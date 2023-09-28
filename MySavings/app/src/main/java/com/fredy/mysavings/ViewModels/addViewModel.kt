@@ -1,5 +1,6 @@
 package com.fredy.mysavings.ViewModels
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -8,12 +9,11 @@ import com.fredy.mysavings.Data.Add.CalcAction
 import com.fredy.mysavings.Data.Add.CalcOperation
 import com.fredy.mysavings.Data.Add.CalcState
 
-
+//state.number1 will be used as the saved data in the note
 class addViewModel : ViewModel() {
     var state by mutableStateOf(CalcState())
 
     fun onAction (action : CalcAction){
-
         when(action) {
             is CalcAction.Number -> enterNumber(action.number)
             is CalcAction.DecimalPoint -> enterDecimal()
@@ -21,6 +21,7 @@ class addViewModel : ViewModel() {
             is CalcAction.Operation -> enterOperation(action.operation)
             is CalcAction.Calculate -> performCalculation()
             is CalcAction.Delete -> performDeletion()
+            is CalcAction.Percent -> performPercent()
         }
 
     }
@@ -54,11 +55,15 @@ class addViewModel : ViewModel() {
                 number2 = "",
                 operation = null
             )
+            prettier()
         }
     }
 
     private fun enterOperation(operation: CalcOperation) {
-        if (state.number1.isNotBlank()){
+        if (state.number1.isNotBlank() && state.number2.isBlank()){
+            state = state.copy(operation = operation)
+        }else if (state.number1.isNotBlank() && state.number2.isNotBlank()){
+            performCalculation()
             state = state.copy(operation = operation)
         }
     }
@@ -78,13 +83,53 @@ class addViewModel : ViewModel() {
                 number2 = state.number2 + "."
             )
         }
-
     }
 
-    private fun enterNumber(number: Int) {
+    private fun performPercent() {
+        if (state.operation == null && !state.number1.contains("%")
+            && state.number1.isNotBlank())
+        {
+            state = state.copy(
+                number1 = (state.number1.toDouble() / 100).toString()
+            )
+            prettier()
+            return
+        }
+        if (!state.number2.contains("%") && state.number2.isNotBlank())
+        {
+            state = state.copy(
+                number2 = (state.number2.toDouble() / 100).toString()
+            )
+            prettier()
+        }
+    }
+
+    private fun prettier() {
+        if (state.operation == null && state.number1.endsWith(".0")
+            && state.number1.isNotBlank())
+        {
+            state = state.copy(
+                number1 = state.number1.dropLast(2)
+            )
+            return
+        }
+        if (state.number2.endsWith(".0") && state.number2.isNotBlank())
+        {
+            state = state.copy(
+                number2 = state.number2.dropLast(2)
+            )
+        }
+    }
+
+    private fun enterNumber(number: String) {
         if (state.operation == null){
             if (state.number1.length >= MAX_NUMBER_LENGTH){
                 return
+            }
+            if (state.number1 == "0") {
+                state = state.copy(
+                    number1 = ""
+                )
             }
             state = state.copy(
                 number1 = state.number1 + number
@@ -94,12 +139,17 @@ class addViewModel : ViewModel() {
         if (state.number2.length >= MAX_NUMBER_LENGTH){
             return
         }
+        if (state.number2 == "0") {
+            state = state.copy(
+                number2 = ""
+            )
+        }
         state = state.copy(
             number2 = state.number2 + number
         )
     }
 
     companion object {
-        private const val MAX_NUMBER_LENGTH = 8
+        private const val MAX_NUMBER_LENGTH = 13
     }
 }
