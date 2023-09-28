@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -46,14 +47,18 @@ fun AddScreen(
                 buttonIcon = Icons.Default.Close,
                 modifier = Modifier
                     .weight(1f)
-                    .padding(vertical = 5.dp),
+                    .padding(
+                        vertical = 5.dp
+                    ),
                 onClick = { })
             Spacer(modifier = Modifier.weight(1f))
             ButtonWithIcon(buttonText = "SAVE",
                 buttonIcon = Icons.Default.Check,
                 modifier = Modifier
                     .weight(1f)
-                    .padding(vertical = 5.dp),
+                    .padding(
+                        vertical = 5.dp
+                    ),
                 onClick = { })
         }
         Row(
@@ -90,10 +95,12 @@ fun AddScreen(
                 spacing
             )
         ) {
-            ButtonWithTitleAndIcon(buttonTitle = "Account",
+            ButtonWithTitleAndIcon(buttonTitle = "Account", buttonIcon = ,
+                buttonText = "Account",
                 modifier = Modifier.weight(1f),
                 onClick = {})
             ButtonWithTitleAndIcon(buttonTitle = "Category",
+                buttonText = "Category",
                 modifier = Modifier.weight(1f),
                 onClick = {})
         }
