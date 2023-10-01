@@ -69,4 +69,7 @@ dependencies {
 
 //    View Model
     implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1")
+
+//    Date And Time
+    implementation ("io.github.vanpra.compose-material-dialogs:datetime:0.9.0")
 }
