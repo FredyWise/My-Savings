@@ -1,3 +1,43 @@
 <resources>
     <string name="app_name">My Savings</string>
+    <string name="income_upper">INCOME</string>
+    <string name="income_capitalized">Income</string>
+
+    <string name="expense_upper">EXPENSE</string>
+    <string name="expense_capitalized">Expense</string>
+
+    <string name="balance_upper">BALANCE</string>
+    <string name="balance_capitalized">Balance</string>
+
+    <string name="transfer_upper">TRANSFER</string>
+    <string name="transfer_capitalized">Transfer</string>
+
+    <string name="account_upper">ACCOUNT</string>
+    <string name="account_capitalized">Account</string>
+
+    <string name="category_upper">CATEGORY</string>
+    <string name="category_capitalized">Category</string>
+
+    <string name="save_upper">SAVE</string>
+    <string name="save_capitalized">Save</string>
+
+    <string name="cancel_upper">CANCEL</string>
+    <string name="cancel_capitalized">Cancel</string>
+
+    <string name="add_notes_upper">ADD NOTES</string>
+    <string name="add_notes_capitalized">Add Notes</string>
+
+    <string name="records_upper">RECORDS</string>
+    <string name="records_capitalized">Records</string>
+
+    <string name="analysis_upper">ANALYSIS</string>
+    <string name="analysis_capitalized">Analysis</string>
+
+    <string name="total">Total</string>
+    <string name="due">Due</string>
+    <string name="account_redacted">• • • • • </string>
+    <string name="accounts">Accounts</string>
+    <string name="categories">Categories</string>
+    <string name="sort">Sort</string>
+    <string name="see_all">SEE ALL</string>
 </resources>

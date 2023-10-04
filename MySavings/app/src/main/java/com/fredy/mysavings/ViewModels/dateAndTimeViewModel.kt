@@ -7,6 +7,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
+import com.fredy.mysavings.Data.Add.dateTimeData
 import com.vanpra.composematerialdialogs.MaterialDialogState
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import java.time.LocalDate
@@ -14,27 +15,26 @@ import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
 class dateAndTimeViewModel: ViewModel() {
-    private var pickedDate by mutableStateOf(LocalDate.now())
-    private var pickedTime by mutableStateOf(LocalTime.now())
+    var pickedDateTime by mutableStateOf(dateTimeData())
     val formattedDate: String by derivedStateOf {
         DateTimeFormatter
             .ofPattern("MMM dd, yyyy")
-            .format(pickedDate)
+            .format(pickedDateTime.date)
     }
     val formattedTime: String by derivedStateOf {
         DateTimeFormatter
-            .ofPattern("hh:mm")
-            .format(pickedTime)
+            .ofPattern("hh : mm")
+            .format(pickedDateTime.time)
     }
     val dateDialogState = MaterialDialogState()
     val timeDialogState = MaterialDialogState()
 
     fun updateDate(date: LocalDate) {
-        pickedDate = date
+        pickedDateTime = pickedDateTime.copy(date = date)
     }
 
     fun updateTime(time: LocalTime) {
-        pickedTime = time
+        pickedDateTime = pickedDateTime.copy(time = time)
     }
 
 

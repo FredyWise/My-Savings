@@ -1,26 +1,25 @@
 package com.fredy.mysavings.ViewModels
 
-import android.util.Log
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
+import com.fredy.mysavings.Data.User.Account
 import com.fredy.mysavings.Data.Add.BtnAction
-import com.fredy.mysavings.Data.Add.Select
-import com.fredy.mysavings.Data.Add.SelectedState
-import java.time.format.DateTimeFormatter
+import com.fredy.mysavings.Data.Add.MutableTitle
+import com.fredy.mysavings.Data.Add.SelectOperation
+import com.fredy.mysavings.Data.User.Category
+import com.fredy.mysavings.Data.Records.Item
 
 //state.number1 will be used as the saved data in the note
-class addViewModel: ViewModel() {
-    var select by mutableStateOf(Select())
-    var textForTextBox by mutableStateOf(
-        ""
-    )
+class addViewModel(
+//    private val calculatorViewModel: calculatorViewModel,
+//    private val dateAndTimeViewModel: dateAndTimeViewModel
+): ViewModel() {
+    var newItem by mutableStateOf(Item())
+    var mutableTitle by mutableStateOf(MutableTitle())
+
+    var textForTextBox by mutableStateOf(newItem.notes)
 
     fun onTextBoxChange(text: String) {
         textForTextBox = text
@@ -30,62 +29,54 @@ class addViewModel: ViewModel() {
         when (action) {
             is BtnAction.Save -> performSave()
             is BtnAction.Cancel -> performCancel()
-            is BtnAction.IncomeSelected -> selectIncome(action.color)
-            is BtnAction.ExpenseSelected -> selectExpense(action.color)
-            is BtnAction.TransferSelected -> selectTransfer(action.color)
+            is BtnAction.Operation -> performSelect(
+                action.operation
+            )
             is BtnAction.AccountClicked -> showAccountList()
-            is BtnAction.CategoryClicked -> showCategoryList()
+            is BtnAction.ToAccountClicked -> showToAccountList()
+            is BtnAction.ToCategoryClicked -> showToCategoryList()
         }
 
     }
 
     private fun performSave() {
-
+//        newItem.balance.amount = calculatorViewModel.state.number1.toDouble()
+//        newItem.time = dateAndTimeViewModel.pickedDateTime.time
     }
 
     private fun performCancel() {
-        select = Select()
 
     }
 
-    private fun selectIncome(color: Color) {
-        select = Select()
-        select = select.copy(
-            income = SelectedState(
-                textColor = color,
-                icon = Icons.Default.CheckCircle,
-                iconColor = color
-            )
-        )
+    private fun performSelect(selectedOperation: SelectOperation) {
+        isTransfer(selectedOperation == SelectOperation.TransferSelected)
+
     }
 
-    private fun selectExpense(color: Color) {
-        select = Select()
-        select = select.copy(
-            expense = SelectedState(
-                textColor = color,
-                icon = Icons.Default.CheckCircle,
-                iconColor = color
-            )
-        )
-    }
 
-    private fun selectTransfer(color: Color) {
-        select = Select()
-        select = select.copy(
-            transfer = SelectedState(
-                textColor = color,
-                icon = Icons.Default.CheckCircle,
-                iconColor = color
+    private fun isTransfer(isTransfer: Boolean) {
+        if (isTransfer) {
+            mutableTitle = mutableTitle.copy(
+                fromTitle = "From", toTitle = "To"
             )
-        )
+            newItem.toCategory = null
+            newItem.toAccount = Account()
+        } else {
+            mutableTitle = MutableTitle()
+            newItem.toCategory = Category()
+            newItem.toAccount = null
+        }
     }
 
     private fun showAccountList() {
 
     }
 
-    private fun showCategoryList() {
+    private fun showToAccountList() {
+
+    }
+
+    private fun showToCategoryList() {
 
     }
 

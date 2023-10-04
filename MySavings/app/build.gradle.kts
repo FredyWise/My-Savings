@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.fredy.mysavings"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.fredy.mysavings"
@@ -67,9 +67,27 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
+//    More Icons
+    implementation("com.google.android.material:material:1.9.0")
+    implementation("androidx.compose.material:material-icons-extended")
+
+
 //    View Model
-    implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1")
 
 //    Date And Time
-    implementation ("io.github.vanpra.compose-material-dialogs:datetime:0.9.0")
+    implementation("io.github.vanpra.compose-material-dialogs:datetime:0.9.0")
+
+//    Navigation
+    implementation("androidx.navigation:navigation-compose:2.7.0")
+
+//    Compose Material Design
+    var compose_version = "1.2.0-alpha08"
+    implementation("androidx.compose.material:material:$compose_version")
+
+    // Compose UI
+    implementation("androidx.compose.ui:ui:$compose_version")
+
+    // Compose UI Tooling
+    implementation("androidx.compose.ui:ui-tooling:$compose_version")
 }

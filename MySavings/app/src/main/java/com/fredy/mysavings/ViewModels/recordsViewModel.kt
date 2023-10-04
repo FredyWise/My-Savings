@@ -4,9 +4,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import com.fredy.mysavings.Data.BalanceBar
 import com.fredy.mysavings.Data.Records.Item
 import com.fredy.mysavings.Data.Records.Record
 import com.fredy.mysavings.Data.Records.RecordsData
+import com.fredy.mysavings.ui.component.Records.BalanceBar
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -14,6 +16,16 @@ class recordsViewModel: ViewModel() {
     var recordsData by mutableStateOf(
         RecordsData()
     )
+
+//    fun onAction(action: RecAction) {
+//        when (action) {
+//            is RecAction.ItemSelected -> selectItem()
+//            is RecAction.RecordSelected -> selectRecord()
+//            is RecAction.AddNewItem -> addItem()
+//        }
+//
+//    }
+
 
     fun formatDate(date: LocalDate): String {
         return DateTimeFormatter.ofPattern(
