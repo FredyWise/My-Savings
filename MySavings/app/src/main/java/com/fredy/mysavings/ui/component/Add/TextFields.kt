@@ -23,8 +23,8 @@ fun TextBox(
     hintText: String = "",
     textStyle: TextStyle = TextStyle(MaterialTheme.colorScheme.secondary) + MaterialTheme.typography.bodyMedium,
     shape: Shape = MaterialTheme.shapes.small,
-    backgroundColor: Color = Color.Transparent,
-    borderColor: Color = Color.Transparent,
+    backgroundColor: Color = Color.Unspecified,
+    borderColor: Color = Color.Unspecified,
 ) {
     TextField(
         value = value,
