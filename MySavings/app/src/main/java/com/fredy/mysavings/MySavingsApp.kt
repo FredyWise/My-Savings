@@ -33,10 +33,9 @@ import com.fredy.mysavings.ui.theme.MySavingsTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MySavingsApp(
-    applicationContext: Context,
 ) {
     MySavingsTheme {
         val navController = rememberNavController()
-        NavGraphRoot(navController,applicationContext)
+        NavGraphRoot(navController)
     }
 }

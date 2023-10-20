@@ -26,12 +26,12 @@ fun RecordsScreen(
         BalanceBar(
             modifier = Modifier.background(
                 MaterialTheme.colorScheme.surface
-            ),
+            ).padding(vertical = 5.dp),
             balanceBars = balanceBars
         )
         CategorizedLazyColumn(
             records = recordsViewModel.recordsData.records,
-            formatDate = recordsViewModel::formatDate
+            formatDate = recordsViewModel::formatDate,
         )
     }
 }

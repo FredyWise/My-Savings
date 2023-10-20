@@ -28,20 +28,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.Data.Add.BtnAction
 import com.fredy.mysavings.Data.Add.MutableTitle
 import com.fredy.mysavings.Data.Add.SelectOperation
-import com.fredy.mysavings.Data.Records.Item
-import com.fredy.mysavings.Data.User.AccountIcons
-import com.fredy.mysavings.Data.User.CategoryIcons
+import com.fredy.mysavings.Data.Add.dateTimeData
+import com.fredy.mysavings.Data.User.Account
+import com.fredy.mysavings.Data.User.Type
+import com.fredy.mysavings.Data.User.formatDate
+import com.fredy.mysavings.Data.User.formatTime
 import com.fredy.mysavings.ui.component.BasicButton
 import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.MaterialDialogState
 import com.vanpra.composematerialdialogs.datetime.date.datepicker
 import com.vanpra.composematerialdialogs.datetime.time.timepicker
+import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -109,7 +114,7 @@ fun ConfirmationBar(
                     vertical = verticalPadding
                 ),
             onClick = { onAction(BtnAction.Cancel) })
-        Spacer(modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier.weight(1.5f))
         ButtonWithIcon(buttonText = "SAVE",
             buttonTextColor = textColor,
             buttonIconColor = textColor,
@@ -183,64 +188,54 @@ fun ChooseNoteType(
 fun ChooseWalletAndTag(
     spacing: Dp,
     modifier: Modifier = Modifier,
-    item: Item,
+    left: Account,
+    right: Type?,
+    rightBtnAction: BtnAction,
     btnTitle: MutableTitle,
     onAction: (BtnAction) -> Unit,
-) {
-    Row(
+) {  Row(
         modifier = modifier.padding(bottom = spacing),
         horizontalArrangement = Arrangement.spacedBy(
             spacing
         )
     ) {
         ButtonWithTitleAndIcon(buttonTitle = btnTitle.fromTitle,
-            buttonIcon = AccountIcons(item.account.icon),
-            buttonText = item.account.name,
+            buttonIcon = painterResource(left.icon),
+            buttonText = left.name,
             modifier = Modifier.weight(1f),
             onClick = {
                 onAction(
                     BtnAction.AccountClicked
                 )
             })
-        item.toCategory?.let {
-            ButtonWithTitleAndIcon(buttonTitle = btnTitle.toTitle,
-                buttonIcon = CategoryIcons(it.icon),
-                buttonText = it.name,
-                modifier = Modifier.weight(1f),
-                onClick = {
-                    onAction(
-                        BtnAction.ToCategoryClicked
-                    )
-                })
-        }
-        item.toAccount?.let {
-            ButtonWithTitleAndIcon(buttonTitle = btnTitle.toTitle,
-                buttonIcon = AccountIcons(it.icon),
-                buttonText = it.name,
-                modifier = Modifier.weight(1f),
-                onClick = {
-                    onAction(
-                        BtnAction.ToAccountClicked
-                    )
-                })
-        }
+    right.let {
+        ButtonWithTitleAndIcon(buttonTitle = btnTitle.toTitle,
+            buttonIcon = painterResource(it!!.icon),
+            buttonText = it!!.name,
+            modifier = Modifier.weight(1f),
+            onClick = {
+                onAction(
+                    rightBtnAction
+                )
+            })
+    }
     }
 }
 
 @Composable
 fun DateAndTimePicker(
-    applicationContext: Context,
     verticalPadding: Dp = 15.dp,
     dividerColor: Color = Color.Gray,
     spacing: Dp,
     modifier: Modifier = Modifier,
-    dateDialogState: MaterialDialogState,
-    timeDialogState: MaterialDialogState,
-    formattedDate: String,
-    formattedTime: String,
+    dateTimeData : dateTimeData,
+    applicationContext: Context,
     onDateChange: (LocalDate) -> Unit,
     onTimeChange: (LocalTime) -> Unit,
 ) {
+
+    val dateDialogState = rememberMaterialDialogState()
+    val timeDialogState = rememberMaterialDialogState()
     Row(
         modifier = modifier
             .padding(top = spacing)
@@ -256,7 +251,7 @@ fun DateAndTimePicker(
                 .padding(
                     vertical = verticalPadding
                 ),
-            buttonText = formattedDate,
+            buttonText = formatDate(dateTimeData.date),
             buttonTextColor = MaterialTheme.colorScheme.onBackground
         )
         Divider(
@@ -275,7 +270,7 @@ fun DateAndTimePicker(
                 .padding(
                     vertical = verticalPadding
                 ),
-            buttonText = formattedTime,
+            buttonText = formatTime(dateTimeData.time),
             buttonTextColor = MaterialTheme.colorScheme.onBackground
         )
     }
@@ -285,14 +280,14 @@ fun DateAndTimePicker(
             positiveButton(text = "Ok") {
                 Toast.makeText(
                     applicationContext,
-                    "Clicked ok",
+                    "Date Changed",
                     Toast.LENGTH_LONG
                 ).show()
             }
             negativeButton(text = "Cancel")
         }) {
         datepicker(
-            initialDate = LocalDate.now(),
+            initialDate = dateTimeData.date,
             onDateChange = onDateChange
         )
     }
@@ -302,14 +297,14 @@ fun DateAndTimePicker(
             positiveButton(text = "Ok") {
                 Toast.makeText(
                     applicationContext,
-                    "Clicked ok",
+                    "Time Changed",
                     Toast.LENGTH_LONG
                 ).show()
             }
             negativeButton(text = "Cancel")
         }) {
         timepicker(
-            initialTime = LocalTime.now(),
+            initialTime = dateTimeData.time,
             onTimeChange = onTimeChange
         )
     }

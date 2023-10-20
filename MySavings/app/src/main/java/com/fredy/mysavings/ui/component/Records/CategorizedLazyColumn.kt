@@ -20,16 +20,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.fredy.mysavings.Data.User.Account
-import com.fredy.mysavings.Data.User.AccountIcons
 import com.fredy.mysavings.Data.Balance
-import com.fredy.mysavings.Data.User.Category
-import com.fredy.mysavings.Data.User.CategoryIcons
-import com.fredy.mysavings.Data.Records.Record
 import com.fredy.mysavings.Data.FormatBalanceAmount
+import com.fredy.mysavings.Data.Records.Record
+import com.fredy.mysavings.Data.User.Account
+import com.fredy.mysavings.Data.User.Category
+import com.fredy.mysavings.Data.User.accountIcons
 import java.time.LocalDate
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -37,7 +37,7 @@ import java.time.LocalDate
 fun CategorizedLazyColumn(
     records: List<Record>,
     modifier: Modifier = Modifier,
-    formatDate: (LocalDate) -> String
+    formatDate: (LocalDate) -> String,
 ) {
     LazyColumn(modifier) {
         records.forEach { record ->
@@ -163,7 +163,7 @@ fun TransferOrNormalIcon(
 ) {
     Row(modifier = modifier) {
         Icon(
-            painter = AccountIcons(
+            painter = painterResource(
                 account.icon
             ),
             contentDescription = account.iconDescription,
@@ -190,7 +190,7 @@ fun TransferOrNormalIcon(
                 )
             )
             Icon(
-                painter = AccountIcons(
+                painter = painterResource(
                     it.icon
                 ),
                 contentDescription = it.iconDescription,
@@ -219,7 +219,7 @@ fun ChooseIcon(
 ) {
     toCategory?.let {
         Icon(
-            painter = CategoryIcons(it.icon),
+            painter = painterResource(it.icon),
             contentDescription = it.iconDescription,
             tint = it.iconColor,
             modifier = Modifier
@@ -231,8 +231,8 @@ fun ChooseIcon(
     }
     toAccount?.let {
         Icon(
-            painter = AccountIcons(
-                AccountIcons.TRANSFER
+            painter = painterResource(
+                accountIcons[0]
             ),
             contentDescription = it.iconDescription,
             tint = it.iconColor,

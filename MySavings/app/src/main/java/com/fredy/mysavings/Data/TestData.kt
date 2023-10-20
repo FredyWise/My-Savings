@@ -3,55 +3,54 @@ package com.fredy.mysavings.Data
 import com.fredy.mysavings.Data.Records.Item
 import com.fredy.mysavings.Data.Records.Record
 import com.fredy.mysavings.Data.User.Account
-import com.fredy.mysavings.Data.User.AccountIcons
 import com.fredy.mysavings.Data.User.Category
-import com.fredy.mysavings.Data.User.CategoryIcons
+import com.fredy.mysavings.R
 import java.time.LocalDate
 import java.time.LocalTime
 
-val tempCategories: List<Category> = listOf(
+val tempCategories: MutableList<Category> = mutableListOf(
     Category(
         name = "Savings toCategory",
-        icon = CategoryIcons.CREDIT_CARD,
+        icon = R.drawable.ic_mastercard,
     ), Category(
         name = "Credit Card",
-        icon = CategoryIcons.CREDIT_CARD,
+        icon = R.drawable.ic_mastercard,
     )
 )
-val tempAccounts: List<Account> = listOf(
+val tempAccounts: MutableList<Account> = mutableListOf(
     Account(
         name = "Savings Account",
-        icon = AccountIcons.CREDIT_CARD,
+        icon = R.drawable.ic_mastercard,
         balance = Balance(
             amount = 1000f, currency = "USD"
         )
     ), Account(
         name = "Credit Card",
-        icon = AccountIcons.MASTER_CARD,
+        icon = R.drawable.ic_visa,
         balance = Balance(
             amount = 1000f, currency = "USD"
         )
-    ),Account(
+    ), Account(
         name = "Bitch Account",
-        icon = AccountIcons.CREDIT_CARD,
+        icon = R.drawable.ic_mastercard,
         balance = Balance(
             amount = 1000f, currency = "USD"
         )
     ), Account(
         name = "Ass Card",
-        icon = AccountIcons.MASTER_CARD,
+        icon = R.drawable.ic_visa,
         balance = Balance(
             amount = -500f, currency = "USD"
         )
-    ),Account(
+    ), Account(
         name = "tai Account",
-        icon = AccountIcons.CREDIT_CARD,
+        icon = R.drawable.ic_mastercard,
         balance = Balance(
             amount = -500f, currency = "USD"
         )
     ), Account(
         name = "babi Card",
-        icon = AccountIcons.MASTER_CARD,
+        icon = R.drawable.ic_visa,
         balance = Balance(
             amount = -500f, currency = "USD"
         )
@@ -69,12 +68,12 @@ val tempRecords = listOf(
                 time = LocalTime.now(),
                 account = Account(
                     name = "Savings",
-                    icon = AccountIcons.MASTER_CARD,
+                    icon = R.drawable.ic_visa,
                     balance = Balance()
                 ),
                 toAccount = Account(
                     name = "Groceries",
-                    icon = AccountIcons.MASTER_CARD,
+                    icon = R.drawable.ic_visa,
                     balance = Balance()
                 ),
                 toCategory = null,
@@ -92,13 +91,13 @@ val tempRecords = listOf(
                 time = LocalTime.now(),
                 account = Account(
                     name = "Credit Card",
-                    icon = AccountIcons.CREDIT_CARD,
+                    icon = R.drawable.ic_mastercard,
                     balance = Balance()
                 ),
                 toAccount = null,
                 toCategory = Category(
                     name = "Dining",
-                    icon = CategoryIcons.CREDIT_CARD
+                    icon = R.drawable.ic_mastercard
                 ),
                 notes = "Restaurant"
             ), Item(
@@ -109,13 +108,13 @@ val tempRecords = listOf(
                 time = LocalTime.now(),
                 account = Account(
                     name = "Salary",
-                    icon = AccountIcons.MASTER_CARD,
+                    icon = R.drawable.ic_visa,
                     balance = Balance()
                 ),
                 toAccount = null,
                 toCategory = Category(
                     name = "Income",
-                    icon = CategoryIcons.MASTER_CARD
+                    icon = R.drawable.ic_visa
                 ),
                 notes = "Monthly salary"
             )
@@ -131,13 +130,13 @@ val tempRecords = listOf(
                 time = LocalTime.now(),
                 account = Account(
                     name = "Credit Card",
-                    icon = AccountIcons.CREDIT_CARD,
+                    icon = R.drawable.ic_mastercard,
                     balance = Balance()
                 ),
                 toAccount = null,
                 toCategory = Category(
                     name = "Dining",
-                    icon = CategoryIcons.CREDIT_CARD
+                    icon = R.drawable.ic_mastercard
                 ),
                 notes = "Restaurant"
             ), Item(
@@ -148,13 +147,13 @@ val tempRecords = listOf(
                 time = LocalTime.now(),
                 account = Account(
                     name = "Salary",
-                    icon = AccountIcons.MASTER_CARD,
+                    icon = R.drawable.ic_visa,
                     balance = Balance()
                 ),
                 toAccount = null,
                 toCategory = Category(
                     name = "Income",
-                    icon = CategoryIcons.MASTER_CARD
+                    icon = R.drawable.ic_visa
                 ),
                 notes = "Monthly salary"
             )
@@ -170,13 +169,13 @@ val tempRecords = listOf(
                 time = LocalTime.now(),
                 account = Account(
                     name = "Credit Card",
-                    icon = AccountIcons.CREDIT_CARD,
+                    icon = R.drawable.ic_mastercard,
                     balance = Balance()
                 ),
                 toAccount = null,
                 toCategory = Category(
                     name = "Dining",
-                    icon = CategoryIcons.CREDIT_CARD
+                    icon = R.drawable.ic_mastercard
                 ),
                 notes = "Restaurant"
             ), Item(
@@ -187,13 +186,13 @@ val tempRecords = listOf(
                 time = LocalTime.now(),
                 account = Account(
                     name = "Salary",
-                    icon = AccountIcons.MASTER_CARD,
+                    icon = R.drawable.ic_visa,
                     balance = Balance()
                 ),
                 toAccount = null,
                 toCategory = Category(
                     name = "Income",
-                    icon = CategoryIcons.MASTER_CARD
+                    icon = R.drawable.ic_visa
                 ),
                 notes = "Monthly salary"
             )
@@ -209,13 +208,13 @@ val tempRecords = listOf(
                 time = LocalTime.now(),
                 account = Account(
                     name = "Credit Card",
-                    icon = AccountIcons.CREDIT_CARD,
+                    icon = R.drawable.ic_mastercard,
                     balance = Balance()
                 ),
                 toAccount = null,
                 toCategory = Category(
                     name = "Dining",
-                    icon = CategoryIcons.CREDIT_CARD
+                    icon = R.drawable.ic_mastercard
                 ),
                 notes = "Restaurant"
             ), Item(
@@ -226,13 +225,13 @@ val tempRecords = listOf(
                 time = LocalTime.now(),
                 account = Account(
                     name = "Credit Card",
-                    icon = AccountIcons.CREDIT_CARD,
+                    icon = R.drawable.ic_mastercard,
                     balance = Balance()
                 ),
                 toAccount = null,
                 toCategory = Category(
                     name = "Dining",
-                    icon = CategoryIcons.CREDIT_CARD
+                    icon = R.drawable.ic_mastercard
                 ),
                 notes = "Restaurant"
             ), Item(
@@ -243,13 +242,13 @@ val tempRecords = listOf(
                 time = LocalTime.now(),
                 account = Account(
                     name = "Credit Card",
-                    icon = AccountIcons.CREDIT_CARD,
+                    icon = R.drawable.ic_mastercard,
                     balance = Balance()
                 ),
                 toAccount = null,
                 toCategory = Category(
                     name = "Dining",
-                    icon = CategoryIcons.CREDIT_CARD
+                    icon = R.drawable.ic_mastercard
                 ),
                 notes = "Restaurant"
             ), Item(
@@ -260,13 +259,13 @@ val tempRecords = listOf(
                 time = LocalTime.now(),
                 account = Account(
                     name = "Credit Card",
-                    icon = AccountIcons.CREDIT_CARD,
+                    icon = R.drawable.ic_mastercard,
                     balance = Balance()
                 ),
                 toAccount = null,
                 toCategory = Category(
                     name = "Dining",
-                    icon = CategoryIcons.CREDIT_CARD
+                    icon = R.drawable.ic_mastercard
                 ),
                 notes = "Restaurant"
             ), Item(
@@ -277,13 +276,13 @@ val tempRecords = listOf(
                 time = LocalTime.now(),
                 account = Account(
                     name = "Credit Card",
-                    icon = AccountIcons.CREDIT_CARD,
+                    icon = R.drawable.ic_mastercard,
                     balance = Balance()
                 ),
                 toAccount = null,
                 toCategory = Category(
                     name = "Dining",
-                    icon = CategoryIcons.CREDIT_CARD
+                    icon = R.drawable.ic_mastercard
                 ),
                 notes = "Restaurant"
             ), Item(
@@ -294,13 +293,13 @@ val tempRecords = listOf(
                 time = LocalTime.now(),
                 account = Account(
                     name = "Salary",
-                    icon = AccountIcons.MASTER_CARD,
+                    icon = R.drawable.ic_visa,
                     balance = Balance()
                 ),
                 toAccount = null,
                 toCategory = Category(
                     name = "Income",
-                    icon = CategoryIcons.MASTER_CARD
+                    icon = R.drawable.ic_visa
                 ),
                 notes = "Monthly salary"
             )
@@ -316,13 +315,13 @@ val tempRecords = listOf(
                 time = LocalTime.now(),
                 account = Account(
                     name = "Credit Card",
-                    icon = AccountIcons.CREDIT_CARD,
+                    icon = R.drawable.ic_mastercard,
                     balance = Balance()
                 ),
                 toAccount = null,
                 toCategory = Category(
                     name = "Dining",
-                    icon = CategoryIcons.CREDIT_CARD
+                    icon = R.drawable.ic_mastercard
                 ),
                 notes = "Restaurant"
             ), Item(
@@ -333,13 +332,13 @@ val tempRecords = listOf(
                 time = LocalTime.now(),
                 account = Account(
                     name = "Salary",
-                    icon = AccountIcons.MASTER_CARD,
+                    icon = R.drawable.ic_visa,
                     balance = Balance()
                 ),
                 toAccount = null,
                 toCategory = Category(
                     name = "Income",
-                    icon = CategoryIcons.MASTER_CARD
+                    icon = R.drawable.ic_visa
                 ),
                 notes = "Monthly salary"
             )
@@ -355,13 +354,13 @@ val tempRecords = listOf(
                 time = LocalTime.now(),
                 account = Account(
                     name = "Credit Card",
-                    icon = AccountIcons.CREDIT_CARD,
+                    icon = R.drawable.ic_mastercard,
                     balance = Balance()
                 ),
                 toAccount = null,
                 toCategory = Category(
                     name = "Dining",
-                    icon = CategoryIcons.CREDIT_CARD
+                    icon = R.drawable.ic_mastercard
                 ),
                 notes = "Restaurant"
             ), Item(
@@ -372,13 +371,13 @@ val tempRecords = listOf(
                 time = LocalTime.now(),
                 account = Account(
                     name = "Salary",
-                    icon = AccountIcons.MASTER_CARD,
+                    icon = R.drawable.ic_visa,
                     balance = Balance()
                 ),
                 toAccount = null,
                 toCategory = Category(
                     name = "Income",
-                    icon = CategoryIcons.MASTER_CARD
+                    icon = R.drawable.ic_visa
                 ),
                 notes = "Monthly salary"
             )
@@ -394,13 +393,13 @@ val tempRecords = listOf(
                 time = LocalTime.now(),
                 account = Account(
                     name = "Credit Card",
-                    icon = AccountIcons.CREDIT_CARD,
+                    icon = R.drawable.ic_mastercard,
                     balance = Balance()
                 ),
                 toAccount = null,
                 toCategory = Category(
                     name = "Dining",
-                    icon = CategoryIcons.CREDIT_CARD
+                    icon = R.drawable.ic_mastercard
                 ),
                 notes = "Restaurant"
             ), Item(
@@ -411,13 +410,13 @@ val tempRecords = listOf(
                 time = LocalTime.now(),
                 account = Account(
                     name = "Salary",
-                    icon = AccountIcons.MASTER_CARD,
+                    icon = R.drawable.ic_visa,
                     balance = Balance()
                 ),
                 toAccount = null,
                 toCategory = Category(
                     name = "Income",
-                    icon = CategoryIcons.MASTER_CARD
+                    icon = R.drawable.ic_visa
                 ),
                 notes = "Monthly salary"
             )
@@ -433,13 +432,13 @@ val tempRecords = listOf(
                 time = LocalTime.now(),
                 account = Account(
                     name = "Credit Card",
-                    icon = AccountIcons.CREDIT_CARD,
+                    icon = R.drawable.ic_mastercard,
                     balance = Balance()
                 ),
                 toAccount = null,
                 toCategory = Category(
                     name = "Dining",
-                    icon = CategoryIcons.CREDIT_CARD
+                    icon = R.drawable.ic_mastercard
                 ),
                 notes = "Restaurant"
             ), Item(
@@ -450,13 +449,13 @@ val tempRecords = listOf(
                 time = LocalTime.now(),
                 account = Account(
                     name = "Salary",
-                    icon = AccountIcons.MASTER_CARD,
+                    icon = R.drawable.ic_visa,
                     balance = Balance()
                 ),
                 toAccount = null,
                 toCategory = Category(
                     name = "Income",
-                    icon = CategoryIcons.MASTER_CARD
+                    icon = R.drawable.ic_visa
                 ),
                 notes = "Monthly salary"
             )
@@ -472,13 +471,13 @@ val tempRecords = listOf(
                 time = LocalTime.now(),
                 account = Account(
                     name = "Credit Card",
-                    icon = AccountIcons.CREDIT_CARD,
+                    icon = R.drawable.ic_mastercard,
                     balance = Balance()
                 ),
                 toAccount = null,
                 toCategory = Category(
                     name = "Dining",
-                    icon = CategoryIcons.CREDIT_CARD
+                    icon = R.drawable.ic_mastercard
                 ),
                 notes = "Restaurant"
             ), Item(
@@ -489,13 +488,13 @@ val tempRecords = listOf(
                 time = LocalTime.now(),
                 account = Account(
                     name = "Salary",
-                    icon = AccountIcons.MASTER_CARD,
+                    icon = R.drawable.ic_visa,
                     balance = Balance()
                 ),
                 toAccount = null,
                 toCategory = Category(
                     name = "Income",
-                    icon = CategoryIcons.MASTER_CARD
+                    icon = R.drawable.ic_visa
                 ),
                 notes = "Monthly salary"
             )

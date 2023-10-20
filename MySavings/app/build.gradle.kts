@@ -72,7 +72,7 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended")
 
 
-//    View Model
+//    View Model lifecycle
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1")
 
 //    Date And Time
@@ -81,8 +81,8 @@ dependencies {
 //    Navigation
     implementation("androidx.navigation:navigation-compose:2.7.0")
 
-//    Compose Material Design
-    var compose_version = "1.2.0-alpha08"
+    var compose_version = "1.5.3"
+    // Compose Material Design
     implementation("androidx.compose.material:material:$compose_version")
 
     // Compose UI

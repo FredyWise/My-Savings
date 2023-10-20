@@ -12,7 +12,6 @@ import com.fredy.mysavings.ui.screens.MainScreen
 @Composable
 fun NavGraphRoot(
     navController: NavHostController,
-    applicationContext: Context,
 ) {
     NavHost(
         navController = navController,
@@ -30,7 +29,7 @@ fun NavGraphRoot(
         composable(
             route = NavigationRoute.Add.route
         ) {
-            AddScreen(applicationContext = applicationContext)
+            AddScreen()
         }
     }
 }

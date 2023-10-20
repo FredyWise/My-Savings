@@ -36,7 +36,9 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.fredy.mysavings.Data.Balance
 import com.fredy.mysavings.Data.FormatAmount
+import com.fredy.mysavings.Data.FormatBalanceAmount
 import com.fredy.mysavings.Data.User.defaultColors
 import com.fredy.mysavings.Data.User.extractProportions
 
@@ -77,3 +79,23 @@ fun BasicButton(
     }
 }
 
+@Composable
+fun BalanceItem(
+    modifier: Modifier = Modifier,
+    title: String,
+    balance: Balance
+) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        androidx.compose.material3.Text(
+            text = title,
+            color = MaterialTheme.colorScheme.onSurface
+        )
+        androidx.compose.material3.Text(
+            text = FormatBalanceAmount(balance = balance),
+            color = balance.balanceColor
+        )
+    }
+}

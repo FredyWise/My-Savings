@@ -1,5 +1,6 @@
 package com.fredy.mysavings.ViewModels
 
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -8,22 +9,26 @@ import com.fredy.mysavings.Data.User.Account
 import com.fredy.mysavings.Data.Add.BtnAction
 import com.fredy.mysavings.Data.Add.MutableTitle
 import com.fredy.mysavings.Data.Add.SelectOperation
+import com.fredy.mysavings.Data.Add.dateTimeData
 import com.fredy.mysavings.Data.User.Category
 import com.fredy.mysavings.Data.Records.Item
+import com.vanpra.composematerialdialogs.MaterialDialogState
+import java.time.LocalDate
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 
 //state.number1 will be used as the saved data in the note
 class addViewModel(
-//    private val calculatorViewModel: calculatorViewModel,
-//    private val dateAndTimeViewModel: dateAndTimeViewModel
 ): ViewModel() {
     var newItem by mutableStateOf(Item())
+    var pickedDateTime by mutableStateOf(
+        dateTimeData()
+    )
     var mutableTitle by mutableStateOf(MutableTitle())
 
     var textForTextBox by mutableStateOf(newItem.notes)
 
-    fun onTextBoxChange(text: String) {
-        textForTextBox = text
-    }
+
 
     fun onAction(action: BtnAction) {
         when (action) {
@@ -39,9 +44,12 @@ class addViewModel(
 
     }
 
+    fun onTextBoxChange(text: String) {
+        textForTextBox = text
+    }
+
     private fun performSave() {
-//        newItem.balance.amount = calculatorViewModel.state.number1.toDouble()
-//        newItem.time = dateAndTimeViewModel.pickedDateTime.time
+
     }
 
     private fun performCancel() {
@@ -78,6 +86,14 @@ class addViewModel(
 
     private fun showToCategoryList() {
 
+    }
+
+    fun updateDate(date: LocalDate) {
+        pickedDateTime = pickedDateTime.copy(date = date)
+    }
+
+    fun updateTime(time: LocalTime) {
+        pickedDateTime = pickedDateTime.copy(time = time)
     }
 
 }

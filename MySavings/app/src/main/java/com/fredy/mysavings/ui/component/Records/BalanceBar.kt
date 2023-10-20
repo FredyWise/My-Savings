@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import com.fredy.mysavings.Data.Balance
 import com.fredy.mysavings.Data.BalanceBar
 import com.fredy.mysavings.Data.FormatBalanceAmount
+import com.fredy.mysavings.ui.component.BalanceItem
 
 @Composable
 fun BalanceBar(
@@ -33,20 +34,4 @@ fun BalanceBar(
     }
 }
 
-@Composable
-fun BalanceItem(
-    modifier: Modifier = Modifier,
-    title: String,
-    balance: Balance
-) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Text(text = title, color = MaterialTheme.colorScheme.onSurface)
-        Text(
-            text = FormatBalanceAmount(balance = balance),
-            color = balance.balanceColor
-        )
-    }
-}
+

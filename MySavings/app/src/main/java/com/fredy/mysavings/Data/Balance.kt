@@ -2,6 +2,7 @@ package com.fredy.mysavings.Data
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import com.fredy.mysavings.Data.User.UserData
 import java.text.DecimalFormat
 
 data class Balance(
@@ -20,7 +21,10 @@ data class Balance(
 
 @Composable
 fun FormatBalanceAmount(balance: Balance): String{
-    return FormatAmount(balance.amount) + " " + balance.currency
+//    if (balance.currency != UserData.currency){
+//        balance.amount = balance.amount * ()
+//    }
+    return FormatAmount(balance.amount) + " " + UserData.currency
 }
 
 @Composable

@@ -14,11 +14,11 @@ sealed class BalanceBar(
     var balance: Balance = Balance()
 ) {
     object Income: BalanceBar(
-        name = "INCOME"
+        name = "INCOME",
     )
 
     object Expense: BalanceBar(
-        name = "EXPENSE"
+        name = "EXPENSE",
     )
 
     object Total: BalanceBar(
