@@ -16,8 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.fredy.mysavings.ui.Screens.Account.AccountAddDialog
-import com.fredy.mysavings.ui.Screens.Account.AccountBody
 import com.fredy.mysavings.Data.RoomDatabase.Entity.Account
 import com.fredy.mysavings.Data.RoomDatabase.Event.AccountEvent
 import com.fredy.mysavings.ViewModel.AccountViewModel
@@ -42,19 +40,23 @@ fun AccountsScreen(
                 .padding(
                     vertical = 4.dp
                 )
-                .background(
-                    MaterialTheme.colorScheme.surface
-                )
                 .border(
                     width = 2.dp,
                     color = MaterialTheme.colorScheme.secondary,
                     shape = MaterialTheme.shapes.large
-                ), state = state
+                )
+                .clip(MaterialTheme.shapes.large)
+                .background(
+                    MaterialTheme.colorScheme.surface
+                ),
+            state = state
         )
         SimpleButton(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding( horizontal = 70.dp)
+                .padding(
+                    horizontal = 70.dp
+                )
                 .clip(
                     MaterialTheme.shapes.medium
                 )
