@@ -37,15 +37,19 @@ class AddRecordViewModel(
     val state = combine(
         _state, _record,
     ) { state, record ->
-        state.copy(
-//            accountIdFromFk = record.accountIdFromFk,
-//            categoryIdFk = record.categoryIdFk,
-//            recordDate = record.recordDateTime.toLocalDate(),
-//            recordTime = record.recordDateTime.toLocalTime(),
-//            recordAmount = record.recordAmount,
-//            recordCurrency = record.recordCurrency,
-//            recordNotes = record.recordNotes
-        )
+        if (itemId != -1) {
+            state.copy(
+                accountIdFromFk = record.accountIdFromFk,
+                categoryIdFk = record.categoryIdFk,
+                recordDate = record.recordDateTime.toLocalDate(),
+                recordTime = record.recordDateTime.toLocalTime(),
+                recordAmount = record.recordAmount,
+                recordCurrency = record.recordCurrency,
+                recordNotes = record.recordNotes
+            )
+        }else {
+            state.copy()
+        }
     }.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(5000),
@@ -55,52 +59,47 @@ class AddRecordViewModel(
     fun onEvent(event: AddRecordEvent) {
         when (event) {
             is AddRecordEvent.SaveRecord -> {
+                val recordId = state.value.recordId
+                val accountIdFromFk = state.value.accountIdFromFk
+                val categoryIdToFk = state.value.categoryIdFk
+                val recordDateTime = state.value.recordDate.atTime(state.value.recordTime)
+                val recordAmount = state.value.recordAmount
+                val recordCurrency = state.value.recordCurrency
+                val recordType = state.value.recordType
+                val recordNotes = state.value.recordNotes
 
-                Log.e(
-                    "BABI",
-                    "onnt: " + state.value + _record.value
+                if (recordDateTime == null || recordAmount == 0.0 || recordCurrency.isBlank() || accountIdFromFk == null || categoryIdToFk == null) {
+                    return
+                }
+
+                val record = Record(
+                    recordId = recordId!!,
+                    accountIdFromFk = accountIdFromFk,
+                    categoryIdFk = categoryIdToFk,
+                    recordDateTime = recordDateTime,
+                    recordAmount = recordAmount,
+                    recordCurrency = recordCurrency,
+                    recordType = recordType,
+                    recordNotes = recordNotes,
                 )
-//                val recordId = state.value.recordId
-//                val accountIdFromFk = state.value.accountIdFromFk
-//                val categoryIdToFk = state.value.categoryIdFk
-//                val recordDateTime = state.value.recordDate.atTime(state.value.recordTime)
-//                val recordAmount = state.value.recordAmount
-//                val recordCurrency = state.value.recordCurrency
-//                val recordType = state.value.recordType
-//                val recordNotes = state.value.recordNotes
-//
-//                if (recordDateTime == null || recordAmount == 0.0 || recordCurrency.isBlank() || accountIdFromFk == null || categoryIdToFk == null) {
-//                    return
-//                }
-//
-//                val record = Record(
-//                    recordId = recordId!!,
-//                    accountIdFromFk = accountIdFromFk,
-//                    categoryIdFk = categoryIdToFk,
-//                    recordDateTime = recordDateTime,
-//                    recordAmount = recordAmount,
-//                    recordCurrency = recordCurrency,
-//                    recordType = recordType,
-//                    recordNotes = recordNotes,
-//                )
-//                viewModelScope.launch {
-//                    recordRepository.upsertRecordItem(
-//                        record
-//                    )
-//                }
-//                _state.update {
-//                    it.copy(
-//                        recordId = null,
-//                        accountIdFromFk = null,
-////                        accountIdToFk = null,
-//                        categoryIdFk = null,
-//                        recordDate = LocalDate.now(),
-//                        recordTime = LocalTime.now(),
-//                        recordAmount = 0.0,
-//                        recordCurrency = "",
-//                        recordNotes = ""
-//                    )
-//                }
+                viewModelScope.launch {
+                    recordRepository.upsertRecordItem(
+                        record
+                    )
+                }
+                _state.update {
+                    it.copy(
+                        recordId = null,
+                        accountIdFromFk = null,
+//                        accountIdToFk = null,
+                        categoryIdFk = null,
+                        recordDate = LocalDate.now(),
+                        recordTime = LocalTime.now(),
+                        recordAmount = 0.0,
+                        recordCurrency = "",
+                        recordNotes = ""
+                    )
+                }
             }
 
             is AddRecordEvent.AccountIdFromFk -> {

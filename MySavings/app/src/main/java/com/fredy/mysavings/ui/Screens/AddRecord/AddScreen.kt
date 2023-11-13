@@ -33,7 +33,9 @@ fun AddScreen(
     id: Int,
     navigateUp: () -> Unit,
     calculatorViewModel: CalculatorViewModel = viewModel(),
-    viewModel:AddRecordViewModel = viewModel(factory = AddRecordViewModelFactory(id))
+    viewModel: AddRecordViewModel = viewModel(
+        factory = AddRecordViewModelFactory(id)
+    )
 ) {
     val state by viewModel.state.collectAsState()
     val calculatorState = calculatorViewModel.state
@@ -60,6 +62,11 @@ fun AddScreen(
             )
             SimpleButton(
                 onClick = {
+                    viewModel.onEvent(
+                        AddRecordEvent.RecordAmount(
+                            calculatorState.number1.toDouble()
+                        )
+                    )
                     viewModel.onEvent(
                         AddRecordEvent.SaveRecord
                     )
@@ -130,7 +137,8 @@ fun AddScreen(
         Calculator(
             state = calculatorState,
             onAction = calculatorViewModel::onAction,
-            buttonAspectRatio = 1.5f,
+            textStyle = MaterialTheme.typography.displayMedium,
+            buttonAspectRatio = 1.8f,
             modifier = Modifier.fillMaxWidth()
         )
         DateAndTimePicker(

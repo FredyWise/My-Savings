@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -31,6 +32,7 @@ fun Calculator(
     btnSpacing: Dp = 10.dp,
     onAction: (CalcEvent) -> Unit,
     calculatorShape: Shape = MaterialTheme.shapes.small,
+    textStyle: TextStyle = MaterialTheme.typography.displayLarge,
     textColor: Color = MaterialTheme.colorScheme.onSecondary,
     textBackgroundColor: Color = MaterialTheme.colorScheme.secondary,
     buttonTextColor: Color = MaterialTheme.colorScheme.onSecondary,
@@ -66,7 +68,7 @@ fun Calculator(
                         vertical = 5.dp
                     )
                     .padding(horizontal = 25.dp),
-                style = MaterialTheme.typography.displayLarge,
+                style = textStyle,
                 color = textColor,
                 maxLines = 2
             )
