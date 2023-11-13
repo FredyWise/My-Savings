@@ -1,7 +1,13 @@
 package com.fredy.mysavings.Data
 
-import com.fredy.mysavings.Data.BalanceBar.Expense.balance as ExpenseBalance
-import com.fredy.mysavings.Data.BalanceBar.Income.balance as IncomeBalance
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
+import java.text.DecimalFormat
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 
 val balanceBars = listOf(
     BalanceBar.Income,
@@ -11,7 +17,8 @@ val balanceBars = listOf(
 
 sealed class BalanceBar(
     var name: String = "",
-    var balance: Balance = Balance()
+    var amount: Double = 77777777.777,
+    var currency: String = "USD"
 ) {
     object Income: BalanceBar(
         name = "INCOME",
@@ -23,8 +30,45 @@ sealed class BalanceBar(
 
     object Total: BalanceBar(
         name = "BALANCE",
-        balance = Balance(amount = IncomeBalance.amount - ExpenseBalance.amount)
     )
+}
+@Composable
+fun BalanceColor(amount: Double, isTransfer: Boolean = false): Color {
+    return when {
+        amount < 0.0 -> MaterialTheme.colorScheme.onSecondary
+        isTransfer -> MaterialTheme.colorScheme.onTertiary
+        else -> MaterialTheme.colorScheme.onPrimary
+    }
+}
+
+fun formatBalanceAmount(amount: Double, currency: String): String{
+    return formatAmount(amount) + " " + currency
+}
+
+fun formatAmount(amount: Double): String{
+    return amountDecimalFormat.format(amount)
 }
 
 
+private val amountDecimalFormat = DecimalFormat("#,##0.00")
+
+fun formatDate(date: LocalDate): String {
+    return DateTimeFormatter.ofPattern(
+        "MMM dd, EEEE "
+    ).format(date)
+}
+
+fun formatTime(time: LocalTime): String {
+    return DateTimeFormatter.ofPattern(
+        "hh : mm"
+    ).format(time)
+}
+
+fun formatDateTime(dateTime: LocalDateTime): String {
+    return formatDate(dateTime.toLocalDate()) + formatTime(dateTime.toLocalTime())
+}
+
+fun <E> List<E>.extractProportions(selector: (E) -> Float): List<Float> {
+    val total = this.sumOf { selector(it).toDouble() }
+    return this.map { (selector(it) / total).toFloat() }
+}

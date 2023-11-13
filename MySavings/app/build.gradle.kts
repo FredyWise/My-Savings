@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("kotlin-kapt")
 }
 
 android {
@@ -30,11 +31,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
     buildFeatures {
         compose = true
@@ -51,9 +52,9 @@ android {
 
 dependencies {
 
-    implementation("androidx.core:core-ktx:1.9.0")
+    implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
-    implementation("androidx.activity:activity-compose:1.7.2")
+    implementation("androidx.activity:activity-compose:1.8.0")
     implementation(platform("androidx.compose:compose-bom:2023.03.00"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
@@ -67,19 +68,25 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
-//    More Icons
+    //    More Icons
     implementation("com.google.android.material:material:1.10.0")
     implementation("androidx.compose.material:material-icons-extended")
 
 
-//    View Model lifecycle
+    //    View Model lifecycle
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
 
-//    Date And Time
+    // Room works with plugin kapt
+    val room_version = "2.6.0"
+    implementation("androidx.room:room-ktx:$room_version")
+    kapt("androidx.room:room-compiler:$room_version")
+
+
+    //    Date And Time
     implementation("io.github.vanpra.compose-material-dialogs:datetime:0.9.0")
 
-//    Navigation
-    implementation("androidx.navigation:navigation-compose:2.7.4")
+    //    Navigation
+    implementation("androidx.navigation:navigation-compose:2.7.5")
 
     var compose_version = "1.5.4"
     // Compose Material Design
