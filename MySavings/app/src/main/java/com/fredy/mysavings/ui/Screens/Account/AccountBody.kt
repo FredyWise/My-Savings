@@ -81,7 +81,7 @@ fun AccountBody(
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
-                    text = "BALANCE" + ": " + formatBalanceAmount(
+                    text = "BALANCE: " + formatBalanceAmount(
                         amount = account.accountAmount,
                         currency = account.accountCurrency
                     ),

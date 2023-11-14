@@ -23,13 +23,14 @@ import com.fredy.mysavings.ui.Navigation.navigateSingleTopTo
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
+    modifier: Modifier = Modifier,
     rootNavController: NavHostController
 ) {
     val navController = rememberNavController()
     val currentBackStack by navController.currentBackStackEntryAsState()
     val currentDestination = currentBackStack?.destination
     val currentScreen = bottomBarScreens.find { it.route == currentDestination?.route } ?: NavigationRoute.Records
-    Scaffold(bottomBar = {
+    Scaffold(modifier = modifier,bottomBar = {
         BottomBar(
             allScreens = bottomBarScreens,
             onTabSelected = { newScreen ->
@@ -43,7 +44,7 @@ fun MainScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { rootNavController.navigateSingleTopTo(
-                    NavigationRoute.Add.route
+                    NavigationRoute.Add.route+"?id=-1"
                 )},
                 backgroundColor = MaterialTheme.colorScheme.surface,
                 contentColor = MaterialTheme.colorScheme.onSurface

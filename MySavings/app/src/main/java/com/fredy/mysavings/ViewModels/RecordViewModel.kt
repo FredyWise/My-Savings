@@ -79,119 +79,9 @@ class RecordViewModel(
                 }
             }
 
-            is RecordsEvent.SaveRecord -> {
-                val recordId = state.value.recordId
-                val accountIdFromFk = state.value.accountIdFromFk
-                val categoryIdToFk = state.value.categoryIdFk
-                val recordDateTime = state.value.recordDateTime
-                val recordAmount = state.value.recordAmount
-                val recordCurrency = state.value.recordCurrency
-                val recordNotes = state.value.recordNotes
-
-                if (recordDateTime == null || recordAmount == 0.0 || recordCurrency.isBlank() || accountIdFromFk == null || categoryIdToFk == null) {
-                    return
-                }
-
-                val record = Record(
-                    recordId = recordId!!,
-                    accountIdFromFk = accountIdFromFk,
-                    categoryIdFk = categoryIdToFk,
-                    recordDateTime = recordDateTime,
-                    recordAmount = recordAmount,
-                    recordCurrency = recordCurrency,
-                    recordNotes = recordNotes,
-                )
-                viewModelScope.launch {
-                    recordRepository.upsertRecordItem(
-                        record
-                    )
-                }
-                _state.update {
-                    it.copy(
-                        recordId = null,
-                        accountIdFromFk = null,
-//                        accountIdToFk = null,
-                        categoryIdFk = null,
-                        recordDateTime = null,
-                        recordAmount = 0.0,
-                        recordCurrency = "",
-                        recordNotes = ""
-                    )
-                }
-            }
-
-            is RecordsEvent.AccountIdFromFk -> {
-                _state.update {
-                    it.copy(
-                        accountIdFromFk = event.fromAccount
-                    )
-                }
-            }
-
-            is RecordsEvent.CategoryIdFk -> {
-                _state.update {
-                    it.copy(
-                        categoryIdFk = event.toCategory
-                    )
-                }
-            }
-
-            is RecordsEvent.RecordDateTime -> {
-                _state.update {
-                    it.copy(
-                        recordDateTime = event.dateTime
-                    )
-                }
-            }
-
-            is RecordsEvent.RecordAmount -> {
-                _state.update {
-                    it.copy(
-                        recordAmount = event.amount
-                    )
-                }
-            }
-
-            is RecordsEvent.RecordCurrency -> {
-                _state.update {
-                    it.copy(
-                        recordCurrency = event.currency
-                    )
-                }
-            }
-
-            is RecordsEvent.RecordNotes -> {
-                _state.update {
-                    it.copy(
-                        recordNotes = event.notes
-                    )
-                }
-            }
-
             is RecordsEvent.SortRecord -> {
                 _sortType.value = event.sortType
-            }
-
-            is RecordsEvent.Dummy -> {
-                val record = Record(
-                    accountIdFromFk = 1,
-                    categoryIdFk = 1,
-                    recordDateTime = LocalDateTime.now(),
-                    recordAmount = 10.0,
-                    recordCurrency = "Piglins",
-                    recordNotes = "recordNotes"
-                )
-                viewModelScope.launch {
-                    Log.e(
-                        "BABI",
-                        "onEvent: " + state.value + _records.value
-                    )
-                    recordRepository.upsertRecordItem(
-                        record
-                    )
-                }
-            }
-        }
+            }        }
 
     }
 }
@@ -199,15 +89,6 @@ class RecordViewModel(
 data class RecordState(
     val trueRecords: List<RecordMap> = listOf(),
     val trueRecord: TrueRecord? = null,
-    val recordId: Int? = null,
-    val accountIdFromFk: Int? = null,
-//    val accountIdToFk: Int? = null,
-    val categoryIdFk: Int? = null,
-    val recordDateTime: LocalDateTime? = null,
-    val recordAmount: Double = 0.0,
-    val recordCurrency: String = "",
-    val recordNotes: String = "",
-//    val isAddingRecord: Boolean = false,
     val sortType: SortType = SortType.ASCENDING
 )
 

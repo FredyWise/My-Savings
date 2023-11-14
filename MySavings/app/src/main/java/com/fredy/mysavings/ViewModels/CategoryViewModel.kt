@@ -3,7 +3,7 @@ package com.fredy.mysavings.ViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fredy.mysavings.Data.RoomDatabase.Entity.Category
-import com.fredy.mysavings.Data.RoomDatabase.Enum.CategoryType
+import com.fredy.mysavings.Data.RoomDatabase.Enum.RecordType
 import com.fredy.mysavings.Data.RoomDatabase.Enum.SortType
 import com.fredy.mysavings.Data.RoomDatabase.Event.CategoryEvent
 import com.fredy.mysavings.ui.Repository.CategoryRepositoryImpl
@@ -153,7 +153,7 @@ data class CategoryState(
     val categories: List<CategoryMap> = listOf(),
     val categoryId: Int? = null,
     val categoryName: String = "",
-    val categoryType: CategoryType = CategoryType.Expense,
+    val categoryType: RecordType = RecordType.Expense,
     val categoryIcon: Int = 0,
     val categoryIconDescription: String = "",
     val isAddingCategory: Boolean = false,
@@ -161,6 +161,6 @@ data class CategoryState(
 )
 
 data class CategoryMap(
-    val categoryType: CategoryType,
-    val categories: List<Category>
+    val categoryType: RecordType = RecordType.Expense,
+    val categories: List<Category> = emptyList()
 )

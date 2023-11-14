@@ -32,6 +32,8 @@ import com.fredy.mysavings.Data.RoomDatabase.Entity.Account
 import com.fredy.mysavings.Data.RoomDatabase.Entity.Category
 import com.fredy.mysavings.Data.RoomDatabase.Event.RecordsEvent
 import com.fredy.mysavings.Data.formatDate
+import com.fredy.mysavings.Data.formatDay
+import com.fredy.mysavings.Data.isTransfer
 import com.fredy.mysavings.ViewModel.RecordMap
 import com.fredy.mysavings.ui.CustomStickyHeader
 import com.fredy.mysavings.ui.SimpleEntityItem
@@ -47,7 +49,7 @@ fun RecordBody(
         trueRecords.forEach { trueRecord ->
             stickyHeader {
                 CustomStickyHeader(
-                    title = formatDate(
+                    title = formatDay(
                         trueRecord.recordDateTime.toLocalDate()
                     ),
                     textStyle = MaterialTheme.typography.titleMedium
@@ -90,7 +92,7 @@ fun RecordBody(
                             fontWeight = FontWeight.Bold,
                             color = BalanceColor(
                                 amount = item.record.recordAmount,
-                                isTransfer = item.record.isTransfer
+                                isTransfer = isTransfer(item.record.recordType)
                             ),
                             modifier = Modifier
                                 .padding(end = 10.dp),
@@ -167,7 +169,7 @@ fun RecordItem(
             fontWeight = FontWeight.Bold,
             color = BalanceColor(
                 amount = item.record.recordAmount,
-                isTransfer = item.record.isTransfer
+                isTransfer = isTransfer(item.record.recordType)
             ),
             modifier = Modifier
                 .padding(end = 10.dp)

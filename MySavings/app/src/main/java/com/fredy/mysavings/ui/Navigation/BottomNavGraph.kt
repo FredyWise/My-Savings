@@ -1,7 +1,9 @@
 package com.fredy.mysavings.ui.Navigation
 
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -33,12 +35,12 @@ fun BottomNavGraph(
         composable(
             route = NavigationRoute.Categories.route
         ) {
-            CategoriesScreen()
+            CategoriesScreen(modifier = Modifier.padding(8.dp))
         }
         composable(
             route = NavigationRoute.Account.route
         ) {
-            AccountsScreen()
+            AccountsScreen(modifier = Modifier.padding(8.dp))
         }
 
 //        composable(

@@ -124,7 +124,7 @@ class AccountViewModel(
                 val accountId = state.value.accountId
                 val accountName = state.value.accountName
                 val accountAmount = state.value.accountAmount
-                val accountCurrency = state.value.accountCurrency
+                val accountCurrency = "hello"//state.value.accountCurrency
                 val accountIcon = state.value.accountIcon
                 val accountIconDescription = state.value.accountIconDescription
 
@@ -193,26 +193,6 @@ class AccountViewModel(
 
             is AccountEvent.SortAccount -> {
                 _sortType.value = event.sortType
-            }
-
-            is AccountEvent.Dummy -> {
-                val account = Account(
-                    accountName = "babi",
-                    accountAmount = 10.0,
-                    accountCurrency = "USD",
-                    accountIcon = R.drawable.ic_launcher_background,
-                    accountIconDescription = "bodoh",
-                )
-                Log.e("BABI", "onTB: "+_totalBalance.value)
-                viewModelScope.launch {
-                    Log.e(
-                        "BABI",
-                        "onEvent: " + state.value + _accounts.value
-                    )
-                    accountRepository.upsertAccount(
-                        account
-                    )
-                }
             }
         }
 

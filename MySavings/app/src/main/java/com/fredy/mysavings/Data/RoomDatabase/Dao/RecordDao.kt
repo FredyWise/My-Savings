@@ -17,8 +17,11 @@ interface RecordDao {
     @Delete
     suspend fun deleteRecordItem(recordItem: Record)
 
-    @Query("SELECT * FROM record WHERE recordId = :id")
-    fun getRecordById(id: Int): Flow<Record>
+    @Query("SELECT * FROM record as r " +
+            "INNER JOIN category AS c ON r.categoryIdFk = c.categoryId " +
+            "INNER JOIN account AS a ON r.accountIdFromFk = a.accountId " +
+            "WHERE recordId = :id")
+    fun getRecordById(id: Int): Flow<TrueRecord>
 
     @Query("SELECT * FROM record "+
             "ORDER BY recordDateTime DESC")
@@ -85,7 +88,7 @@ interface RecordDao {
 }
 
 data class TrueRecord(
-    @Embedded val record: Record,
-    @Embedded val fromAccount: Account,
-    @Embedded val toCategory: Category,
+    @Embedded val record: Record = Record(),
+    @Embedded val fromAccount: Account = Account(),
+    @Embedded val toCategory: Category = Category(),
 )

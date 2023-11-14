@@ -14,7 +14,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.fredy.mysavings.Data.RoomDatabase.Enum.CategoryType
+import com.fredy.mysavings.Data.RoomDatabase.Enum.RecordType
 import com.fredy.mysavings.Data.RoomDatabase.Event.CategoryEvent
 import com.fredy.mysavings.Data.categoryIcons
 import com.fredy.mysavings.ViewModel.CategoryState
@@ -41,20 +41,20 @@ fun CategoryAddDialog(
             selectedName = state.categoryType.name,
             radioButtons = listOf(
                 ActionWithName(
-                    name = CategoryType.Expense.name,
+                    name = RecordType.Expense.name,
                     action = {
                         onEvent(
                             CategoryEvent.CategoryTypes(
-                                CategoryType.Expense
+                                RecordType.Expense
                             )
                         )
                     },
                 ), ActionWithName(
-                    name = CategoryType.Income.name,
+                    name = RecordType.Income.name,
                     action = {
                         onEvent(
                             CategoryEvent.CategoryTypes(
-                                CategoryType.Income
+                                RecordType.Income
                             )
                         )
                     },

@@ -12,17 +12,18 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
@@ -32,6 +33,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -40,12 +42,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.Data.BalanceColor
@@ -233,27 +235,33 @@ fun CustomStickyHeader(
     title: String,
     textStyle: TextStyle
 ) {
-    Text(
-        text = title,
-        style = textStyle,
-        fontWeight = FontWeight.Bold,
-        color = MaterialTheme.colorScheme.onBackground,
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(
-                top = 28.dp,
-                start = 8.dp,
-                bottom = 4.dp
-            ),
-    )
-    Divider(
-        modifier = Modifier
-            .padding(start = 4.dp)
-            .height(
-                2.dp
-            ),
-        color = MaterialTheme.colorScheme.onBackground
-    )
+    Column(
+        modifier = modifier.background(
+            MaterialTheme.colorScheme.background
+        )
+    ) {
+        Text(
+            text = title,
+            style = textStyle,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onBackground,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    top = 28.dp,
+                    start = 8.dp,
+                    bottom = 4.dp
+                ),
+        )
+        Divider(
+            modifier = Modifier
+                .padding(start = 4.dp)
+                .height(
+                    2.dp
+                ),
+            color = MaterialTheme.colorScheme.onBackground
+        )
+    }
 }
 
 @Composable
@@ -261,21 +269,23 @@ fun TypeRadioButton(
     modifier: Modifier = Modifier,
     selectedName: String,
     radioButtons: List<ActionWithName>,
-) {
+    textStyle: TextStyle = MaterialTheme.typography.titleLarge,
+    barHeight: Dp = 35.dp,
+    ) {
     var selectedName by remember {
         mutableStateOf(
             selectedName
         )
     }
     Row(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth().height(barHeight),
         verticalAlignment = Alignment.CenterVertically
     ) {
         radioButtons.forEachIndexed { index, button ->
             if (index > 0 && index < radioButtons.size) {
                 Divider(
                     modifier = Modifier
-                        .height(35.dp)
+                        .fillMaxHeight()
                         .width(
                             2.dp
                         ),
@@ -293,7 +303,7 @@ fun TypeRadioButton(
                 .weight(
                     1f
                 ),
-                horizontalArrangement = Arrangement.SpaceEvenly,
+                horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically) {
                 if (selectedName == button.name) {
                     Icon(
@@ -304,7 +314,7 @@ fun TypeRadioButton(
                 }
                 Text(
                     text = button.name,
-                    style = MaterialTheme.typography.titleLarge,
+                    style = textStyle,
                     color = if (selectedName == button.name) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.onBackground.copy(
                         alpha = 0.5f
                     )
@@ -323,11 +333,11 @@ fun ChooseIcon(
     icons: List<SavingsIcon>,
 ) {
     var selectedIcon by remember {
-        mutableStateOf(
+        mutableIntStateOf(
             selectedIcon
         )
     }
-    LazyRow(
+    LazyRow(//change to lazy horizontal grid
         modifier = modifier.background(
             MaterialTheme.colorScheme.background
         )
@@ -367,26 +377,29 @@ fun ChooseIcon(
 fun SimpleButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
-    imageVector: ImageVector? = null,
+    image: Int? = null,
+    imageColor: Color = Color.Unspecified,
     title: String,
     titleStyle: TextStyle = MaterialTheme.typography.titleLarge,
 ) {
     Box(
         modifier = modifier.clickable {
-                onClick()
-            }, contentAlignment = Alignment.Center
+            onClick()
+        }, contentAlignment = Alignment.Center
     ) {
         Row(
             modifier = Modifier.padding(
-                    8.dp
-                ),
+                8.dp
+            ),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            imageVector?.let {
+            image?.let {
                 Icon(
-                    imageVector = it,
-                    contentDescription = ""
+                    modifier = Modifier.size(35.dp),
+                    painter = painterResource(id = it),
+                    contentDescription = "",
+                    tint = imageColor,
                 )
             }
             Text(

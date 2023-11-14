@@ -1,6 +1,12 @@
 package com.fredy.mysavings.ui.Navigation
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -24,20 +30,21 @@ fun NavGraphRoot(
         ) {
             MainScreen(
                 rootNavController = navController,
-//                onNavigate = { id ->
-//                    navController.navigate(route = "${NavigationRoute.Add.route}?id=$id")
-//                }
             )
         }
         composable(
-            route = "${NavigationRoute.Add.route}",//?id={id}
-            //arguments = listOf(navArgument("id") { type = NavType.IntType })
+            route = "${NavigationRoute.Add.route}?id={id}",
+            arguments = listOf(navArgument("id") { type = NavType.IntType })
         ) {
-            val id = -1//it.arguments?.getInt("id") ?: -1
-            AddScreen(
+            val id = it.arguments?.getInt("id") ?: -1
+            AddScreen(modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    MaterialTheme.colorScheme.background
+                )
+                .padding(8.dp),
                 id = id,
-                navigateUp = { navController.navigateUp() }
-            )
+                navigateUp = { navController.navigateUp() })
         }
     }
 }

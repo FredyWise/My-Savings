@@ -3,6 +3,7 @@ package com.fredy.mysavings.Data
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import com.fredy.mysavings.Data.RoomDatabase.Enum.RecordType
 import java.text.DecimalFormat
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -32,6 +33,10 @@ sealed class BalanceBar(
         name = "BALANCE",
     )
 }
+
+fun isTransfer(recordType: RecordType):Boolean{
+    return recordType == RecordType.Transfer
+}
 @Composable
 fun BalanceColor(amount: Double, isTransfer: Boolean = false): Color {
     return when {
@@ -53,6 +58,11 @@ fun formatAmount(amount: Double): String{
 private val amountDecimalFormat = DecimalFormat("#,##0.00")
 
 fun formatDate(date: LocalDate): String {
+    return DateTimeFormatter.ofPattern(
+        "MMM dd, YYYY "
+    ).format(date)
+}
+fun formatDay(date: LocalDate): String {
     return DateTimeFormatter.ofPattern(
         "MMM dd, EEEE "
     ).format(date)

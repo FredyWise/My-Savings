@@ -3,6 +3,7 @@ package com.fredy.mysavings.ui.Screens.AddRecord
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -35,22 +36,20 @@ fun DateAndTimePicker(
     val timeDialogState = rememberMaterialDialogState()
     Row(
         modifier = modifier
-            .padding(top = 8.dp)
+            .padding(vertical = 8.dp)
+            .height(35.dp)
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         SimpleButton(
             modifier = Modifier
-                .weight(1f)
-                .padding(
-                    vertical = 8.dp
-                ),
+                .weight(1f),
             onClick = { dateDialogState.show() },
             title = formatDate(state.recordDate)
         )
         Divider(
             modifier = Modifier
-                .height(35.dp)
+                .fillMaxHeight()
                 .width(
                     2.dp
                 ),
@@ -60,11 +59,8 @@ fun DateAndTimePicker(
         )
         SimpleButton(
             modifier = Modifier
-                .weight(1f)
-                .padding(
-                    vertical = 8.dp
-                ),
-            onClick = { dateDialogState.show() },
+                .weight(1f),
+            onClick = { timeDialogState.show() },
             title = formatTime(state.recordTime)
         )
     }

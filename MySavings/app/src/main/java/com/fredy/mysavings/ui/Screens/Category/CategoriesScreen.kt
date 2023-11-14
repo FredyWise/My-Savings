@@ -5,7 +5,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddCircleOutline
 import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.icons.outlined.AddCircleOutline
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -16,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.fredy.mysavings.Data.RoomDatabase.Entity.Category
 import com.fredy.mysavings.Data.RoomDatabase.Event.CategoryEvent
+import com.fredy.mysavings.R
 import com.fredy.mysavings.ViewModel.CategoryViewModel
 import com.fredy.mysavings.ui.SimpleButton
 
@@ -44,11 +47,11 @@ fun CategoriesScreen(
                     color = MaterialTheme.colorScheme.secondary,
                     shape = MaterialTheme.shapes.medium
                 ),
-            imageVector = Icons.Outlined.Add,
+            image = R.drawable.ic_add_foreground,
             onClick = {
                 viewModel.onEvent(
                     CategoryEvent.ShowDialog(
-                        Category()
+                        Category(categoryName = "")
                     )
                 )
             },

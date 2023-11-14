@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 interface RecordRepository {
     suspend fun upsertRecordItem(recordItem: Record)
     suspend fun deleteRecordItem(recordItem: Record)
-    fun getRecordById(id: Int): Flow<Record>
+    fun getRecordById(id: Int): Flow<TrueRecord>
     fun getUserRecordsOrderedAscending(): Flow<List<Record>>
     fun getUserRecordsOrderedDescending(): Flow<List<TrueRecord>>
     fun getUserRecordsFromSpecificTime(start: Int, end: Int): Flow<List<TrueRecord>>
@@ -31,7 +31,7 @@ class RecordRepositoryImpl(
         recordDao.deleteRecordItem(recordItem)
     }
 
-    override fun getRecordById(id: Int): Flow<Record> {
+    override fun getRecordById(id: Int): Flow<TrueRecord> {
         return recordDao.getRecordById(id)
     }
 

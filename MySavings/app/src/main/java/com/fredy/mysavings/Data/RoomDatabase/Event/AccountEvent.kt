@@ -15,12 +15,7 @@ sealed interface AccountEvent{
 
     data class ShowDialog(val account: Account): AccountEvent
     object HideDialog: AccountEvent
-//    object ShowOption: AccountEvent
-//    object HideOption: AccountEvent
     data class SortAccount(val sortType: SortType): AccountEvent
     data class DeleteAccount(val account: Account): AccountEvent
 
-    object Dummy: AccountEvent
 }
-
-//need change

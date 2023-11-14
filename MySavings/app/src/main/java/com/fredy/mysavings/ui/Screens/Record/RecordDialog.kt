@@ -27,13 +27,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.fredy.mysavings.Data.BalanceColor
 import com.fredy.mysavings.Data.RoomDatabase.Dao.TrueRecord
+import com.fredy.mysavings.Data.RoomDatabase.Enum.RecordType
 import com.fredy.mysavings.Data.RoomDatabase.Event.RecordsEvent
 import com.fredy.mysavings.Data.formatDateTime
+import com.fredy.mysavings.Data.isTransfer
 import com.fredy.mysavings.ui.BalanceItem
 import com.fredy.mysavings.ui.SimpleEntityItem
 
 @Composable
-fun RecordDialog(// this should have TrueRecords
+fun RecordDialog(
     trueRecord: TrueRecord,
     onEvent: (RecordsEvent) -> Unit,
     modifier: Modifier = Modifier
@@ -60,7 +62,7 @@ fun RecordDialog(// this should have TrueRecords
                     .background(
                         color = BalanceColor(
                             amount = trueRecord.record.recordAmount,
-                            isTransfer = trueRecord.record.isTransfer
+                            isTransfer = isTransfer(trueRecord.record.recordType)
                         )
                     )
                     .padding(8.dp)
@@ -157,7 +159,7 @@ fun RecordDialog(// this should have TrueRecords
                         ),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(text = if (trueRecord.record.isTransfer) "From: " else "Account: ")
+                        Text(text = if (isTransfer(trueRecord.record.recordType)) "From: " else "Account: ")
                         SimpleEntityItem(
                             modifier = Modifier
                                 .padding(
@@ -195,7 +197,7 @@ fun RecordDialog(// this should have TrueRecords
                         ),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(text = if (trueRecord.record.isTransfer) "To: " else "Category: ")
+                        Text(text = if (trueRecord.record.recordType == RecordType.Transfer) "To: " else "Category: ")
                         SimpleEntityItem(
                             modifier = Modifier
                                 .padding(

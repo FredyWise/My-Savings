@@ -5,7 +5,7 @@ import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
 import com.fredy.mysavings.Data.RoomDatabase.Entity.Category
-import com.fredy.mysavings.Data.RoomDatabase.Enum.CategoryType
+import com.fredy.mysavings.Data.RoomDatabase.Enum.RecordType
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -25,7 +25,7 @@ interface CategoryDao {
     @Query("SELECT * FROM category " +
             "WHERE categoryType =:type " +
             "ORDER BY categoryName ASC")
-    fun getCategoriesUsingTypeOrderedByName(type: CategoryType = CategoryType.Expense): Flow<List<Category>>
+    fun getCategoriesUsingTypeOrderedByName(type: RecordType = RecordType.Expense): Flow<List<Category>>
 }
 
 //remember to change the query bro
