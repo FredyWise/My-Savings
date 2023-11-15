@@ -10,29 +10,12 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
-val balanceBars = listOf(
-    BalanceBar.Income,
-    BalanceBar.Expense,
-    BalanceBar.Total
-)
 
-sealed class BalanceBar(
+data class BalanceItem(
     var name: String = "",
-    var amount: Double = 77777777.777,
-    var currency: String = "USD"
-) {
-    object Income: BalanceBar(
-        name = "INCOME",
-    )
-
-    object Expense: BalanceBar(
-        name = "EXPENSE",
-    )
-
-    object Total: BalanceBar(
-        name = "BALANCE",
-    )
-}
+    var amount: Double = 0.0,
+    var currency: String = ""
+)
 
 fun isTransfer(recordType: RecordType):Boolean{
     return recordType == RecordType.Transfer
@@ -40,6 +23,10 @@ fun isTransfer(recordType: RecordType):Boolean{
 
 fun isExpense(recordType: RecordType):Boolean{
     return recordType == RecordType.Expense
+}
+
+fun isIncome(recordType: RecordType):Boolean{
+    return recordType == RecordType.Income
 }
 @Composable
 fun BalanceColor(amount: Double, isTransfer: Boolean = false): Color {

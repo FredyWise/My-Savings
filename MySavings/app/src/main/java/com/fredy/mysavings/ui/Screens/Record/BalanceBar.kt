@@ -13,14 +13,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import com.fredy.mysavings.Data.BalanceBar
 import com.fredy.mysavings.Data.BalanceColor
+import com.fredy.mysavings.Data.BalanceItem
 import com.fredy.mysavings.Data.formatBalanceAmount
 
 @Composable
 fun BalanceBar(
     modifier: Modifier = Modifier,
-    amountBars: List<BalanceBar>,
+    amountBars: List<BalanceItem>,
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
@@ -29,7 +29,11 @@ fun BalanceBar(
     ) {
         amountBars.forEach { type ->
             BalanceItem(
-                modifier = Modifier.padding(0.dp).weight(1f),
+                modifier = Modifier
+                    .padding(0.dp)
+                    .weight(
+                        1f
+                    ),
                 title = type.name,
                 amount = type.amount,
                 currency = type.currency,
@@ -62,7 +66,10 @@ fun BalanceItem(
             style = titleStyle
         )
         Text(
-            text = formatBalanceAmount(amount = amount, currency =  currency),
+            text = formatBalanceAmount(
+                amount = amount,
+                currency = currency
+            ),
             color = amountColor,
             style = amountStyle
         )

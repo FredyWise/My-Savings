@@ -17,15 +17,17 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.fredy.mysavings.Data.RoomDatabase.Enum.SortType
 import com.fredy.mysavings.Data.RoomDatabase.Event.RecordsEvent
-import com.fredy.mysavings.Data.balanceBars
 import com.fredy.mysavings.ViewModel.RecordViewModel
 import com.fredy.mysavings.ui.Navigation.NavigationRoute
 import com.fredy.mysavings.ui.Navigation.navigateSingleTopTo
+import com.fredy.mysavings.Data.BalanceItem
+import com.fredy.mysavings.Data.RoomDatabase.Enum.RecordType
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -56,7 +58,11 @@ fun RecordsScreen(
                     MaterialTheme.colorScheme.surface
                 )
                 .padding(vertical = 5.dp),
-            amountBars = balanceBars
+            amountBars = listOf(
+                BalanceItem(name = "EXPENSE", amount = state.totalExpense),
+                BalanceItem(name = "INCOME", amount = state.totalIncome),
+                BalanceItem(name = "BALANCE", amount = state.totalAll),
+            )
         )
         Row(
             modifier = Modifier

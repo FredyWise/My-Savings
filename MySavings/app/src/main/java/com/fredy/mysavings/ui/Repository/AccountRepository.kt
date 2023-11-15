@@ -9,6 +9,7 @@ interface AccountRepository {
     suspend fun deleteAccount(account: Account)
     fun getAccount(accountId: Int): Flow<Account>
     fun getUserAccountOrderedByName(): Flow<List<Account>>
+    fun getUserAccountTotalBalance(): Flow<Double>
 }
 
 
@@ -27,5 +28,9 @@ class AccountRepositoryImpl(private val accountDao: AccountDao) : AccountReposit
 
     override fun getUserAccountOrderedByName(): Flow<List<Account>> {
         return accountDao.getUserAccountOrderedByName()
+    }
+
+    override fun getUserAccountTotalBalance(): Flow<Double> {
+        return accountDao.getUserAccountTotalBalance()
     }
 }

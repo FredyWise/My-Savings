@@ -13,6 +13,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.ViewModel.AccountState
 import com.fredy.mysavings.ui.Screens.BalanceItem
@@ -23,8 +24,7 @@ fun AccountHeader(
     state: AccountState
 ) {
     Column(
-        modifier = modifier
-            .fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceAround
     ) {
@@ -42,8 +42,12 @@ fun AccountHeader(
                 title = "Expense So Far",
                 amount = state.totalExpense,
                 currency = "",
-                titleStyle = MaterialTheme.typography.titleLarge,
-                amountStyle = MaterialTheme.typography.titleLarge
+                titleStyle = MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = FontWeight.SemiBold
+                ),
+                amountStyle = MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = FontWeight.SemiBold
+                ),
             )
             Divider(
                 modifier = Modifier
@@ -58,8 +62,12 @@ fun AccountHeader(
                 title = "Income So Far",
                 amount = state.totalIncome,
                 currency = "",
-                titleStyle = MaterialTheme.typography.titleLarge,
-                amountStyle = MaterialTheme.typography.titleLarge
+                titleStyle = MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = FontWeight.SemiBold
+                ),
+                amountStyle = MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = FontWeight.SemiBold
+                ),
             )
         }
         Divider(
@@ -73,7 +81,9 @@ fun AccountHeader(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(4.dp)
+                .padding(
+                    4.dp
+                )
                 .weight(
                     1f
                 ),
@@ -83,8 +93,12 @@ fun AccountHeader(
                 title = "Total Balance",
                 amount = state.totalAll,
                 currency = "",
-                titleStyle = MaterialTheme.typography.titleLarge,
-                amountStyle = MaterialTheme.typography.titleLarge
+                titleStyle = MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = FontWeight.SemiBold
+                ),
+                amountStyle = MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = FontWeight.SemiBold
+                ),
             )
         }
     }

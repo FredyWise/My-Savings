@@ -12,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.Data.RoomDatabase.Event.CategoryEvent
 import com.fredy.mysavings.Data.isTransfer
@@ -84,7 +85,9 @@ fun CategoryBody(
                     ) {
                         Text(
                             text = category.categoryName,
-                            style = MaterialTheme.typography.titleMedium,
+                            style = MaterialTheme.typography.titleMedium.copy(
+                                fontWeight = FontWeight.SemiBold
+                            ),
                             color = MaterialTheme.colorScheme.onSurface
                         )
                     }

@@ -12,10 +12,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.fredy.mysavings.Data.formatBalanceAmount
+import com.fredy.mysavings.Data.BalanceColor
 import com.fredy.mysavings.Data.RoomDatabase.Entity.Account
 import com.fredy.mysavings.Data.RoomDatabase.Event.AccountEvent
+import com.fredy.mysavings.Data.formatBalanceAmount
 import com.fredy.mysavings.ui.Screens.ActionWithName
 import com.fredy.mysavings.ui.Screens.AdvancedEntityItem
 import com.fredy.mysavings.ui.Screens.CustomStickyHeader
@@ -57,36 +59,44 @@ fun AccountBody(
                         shape = MaterialTheme.shapes.medium
                     ),
                 menuItems = listOf(
-                    ActionWithName(name = "Delete Account",
+                    ActionWithName(
+                        name = "Delete Account",
                         action = {
                             onEvent(
                                 AccountEvent.DeleteAccount(
                                     account
                                 )
                             )
-                        }),
-                    ActionWithName(name = "Edit Account",
+                        },
+                    ),
+                    ActionWithName(
+                        name = "Edit Account",
                         action = {
                             onEvent(
                                 AccountEvent.ShowDialog(
                                     account
                                 )
                             )
-                        })
+                        },
+                    )
                 )
             ) {
                 Text(
                     text = account.accountName,
-                    style = MaterialTheme.typography.titleLarge,
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        fontWeight = FontWeight.SemiBold
+                    ),
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
-                    text = "BALANCE: " + formatBalanceAmount(
+                    text = "Balance: " + formatBalanceAmount(
                         amount = account.accountAmount,
                         currency = account.accountCurrency
                     ),
-                    style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.onSurface
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        fontWeight = FontWeight.SemiBold
+                    ),
+                    color = BalanceColor(amount = account.accountAmount)
                 )
             }
         }

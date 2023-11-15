@@ -3,6 +3,7 @@ package com.fredy.mysavings.ui.Repository
 import com.fredy.mysavings.Data.RoomDatabase.Dao.RecordDao
 import com.fredy.mysavings.Data.RoomDatabase.Dao.TrueRecord
 import com.fredy.mysavings.Data.RoomDatabase.Entity.Record
+import com.fredy.mysavings.Data.RoomDatabase.Enum.RecordType
 import kotlinx.coroutines.flow.Flow
 
 
@@ -15,9 +16,7 @@ interface RecordRepository {
     fun getUserRecordsFromSpecificTime(start: Int, end: Int): Flow<List<TrueRecord>>
     fun getUserCategoryRecordsOrderedByDateTime(categoryId: Int): Flow<List<TrueRecord>>
     fun getUserAccountRecordsOrderedByDateTime(accountId: Int): Flow<List<TrueRecord>>
-    fun getUserTotalBalance(): Flow<List<Double>>
-    fun getUserTotalExpenses(): Flow<Double>
-    fun getUserTotalIncomes(): Flow<Double>
+    fun getUserTotalAmountByType(recordType: RecordType): Flow<Double>
 }
 
 class RecordRepositoryImpl(
@@ -63,15 +62,7 @@ class RecordRepositoryImpl(
         return recordDao.getUserAccountRecordsOrderedByDateTime(accountId)
     }
 
-    override fun getUserTotalBalance(): Flow<List<Double>> {
-        return recordDao.getUserTotalBalance()
-    }
-
-    override fun getUserTotalExpenses(): Flow<Double> {
-        return recordDao.getUserTotalExpenses()
-    }
-
-    override fun getUserTotalIncomes(): Flow<Double> {
-        return recordDao.getUserTotalIncomes()
+    override fun getUserTotalAmountByType(recordType: RecordType): Flow<Double> {
+        return recordDao.getUserTotalAmountByType(recordType)
     }
 }

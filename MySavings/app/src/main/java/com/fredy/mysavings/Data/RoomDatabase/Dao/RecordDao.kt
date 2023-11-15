@@ -5,10 +5,12 @@ import androidx.room.Delete
 import androidx.room.Embedded
 import androidx.room.Query
 import androidx.room.Relation
+import androidx.room.Transaction
 import androidx.room.Upsert
 import com.fredy.mysavings.Data.RoomDatabase.Entity.Account
 import com.fredy.mysavings.Data.RoomDatabase.Entity.Category
 import com.fredy.mysavings.Data.RoomDatabase.Entity.Record
+import com.fredy.mysavings.Data.RoomDatabase.Enum.RecordType
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -51,9 +53,6 @@ interface RecordDao {
             "ORDER BY recordDateTime ASC")
     fun getUserAccountRecordsOrderedByDateTime(accountId: Int): Flow<List<TrueRecord>>
 
-    @Query("SELECT recordAmount FROM record ")
-    fun getUserTotalBalance(): Flow<List<Double>>
-
     @Query("SELECT SUM(recordAmount) FROM record "+
             "WHERE recordDateTime > :start " +
             "AND recordDateTime < :end " +
@@ -61,8 +60,8 @@ interface RecordDao {
     fun getUserTotalBalanceFromSpecificTime(start:Int,end: Int): Flow<Double>
 
     @Query("SELECT SUM(recordAmount) FROM record " +
-            "WHERE recordAmount < 0 ")
-    fun getUserTotalExpenses(): Flow<Double>
+            "WHERE recordType=:recordType")
+    fun getUserTotalAmountByType(recordType: RecordType): Flow<Double>
 
     @Query("SELECT SUM(recordAmount) FROM record " +
             "WHERE recordAmount < 0 "+

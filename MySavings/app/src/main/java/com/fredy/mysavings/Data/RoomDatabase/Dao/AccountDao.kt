@@ -19,4 +19,7 @@ interface AccountDao {
     @Query("SELECT * FROM account " +
             "ORDER BY accountName ASC")
     fun getUserAccountOrderedByName(): Flow<List<Account>>
+
+    @Query("SELECT SUM(accountAmount) FROM account ")
+    fun getUserAccountTotalBalance(): Flow<Double>
 }

@@ -3,12 +3,15 @@ package com.fredy.mysavings.ViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fredy.mysavings.Data.RoomDatabase.Dao.TrueRecord
+import com.fredy.mysavings.Data.RoomDatabase.Enum.RecordType
 import com.fredy.mysavings.Data.RoomDatabase.Enum.SortType
 import com.fredy.mysavings.Data.RoomDatabase.Event.RecordsEvent
+import com.fredy.mysavings.Data.isExpense
 import com.fredy.mysavings.ui.Repository.Graph
 import com.fredy.mysavings.ui.Repository.RecordRepositoryImpl
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -32,6 +35,33 @@ class RecordViewModel(
         RecordState()
     )
 
+    init {
+        viewModelScope.launch {
+            recordRepository.getUserTotalAmountByType(
+                RecordType.Expense
+            ).collectLatest { totalExpense ->
+                _state.update {
+                    it.copy(
+                        totalExpense = totalExpense,
+                        totalAll = totalExpense + it.totalAll
+                    )
+                }
+            }
+        }
+        viewModelScope.launch {
+            recordRepository.getUserTotalAmountByType(
+                RecordType.Income
+            ).collectLatest { totalIncome ->
+                _state.update {
+                    it.copy(
+                        totalIncome = totalIncome + it.totalIncome,
+                        totalAll = totalIncome + it.totalAll
+                    )
+                }
+            }
+        }
+    }
+
     val state = combine(
         _state, _sortType, _records
     ) { state, sortType, records ->
@@ -42,7 +72,8 @@ class RecordViewModel(
                 recordDateTime = it.key,
                 records = it.value
             )
-        }, sortType = sortType
+        },
+            sortType = sortType
         )
     }.stateIn(
         viewModelScope,
@@ -88,6 +119,9 @@ class RecordViewModel(
 data class RecordState(
     val trueRecords: List<RecordMap> = listOf(),
     val trueRecord: TrueRecord? = null,
+    val totalExpense: Double = 0.0,
+    val totalIncome: Double = 0.0,
+    val totalAll: Double = 0.0,
     val sortType: SortType = SortType.ASCENDING
 )
 
