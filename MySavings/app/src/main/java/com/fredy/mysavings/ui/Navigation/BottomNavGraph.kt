@@ -25,7 +25,7 @@ fun BottomNavGraph(
         composable(
             route = NavigationRoute.Records.route
         ) {
-            RecordsScreen()
+            RecordsScreen(rootNavController = navController)
         }
         composable(
             route = NavigationRoute.Analysis.route

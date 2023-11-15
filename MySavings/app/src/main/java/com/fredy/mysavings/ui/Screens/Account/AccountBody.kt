@@ -16,9 +16,9 @@ import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.Data.formatBalanceAmount
 import com.fredy.mysavings.Data.RoomDatabase.Entity.Account
 import com.fredy.mysavings.Data.RoomDatabase.Event.AccountEvent
-import com.fredy.mysavings.ui.ActionWithName
-import com.fredy.mysavings.ui.AdvancedEntityItem
-import com.fredy.mysavings.ui.CustomStickyHeader
+import com.fredy.mysavings.ui.Screens.ActionWithName
+import com.fredy.mysavings.ui.Screens.AdvancedEntityItem
+import com.fredy.mysavings.ui.Screens.CustomStickyHeader
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

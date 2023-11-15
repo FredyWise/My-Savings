@@ -26,17 +26,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.Data.BalanceColor
-import com.fredy.mysavings.Data.formatBalanceAmount
 import com.fredy.mysavings.Data.RoomDatabase.Dao.TrueRecord
 import com.fredy.mysavings.Data.RoomDatabase.Entity.Account
 import com.fredy.mysavings.Data.RoomDatabase.Entity.Category
+import com.fredy.mysavings.Data.RoomDatabase.Enum.RecordType
 import com.fredy.mysavings.Data.RoomDatabase.Event.RecordsEvent
-import com.fredy.mysavings.Data.formatDate
+import com.fredy.mysavings.Data.formatBalanceAmount
 import com.fredy.mysavings.Data.formatDay
 import com.fredy.mysavings.Data.isTransfer
 import com.fredy.mysavings.ViewModel.RecordMap
-import com.fredy.mysavings.ui.CustomStickyHeader
-import com.fredy.mysavings.ui.SimpleEntityItem
+import com.fredy.mysavings.ui.Screens.CustomStickyHeader
+import com.fredy.mysavings.ui.Screens.SimpleEntityItem
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -62,22 +62,23 @@ fun RecordBody(
                         alpha = 0.4f
                     )
                 )
-                SimpleEntityItem(
-                    modifier = Modifier
-                        .background(
-                            MaterialTheme.colorScheme.background
-                        )
-                        .padding(bottom = 5.dp)
-                        .clickable {
-                            onEvent(
-                                RecordsEvent.ShowDialog(
-                                    item
-                                )
+                SimpleEntityItem(modifier = Modifier
+                    .background(
+                        MaterialTheme.colorScheme.background
+                    )
+                    .padding(bottom = 5.dp)
+                    .clickable {
+                        onEvent(
+                            RecordsEvent.ShowDialog(
+                                item
                             )
-                        },
+                        )
+                    },
                     icon = item.toCategory.categoryIcon,
                     iconModifier = Modifier
-                        .size(40.dp)
+                        .size(
+                            40.dp
+                        )
                         .clip(
                             shape = MaterialTheme.shapes.extraLarge
                         ),
@@ -92,19 +93,21 @@ fun RecordBody(
                             fontWeight = FontWeight.Bold,
                             color = BalanceColor(
                                 amount = item.record.recordAmount,
-                                isTransfer = isTransfer(item.record.recordType)
+                                isTransfer = isTransfer(
+                                    item.record.recordType
+                                )
                             ),
-                            modifier = Modifier
-                                .padding(end = 10.dp),
+                            modifier = Modifier.padding(
+                                end = 10.dp
+                            ),
                             textAlign = TextAlign.End
                         )
-                    }
-                ){
+                    }) {
                     Text(
-                        text = if (item.toCategory != null) {
-                            item.toCategory!!.categoryName
+                        text = if (isTransfer(item.record.recordType)) {
+                            RecordType.Transfer.name
                         } else {
-                            "Transfer"
+                            item.toCategory.categoryName
                         },
                         style = MaterialTheme.typography.bodyLarge,
                         fontWeight = FontWeight.Bold,
@@ -113,6 +116,66 @@ fun RecordBody(
                             vertical = 3.dp
                         ),
                     )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        SimpleEntityItem(
+                            modifier = Modifier.weight(
+                                1f
+                            ),
+                            icon = item.fromAccount.accountIcon,
+                            iconModifier = Modifier
+                                .size(
+                                    25.dp
+                                )
+                                .clip(
+                                    shape = MaterialTheme.shapes.small
+                                ),
+                            iconDescription = item.fromAccount.accountIconDescription
+                        ) {
+                            Text(
+                                text = item.fromAccount.accountName,
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onBackground,
+                                modifier = Modifier.padding(
+                                    vertical = 3.dp
+                                ),
+                                maxLines = 1,
+                            )
+                        }
+                        if (isTransfer(item.record.recordType)) {
+                            Icon(
+                                imageVector = Icons.Default.ArrowForward,
+                                contentDescription = ""
+                            )
+                            SimpleEntityItem(
+                                modifier = Modifier.weight(
+                                    1f
+                                ),
+                                icon = item.toAccount.accountIcon,
+                                iconModifier = Modifier
+                                    .size(
+                                        25.dp
+                                    )
+                                    .clip(
+                                        shape = MaterialTheme.shapes.small
+                                    ),
+                                iconDescription = item.toAccount.accountIconDescription
+                            ) {
+                                Text(
+                                    text = item.toAccount.accountName,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                    modifier = Modifier.padding(
+                                        vertical = 3.dp
+                                    ),
+                                    maxLines = 1,
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }

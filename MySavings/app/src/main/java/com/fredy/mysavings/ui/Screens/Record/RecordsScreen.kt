@@ -19,16 +19,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import com.fredy.mysavings.Data.RoomDatabase.Enum.SortType
 import com.fredy.mysavings.Data.RoomDatabase.Event.RecordsEvent
 import com.fredy.mysavings.Data.balanceBars
 import com.fredy.mysavings.ViewModel.RecordViewModel
+import com.fredy.mysavings.ui.Navigation.NavigationRoute
+import com.fredy.mysavings.ui.Navigation.navigateSingleTopTo
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun RecordsScreen(
     modifier: Modifier = Modifier,
+    rootNavController: NavHostController,
     viewModel: RecordViewModel = viewModel()
 ) {
     val state by viewModel.state.collectAsState()
@@ -38,7 +42,12 @@ fun RecordsScreen(
         state.trueRecord?.let {
             RecordDialog(
                 trueRecord = it,
-                onEvent = viewModel::onEvent
+                onEvent = viewModel::onEvent,
+                onEdit = {
+                    rootNavController.navigateSingleTopTo(
+                        NavigationRoute.Add.route+"?id=-1"
+                    )
+                }
             )
         }
         BalanceBar(

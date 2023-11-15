@@ -31,13 +31,14 @@ import com.fredy.mysavings.Data.RoomDatabase.Enum.RecordType
 import com.fredy.mysavings.Data.RoomDatabase.Event.RecordsEvent
 import com.fredy.mysavings.Data.formatDateTime
 import com.fredy.mysavings.Data.isTransfer
-import com.fredy.mysavings.ui.BalanceItem
-import com.fredy.mysavings.ui.SimpleEntityItem
+import com.fredy.mysavings.ui.Screens.BalanceItem
+import com.fredy.mysavings.ui.Screens.SimpleEntityItem
 
 @Composable
 fun RecordDialog(
     trueRecord: TrueRecord,
     onEvent: (RecordsEvent) -> Unit,
+    onEdit: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Dialog(onDismissRequest = {
@@ -62,7 +63,9 @@ fun RecordDialog(
                     .background(
                         color = BalanceColor(
                             amount = trueRecord.record.recordAmount,
-                            isTransfer = isTransfer(trueRecord.record.recordType)
+                            isTransfer = isTransfer(
+                                trueRecord.record.recordType
+                            )
                         )
                     )
                     .padding(8.dp)
@@ -96,12 +99,12 @@ fun RecordDialog(
                                 )
                                 .clickable {
                                     onEvent(
-                                        RecordsEvent.HideDialog
-                                    )
-                                    onEvent(
                                         RecordsEvent.DeleteRecord(
                                             trueRecord.record
                                         )
+                                    )
+                                    onEvent(
+                                        RecordsEvent.HideDialog
                                     )
                                 }
                                 .padding(4.dp),
@@ -117,6 +120,7 @@ fun RecordDialog(
                                     onEvent(
                                         RecordsEvent.HideDialog
                                     )
+                                    onEdit()
                                 }
                                 .padding(4.dp),
                             imageVector = Icons.Outlined.Edit,
@@ -159,7 +163,11 @@ fun RecordDialog(
                         ),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(text = if (isTransfer(trueRecord.record.recordType)) "From: " else "Account: ")
+                        Text(
+                            text = if (isTransfer(
+                                    trueRecord.record.recordType
+                                )) "From: " else "Account: "
+                        )
                         SimpleEntityItem(
                             modifier = Modifier
                                 .padding(

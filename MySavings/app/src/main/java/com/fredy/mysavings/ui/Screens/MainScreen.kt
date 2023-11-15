@@ -1,4 +1,4 @@
-package com.fredy.mysavings.ui
+package com.fredy.mysavings.ui.Screens
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size

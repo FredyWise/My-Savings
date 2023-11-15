@@ -10,7 +10,7 @@ data class Record(
     @PrimaryKey(autoGenerate = true)
     val recordId: Int = 0,
     val accountIdFromFk: Int = -1,
-//    val accountIdToFk: Int?,
+    val accountIdToFk: Int = -1,
     val categoryIdFk: Int = -1,
     val recordDateTime: LocalDateTime = LocalDateTime.now(),
     var recordAmount: Double = 0.0,

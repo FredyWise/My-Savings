@@ -9,7 +9,7 @@ import java.time.LocalTime
 sealed interface AddRecordEvent{
     object SaveRecord: AddRecordEvent
     data class AccountIdFromFk(val fromAccount: Account): AddRecordEvent
-//    data class AccountIdToFk(val toAccount: Account): AddRecordEvent
+    data class AccountIdToFk(val toAccount: Account): AddRecordEvent
     data class CategoryIdFk(val toCategory: Category): AddRecordEvent
     data class RecordDate(val date: LocalDate): AddRecordEvent
     data class RecordTime(val time: LocalTime): AddRecordEvent

@@ -17,8 +17,8 @@ import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.Data.RoomDatabase.Event.AccountEvent
 import com.fredy.mysavings.Data.accountIcons
 import com.fredy.mysavings.ViewModel.AccountState
-import com.fredy.mysavings.ui.ChooseIcon
-import com.fredy.mysavings.ui.SimpleAddDialog
+import com.fredy.mysavings.ui.Screens.ChooseIcon
+import com.fredy.mysavings.ui.Screens.SimpleAddDialog
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

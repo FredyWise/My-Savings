@@ -1,6 +1,5 @@
 package com.fredy.mysavings.ui.Screens.AddRecord
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -39,11 +38,11 @@ import com.fredy.mysavings.ViewModel.AddRecordViewModel
 import com.fredy.mysavings.ViewModel.AddRecordViewModelFactory
 import com.fredy.mysavings.ViewModel.CalculatorViewModel
 import com.fredy.mysavings.ViewModel.CategoryViewModel
-import com.fredy.mysavings.ui.ActionWithName
 import com.fredy.mysavings.ui.Screens.Account.AccountAddDialog
+import com.fredy.mysavings.ui.Screens.ActionWithName
 import com.fredy.mysavings.ui.Screens.Category.CategoryAddDialog
-import com.fredy.mysavings.ui.SimpleButton
-import com.fredy.mysavings.ui.TypeRadioButton
+import com.fredy.mysavings.ui.Screens.SimpleButton
+import com.fredy.mysavings.ui.Screens.TypeRadioButton
 import kotlinx.coroutines.launch
 
 @OptIn(
@@ -74,8 +73,9 @@ fun AddScreen(
         scaffoldState = scaffoldState,
         sheetPeekHeight = 0.dp,
         sheetContent = {
-            if (isLeft || state.recordType == RecordType.Transfer ) {
-                AccountBottomSheet(accounts = accountState.accounts,
+            if (isLeft) {
+                AccountBottomSheet(
+                    accounts = accountState.accounts,
                     onSelectAccount = {
                         viewModel.onEvent(
                             AddRecordEvent.AccountIdFromFk(
@@ -94,7 +94,31 @@ fun AddScreen(
                                 )
                             )
                         )
-                    })
+                    },
+                )
+            } else if (isTransfer(state.recordType)) {
+                AccountBottomSheet(
+                    accounts = accountState.accounts,
+                    onSelectAccount = {
+                        viewModel.onEvent(
+                            AddRecordEvent.AccountIdToFk(
+                                it
+                            )
+                        )
+                        scope.launch {
+                            scaffoldState.bottomSheetState.collapse()
+                        }
+                    },
+                    onAddAccount = {
+                        accountViewModel.onEvent(
+                            AccountEvent.ShowDialog(
+                                Account(
+                                    accountName = ""
+                                )
+                            )
+                        )
+                    },
+                )
             } else {
                 CategoryBottomSheet(categoryMaps = categoryState.categories,
                     recordType = state.recordType,
@@ -232,7 +256,11 @@ fun AddScreen(
                     ),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(text = if (isTransfer(state.recordType)) "From" else "Account")
+                    Text(
+                        text = if (isTransfer(
+                                state.recordType
+                            )) "From" else "Account"
+                    )
                     SimpleButton(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -265,7 +293,11 @@ fun AddScreen(
                     ),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(text = if (isTransfer(state.recordType)) "To" else "Category")
+                    Text(
+                        text = if (isTransfer(
+                                state.recordType
+                            )) "To" else "Category"
+                    )
                     SimpleButton(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -280,14 +312,18 @@ fun AddScreen(
                                 color = MaterialTheme.colorScheme.secondary,
                                 shape = MaterialTheme.shapes.small
                             ),
-                        image = if (isTransfer(state.recordType)) state.fromAccount.accountIcon else state.toCategory.categoryIcon,
+                        image = if (isTransfer(
+                                state.recordType
+                            )) state.toAccount.accountIcon else state.toCategory.categoryIcon,
                         onClick = {
                             isLeft = false
                             scope.launch {
                                 scaffoldState.bottomSheetState.expand()
                             }
                         },
-                        title = if (isTransfer(state.recordType)) state.fromAccount.accountName else state.toCategory.categoryName,
+                        title = if (isTransfer(
+                                state.recordType
+                            )) state.toAccount.accountName else state.toCategory.categoryName,
                         titleStyle = MaterialTheme.typography.headlineSmall
                     )
                 }

@@ -18,7 +18,7 @@ import com.fredy.mysavings.Data.RoomDatabase.Event.AddRecordEvent
 import com.fredy.mysavings.Data.formatDate
 import com.fredy.mysavings.Data.formatTime
 import com.fredy.mysavings.ViewModel.AddRecordState
-import com.fredy.mysavings.ui.SimpleButton
+import com.fredy.mysavings.ui.Screens.SimpleButton
 import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.datetime.date.datepicker
 import com.vanpra.composematerialdialogs.datetime.time.timepicker

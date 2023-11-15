@@ -18,10 +18,10 @@ import com.fredy.mysavings.Data.RoomDatabase.Enum.RecordType
 import com.fredy.mysavings.Data.RoomDatabase.Event.CategoryEvent
 import com.fredy.mysavings.Data.categoryIcons
 import com.fredy.mysavings.ViewModel.CategoryState
-import com.fredy.mysavings.ui.ActionWithName
-import com.fredy.mysavings.ui.ChooseIcon
-import com.fredy.mysavings.ui.SimpleAddDialog
-import com.fredy.mysavings.ui.TypeRadioButton
+import com.fredy.mysavings.ui.Screens.ActionWithName
+import com.fredy.mysavings.ui.Screens.ChooseIcon
+import com.fredy.mysavings.ui.Screens.SimpleAddDialog
+import com.fredy.mysavings.ui.Screens.TypeRadioButton
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

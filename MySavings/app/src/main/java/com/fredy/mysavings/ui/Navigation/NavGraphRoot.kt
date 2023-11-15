@@ -12,7 +12,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.fredy.mysavings.ui.MainScreen
+import com.fredy.mysavings.ui.Screens.MainScreen
 import com.fredy.mysavings.ui.Screens.AddRecord.AddScreen
 
 @Composable

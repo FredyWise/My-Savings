@@ -23,14 +23,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.fredy.mysavings.Data.RoomDatabase.Entity.Account
 import com.fredy.mysavings.Data.RoomDatabase.Entity.Category
 import com.fredy.mysavings.Data.RoomDatabase.Enum.RecordType
 import com.fredy.mysavings.Data.formatBalanceAmount
 import com.fredy.mysavings.R
 import com.fredy.mysavings.ViewModel.CategoryMap
-import com.fredy.mysavings.ui.SimpleButton
-import com.fredy.mysavings.ui.SimpleEntityItem
+import com.fredy.mysavings.ui.Screens.SimpleButton
+import com.fredy.mysavings.ui.Screens.SimpleEntityItem
 
 @Composable
 fun AccountBottomSheet(
@@ -72,15 +73,16 @@ fun AccountBottomSheet(
                             amount = account.accountAmount,
                             currency = account.accountCurrency
                         ),
-                        style = MaterialTheme.typography.titleLarge,
+                        style = MaterialTheme.typography.headlineSmall.copy(fontSize = 20.sp),
                         color = MaterialTheme.colorScheme.onSurface
                     )
                 },
             ) {
                 Text(
                     text = account.accountName,
-                    style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.onSurface
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    maxLines = 2,
                 )
             }
         }
@@ -89,7 +91,7 @@ fun AccountBottomSheet(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(
-                        horizontal = 70.dp
+                        horizontal = 70.dp, vertical = 8.dp
                     )
                     .clip(
                         MaterialTheme.shapes.medium
@@ -166,7 +168,9 @@ fun CategoryBottomSheet(
                     Text(
                         text = category.categoryName,
                         style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = MaterialTheme.colorScheme.onSurface,
+                        textAlign = TextAlign.Center,
+                        maxLines = 2
                     )
                 }
             }

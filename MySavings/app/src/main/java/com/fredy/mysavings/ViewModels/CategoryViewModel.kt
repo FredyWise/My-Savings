@@ -6,6 +6,7 @@ import com.fredy.mysavings.Data.RoomDatabase.Entity.Category
 import com.fredy.mysavings.Data.RoomDatabase.Enum.RecordType
 import com.fredy.mysavings.Data.RoomDatabase.Enum.SortType
 import com.fredy.mysavings.Data.RoomDatabase.Event.CategoryEvent
+import com.fredy.mysavings.R
 import com.fredy.mysavings.ui.Repository.CategoryRepositoryImpl
 import com.fredy.mysavings.ui.Repository.Graph
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -94,7 +95,7 @@ class CategoryViewModel(
                 }
 
                 val category = Category(
-                    categoryId = categoryId!!,
+                    categoryId = categoryId,
                     categoryName = categoryName,
                     categoryType = categoryType,
                     categoryIconDescription = categoryIconDescription,
@@ -102,12 +103,21 @@ class CategoryViewModel(
                 )
                 viewModelScope.launch {
                     categoryRepository.upsertCategory(
+                        Category(
+                            categoryId = 1,
+                            categoryName = RecordType.Transfer.name,
+                            categoryType = RecordType.Transfer,
+                            categoryIconDescription = RecordType.Transfer.name,
+                            categoryIcon = R.drawable.ic_exchange,
+                        )
+                    )
+                    categoryRepository.upsertCategory(
                         category
                     )
                 }
                 _state.update {
                     it.copy(
-                        categoryId = null,
+                        categoryId = 0,
                         categoryName = "",
                         categoryIcon = 0,
                         categoryIconDescription = "",
@@ -151,7 +161,7 @@ class CategoryViewModel(
 
 data class CategoryState(
     val categories: List<CategoryMap> = listOf(),
-    val categoryId: Int? = null,
+    val categoryId: Int = 0,
     val categoryName: String = "",
     val categoryType: RecordType = RecordType.Expense,
     val categoryIcon: Int = 0,

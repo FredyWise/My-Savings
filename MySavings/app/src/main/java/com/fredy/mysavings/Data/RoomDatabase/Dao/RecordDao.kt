@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Embedded
 import androidx.room.Query
+import androidx.room.Relation
 import androidx.room.Upsert
 import com.fredy.mysavings.Data.RoomDatabase.Entity.Account
 import com.fredy.mysavings.Data.RoomDatabase.Entity.Category
@@ -27,17 +28,13 @@ interface RecordDao {
             "ORDER BY recordDateTime DESC")
     fun getUserRecordsOrderedAscending(): Flow<List<Record>>
 
-    @Query("SELECT * FROM record as r " +
-            "INNER JOIN category AS c ON r.categoryIdFk = c.categoryId " +
-            "INNER JOIN account AS a ON r.accountIdFromFk = a.accountId " +
-            "ORDER BY recordDateTime DESC")
+    @Query("SELECT * FROM record "+
+            "ORDER BY recordDateTime ASC")
     fun getUserRecordsOrderedDescending(): Flow<List<TrueRecord>>
 
-    @Query("SELECT * FROM record as r " +
-            "INNER JOIN category AS c ON r.categoryIdFk = c.categoryId " +
-            "INNER JOIN account AS a ON r.accountIdFromFk = a.accountId " +
-            "WHERE r.recordDateTime > :start " +
-            "AND r.recordDateTime < :end " +
+    @Query("SELECT * FROM record "+
+            "WHERE recordDateTime > :start " +
+            "AND recordDateTime < :end " +
             "ORDER BY recordDateTime ASC")
     fun getUserRecordsFromSpecificTime(start:Int,end: Int): Flow<List<TrueRecord>>
 
@@ -48,11 +45,10 @@ interface RecordDao {
             "ORDER BY r.recordDateTime ASC")
     fun getUserCategoryRecordsOrderedByDateTime(categoryId: Int): Flow<List<TrueRecord>>
 
-    @Query("SELECT * FROM record AS r " +
-            "INNER JOIN category AS c ON r.categoryIdFk = c.categoryId " +
-            "INNER JOIN account AS a1 ON r.accountIdFromFk = a1.accountId " +
-            "WHERE r.accountIdFromFk=:accountId " +
-            "ORDER BY r.recordDateTime ASC")
+    @Query("SELECT * FROM record "+
+            "WHERE accountIdFromFk=:accountId " +
+            "OR accountIdToFk=:accountId " +
+            "ORDER BY recordDateTime ASC")
     fun getUserAccountRecordsOrderedByDateTime(accountId: Int): Flow<List<TrueRecord>>
 
     @Query("SELECT recordAmount FROM record ")
@@ -89,6 +85,16 @@ interface RecordDao {
 
 data class TrueRecord(
     @Embedded val record: Record = Record(),
-    @Embedded val fromAccount: Account = Account(),
-    @Embedded val toCategory: Category = Category(),
+    @Relation(
+        parentColumn = "accountIdFromFk",
+        entityColumn = "accountId"
+    ) val fromAccount: Account = Account(),
+    @Relation(
+        parentColumn = "accountIdToFk",
+        entityColumn = "accountId"
+    ) val toAccount: Account = Account(),
+    @Relation(
+        parentColumn = "categoryIdFk",
+        entityColumn = "categoryId"
+    ) val toCategory: Category = Category(),
 )

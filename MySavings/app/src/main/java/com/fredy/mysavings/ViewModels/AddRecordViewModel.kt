@@ -10,6 +10,8 @@ import com.fredy.mysavings.Data.RoomDatabase.Entity.Category
 import com.fredy.mysavings.Data.RoomDatabase.Entity.Record
 import com.fredy.mysavings.Data.RoomDatabase.Enum.RecordType
 import com.fredy.mysavings.Data.RoomDatabase.Event.AddRecordEvent
+import com.fredy.mysavings.Data.isExpense
+import com.fredy.mysavings.Data.isTransfer
 import com.fredy.mysavings.ui.Repository.Graph
 import com.fredy.mysavings.ui.Repository.RecordRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,6 +22,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalTime
+import kotlin.math.absoluteValue
 
 class AddRecordViewModel(
     private val itemId: Int,
@@ -69,23 +72,38 @@ class AddRecordViewModel(
             is AddRecordEvent.SaveRecord -> {
                 val recordId = state.value.recordId
                 val accountIdFromFk = state.value.accountIdFromFk
-                val categoryIdToFk = state.value.categoryIdFk
+                var accountIdToFk = state.value.accountIdToFk
+                var categoryIdToFk = state.value.categoryIdFk
                 val recordDateTime = state.value.recordDate.atTime(
                     state.value.recordTime
                 )
-                val recordAmount = state.value.recordAmount
+                var recordAmount = state.value.recordAmount
                 val recordCurrency = "baba"//state.value.recordCurrency
                 val recordType = state.value.recordType
                 val recordNotes = state.value.recordNotes
+
+                if (isTransfer(recordType)){
+                    categoryIdToFk = 1
+                } else {
+                    accountIdToFk = accountIdFromFk
+                }
+
+                if (isExpense(recordType)){
+                    recordAmount = (-recordAmount.absoluteValue)
+                }else {
+                    recordAmount = (recordAmount.absoluteValue)
+                }
+
                 Log.e("BABI", "onEvent: "+state.value.toString(), )
 
-                if (recordDateTime == null || recordAmount == 0.0 || recordCurrency.isBlank() || accountIdFromFk == null || categoryIdToFk == null) {
+                if (recordDateTime == null || recordAmount == 0.0 || recordCurrency.isBlank() || accountIdFromFk == null|| accountIdToFk == null || categoryIdToFk == null) {
                     return
                 }
 
                 val record = Record(
-                    recordId = recordId!!,
+                    recordId = recordId,
                     accountIdFromFk = accountIdFromFk,
+                    accountIdToFk = accountIdToFk,
                     categoryIdFk = categoryIdToFk,
                     recordDateTime = recordDateTime,
                     recordAmount = recordAmount,
@@ -102,10 +120,10 @@ class AddRecordViewModel(
                 }
                 _state.update {
                     it.copy(
-                        recordId = null,
+                        recordId = 0,
                         fromAccount = Account(),
                         accountIdFromFk = null,
-//                        accountIdToFk = null,
+                        accountIdToFk = null,
                         toCategory = Category(),
                         categoryIdFk = null,
                         recordDate = LocalDate.now(),
@@ -123,6 +141,15 @@ class AddRecordViewModel(
                     it.copy(
                         accountIdFromFk = event.fromAccount.accountId,
                         fromAccount = event.fromAccount
+                    )
+                }
+            }
+
+            is AddRecordEvent.AccountIdToFk -> {
+                _state.update {
+                    it.copy(
+                        accountIdToFk = event.toAccount.accountId,
+                        toAccount = event.toAccount
                     )
                 }
             }
@@ -196,13 +223,13 @@ class AddRecordViewModelFactory(private val id: Int): ViewModelProvider.Factory 
 
 
 data class AddRecordState(
-    val recordId: Int? = 0,
+    val recordId: Int = 0,
     val categories: List<Category> = emptyList(),
     val accounts: List<Account> = emptyList(),
     val accountIdFromFk: Int? = null,
     val fromAccount: Account = Account(),
-//    val accountIdToFk: Int? = null,
-//    val toAccount: Account = Account(),
+    val accountIdToFk: Int? = null,
+    val toAccount: Account = Account(),
     val categoryIdFk: Int? = null,
     val toCategory: Category = Category(),
     val recordDate: LocalDate = LocalDate.now(),

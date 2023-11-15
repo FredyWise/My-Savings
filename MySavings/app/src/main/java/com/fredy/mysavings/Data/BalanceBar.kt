@@ -37,12 +37,16 @@ sealed class BalanceBar(
 fun isTransfer(recordType: RecordType):Boolean{
     return recordType == RecordType.Transfer
 }
+
+fun isExpense(recordType: RecordType):Boolean{
+    return recordType == RecordType.Expense
+}
 @Composable
 fun BalanceColor(amount: Double, isTransfer: Boolean = false): Color {
     return when {
-        amount < 0.0 -> MaterialTheme.colorScheme.onSecondary
-        isTransfer -> MaterialTheme.colorScheme.onTertiary
-        else -> MaterialTheme.colorScheme.onPrimary
+        amount < 0.0 -> MaterialTheme.colorScheme.secondary
+        isTransfer -> MaterialTheme.colorScheme.tertiary
+        else -> MaterialTheme.colorScheme.primary
     }
 }
 

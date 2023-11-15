@@ -15,7 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.ViewModel.AccountState
-import com.fredy.mysavings.ui.BalanceItem
+import com.fredy.mysavings.ui.Screens.BalanceItem
 
 @Composable
 fun AccountHeader(

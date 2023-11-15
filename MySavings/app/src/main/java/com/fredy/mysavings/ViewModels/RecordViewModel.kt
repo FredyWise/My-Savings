@@ -1,10 +1,8 @@
 package com.fredy.mysavings.ViewModel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fredy.mysavings.Data.RoomDatabase.Dao.TrueRecord
-import com.fredy.mysavings.Data.RoomDatabase.Entity.Record
 import com.fredy.mysavings.Data.RoomDatabase.Enum.SortType
 import com.fredy.mysavings.Data.RoomDatabase.Event.RecordsEvent
 import com.fredy.mysavings.ui.Repository.Graph
@@ -39,7 +37,7 @@ class RecordViewModel(
     ) { state, sortType, records ->
         state.copy(trueRecords = records.groupBy {
             it.record.recordDateTime
-        }.toSortedMap().map {
+        }.toSortedMap(compareByDescending { it }).map {
             RecordMap(
                 recordDateTime = it.key,
                 records = it.value
@@ -81,7 +79,8 @@ class RecordViewModel(
 
             is RecordsEvent.SortRecord -> {
                 _sortType.value = event.sortType
-            }        }
+            }
+        }
 
     }
 }

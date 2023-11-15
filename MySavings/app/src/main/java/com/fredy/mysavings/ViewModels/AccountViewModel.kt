@@ -93,24 +93,6 @@ class AccountViewModel(
                     )
                 }
             }
-//
-//            is AccountEvent.ShowOption -> {
-//                _state.update {
-//                    it.copy(
-//                        isShowMenu = true,
-//                        pressOffset = DpOffset(it.pressOffset.x, it.pressOffset.y)
-//                    )
-//                }
-//            }
-//
-//            is AccountEvent.HideOption -> {
-//                _state.update {
-//                    it.copy(
-//                        isShowMenu = false,
-//                        pressOffset = DpOffset.Zero
-//                    )
-//                }
-//            }
 
             is AccountEvent.DeleteAccount -> {
                 viewModelScope.launch {
@@ -133,7 +115,7 @@ class AccountViewModel(
                 }
 
                 val account = Account(
-                    accountId = accountId!!,
+                    accountId = accountId,
                     accountName = accountName,
                     accountAmount = accountAmount.toDouble(),
                     accountCurrency = accountCurrency,
@@ -147,7 +129,7 @@ class AccountViewModel(
                 }
                 _state.update {
                     it.copy(
-                        accountId = null,
+                        accountId = 0,
                         accountName = "",
                         accountAmount = "",
                         accountCurrency = "",
@@ -217,7 +199,7 @@ data class AccountState(
     val totalExpense: Double = 0.0,
     val totalIncome: Double = 0.0,
     val totalAll: Double = 0.0,
-    val accountId: Int? = null,
+    val accountId: Int = 0,
     val accountName: String = "",
     val accountAmount: String = "",
     val accountCurrency: String = "",
