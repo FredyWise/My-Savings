@@ -64,37 +64,6 @@ fun RecordsScreen(
                 BalanceItem(name = "BALANCE", amount = state.totalAll),
             )
         )
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .horizontalScroll(
-                    rememberScrollState()
-                ),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            SortType.values().forEach { sortType ->
-                Row(
-                    modifier = Modifier.clickable {
-                        viewModel.onEvent(
-                            RecordsEvent.SortRecord(
-                                sortType
-                            )
-                        )
-                    },
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    RadioButton(selected = state.sortType == sortType,
-                        onClick = {
-                            viewModel.onEvent(
-                                RecordsEvent.SortRecord(
-                                    sortType
-                                )
-                            )
-                        })
-                    Text(text = sortType.name)
-                }
-            }
-        }
         RecordBody(
             trueRecords = state.trueRecords,
             onEvent = viewModel::onEvent
