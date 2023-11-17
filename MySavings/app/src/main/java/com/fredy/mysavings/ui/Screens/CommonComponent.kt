@@ -182,12 +182,13 @@ fun AdvancedEntityItem(
                 }
                 .padding(4.dp),
                 imageVector = Icons.Default.MoreVert,
-                contentDescription = "")
+                contentDescription = "",
+                tint = MaterialTheme.colorScheme.onSurface,)
             CustomDropDownMenu(pressOffset = pressOffset,
                 menuItems = menuItems,
                 isShowMenu = isShowMenu,
                 onClose = { isShowMenu = false })
-        })
+        },)
 }
 
 

@@ -24,8 +24,8 @@ import androidx.navigation.NavHostController
 import com.fredy.mysavings.Data.RoomDatabase.Enum.SortType
 import com.fredy.mysavings.Data.RoomDatabase.Event.RecordsEvent
 import com.fredy.mysavings.ViewModel.RecordViewModel
-import com.fredy.mysavings.ui.Navigation.NavigationRoute
-import com.fredy.mysavings.ui.Navigation.navigateSingleTopTo
+import com.fredy.mysavings.ui.NavigationComponent.Navigation.NavigationRoute
+import com.fredy.mysavings.ui.NavigationComponent.Navigation.navigateSingleTopTo
 import com.fredy.mysavings.Data.BalanceItem
 import com.fredy.mysavings.Data.RoomDatabase.Enum.RecordType
 
@@ -47,7 +47,7 @@ fun RecordsScreen(
                 onEvent = viewModel::onEvent,
                 onEdit = {
                     rootNavController.navigateSingleTopTo(
-                        NavigationRoute.Add.route+"?id=-1"
+                        NavigationRoute.Add.route+"?id="+it.record.recordId
                     )
                 }
             )

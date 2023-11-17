@@ -22,6 +22,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -51,6 +52,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun AddScreen(
     modifier: Modifier = Modifier,
+    onBackground: Color = MaterialTheme.colorScheme.onBackground,
     id: Int,
     navigateUp: () -> Unit,
     calculatorViewModel: CalculatorViewModel = viewModel(),
@@ -168,8 +170,9 @@ fun AddScreen(
                     modifier = Modifier,
                     onClick = { navigateUp() },
                     image = R.drawable.ic_close_foreground,
+                    imageColor = onBackground,
                     title = "CANCEL",
-                    titleStyle = MaterialTheme.typography.titleMedium,
+                    titleStyle = MaterialTheme.typography.titleMedium.copy(onBackground),
                 )
                 SimpleButton(
                     onClick = {
@@ -184,8 +187,9 @@ fun AddScreen(
                         navigateUp()
                     },
                     image = R.drawable.ic_check_foreground,
+                    imageColor = onBackground,
                     title = "SAVE",
-                    titleStyle = MaterialTheme.typography.titleMedium,
+                    titleStyle = MaterialTheme.typography.titleMedium.copy(onBackground),
                 )
             }
             TextBox(
@@ -259,7 +263,8 @@ fun AddScreen(
                     Text(
                         text = if (isTransfer(
                                 state.recordType
-                            )) "From" else "Account"
+                            )) "From" else "Account",
+                        color = onBackground,
                     )
                     SimpleButton(
                         modifier = Modifier
@@ -276,6 +281,7 @@ fun AddScreen(
                                 shape = MaterialTheme.shapes.small
                             ),
                         image = state.fromAccount.accountIcon,
+                        imageColor = onBackground,
                         onClick = {
                             isLeft = true
                             scope.launch {
@@ -283,7 +289,7 @@ fun AddScreen(
                             }
                         },
                         title = state.fromAccount.accountName,
-                        titleStyle = MaterialTheme.typography.headlineSmall
+                        titleStyle = MaterialTheme.typography.headlineSmall.copy(onBackground)
                     )
                 }
 
@@ -296,7 +302,8 @@ fun AddScreen(
                     Text(
                         text = if (isTransfer(
                                 state.recordType
-                            )) "To" else "Category"
+                            )) "To" else "Category",
+                        color = onBackground
                     )
                     SimpleButton(
                         modifier = Modifier
@@ -315,6 +322,7 @@ fun AddScreen(
                         image = if (isTransfer(
                                 state.recordType
                             )) state.toAccount.accountIcon else state.toCategory.categoryIcon,
+                        imageColor = onBackground,
                         onClick = {
                             isLeft = false
                             scope.launch {
@@ -324,7 +332,7 @@ fun AddScreen(
                         title = if (isTransfer(
                                 state.recordType
                             )) state.toAccount.accountName else state.toCategory.categoryName,
-                        titleStyle = MaterialTheme.typography.headlineSmall
+                        titleStyle = MaterialTheme.typography.headlineSmall.copy(onBackground)
                     )
                 }
             }

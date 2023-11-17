@@ -13,20 +13,35 @@ interface RecordRepository {
     fun getRecordById(id: Int): Flow<TrueRecord>
     fun getUserRecordsOrderedAscending(): Flow<List<Record>>
     fun getUserRecordsOrderedDescending(): Flow<List<TrueRecord>>
-    fun getUserRecordsFromSpecificTime(start: Int, end: Int): Flow<List<TrueRecord>>
-    fun getUserCategoryRecordsOrderedByDateTime(categoryId: Int): Flow<List<TrueRecord>>
-    fun getUserAccountRecordsOrderedByDateTime(accountId: Int): Flow<List<TrueRecord>>
+    fun getUserRecordsFromSpecificTime(
+        start: Int, end: Int
+    ): Flow<List<TrueRecord>>
+
+    fun getUserCategoryRecordsOrderedByDateTime(
+        categoryId: Int
+    ): Flow<List<TrueRecord>>
+
+    fun getUserAccountRecordsOrderedByDateTime(
+        accountId: Int
+    ): Flow<List<TrueRecord>>
+
     fun getUserTotalAmountByType(recordType: RecordType): Flow<Double>
+    fun getUserTotalAmountByTypeFromSpecificTime(recordType: RecordType, start: Int, end: Int): Flow<Double>
+    fun getUserTotalRecordBalance(): Flow<Double>
 }
 
 class RecordRepositoryImpl(
     private val recordDao: RecordDao,
-) : RecordRepository {
-    override suspend fun upsertRecordItem(recordItem: Record) {
+): RecordRepository {
+    override suspend fun upsertRecordItem(
+        recordItem: Record
+    ) {
         recordDao.upsertRecordItem(recordItem)
     }
 
-    override suspend fun deleteRecordItem(recordItem: Record) {
+    override suspend fun deleteRecordItem(
+        recordItem: Record
+    ) {
         recordDao.deleteRecordItem(recordItem)
     }
 
@@ -43,26 +58,48 @@ class RecordRepositoryImpl(
     }
 
     override fun getUserRecordsFromSpecificTime(
-        start: Int,
-        end: Int
+        start: Int, end: Int
     ): Flow<List<TrueRecord>> {
-        return recordDao.getUserRecordsFromSpecificTime(start, end)
+        return recordDao.getUserRecordsFromSpecificTime(
+            start, end
+        )
     }
 
     override fun getUserCategoryRecordsOrderedByDateTime(
         categoryId: Int,
-
     ): Flow<List<TrueRecord>> {
-        return recordDao.getUserCategoryRecordsOrderedByDateTime(categoryId)
+        return recordDao.getUserCategoryRecordsOrderedByDateTime(
+            categoryId
+        )
     }
 
     override fun getUserAccountRecordsOrderedByDateTime(
         accountId: Int,
     ): Flow<List<TrueRecord>> {
-        return recordDao.getUserAccountRecordsOrderedByDateTime(accountId)
+        return recordDao.getUserAccountRecordsOrderedByDateTime(
+            accountId
+        )
     }
 
-    override fun getUserTotalAmountByType(recordType: RecordType): Flow<Double> {
-        return recordDao.getUserTotalAmountByType(recordType)
+    override fun getUserTotalAmountByType(
+        recordType: RecordType
+    ): Flow<Double> {
+        return recordDao.getUserTotalAmountByType(
+            recordType
+        )
+    }
+
+    override fun getUserTotalAmountByTypeFromSpecificTime(
+        recordType: RecordType,
+        start: Int,
+        end: Int
+    ): Flow<Double> {
+        return recordDao.getUserTotalAmountByTypeFromSpecificTime(
+            recordType, start, end
+        )
+    }
+
+    override fun getUserTotalRecordBalance(): Flow<Double> {
+        return recordDao.getUserTotalRecordBalance()
     }
 }

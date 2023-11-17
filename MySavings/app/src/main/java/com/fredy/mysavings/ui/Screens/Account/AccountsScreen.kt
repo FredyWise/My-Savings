@@ -12,6 +12,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.fredy.mysavings.Data.RoomDatabase.Entity.Account
@@ -54,7 +56,7 @@ fun AccountsScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(
-                    horizontal = 70.dp
+                    horizontal = 50.dp
                 )
                 .clip(
                     MaterialTheme.shapes.medium
@@ -65,6 +67,7 @@ fun AccountsScreen(
                     shape = MaterialTheme.shapes.medium
                 ),
             image = R.drawable.ic_add_foreground,
+            imageColor = MaterialTheme.colorScheme.onBackground,
             onClick = {
                 viewModel.onEvent(
                     AccountEvent.ShowDialog(
@@ -73,6 +76,7 @@ fun AccountsScreen(
                 )
             },
             title = "ADD NEW ACCOUNT",
+            titleStyle = MaterialTheme.typography.titleLarge.copy(MaterialTheme.colorScheme.onBackground)
         )
         AccountBody(
             accounts = state.accounts,

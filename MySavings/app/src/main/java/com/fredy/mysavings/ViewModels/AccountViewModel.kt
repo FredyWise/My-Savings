@@ -1,5 +1,6 @@
 package com.fredy.mysavings.ViewModel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fredy.mysavings.Data.RoomDatabase.Entity.Account
@@ -11,6 +12,7 @@ import com.fredy.mysavings.ui.Repository.Graph
 import com.fredy.mysavings.ui.Repository.RecordRepositoryImpl
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
@@ -25,6 +27,49 @@ class AccountViewModel(
         SortType.ASCENDING
     )
 
+    private val _totalAccountBalance: StateFlow<Double?> = accountRepository.getUserAccountTotalBalance().stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(),
+        0.0
+    )
+
+    private val _totalExpense: StateFlow<Double?> = recordRepository.getUserTotalAmountByType(
+        RecordType.Expense
+    ).stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(),
+        0.0
+    )
+
+    private val _totalIncome: StateFlow<Double?> = recordRepository.getUserTotalAmountByType(
+        RecordType.Income
+    ).stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(),
+        0.0
+    )
+
+    private val _balanceBar = MutableStateFlow(
+        BalanceBar()
+    )
+
+    private val balanceBar = combine(
+        _balanceBar,
+        _totalExpense,
+        _totalIncome,
+        _totalAccountBalance
+    ) { balanceBar, totalExpense, totalIncome, totalAccountBalance ->
+        balanceBar.copy(
+            expense = totalExpense ?: 0.0,
+            income = totalIncome ?: 0.0,
+            balance = totalAccountBalance ?: 0.0,
+        )
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5000),
+        BalanceBar()
+    )
+
     private val _accounts = accountRepository.getUserAccountOrderedByName().stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(),
@@ -35,51 +80,15 @@ class AccountViewModel(
         AccountState()
     )
 
-    init {
-        viewModelScope.launch {
-            recordRepository.getUserTotalAmountByType(
-                RecordType.Expense
-            ).collectLatest { totalExpense ->
-                _state.update {
-                    it.copy(
-                        totalExpense = totalExpense,
-                        totalAll = totalExpense + it.totalIncome + it.totalAccountBalance
-                    )
-                }
-            }
-        }
-        viewModelScope.launch {
-            recordRepository.getUserTotalAmountByType(
-                RecordType.Income
-            ).collectLatest { totalIncome ->
-                _state.update {
-                    it.copy(
-                        totalIncome = totalIncome+ it.totalAccountBalance,
-                        tempIncome = totalIncome,
-                        totalAll = totalIncome + it.totalExpense + it.totalAccountBalance
-                    )
-                }
-            }
-        }
-        viewModelScope.launch {
-            accountRepository.getUserAccountTotalBalance().collectLatest { totalBalance ->
-                _state.update {
-                    it.copy(
-                        totalAccountBalance = totalBalance,
-                        totalIncome = totalBalance + it.tempIncome,
-                        totalAll = totalBalance + it.tempIncome + it.totalExpense
-                    )
-                }
-            }
-        }
-    }
-
 
     val state = combine(
-        _state, _sortType, _accounts,
-    ) { state, sortType, accounts ->
+        _state, _sortType, _accounts, balanceBar,
+    ) { state, sortType, accounts, balanceBar ->
         state.copy(
             accounts = accounts,
+            totalExpense = balanceBar.expense,
+            totalIncome = balanceBar.income + balanceBar.balance,
+            totalAll = balanceBar.income + balanceBar.expense + balanceBar.balance,
             sortType = sortType
         )
     }.stateIn(
@@ -201,9 +210,7 @@ class AccountViewModel(
 data class AccountState(
     val accounts: List<Account> = emptyList(),
     val totalExpense: Double = 0.0,
-    val tempIncome: Double = 0.0,
     val totalIncome: Double = 0.0,
-    val totalAccountBalance: Double = 0.0,
     val totalAll: Double = 0.0,
     val accountId: Int = 0,
     val accountName: String = "",

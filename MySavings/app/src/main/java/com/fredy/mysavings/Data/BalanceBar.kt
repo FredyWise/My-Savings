@@ -61,7 +61,7 @@ fun formatDay(date: LocalDate): String {
 
 fun formatTime(time: LocalTime): String {
     return DateTimeFormatter.ofPattern(
-        "hh : mm"
+        "hh:mm"
     ).format(time)
 }
 

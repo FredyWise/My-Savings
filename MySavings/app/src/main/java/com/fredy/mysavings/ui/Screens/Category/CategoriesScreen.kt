@@ -34,7 +34,9 @@ fun CategoriesScreen(
         SimpleButton(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding( horizontal = 70.dp)
+                .padding(
+                    horizontal = 50.dp
+                )
                 .clip(
                     MaterialTheme.shapes.medium
                 )
@@ -44,6 +46,7 @@ fun CategoriesScreen(
                     shape = MaterialTheme.shapes.medium
                 ),
             image = R.drawable.ic_add_foreground,
+            imageColor = MaterialTheme.colorScheme.onBackground,
             onClick = {
                 viewModel.onEvent(
                     CategoryEvent.ShowDialog(
@@ -52,6 +55,7 @@ fun CategoriesScreen(
                 )
             },
             title = "ADD NEW CATEGORY",
+            titleStyle = MaterialTheme.typography.titleLarge.copy(MaterialTheme.colorScheme.onBackground)
         )
         CategoryBody(
             categoryMaps = state.categories,

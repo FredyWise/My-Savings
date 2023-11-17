@@ -1,17 +1,17 @@
 package com.fredy.mysavings.ViewModel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fredy.mysavings.Data.RoomDatabase.Dao.TrueRecord
 import com.fredy.mysavings.Data.RoomDatabase.Enum.RecordType
 import com.fredy.mysavings.Data.RoomDatabase.Enum.SortType
 import com.fredy.mysavings.Data.RoomDatabase.Event.RecordsEvent
-import com.fredy.mysavings.Data.isExpense
 import com.fredy.mysavings.ui.Repository.Graph
 import com.fredy.mysavings.ui.Repository.RecordRepositoryImpl
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -25,6 +25,49 @@ class RecordViewModel(
         SortType.ASCENDING
     )
 
+    private val _totalRecordBalance: StateFlow<Double?> = recordRepository.getUserTotalRecordBalance().stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(),
+        0.0
+    )
+
+    private val _totalExpense: StateFlow<Double?> = recordRepository.getUserTotalAmountByType(
+        RecordType.Expense
+    ).stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(),
+        0.0
+    )
+
+    private val _totalIncome: StateFlow<Double?> = recordRepository.getUserTotalAmountByType(
+        RecordType.Income
+    ).stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(),
+        0.0
+    )
+
+    private val _balanceBar = MutableStateFlow(
+        BalanceBar()
+    )
+
+    private val balanceBar = combine(
+        _balanceBar,
+        _totalExpense,
+        _totalIncome,
+        _totalRecordBalance
+    ) { balanceBar, totalExpense, totalIncome, totalRecordBalance ->
+        balanceBar.copy(
+            expense = totalExpense ?: 0.0,
+            income = totalIncome ?: 0.0,
+            balance = totalRecordBalance ?: 0.0,
+        )
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5000),
+        BalanceBar()
+    )
+
     private val _records = recordRepository.getUserRecordsOrderedDescending().stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(),
@@ -35,45 +78,25 @@ class RecordViewModel(
         RecordState()
     )
 
-    init {
-        viewModelScope.launch {
-            recordRepository.getUserTotalAmountByType(
-                RecordType.Expense
-            ).collectLatest { totalExpense ->
-                _state.update {
-                    it.copy(
-                        totalExpense = totalExpense,
-                        totalAll = totalExpense + it.totalAll
-                    )
-                }
-            }
-        }
-        viewModelScope.launch {
-            recordRepository.getUserTotalAmountByType(
-                RecordType.Income
-            ).collectLatest { totalIncome ->
-                _state.update {
-                    it.copy(
-                        totalIncome = totalIncome + it.totalIncome,
-                        totalAll = totalIncome + it.totalAll
-                    )
-                }
-            }
-        }
-    }
-
     val state = combine(
-        _state, _sortType, _records
-    ) { state, sortType, records ->
-        state.copy(trueRecords = records.groupBy {
-            it.record.recordDateTime
-        }.toSortedMap(compareByDescending { it }).map {
-            RecordMap(
-                recordDateTime = it.key,
-                records = it.value
-            )
-        },
-            sortType = sortType
+        _state,
+        _sortType,
+        _records,
+        balanceBar,
+    ) { state, sortType, records, balanceBar ->
+        state.copy(
+            trueRecords = records.groupBy {
+                it.record.recordDateTime
+            }.toSortedMap(compareByDescending { it }).map {
+                RecordMap(
+                    recordDateTime = it.key,
+                    records = it.value
+                )
+            },
+            totalExpense = balanceBar.expense,
+            totalIncome = balanceBar.income,
+            totalAll = balanceBar.balance,
+            sortType = sortType,
         )
     }.stateIn(
         viewModelScope,
@@ -128,4 +151,10 @@ data class RecordState(
 data class RecordMap(
     val recordDateTime: LocalDateTime,
     val records: List<TrueRecord>
+)
+
+data class BalanceBar(
+    val expense: Double = 0.0,
+    val income: Double = 0.0,
+    val balance: Double = 0.0,
 )

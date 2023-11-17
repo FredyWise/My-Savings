@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -42,6 +43,8 @@ import com.fredy.mysavings.ui.Screens.SimpleEntityItem
 @Composable
 fun RecordBody(
     modifier: Modifier = Modifier,
+    onBackgroundColor: Color = MaterialTheme.colorScheme.onBackground,
+    backgroundColor: Color = MaterialTheme.colorScheme.background,
     trueRecords: List<RecordMap>,
     onEvent: (RecordsEvent) -> Unit,
 ) {
@@ -58,13 +61,13 @@ fun RecordBody(
             items(trueRecord.records) { item ->
                 Divider(
                     modifier = Modifier.height(0.3.dp),
-                    color = MaterialTheme.colorScheme.onBackground.copy(
+                    color = onBackgroundColor.copy(
                         alpha = 0.4f
                     )
                 )
                 SimpleEntityItem(modifier = Modifier
                     .background(
-                        MaterialTheme.colorScheme.background
+                        backgroundColor
                     )
                     .padding(bottom = 5.dp)
                     .clickable {
@@ -111,7 +114,7 @@ fun RecordBody(
                         },
                         style = MaterialTheme.typography.bodyLarge,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onBackground,
+                        color = onBackgroundColor,
                         modifier = Modifier.padding(
                             vertical = 3.dp
                         ),
@@ -137,7 +140,7 @@ fun RecordBody(
                                 text = item.fromAccount.accountName,
                                 style = MaterialTheme.typography.bodyLarge,
                                 fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onBackground,
+                                color = onBackgroundColor,
                                 modifier = Modifier.padding(
                                     vertical = 3.dp
                                 ),
@@ -147,6 +150,7 @@ fun RecordBody(
                         if (isTransfer(item.record.recordType)) {
                             Icon(
                                 imageVector = Icons.Default.ArrowForward,
+                                tint = onBackgroundColor,
                                 contentDescription = ""
                             )
                             SimpleEntityItem(
@@ -167,7 +171,7 @@ fun RecordBody(
                                     text = item.toAccount.accountName,
                                     style = MaterialTheme.typography.bodyLarge,
                                     fontWeight = FontWeight.Bold,
-                                    color = MaterialTheme.colorScheme.onBackground,
+                                    color = onBackgroundColor,
                                     modifier = Modifier.padding(
                                         vertical = 3.dp
                                     ),
@@ -179,155 +183,5 @@ fun RecordBody(
                 }
             }
         }
-    }
-}
-
-@Composable
-fun RecordItem(
-    modifier: Modifier = Modifier,
-    item: TrueRecord,
-) {
-    Row(
-        modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically,
-
-        ) {
-//        ChooseIcon(
-//            modifier = Modifier.weight(1f),
-//            toCategory = item.toCategory,
-//            toAccount = item.toAccount,
-//        )
-        Column(
-            modifier = Modifier
-                .padding(1.dp)
-                .weight(
-                    3.5f
-                ),
-            verticalArrangement = Arrangement.Center,
-        ) {
-            Text(
-                text = if (item.toCategory != null) {
-                    item.toCategory!!.categoryName
-                } else {
-                    "Transfer"
-                },
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onBackground,
-                modifier = Modifier.padding(
-                    vertical = 3.dp
-                ),
-            )
-//            TransferOrNormalIcon(
-//                account = item.fromAccount,
-//                toAccount = item.toAccount
-//            )
-        }
-        Text(
-            text = formatBalanceAmount(
-                amount = item.record.recordAmount,
-                currency = item.record.recordCurrency
-            ),
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold,
-            color = BalanceColor(
-                amount = item.record.recordAmount,
-                isTransfer = isTransfer(item.record.recordType)
-            ),
-            modifier = Modifier
-                .padding(end = 10.dp)
-                .weight(
-                    2.5f
-                ),
-            textAlign = TextAlign.End
-        )
-    }
-
-}
-
-@Composable
-fun TransferOrNormalIcon(
-    modifier: Modifier = Modifier,
-    account: Account,
-    toAccount: Account? = null,
-) {
-    Row(modifier = modifier) {
-        Icon(
-            painter = painterResource(
-                account.accountIcon
-            ),
-            contentDescription = account.accountIconDescription,
-            modifier = Modifier.size(
-                width = 20.dp, height = 20.dp
-            )
-        )
-        Text(
-            text = account.accountName,
-            style = MaterialTheme.typography.bodyMedium,
-            fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.onBackground.copy(
-                alpha = 0.5f
-            ),
-        )
-        toAccount?.let {
-            Icon(
-                imageVector = Icons.Default.ArrowForward,
-                contentDescription = "",
-                tint = MaterialTheme.colorScheme.onBackground,
-                modifier = Modifier.size(
-                    width = 20.dp, height = 20.dp
-                )
-            )
-            Icon(
-                painter = painterResource(
-                    it.accountIcon
-                ),
-                contentDescription = it.accountIconDescription,
-                modifier = Modifier.size(
-                    width = 20.dp, height = 20.dp
-                )
-            )
-            Text(
-                text = it.accountName,
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onBackground.copy(
-                    alpha = 0.5f
-                ),
-            )
-        }
-    }
-}
-
-@Composable
-fun ChooseIcon(
-    modifier: Modifier = Modifier,
-    toCategory: Category?,
-    toAccount: Account?
-) {
-    toCategory?.let {
-        Icon(
-            painter = painterResource(it.categoryIcon),
-            contentDescription = it.categoryIconDescription,
-            modifier = Modifier
-                .size(
-                    width = 40.dp, height = 40.dp
-                )
-                .then(modifier),
-        )
-    }
-    toAccount?.let {
-        Icon(
-            painter = painterResource(
-//                accountIcons[0]
-                it.accountIcon
-            ),
-            contentDescription = it.accountIconDescription,
-            modifier = Modifier
-                .size(
-                    width = 40.dp, height = 40.dp
-                )
-                .then(modifier),
-        )
     }
 }
