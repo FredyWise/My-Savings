@@ -53,7 +53,7 @@ fun RecordBody(
             stickyHeader {
                 CustomStickyHeader(
                     title = formatDay(
-                        trueRecord.recordDateTime.toLocalDate()
+                        trueRecord.recordDate
                     ),
                     textStyle = MaterialTheme.typography.titleMedium
                 )

@@ -1,24 +1,24 @@
 package com.fredy.mysavings.ViewModel
 
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.fredy.mysavings.Data.RoomDatabase.Dao.TrueRecord
 import com.fredy.mysavings.Data.RoomDatabase.Entity.Account
 import com.fredy.mysavings.Data.RoomDatabase.Entity.Category
 import com.fredy.mysavings.Data.RoomDatabase.Entity.Record
 import com.fredy.mysavings.Data.RoomDatabase.Enum.RecordType
 import com.fredy.mysavings.Data.RoomDatabase.Event.AddRecordEvent
+import com.fredy.mysavings.Data.RoomDatabase.Event.CalcEvent
+import com.fredy.mysavings.Data.RoomDatabase.Event.CalcOperation
 import com.fredy.mysavings.Data.isExpense
 import com.fredy.mysavings.Data.isTransfer
 import com.fredy.mysavings.ui.Repository.Graph
 import com.fredy.mysavings.ui.Repository.RecordRepository
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalTime
@@ -28,75 +28,68 @@ class AddRecordViewModel(
     private val itemId: Int,
     private val recordRepository: RecordRepository = Graph.recordRepository,
 ): ViewModel() {
-    private val _trueRecord = recordRepository.getRecordById(
-        itemId
-    ).stateIn(
-        viewModelScope,
-        SharingStarted.WhileSubscribed(),
-        TrueRecord()
-    )
+    var state by mutableStateOf(AddRecordState())
+    var calcState by mutableStateOf(CalcState())
 
-    private val _state = MutableStateFlow(
-        AddRecordState()
-    )
-
-    val state = combine(
-        _state,
-        _trueRecord,
-    ) { state, trueRecord ->
+    init {
         if (itemId != -1) {
-            state.copy(
-                fromAccount = trueRecord.fromAccount,
-                toCategory = trueRecord.toCategory,
-                recordId = trueRecord.record.recordId,
-                accountIdFromFk = trueRecord.record.accountIdFromFk,
-                categoryIdFk = trueRecord.record.categoryIdFk,
-                recordDate = trueRecord.record.recordDateTime.toLocalDate(),
-                recordTime = trueRecord.record.recordDateTime.toLocalTime(),
-                recordAmount = trueRecord.record.recordAmount,
-                recordCurrency = trueRecord.record.recordCurrency,
-                recordNotes = trueRecord.record.recordNotes
-            )
-        } else {
-            state.copy()
+            viewModelScope.launch {
+                recordRepository.getRecordById(
+                    itemId
+                ).collectLatest {
+                    state = state.copy(
+                        fromAccount = it.fromAccount,
+                        toCategory = it.toCategory,
+                        recordId = it.record.recordId,
+                        accountIdFromFk = it.record.accountIdFromFk,
+                        categoryIdFk = it.record.categoryIdFk,
+                        recordDate = it.record.recordDateTime.toLocalDate(),
+                        recordTime = it.record.recordDateTime.toLocalTime(),
+                        recordAmount = it.record.recordAmount,
+                        recordCurrency = it.record.recordCurrency,
+                        recordType = it.record.recordType,
+                        recordNotes = it.record.recordNotes
+                    )
+                    calcState = calcState.copy(number1 = it.record.recordAmount.toString())
+                }
+            }
         }
-    }.stateIn(
-        viewModelScope,
-        SharingStarted.WhileSubscribed(5000),
-        AddRecordState()
-    )
+    }
 
     fun onEvent(event: AddRecordEvent) {
         when (event) {
 
             is AddRecordEvent.SaveRecord -> {
-                val recordId = state.value.recordId
-                val accountIdFromFk = state.value.accountIdFromFk
-                var accountIdToFk = state.value.accountIdToFk
-                var categoryIdToFk = state.value.categoryIdFk
-                val recordDateTime = state.value.recordDate.atTime(
-                    state.value.recordTime
+                val recordId = state.recordId
+                val accountIdFromFk = state.accountIdFromFk
+                var accountIdToFk = state.accountIdToFk
+                var categoryIdToFk = state.categoryIdFk
+                val recordDateTime = state.recordDate.atTime(
+                    state.recordTime
                 )
-                var recordAmount = state.value.recordAmount
-                val recordCurrency = "baba"//state.value.recordCurrency
-                val recordType = state.value.recordType
-                val recordNotes = state.value.recordNotes
+                var recordAmount = state.recordAmount
+                val recordCurrency = "baba"//state.recordCurrency
+                val recordType = state.recordType
+                val recordNotes = state.recordNotes
 
-                if (isTransfer(recordType)){
+                if (isTransfer(recordType)) {
                     categoryIdToFk = 1
                 } else {
                     accountIdToFk = accountIdFromFk
                 }
 
-                if (isExpense(recordType)){
+                if (isExpense(recordType)) {
                     recordAmount = (-recordAmount.absoluteValue)
-                }else {
+                } else {
                     recordAmount = (recordAmount.absoluteValue)
                 }
 
-                Log.e("BABI", "onEvent: "+state.value.toString(), )
+//                Log.e(
+//                    "BABI",
+//                    "onEvent: " + state.toString(),
+//                )
 
-                if (recordDateTime == null || recordAmount == 0.0 || recordCurrency.isBlank() || accountIdFromFk == null|| accountIdToFk == null || categoryIdToFk == null) {
+                if (recordDateTime == null || recordAmount == 0.0 || recordCurrency.isBlank() || accountIdFromFk == null || accountIdToFk == null || categoryIdToFk == null || recordType != state.toCategory.categoryType) {
                     return
                 }
 
@@ -112,105 +105,248 @@ class AddRecordViewModel(
                     isTransfer = recordType == RecordType.Transfer,
                     recordNotes = recordNotes,
                 )
-                Log.e("BABI", "\n\nonLast: $record", )
+                Log.e(
+                    "BABI",
+                    "\n\nonLast: $record",
+                )
                 viewModelScope.launch {
                     recordRepository.upsertRecordItem(
                         record
                     )
                 }
-                _state.update {
-                    it.copy(
-                        recordId = 0,
-                        fromAccount = Account(),
-                        accountIdFromFk = null,
-                        accountIdToFk = null,
-                        toCategory = Category(),
-                        categoryIdFk = null,
-                        recordDate = LocalDate.now(),
-                        recordTime = LocalTime.now(),
-                        recordAmount = 0.0,
-                        recordCurrency = "",
-                        recordType = RecordType.Expense,
-                        recordNotes = ""
-                    )
-                }
+                state = state.copy(
+                    recordId = 0,
+                    fromAccount = Account(),
+                    accountIdFromFk = null,
+                    accountIdToFk = null,
+                    toCategory = Category(),
+                    categoryIdFk = null,
+                    recordDate = LocalDate.now(),
+                    recordTime = LocalTime.now(),
+                    recordAmount = 0.0,
+                    recordCurrency = "",
+                    recordType = RecordType.Expense,
+                    recordNotes = ""
+                )
+
+                event.navigateUp()
             }
 
             is AddRecordEvent.AccountIdFromFk -> {
-                _state.update {
-                    it.copy(
-                        accountIdFromFk = event.fromAccount.accountId,
-                        fromAccount = event.fromAccount
-                    )
-                }
+                state = state.copy(
+                    accountIdFromFk = event.fromAccount.accountId,
+                    fromAccount = event.fromAccount
+                )
+
             }
 
             is AddRecordEvent.AccountIdToFk -> {
-                _state.update {
-                    it.copy(
-                        accountIdToFk = event.toAccount.accountId,
-                        toAccount = event.toAccount
-                    )
-                }
+                state = state.copy(
+                    accountIdToFk = event.toAccount.accountId,
+                    toAccount = event.toAccount
+                )
+
             }
 
             is AddRecordEvent.CategoryIdFk -> {
-                _state.update {
-                    it.copy(
-                        categoryIdFk = event.toCategory.categoryId,
-                        toCategory = event.toCategory
-                    )
-                }
+                state = state.copy(
+                    categoryIdFk = event.toCategory.categoryId,
+                    toCategory = event.toCategory
+                )
+
             }
 
             is AddRecordEvent.RecordDate -> {
-                _state.update {
-                    it.copy(
-                        recordDate = event.date
-                    )
-                }
+                state = state.copy(
+                    recordDate = event.date
+                )
+
             }
 
             is AddRecordEvent.RecordTime -> {
-                _state.update {
-                    it.copy(
-                        recordTime = event.time
-                    )
-                }
+                state = state.copy(
+                    recordTime = event.time
+                )
+
             }
 
             is AddRecordEvent.RecordAmount -> {
-                _state.update {
-                    it.copy(
-                        recordAmount = event.amount
-                    )
-                }
+                state = state.copy(
+                    recordAmount = event.amount
+                )
+
             }
 
             is AddRecordEvent.RecordCurrency -> {
-                _state.update {
-                    it.copy(
-                        recordCurrency = event.currency
-                    )
-                }
+                state = state.copy(
+                    recordCurrency = event.currency
+                )
+
             }
 
             is AddRecordEvent.RecordTypes -> {
-                _state.update {
-                    it.copy(
-                        recordType = event.recordType
-                    )
-                }
+                state = state.copy(
+                    recordType = event.recordType,
+                    toCategory = Category()
+                )
             }
 
+
             is AddRecordEvent.RecordNotes -> {
-                _state.update {
-                    it.copy(
-                        recordNotes = event.notes
-                    )
-                }
+                state = state.copy(
+                    recordNotes = event.notes
+                )
+
             }
         }
+    }
+
+    fun onAction(event: CalcEvent) {
+        when (event) {
+            is CalcEvent.Number -> enterNumber(
+                event.number
+            )
+            is CalcEvent.DecimalPoint -> enterDecimal()
+            is CalcEvent.Clear -> calcState = CalcState()
+            is CalcEvent.Operation -> enterOperation(
+                event.operation
+            )
+            is CalcEvent.Calculate -> performCalculation()
+            is CalcEvent.Delete -> performDeletion()
+            is CalcEvent.Percent -> performPercent()
+        }
+
+    }
+
+    private fun performDeletion() {
+        when {
+            calcState.number2.isNotBlank() -> calcState = calcState.copy(
+                number2 = calcState.number2.dropLast(1)
+            )
+
+            calcState.operation != null -> calcState = calcState.copy(
+                operation = null
+            )
+
+            calcState.number1.length == 1 && calcState.number1 != "0" -> calcState = calcState.copy(
+                number1 = "0"
+            )
+
+            calcState.number1.isNotBlank() && calcState.number1 != "0" -> calcState = calcState.copy(
+                number1 = calcState.number1.dropLast(1)
+            )
+        }
+    }
+
+    private fun performCalculation() {
+        val number1 = calcState.number1.toDoubleOrNull()
+        val number2 = calcState.number2.toDoubleOrNull()
+        if (number1 != null && number2 != null) {
+            val result = when (calcState.operation) {
+                is CalcOperation.Add -> number1 + number2
+                is CalcOperation.Substract -> number1 - number2
+                is CalcOperation.Multiply -> number1 * number2
+                is CalcOperation.Divide -> number1 / number2
+                null -> return
+            }
+            calcState = calcState.copy(
+                number1 = result.toString().take(
+                    10
+                ), number2 = "", operation = null
+            )
+            prettier()
+        }
+    }
+
+    private fun enterOperation(operation: CalcOperation) {
+        if (calcState.number1.isNotBlank() && calcState.number2.isBlank()) {
+            calcState = calcState.copy(operation = operation)
+        } else if (calcState.number1.isNotBlank() && calcState.number2.isNotBlank()) {
+            performCalculation()
+            calcState = calcState.copy(operation = operation)
+        }
+    }
+
+    private fun enterDecimal() {
+        if (calcState.operation == null && !calcState.number1.contains(
+                "."
+            ) && calcState.number1.isNotBlank()) {
+            calcState = calcState.copy(
+                number1 = calcState.number1 + "."
+            )
+            return
+        }
+        if (!calcState.number2.contains(".") && calcState.number2.isNotBlank()) {
+            calcState = calcState.copy(
+                number2 = calcState.number2 + "."
+            )
+        }
+    }
+
+    private fun performPercent() {
+        if (calcState.operation == null && !calcState.number1.contains(
+                "%"
+            ) && calcState.number1.isNotBlank()) {
+            calcState = calcState.copy(
+                number1 = (calcState.number1.toDouble() / 100).toString()
+            )
+            prettier()
+            return
+        }
+        if (!calcState.number2.contains("%") && calcState.number2.isNotBlank()) {
+            calcState = calcState.copy(
+                number2 = (calcState.number2.toDouble() / 100).toString()
+            )
+            prettier()
+        }
+    }
+
+    private fun prettier() {
+        if (calcState.operation == null && calcState.number1.endsWith(
+                ".0"
+            ) && calcState.number1.isNotBlank()) {
+            calcState = calcState.copy(
+                number1 = calcState.number1.dropLast(2)
+            )
+            return
+        }
+        if (calcState.number2.endsWith(".0") && calcState.number2.isNotBlank()) {
+            calcState = calcState.copy(
+                number2 = calcState.number2.dropLast(2)
+            )
+        }
+    }
+
+    private fun enterNumber(number: String) {
+        if (calcState.operation == null) {
+            if (calcState.number1.length >= MAX_NUMBER_LENGTH) {
+                return
+            }
+            if (calcState.number1 == "0") {
+                calcState = calcState.copy(
+                    number1 = ""
+                )
+            }
+            calcState = calcState.copy(
+                number1 = calcState.number1 + number
+            )
+            return
+        }
+        if (calcState.number2.length >= MAX_NUMBER_LENGTH) {
+            return
+        }
+        if (calcState.number2 == "0") {
+            calcState = calcState.copy(
+                number2 = ""
+            )
+        }
+        calcState = calcState.copy(
+            number2 = calcState.number2 + number
+        )
+    }
+
+    companion object {
+        private const val MAX_NUMBER_LENGTH = 13
     }
 }
 
@@ -236,6 +372,12 @@ data class AddRecordState(
     val recordTime: LocalTime = LocalTime.now(),
     val recordAmount: Double = 0.0,
     val recordCurrency: String = "",
-    val recordType: RecordType = RecordType.Expense,
-    val recordNotes: String = ""
+    val recordNotes: String = "",
+    val recordType: RecordType = RecordType.Expense
+)
+
+data class CalcState(
+    val number1: String = "0",
+    val number2: String = "",
+    val operation: CalcOperation? = null
 )

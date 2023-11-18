@@ -37,7 +37,6 @@ import com.fredy.mysavings.R
 import com.fredy.mysavings.ViewModel.AccountViewModel
 import com.fredy.mysavings.ViewModel.AddRecordViewModel
 import com.fredy.mysavings.ViewModel.AddRecordViewModelFactory
-import com.fredy.mysavings.ViewModel.CalculatorViewModel
 import com.fredy.mysavings.ViewModel.CategoryViewModel
 import com.fredy.mysavings.ui.Screens.Account.AccountAddDialog
 import com.fredy.mysavings.ui.Screens.ActionWithName
@@ -55,17 +54,16 @@ fun AddScreen(
     onBackground: Color = MaterialTheme.colorScheme.onBackground,
     id: Int,
     navigateUp: () -> Unit,
-    calculatorViewModel: CalculatorViewModel = viewModel(),
     viewModel: AddRecordViewModel = viewModel(
         factory = AddRecordViewModelFactory(id)
     ),
     categoryViewModel: CategoryViewModel = viewModel(),
     accountViewModel: AccountViewModel = viewModel()
 ) {
-    val state by viewModel.state.collectAsState()
+    val state = viewModel.state
     val categoryState by categoryViewModel.state.collectAsState()
     val accountState by accountViewModel.state.collectAsState()
-    val calculatorState = calculatorViewModel.state
+    val calculatorState = viewModel.calcState
     val applicationContext = LocalContext.current
     val scaffoldState = rememberBottomSheetScaffoldState()
     val scope = rememberCoroutineScope()
@@ -122,7 +120,8 @@ fun AddScreen(
                     },
                 )
             } else {
-                CategoryBottomSheet(categoryMaps = categoryState.categories,
+                CategoryBottomSheet(
+                    categoryMaps = categoryState.categories,
                     recordType = state.recordType,
                     onSelectCategory = {
                         viewModel.onEvent(
@@ -142,7 +141,8 @@ fun AddScreen(
                                 )
                             )
                         )
-                    })
+                    },
+                )
             }
         },
     ) {
@@ -172,7 +172,9 @@ fun AddScreen(
                     image = R.drawable.ic_close_foreground,
                     imageColor = onBackground,
                     title = "CANCEL",
-                    titleStyle = MaterialTheme.typography.titleMedium.copy(onBackground),
+                    titleStyle = MaterialTheme.typography.titleMedium.copy(
+                        onBackground
+                    ),
                 )
                 SimpleButton(
                     onClick = {
@@ -182,14 +184,18 @@ fun AddScreen(
                             )
                         )
                         viewModel.onEvent(
-                            AddRecordEvent.SaveRecord
+                            AddRecordEvent.SaveRecord(
+                                {
+                                    navigateUp()
+                                })
                         )
-                        navigateUp()
                     },
                     image = R.drawable.ic_check_foreground,
                     imageColor = onBackground,
                     title = "SAVE",
-                    titleStyle = MaterialTheme.typography.titleMedium.copy(onBackground),
+                    titleStyle = MaterialTheme.typography.titleMedium.copy(
+                        onBackground
+                    ),
                 )
             }
             TextBox(
@@ -281,7 +287,7 @@ fun AddScreen(
                                 shape = MaterialTheme.shapes.small
                             ),
                         image = state.fromAccount.accountIcon,
-                        imageColor = onBackground,
+                        imageColor = if (state.fromAccount.accountIconDescription == "") onBackground else Color.Unspecified,
                         onClick = {
                             isLeft = true
                             scope.launch {
@@ -289,7 +295,9 @@ fun AddScreen(
                             }
                         },
                         title = state.fromAccount.accountName,
-                        titleStyle = MaterialTheme.typography.headlineSmall.copy(onBackground)
+                        titleStyle = MaterialTheme.typography.headlineSmall.copy(
+                            onBackground
+                        )
                     )
                 }
 
@@ -322,7 +330,13 @@ fun AddScreen(
                         image = if (isTransfer(
                                 state.recordType
                             )) state.toAccount.accountIcon else state.toCategory.categoryIcon,
-                        imageColor = onBackground,
+                        imageColor = if (state.toCategory.categoryIconDescription != "" && !isTransfer(state.recordType)) {
+                            Color.Unspecified
+                        } else if (state.toAccount.accountIconDescription != "" && isTransfer(state.recordType)) {
+                            Color.Unspecified
+                        } else {
+                            onBackground
+                        },
                         onClick = {
                             isLeft = false
                             scope.launch {
@@ -332,13 +346,15 @@ fun AddScreen(
                         title = if (isTransfer(
                                 state.recordType
                             )) state.toAccount.accountName else state.toCategory.categoryName,
-                        titleStyle = MaterialTheme.typography.headlineSmall.copy(onBackground)
+                        titleStyle = MaterialTheme.typography.headlineSmall.copy(
+                            onBackground
+                        )
                     )
                 }
             }
             Calculator(
                 state = calculatorState,
-                onAction = calculatorViewModel::onAction,
+                onAction = viewModel::onAction,
                 textStyle = MaterialTheme.typography.displayMedium,
                 buttonAspectRatio = 1.8f,
                 modifier = Modifier.fillMaxWidth()

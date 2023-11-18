@@ -273,11 +273,6 @@ fun TypeRadioButton(
     textStyle: TextStyle = MaterialTheme.typography.titleLarge,
     barHeight: Dp = 35.dp,
     ) {
-    var selectedName by remember {
-        mutableStateOf(
-            selectedName
-        )
-    }
     Row(
         modifier = modifier.fillMaxWidth().height(barHeight),
         verticalAlignment = Alignment.CenterVertically
@@ -298,7 +293,6 @@ fun TypeRadioButton(
             Row(modifier = Modifier
                 .clickable {
                     button.action()
-                    selectedName = button.name
                 }
                 .padding(vertical = 8.dp)
                 .weight(

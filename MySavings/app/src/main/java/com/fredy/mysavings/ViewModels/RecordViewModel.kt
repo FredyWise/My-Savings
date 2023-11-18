@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fredy.mysavings.Data.RoomDatabase.Dao.TrueRecord
+import com.fredy.mysavings.Data.RoomDatabase.Enum.FilterType
 import com.fredy.mysavings.Data.RoomDatabase.Enum.RecordType
 import com.fredy.mysavings.Data.RoomDatabase.Enum.SortType
 import com.fredy.mysavings.Data.RoomDatabase.Event.RecordsEvent
@@ -16,13 +17,18 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 class RecordViewModel(
     private val recordRepository: RecordRepositoryImpl = Graph.recordRepository,
 ): ViewModel() {
     private val _sortType = MutableStateFlow(
-        SortType.ASCENDING
+        SortType.DESCENDING
+    )
+
+    private val _filterType = MutableStateFlow(
+        FilterType.Monthly
     )
 
     private val _totalRecordBalance: StateFlow<Double?> = recordRepository.getUserTotalRecordBalance().stateIn(
@@ -85,11 +91,13 @@ class RecordViewModel(
         balanceBar,
     ) { state, sortType, records, balanceBar ->
         state.copy(
-            trueRecords = records.groupBy {
-                it.record.recordDateTime
-            }.toSortedMap(compareByDescending { it }).map {
+            trueRecords = records.groupBy { it.record.recordDateTime.toLocalDate()
+            }.toSortedMap(
+                if(sortType == SortType.DESCENDING) {
+                    compareByDescending { it }
+                } else compareBy { it }).map {
                 RecordMap(
-                    recordDateTime = it.key,
+                    recordDate = it.key,
                     records = it.value
                 )
             },
@@ -132,8 +140,12 @@ class RecordViewModel(
             }
 
             is RecordsEvent.SortRecord -> {
-                _sortType.value = event.sortType
+                _filterType.value = event.filterType
             }
+
+//            is RecordsEvent.SortRecord -> {
+//                _sortType.value = event.sortType
+//            }
         }
 
     }
@@ -145,11 +157,13 @@ data class RecordState(
     val totalExpense: Double = 0.0,
     val totalIncome: Double = 0.0,
     val totalAll: Double = 0.0,
-    val sortType: SortType = SortType.ASCENDING
+    val selectedDate: LocalDateTime = LocalDateTime.now(),
+    val sortType: SortType = SortType.ASCENDING,
+    val filterType: FilterType = FilterType.Monthly
 )
 
 data class RecordMap(
-    val recordDateTime: LocalDateTime,
+    val recordDate: LocalDate,
     val records: List<TrueRecord>
 )
 

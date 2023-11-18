@@ -1,5 +1,5 @@
 package com.fredy.mysavings.ui.Screens.Analysis
-//
+
 //import androidx.compose.foundation.layout.Column
 //import androidx.compose.foundation.layout.fillMaxWidth
 //import androidx.compose.foundation.layout.padding
@@ -60,8 +60,8 @@ package com.fredy.mysavings.ui.Screens.Analysis
 //                        color = MaterialTheme.colorScheme.onSurface
 //                    )
 //                    Text(
-//                        text = stringResource(id = R.string.balance_capitalized) + ": " + formatBalanceAmount(
-//                            balance = account.balance
+//                        text = "Balance" + ": " + formatBalanceAmount(
+//                            amount = account
 //                        ),
 //                        style = MaterialTheme.typography.titleMedium,
 //                        color = MaterialTheme.colorScheme.onSurface
