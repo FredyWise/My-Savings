@@ -12,6 +12,7 @@ import com.fredy.mysavings.Data.RoomDatabase.Entity.Category
 import com.fredy.mysavings.Data.RoomDatabase.Entity.Record
 import com.fredy.mysavings.Data.RoomDatabase.Enum.RecordType
 import kotlinx.coroutines.flow.Flow
+import java.time.LocalDateTime
 
 @Dao
 interface RecordDao {
@@ -32,9 +33,9 @@ interface RecordDao {
     fun getUserRecordsOrderedDescending(): Flow<List<TrueRecord>> //x
 
     @Query("SELECT * FROM record "+
-            "WHERE recordDateTime > :start " +
-            "AND recordDateTime < :end")
-    fun getUserRecordsFromSpecificTime(start:Int,end: Int): Flow<List<TrueRecord>>
+            "WHERE recordDateTime BETWEEN :start AND :end " +
+            "ORDER BY recordDateTime DESC")
+    fun getUserRecordsFromSpecificTime(start: LocalDateTime,end: LocalDateTime): Flow<List<TrueRecord>>
 
     @Query("SELECT * FROM record as r " +
             "WHERE categoryIdFk=:categoryId")

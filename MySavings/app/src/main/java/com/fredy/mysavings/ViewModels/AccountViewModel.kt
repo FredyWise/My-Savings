@@ -200,6 +200,14 @@ class AccountViewModel(
                 }
             }
 
+            is AccountEvent.UpdateAccountBalance -> {
+                viewModelScope.launch {
+                    accountRepository.upsertAccount(
+                        event.account
+                    )
+                }
+            }
+
             is AccountEvent.SortAccount -> {
                 _sortType.value = event.sortType
             }

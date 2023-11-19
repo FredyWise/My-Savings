@@ -32,6 +32,9 @@ fun AccountBody(
     LazyColumn(modifier = modifier) {
         stickyHeader {
             CustomStickyHeader(
+                modifier = Modifier.background(
+                    MaterialTheme.colorScheme.background
+                ),
                 title = "Accounts",
                 textStyle = MaterialTheme.typography.titleLarge
             )

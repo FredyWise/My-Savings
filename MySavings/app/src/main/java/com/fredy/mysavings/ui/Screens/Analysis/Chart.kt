@@ -30,7 +30,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.Data.User.defaultColors
-import com.fredy.mysavings.Data.User.extractProportions
+import com.fredy.mysavings.Data.extractProportions
 import com.fredy.mysavings.Data.formatAmount
 
 

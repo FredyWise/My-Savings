@@ -5,6 +5,7 @@ import com.fredy.mysavings.Data.RoomDatabase.Dao.TrueRecord
 import com.fredy.mysavings.Data.RoomDatabase.Entity.Record
 import com.fredy.mysavings.Data.RoomDatabase.Enum.RecordType
 import kotlinx.coroutines.flow.Flow
+import java.time.LocalDateTime
 
 
 interface RecordRepository {
@@ -14,7 +15,7 @@ interface RecordRepository {
     fun getUserRecordsOrderedAscending(): Flow<List<Record>>
     fun getUserRecordsOrderedDescending(): Flow<List<TrueRecord>>
     fun getUserRecordsFromSpecificTime(
-        start: Int, end: Int
+        start: LocalDateTime, end: LocalDateTime
     ): Flow<List<TrueRecord>>
 
     fun getUserCategoryRecordsOrderedByDateTime(
@@ -58,7 +59,7 @@ class RecordRepositoryImpl(
     }
 
     override fun getUserRecordsFromSpecificTime(
-        start: Int, end: Int
+        start: LocalDateTime, end: LocalDateTime
     ): Flow<List<TrueRecord>> {
         return recordDao.getUserRecordsFromSpecificTime(
             start, end

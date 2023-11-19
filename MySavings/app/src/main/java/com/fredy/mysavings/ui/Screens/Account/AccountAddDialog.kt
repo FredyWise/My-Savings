@@ -20,7 +20,6 @@ import com.fredy.mysavings.ViewModel.AccountState
 import com.fredy.mysavings.ui.Screens.ChooseIcon
 import com.fredy.mysavings.ui.Screens.SimpleAddDialog
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AccountAddDialog(
     state: AccountState,
@@ -29,7 +28,7 @@ fun AccountAddDialog(
 ) {
     SimpleAddDialog(
         modifier = modifier,
-        title = if (state.accountId == null) "Add New Account" else "Update Account",
+        title = if (state.accountId == 0) "Add New Account" else "Update Account",
         onDismissRequest = { onEvent(AccountEvent.HideDialog) },
         onCancelClicked = { onEvent(AccountEvent.HideDialog) },
         onSaveClicked = { onEvent(AccountEvent.SaveAccount) },
@@ -59,7 +58,7 @@ fun AccountAddDialog(
                     KeyboardActions.Default.onNext
                 }),
             label = {
-                Text(text = "Initial Amount")
+                Text(text = if (state.accountId == 0) "Initial Amount" else "Current Amount")
             },
             placeholder = {
                 Text(text = "0")

@@ -48,26 +48,7 @@ fun formatAmount(amount: Double): String{
 
 private val amountDecimalFormat = DecimalFormat("#,##0.00")
 
-fun formatDate(date: LocalDate): String {
-    return DateTimeFormatter.ofPattern(
-        "MMM dd, YYYY "
-    ).format(date)
-}
-fun formatDay(date: LocalDate): String {
-    return DateTimeFormatter.ofPattern(
-        "MMM dd, EEEE "
-    ).format(date)
-}
 
-fun formatTime(time: LocalTime): String {
-    return DateTimeFormatter.ofPattern(
-        "hh:mm"
-    ).format(time)
-}
-
-fun formatDateTime(dateTime: LocalDateTime): String {
-    return formatDate(dateTime.toLocalDate()) + formatTime(dateTime.toLocalTime())
-}
 
 fun <E> List<E>.extractProportions(selector: (E) -> Float): List<Float> {
     val total = this.sumOf { selector(it).toDouble() }

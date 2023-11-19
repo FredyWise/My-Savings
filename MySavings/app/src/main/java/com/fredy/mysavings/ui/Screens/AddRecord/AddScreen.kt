@@ -179,15 +179,13 @@ fun AddScreen(
                 SimpleButton(
                     onClick = {
                         viewModel.onEvent(
-                            AddRecordEvent.RecordAmount(
-                                calculatorState.number1.toDouble()
-                            )
-                        )
-                        viewModel.onEvent(
-                            AddRecordEvent.SaveRecord(
-                                {
-                                    navigateUp()
-                                })
+                            AddRecordEvent.SaveRecord {
+                                accountViewModel.onEvent(AccountEvent.UpdateAccountBalance(state.fromAccount))
+                                if (isTransfer(state.recordType)){
+                                    accountViewModel.onEvent(AccountEvent.UpdateAccountBalance(state.toAccount))
+                                }
+                                navigateUp()
+                            },
                         )
                     },
                     image = R.drawable.ic_check_foreground,
@@ -330,9 +328,13 @@ fun AddScreen(
                         image = if (isTransfer(
                                 state.recordType
                             )) state.toAccount.accountIcon else state.toCategory.categoryIcon,
-                        imageColor = if (state.toCategory.categoryIconDescription != "" && !isTransfer(state.recordType)) {
+                        imageColor = if (state.toCategory.categoryIconDescription != "" && !isTransfer(
+                                state.recordType
+                            )) {
                             Color.Unspecified
-                        } else if (state.toAccount.accountIconDescription != "" && isTransfer(state.recordType)) {
+                        } else if (state.toAccount.accountIconDescription != "" && isTransfer(
+                                state.recordType
+                            )) {
                             Color.Unspecified
                         } else {
                             onBackground

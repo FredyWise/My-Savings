@@ -15,6 +15,7 @@ import com.fredy.mysavings.Data.RoomDatabase.Event.AddRecordEvent
 import com.fredy.mysavings.Data.RoomDatabase.Event.CalcEvent
 import com.fredy.mysavings.Data.RoomDatabase.Event.CalcOperation
 import com.fredy.mysavings.Data.isExpense
+import com.fredy.mysavings.Data.isIncome
 import com.fredy.mysavings.Data.isTransfer
 import com.fredy.mysavings.ui.Repository.Graph
 import com.fredy.mysavings.ui.Repository.RecordRepository
@@ -39,9 +40,11 @@ class AddRecordViewModel(
                 ).collectLatest {
                     state = state.copy(
                         fromAccount = it.fromAccount,
+                        toAccount = it.toAccount,
                         toCategory = it.toCategory,
                         recordId = it.record.recordId,
                         accountIdFromFk = it.record.accountIdFromFk,
+                        accountIdToFk = it.record.accountIdToFk,
                         categoryIdFk = it.record.categoryIdFk,
                         recordDate = it.record.recordDateTime.toLocalDate(),
                         recordTime = it.record.recordDateTime.toLocalTime(),
@@ -58,7 +61,6 @@ class AddRecordViewModel(
 
     fun onEvent(event: AddRecordEvent) {
         when (event) {
-
             is AddRecordEvent.SaveRecord -> {
                 val recordId = state.recordId
                 val accountIdFromFk = state.accountIdFromFk
@@ -67,30 +69,37 @@ class AddRecordViewModel(
                 val recordDateTime = state.recordDate.atTime(
                     state.recordTime
                 )
-                var recordAmount = state.recordAmount
+                var recordAmount = calcState.number1.toDouble().absoluteValue
                 val recordCurrency = "baba"//state.recordCurrency
                 val recordType = state.recordType
                 val recordNotes = state.recordNotes
+                var difference = state.recordAmount.absoluteValue
+                if (recordId == 0){
+                    difference += recordAmount
+                }else{
+                    difference -= recordAmount
+                    difference = -difference
+                }
 
                 if (isTransfer(recordType)) {
                     categoryIdToFk = 1
                 } else {
                     accountIdToFk = accountIdFromFk
                 }
+                Log.e("BABI", "onEvent: "+state+"\n"+difference+"\n"+recordAmount+categoryIdToFk )
 
-                if (isExpense(recordType)) {
-                    recordAmount = (-recordAmount.absoluteValue)
-                } else {
-                    recordAmount = (recordAmount.absoluteValue)
+                if (recordDateTime == null || recordAmount == 0.0 || recordCurrency.isBlank() || accountIdFromFk == null || accountIdToFk == null || categoryIdToFk == null || (recordType != state.toCategory.categoryType && !isTransfer(recordType)) || (state.fromAccount.accountAmount < difference && !isIncome(recordType))) {
+                    return
                 }
 
-//                Log.e(
-//                    "BABI",
-//                    "onEvent: " + state.toString(),
-//                )
-
-                if (recordDateTime == null || recordAmount == 0.0 || recordCurrency.isBlank() || accountIdFromFk == null || accountIdToFk == null || categoryIdToFk == null || recordType != state.toCategory.categoryType) {
-                    return
+                if (isExpense(recordType)) {
+                    state.fromAccount.accountAmount -= difference
+                    recordAmount = -recordAmount
+                }else if(isTransfer(recordType)){
+                    state.fromAccount.accountAmount -= difference
+                    state.toAccount.accountAmount += difference
+                }else {
+                    state.fromAccount.accountAmount += difference
                 }
 
                 val record = Record(
@@ -105,10 +114,7 @@ class AddRecordViewModel(
                     isTransfer = recordType == RecordType.Transfer,
                     recordNotes = recordNotes,
                 )
-                Log.e(
-                    "BABI",
-                    "\n\nonLast: $record",
-                )
+
                 viewModelScope.launch {
                     recordRepository.upsertRecordItem(
                         record
@@ -172,7 +178,7 @@ class AddRecordViewModel(
 
             is AddRecordEvent.RecordAmount -> {
                 state = state.copy(
-                    recordAmount = event.amount
+                    recordAmount = calcState.number1.toDouble()
                 )
 
             }
@@ -360,8 +366,6 @@ class AddRecordViewModelFactory(private val id: Int): ViewModelProvider.Factory 
 
 data class AddRecordState(
     val recordId: Int = 0,
-    val categories: List<Category> = emptyList(),
-    val accounts: List<Account> = emptyList(),
     val accountIdFromFk: Int? = null,
     val fromAccount: Account = Account(),
     val accountIdToFk: Int? = null,

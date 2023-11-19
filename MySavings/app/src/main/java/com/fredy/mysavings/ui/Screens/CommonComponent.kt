@@ -33,7 +33,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -63,7 +62,8 @@ fun SimpleAddDialog(
     onSaveClicked: () -> Unit,
     content: @Composable () -> Unit,
 ) {
-    AlertDialog(modifier = modifier,
+    AlertDialog(
+        modifier = modifier,
         title = {
             Text(
                 modifier = Modifier.fillMaxWidth(),
@@ -121,7 +121,8 @@ fun SimpleAddDialog(
                     text = "SAVE"
                 )
             }
-        })
+        },
+    )
 }
 
 @Composable
@@ -142,53 +143,57 @@ fun AdvancedEntityItem(
     val interactionSource = remember {
         MutableInteractionSource()
     }
-    SimpleEntityItem(modifier = modifier
-        .indication(
-            interactionSource,
-            LocalIndication.current
-        )
-        .pointerInput(true) {
-            detectTapGestures(onLongPress = {
-                isShowMenu = true
-            }, onPress = {
-                val press = PressInteraction.Press(
-                    it
-                )
-                interactionSource.emit(
-                    press
-                )
-                tryAwaitRelease()
-                interactionSource.emit(
-                    PressInteraction.Release(
+    SimpleEntityItem(
+        modifier = modifier
+            .indication(
+                interactionSource,
+                LocalIndication.current
+            )
+            .pointerInput(true) {
+                detectTapGestures(onLongPress = {
+                    isShowMenu = true
+                }, onPress = {
+                    val press = PressInteraction.Press(
+                        it
+                    )
+                    interactionSource.emit(
                         press
                     )
-                )
-            })
-        }
-        .padding(
-            8.dp
-        ),
+                    tryAwaitRelease()
+                    interactionSource.emit(
+                        PressInteraction.Release(
+                            press
+                        )
+                    )
+                })
+            }
+            .padding(
+                8.dp
+            ),
         icon = icon,
         iconModifier = iconModifier,
         iconDescription = iconDescription,
         content = content,
         endContent = {
-            Icon(modifier = Modifier
-                .clip(
-                    MaterialTheme.shapes.large
-                )
-                .clickable {
-                    isShowMenu = true
-                }
-                .padding(4.dp),
+            Icon(
+                modifier = Modifier
+                    .clip(
+                        MaterialTheme.shapes.large
+                    )
+                    .clickable {
+                        isShowMenu = true
+                    }
+                    .padding(4.dp),
                 imageVector = Icons.Default.MoreVert,
                 contentDescription = "",
-                tint = MaterialTheme.colorScheme.onSurface,)
+                tint = MaterialTheme.colorScheme.onSurface,
+            )
             CustomDropDownMenu(pressOffset = pressOffset,
                 menuItems = menuItems,
                 isShowMenu = isShowMenu,
                 onClose = { isShowMenu = false })
-        },)
+        },
+    )
 }
 
 
@@ -237,9 +242,7 @@ fun CustomStickyHeader(
     textStyle: TextStyle
 ) {
     Column(
-        modifier = modifier.background(
-            MaterialTheme.colorScheme.background
-        )
+        modifier = modifier
     ) {
         Text(
             text = title,
@@ -272,9 +275,13 @@ fun TypeRadioButton(
     radioButtons: List<ActionWithName>,
     textStyle: TextStyle = MaterialTheme.typography.titleLarge,
     barHeight: Dp = 35.dp,
-    ) {
+) {
     Row(
-        modifier = modifier.fillMaxWidth().height(barHeight),
+        modifier = modifier
+            .fillMaxWidth()
+            .height(
+                barHeight
+            ),
         verticalAlignment = Alignment.CenterVertically
     ) {
         radioButtons.forEachIndexed { index, button ->
@@ -327,21 +334,19 @@ fun ChooseIcon(
     selectedIcon: Int,
     icons: List<SavingsIcon>,
 ) {
-    var selectedIcon by remember {
-        mutableIntStateOf(
-            selectedIcon
-        )
-    }
     LazyRow(//change to lazy horizontal grid
-        modifier = modifier.background(
-            MaterialTheme.colorScheme.background
-        )
+        modifier = modifier
+            .clip(
+                shape = MaterialTheme.shapes.medium
+            )
+            .background(
+                MaterialTheme.colorScheme.background
+            )
     ) {
         items(icons) { icon ->
             Box(modifier = Modifier
                 .clickable {
                     onClick(icon)
-                    selectedIcon = icon.image
                 }
                 .clip(
                     shape = MaterialTheme.shapes.medium
@@ -440,6 +445,9 @@ fun CustomDropDownMenu(
 
 data class ActionWithName(
     val name: String, val action: () -> Unit
+)
+data class ValueWithName<T>(
+    val name: String, val value: T
 )
 
 @Composable

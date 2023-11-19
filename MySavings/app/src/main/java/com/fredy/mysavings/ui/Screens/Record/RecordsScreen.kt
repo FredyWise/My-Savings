@@ -13,10 +13,18 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.fredy.mysavings.Data.BalanceItem
+import com.fredy.mysavings.Data.RoomDatabase.Enum.FilterType
+import com.fredy.mysavings.Data.formatDate
 import com.fredy.mysavings.Data.formatDateTime
+import com.fredy.mysavings.Data.formatRangeOfDate
+import com.fredy.mysavings.ViewModel.FilterState
 import com.fredy.mysavings.ViewModel.RecordViewModel
 import com.fredy.mysavings.ui.NavigationComponent.Navigation.NavigationRoute
 import com.fredy.mysavings.ui.NavigationComponent.Navigation.navigateSingleTopTo
+import com.fredy.mysavings.ui.Screens.ValueWithName
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.temporal.TemporalAdjusters
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -30,6 +38,13 @@ fun RecordsScreen(
     Column(
         modifier = modifier,
     ) {
+        if (state.isChoosingFilter) {
+            FilterDialog(
+                title = "DisplayOption",
+                selectedName = state.filterType.name,
+                onEvent = viewModel::onEvent,
+            )
+        }
         state.trueRecord?.let {
             RecordDialog(trueRecord = it,
                 onEvent = viewModel::onEvent,
@@ -41,7 +56,7 @@ fun RecordsScreen(
         }
         DisplayBar(
             onEvent = viewModel::onEvent,
-            selectedDate = formatDateTime(state.selectedDate)
+            selectedDate = formatRangeOfDate(state.chosenDate,state.filterType)
         )
         BalanceBar(
             modifier = Modifier

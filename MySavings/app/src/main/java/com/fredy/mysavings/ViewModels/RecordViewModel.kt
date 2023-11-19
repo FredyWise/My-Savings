@@ -1,6 +1,5 @@
 package com.fredy.mysavings.ViewModel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fredy.mysavings.Data.RoomDatabase.Dao.TrueRecord
@@ -14,11 +13,15 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.temporal.TemporalAdjusters
 
 class RecordViewModel(
     private val recordRepository: RecordRepositoryImpl = Graph.recordRepository,
@@ -27,8 +30,40 @@ class RecordViewModel(
         SortType.DESCENDING
     )
 
-    private val _filterType = MutableStateFlow(
-        FilterType.Monthly
+    private val _filterState = MutableStateFlow(
+        FilterState()
+    )
+
+    private val _records = _filterState.flatMapLatest { filterType ->
+        when (filterType.filterType) {
+            FilterType.Daily -> recordRepository.getUserRecordsFromSpecificTime(
+                filterType.start, filterType.end
+            )
+
+            FilterType.Weekly -> recordRepository.getUserRecordsFromSpecificTime(
+                filterType.start, filterType.end
+            )
+
+            FilterType.Monthly -> recordRepository.getUserRecordsFromSpecificTime(
+                filterType.start, filterType.end
+            )
+
+            FilterType.Per3Months -> recordRepository.getUserRecordsFromSpecificTime(
+                filterType.start, filterType.end
+            )
+
+            FilterType.Per6Months -> recordRepository.getUserRecordsFromSpecificTime(
+                filterType.start, filterType.end
+            )
+
+            FilterType.Yearly -> recordRepository.getUserRecordsFromSpecificTime(
+                filterType.start, filterType.end
+            )
+        }
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(),
+        emptyList()
     )
 
     private val _totalRecordBalance: StateFlow<Double?> = recordRepository.getUserTotalRecordBalance().stateIn(
@@ -74,12 +109,6 @@ class RecordViewModel(
         BalanceBar()
     )
 
-    private val _records = recordRepository.getUserRecordsOrderedDescending().stateIn(
-        viewModelScope,
-        SharingStarted.WhileSubscribed(),
-        emptyList()
-    )
-
     private val _state = MutableStateFlow(
         RecordState()
     )
@@ -87,15 +116,18 @@ class RecordViewModel(
     val state = combine(
         _state,
         _sortType,
+        _filterState,
         _records,
         balanceBar,
-    ) { state, sortType, records, balanceBar ->
+    ) { state, sortType, filterType, records, balanceBar ->
         state.copy(
-            trueRecords = records.groupBy { it.record.recordDateTime.toLocalDate()
-            }.toSortedMap(
-                if(sortType == SortType.DESCENDING) {
-                    compareByDescending { it }
-                } else compareBy { it }).map {
+            trueRecords = records.groupBy {
+                it.record.recordDateTime.toLocalDate()
+            }.toSortedMap(if (sortType == SortType.DESCENDING) {
+                compareByDescending { it }
+            } else {
+                compareBy { it }
+            }).map {
                 RecordMap(
                     recordDate = it.key,
                     records = it.value
@@ -131,6 +163,22 @@ class RecordViewModel(
                 }
             }
 
+            is RecordsEvent.ShowFilterDialog -> {
+                _state.update {
+                    it.copy(
+                        isChoosingFilter = true,
+                    )
+                }
+            }
+
+            is RecordsEvent.HideFilterDialog -> {
+                _state.update {
+                    it.copy(
+                        isChoosingFilter = false,
+                    )
+                }
+            }
+
             is RecordsEvent.DeleteRecord -> {
                 viewModelScope.launch {
                     recordRepository.deleteRecordItem(
@@ -139,15 +187,216 @@ class RecordViewModel(
                 }
             }
 
-            is RecordsEvent.SortRecord -> {
-                _filterType.value = event.filterType
+            is RecordsEvent.FilterRecord -> {
+                _state.update {
+                    it.copy(
+                        filterType = event.filterType
+                    )
+                }
+                updateFilterState(event.filterType)
+            }
+
+            is RecordsEvent.ShowNextList -> {
+                when (state.value.filterType) {
+                    FilterType.Daily -> _state.update {
+                        it.copy(
+                            chosenDate = it.chosenDate.plusDays(
+                                1
+                            ),
+                        )
+                    }
+
+                    FilterType.Weekly -> _state.update {
+                        it.copy(
+                            chosenDate = it.chosenDate.plusWeeks(
+                                1
+                            ),
+                        )
+                    }
+
+                    FilterType.Monthly -> _state.update {
+                        it.copy(
+                            chosenDate = it.chosenDate.plusMonths(
+                                1
+                            ),
+                        )
+                    }
+
+                    FilterType.Per3Months -> _state.update {
+                        it.copy(
+                            chosenDate = it.chosenDate.plusMonths(
+                                3
+                            ),
+                        )
+                    }
+
+                    FilterType.Per6Months -> _state.update {
+                        it.copy(
+                            chosenDate = it.chosenDate.plusMonths(
+                                6
+                            ),
+                        )
+                    }
+
+                    FilterType.Yearly -> _state.update {
+                        it.copy(
+                            chosenDate = it.chosenDate.plusYears(
+                                1
+                            ),
+                        )
+                    }
+                }
+                updateFilterState(state.value.filterType)
+            }
+
+            is RecordsEvent.ShowPreviousList -> {
+                when (state.value.filterType) {
+                    FilterType.Daily -> _state.update {
+                        it.copy(
+                            chosenDate = it.chosenDate.minusDays(
+                                1
+                            ),
+                        )
+                    }
+
+                    FilterType.Weekly -> _state.update {
+                        it.copy(
+                            chosenDate = it.chosenDate.minusWeeks(
+                                1
+                            ),
+                        )
+                    }
+
+                    FilterType.Monthly -> _state.update {
+                        it.copy(
+                            chosenDate = it.chosenDate.minusMonths(
+                                1
+                            ),
+                        )
+                    }
+
+                    FilterType.Per3Months -> _state.update {
+                        it.copy(
+                            chosenDate = it.chosenDate.minusMonths(
+                                3
+                            ),
+                        )
+                    }
+
+                    FilterType.Per6Months -> _state.update {
+                        it.copy(
+                            chosenDate = it.chosenDate.minusMonths(
+                                6
+                            ),
+                        )
+                    }
+
+                    FilterType.Yearly -> _state.update {
+                        it.copy(
+                            chosenDate = it.chosenDate.minusYears(
+                                1
+                            ),
+                        )
+                    }
+                }
+                updateFilterState(state.value.filterType)
             }
 
 //            is RecordsEvent.SortRecord -> {
 //                _sortType.value = event.sortType
 //            }
         }
+    }
 
+    private fun updateFilterState(event: FilterType){
+        when (event) {
+            FilterType.Daily -> _filterState.value = FilterState(
+                FilterType.Daily,
+                LocalDateTime.of(
+                    state.value.chosenDate,
+                    LocalTime.MIN
+                ),
+                LocalDateTime.of(
+                    state.value.chosenDate,
+                    LocalTime.MAX
+                )
+            )
+
+
+            FilterType.Weekly -> _filterState.value = FilterState(
+                FilterType.Weekly,
+                LocalDateTime.of(
+                    state.value.chosenDate.with(
+                        TemporalAdjusters.previousOrSame(
+                            DayOfWeek.MONDAY
+                        )
+                    ), LocalTime.MIN
+                ),
+                LocalDateTime.of(
+                    state.value.chosenDate.with(
+                        TemporalAdjusters.previousOrSame(
+                            DayOfWeek.SUNDAY
+                        )
+                    ), LocalTime.MAX
+                )
+            )
+
+            FilterType.Monthly -> _filterState.value = FilterState(
+                FilterType.Monthly,
+                LocalDateTime.of(
+                    state.value.chosenDate.with(
+                        TemporalAdjusters.firstDayOfMonth()
+                    ), LocalTime.MIN
+                ),
+                LocalDateTime.of(
+                    state.value.chosenDate.with(
+                        TemporalAdjusters.lastDayOfMonth()
+                    ), LocalTime.MAX
+                )
+            )
+
+            FilterType.Per3Months -> _filterState.value = FilterState(
+                FilterType.Monthly,
+                LocalDateTime.of(
+                    state.value.chosenDate.with(
+                        TemporalAdjusters.firstDayOfMonth()
+                    ), LocalTime.MIN
+                ),
+                LocalDateTime.of(
+                    state.value.chosenDate.plusMonths(2).with(
+                        TemporalAdjusters.lastDayOfMonth()
+                    ), LocalTime.MAX
+                )
+            )
+
+            FilterType.Per6Months -> _filterState.value = FilterState(
+                FilterType.Monthly,
+                LocalDateTime.of(
+                    state.value.chosenDate.with(
+                        TemporalAdjusters.firstDayOfMonth()
+                    ), LocalTime.MIN
+                ),
+                LocalDateTime.of(
+                    state.value.chosenDate.plusMonths(5).with(
+                        TemporalAdjusters.lastDayOfMonth()
+                    ), LocalTime.MAX
+                )
+            )
+
+            FilterType.Yearly -> _filterState.value = FilterState(
+                FilterType.Yearly,
+                LocalDateTime.of(
+                    state.value.chosenDate.with(
+                        TemporalAdjusters.firstDayOfYear()
+                    ), LocalTime.MIN
+                ),
+                LocalDateTime.of(
+                    state.value.chosenDate.with(
+                        TemporalAdjusters.lastDayOfYear()
+                    ), LocalTime.MAX
+                )
+            )
+        }
     }
 }
 
@@ -157,8 +406,9 @@ data class RecordState(
     val totalExpense: Double = 0.0,
     val totalIncome: Double = 0.0,
     val totalAll: Double = 0.0,
-    val selectedDate: LocalDateTime = LocalDateTime.now(),
     val sortType: SortType = SortType.ASCENDING,
+    val chosenDate: LocalDate = LocalDate.now(),
+    val isChoosingFilter: Boolean = false,
     val filterType: FilterType = FilterType.Monthly
 )
 
@@ -171,4 +421,18 @@ data class BalanceBar(
     val expense: Double = 0.0,
     val income: Double = 0.0,
     val balance: Double = 0.0,
+)
+
+data class FilterState(
+    val filterType: FilterType = FilterType.Monthly,
+    val start: LocalDateTime = LocalDateTime.of(
+        LocalDate.now().with(
+            TemporalAdjusters.firstDayOfMonth()
+        ), LocalTime.MIN
+    ),
+    val end: LocalDateTime = LocalDateTime.of(
+        LocalDate.now().with(
+            TemporalAdjusters.lastDayOfMonth()
+        ), LocalTime.MIN
+    ),
 )

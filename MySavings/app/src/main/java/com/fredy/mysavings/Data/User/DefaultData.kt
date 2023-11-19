@@ -29,20 +29,3 @@ val defaultColors = listOf(
     toColor(Color.parseColor("#8BC34A")), // Light Green
     toColor(Color.parseColor("#F44336"))  // Red
 )
-
-//@Composable
-fun formatDate(date: LocalDate): String {
-    return DateTimeFormatter.ofPattern(
-        "MMM dd, EEEE"
-    ).format(date)
-}
-
-fun formatTime(time: LocalTime): String {
-    return DateTimeFormatter.ofPattern(
-        "hh : mm"
-    ).format(time)
-}
-fun <E> List<E>.extractProportions(selector: (E) -> Float): List<Float> {
-    val total = this.sumOf { selector(it).toDouble() }
-    return this.map { (selector(it) / total).toFloat() }
-}

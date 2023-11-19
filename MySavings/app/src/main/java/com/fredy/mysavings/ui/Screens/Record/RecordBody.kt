@@ -52,6 +52,9 @@ fun RecordBody(
         trueRecords.forEach { trueRecord ->
             stickyHeader {
                 CustomStickyHeader(
+                    modifier = Modifier.background(
+                        MaterialTheme.colorScheme.background
+                    ),
                     title = formatDay(
                         trueRecord.recordDate
                     ),

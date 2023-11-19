@@ -2,19 +2,15 @@ package com.fredy.mysavings.ui.Screens.Record
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.KeyboardArrowRight
-import androidx.compose.material.icons.filled.Sort
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -24,9 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.fredy.mysavings.Data.RoomDatabase.Enum.FilterType
 import com.fredy.mysavings.Data.RoomDatabase.Event.RecordsEvent
-import com.fredy.mysavings.ui.Screens.ActionWithName
 
 @Composable
 fun DisplayBar(
@@ -41,7 +35,9 @@ fun DisplayBar(
             .background(
                 MaterialTheme.colorScheme.surface
             )
-            .padding(horizontal =4.dp, vertical = 8.dp),
+            .padding(
+                horizontal = 4.dp, vertical = 8.dp
+            ),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -52,7 +48,7 @@ fun DisplayBar(
 
                 }
                 .padding(4.dp),
-            imageVector = Icons.Default.Sort,
+            imageVector = Icons.Outlined.Info,
             contentDescription = "",
             tint = tint,
         )
@@ -60,7 +56,7 @@ fun DisplayBar(
             modifier = Modifier
                 .clip(MaterialTheme.shapes.extraLarge)
                 .clickable {
-
+                    onEvent(RecordsEvent.ShowPreviousList)
                 }
                 .padding(4.dp),
             imageVector = Icons.Default.KeyboardArrowLeft,
@@ -75,7 +71,7 @@ fun DisplayBar(
             modifier = Modifier
                 .clip(MaterialTheme.shapes.extraLarge)
                 .clickable {
-
+                    onEvent(RecordsEvent.ShowNextList)
                 }
                 .padding(4.dp),
             imageVector = Icons.Default.KeyboardArrowRight,
@@ -86,7 +82,7 @@ fun DisplayBar(
             modifier = Modifier
                 .clip(MaterialTheme.shapes.extraLarge)
                 .clickable {
-
+                    onEvent(RecordsEvent.ShowFilterDialog)
                 }
                 .padding(4.dp),
             imageVector = Icons.Default.FilterList,
@@ -97,40 +93,3 @@ fun DisplayBar(
 
 }
 
-@Composable
-fun FilterDialog(
-
-    menuItems: List<ActionWithName>,
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .horizontalScroll(
-                rememberScrollState()
-            ),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        FilterType.values().forEach { filterType ->
-            Row(
-                modifier = Modifier.clickable {
-//                    onEvent(
-//                        RecordsEvent.SortRecord(
-//                            filterType
-//                        )
-//                    )
-                },
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-//                RadioButton(selected = displayOption == filterType,
-//                    onClick = {
-//                        onEvent(
-//                            RecordsEvent.SortRecord(
-//                                filterType
-//                            )
-//                        )
-//                    })
-                Text(text = filterType.name)
-            }
-        }
-    }
-}

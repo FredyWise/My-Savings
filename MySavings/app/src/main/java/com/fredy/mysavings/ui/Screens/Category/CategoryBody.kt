@@ -33,6 +33,9 @@ fun CategoryBody(
             if (!isTransfer(categoryMap.categoryType)) {
                 stickyHeader {
                     CustomStickyHeader(
+                        modifier = Modifier.background(
+                            MaterialTheme.colorScheme.background
+                        ),
                         title = categoryMap.categoryType.name + " Categories",
                         textStyle = MaterialTheme.typography.titleLarge
                     )
