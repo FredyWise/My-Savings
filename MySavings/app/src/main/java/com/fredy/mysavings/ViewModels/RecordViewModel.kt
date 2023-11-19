@@ -7,8 +7,8 @@ import com.fredy.mysavings.Data.RoomDatabase.Enum.FilterType
 import com.fredy.mysavings.Data.RoomDatabase.Enum.RecordType
 import com.fredy.mysavings.Data.RoomDatabase.Enum.SortType
 import com.fredy.mysavings.Data.RoomDatabase.Event.RecordsEvent
-import com.fredy.mysavings.ui.Repository.Graph
-import com.fredy.mysavings.ui.Repository.RecordRepositoryImpl
+import com.fredy.mysavings.DI.AppModuleImpl
+import com.fredy.mysavings.Repository.RecordRepositoryImpl
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -24,7 +24,7 @@ import java.time.LocalTime
 import java.time.temporal.TemporalAdjusters
 
 class RecordViewModel(
-    private val recordRepository: RecordRepositoryImpl = Graph.recordRepository,
+    private val recordRepository: RecordRepositoryImpl = AppModuleImpl.recordRepository,
 ): ViewModel() {
     private val _sortType = MutableStateFlow(
         SortType.DESCENDING

@@ -1,15 +1,16 @@
 package com.fredy.mysavings
 
-import androidx.compose.runtime.Composable
-import androidx.navigation.compose.rememberNavController
-import com.fredy.mysavings.ui.NavigationComponent.Navigation.NavGraphRoot
-import com.fredy.mysavings.ui.theme.MySavingsTheme
+import android.app.Application
+import com.fredy.mysavings.DI.AppModule
+import com.fredy.mysavings.DI.AppModuleImpl
 
-@Composable
-fun MySavingsApp(
-) {
-    MySavingsTheme {
-        val navController = rememberNavController()
-        NavGraphRoot(navController)
-    }
-}
+//class MySavingsApp: Application() {
+//
+//    companion object {
+//        lateinit var appModule: AppModule
+//    }
+//    override fun onCreate() {
+//        super.onCreate()
+//        appModule = AppModuleImpl(this)
+//    }
+//}

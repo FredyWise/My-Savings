@@ -49,9 +49,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import com.fredy.mysavings.Data.BalanceColor
-import com.fredy.mysavings.Data.SavingsIcon
-import com.fredy.mysavings.Data.formatBalanceAmount
+import com.fredy.mysavings.Util.BalanceColor
+import com.fredy.mysavings.Util.SavingsIcon
+import com.fredy.mysavings.Util.formatBalanceAmount
 
 @Composable
 fun SimpleAddDialog(

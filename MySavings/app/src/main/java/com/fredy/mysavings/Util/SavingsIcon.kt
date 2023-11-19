@@ -1,7 +1,6 @@
-package com.fredy.mysavings.Data
+package com.fredy.mysavings.Util
 
 import com.fredy.mysavings.R
-
 
 data class SavingsIcon(
     val image: Int,
@@ -19,4 +18,4 @@ val categoryIcons = listOf(
     SavingsIcon(R.drawable.ic_visa, "Visa"),
 )
 
-val transferIcon = SavingsIcon(R.drawable.ic_exchange, "Transfer")
+//val transferIcon = SavingsIcon(R.drawable.ic_exchange, "Transfer")

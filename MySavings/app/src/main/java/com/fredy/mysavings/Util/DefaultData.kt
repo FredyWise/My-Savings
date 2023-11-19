@@ -1,4 +1,4 @@
-package com.fredy.mysavings.Data.User
+package com.fredy.mysavings.Util
 
 import android.graphics.Color
 import androidx.compose.runtime.Composable

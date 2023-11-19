@@ -25,12 +25,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import com.fredy.mysavings.Data.BalanceColor
+import com.fredy.mysavings.Util.BalanceColor
 import com.fredy.mysavings.Data.RoomDatabase.Dao.TrueRecord
 import com.fredy.mysavings.Data.RoomDatabase.Enum.RecordType
 import com.fredy.mysavings.Data.RoomDatabase.Event.RecordsEvent
-import com.fredy.mysavings.Data.formatDateTime
-import com.fredy.mysavings.Data.isTransfer
+import com.fredy.mysavings.Util.formatDateTime
+import com.fredy.mysavings.Util.isTransfer
 import com.fredy.mysavings.ui.Screens.BalanceItem
 import com.fredy.mysavings.ui.Screens.SimpleEntityItem
 

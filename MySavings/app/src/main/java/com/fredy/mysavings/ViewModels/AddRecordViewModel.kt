@@ -14,11 +14,11 @@ import com.fredy.mysavings.Data.RoomDatabase.Enum.RecordType
 import com.fredy.mysavings.Data.RoomDatabase.Event.AddRecordEvent
 import com.fredy.mysavings.Data.RoomDatabase.Event.CalcEvent
 import com.fredy.mysavings.Data.RoomDatabase.Event.CalcOperation
-import com.fredy.mysavings.Data.isExpense
-import com.fredy.mysavings.Data.isIncome
-import com.fredy.mysavings.Data.isTransfer
-import com.fredy.mysavings.ui.Repository.Graph
-import com.fredy.mysavings.ui.Repository.RecordRepository
+import com.fredy.mysavings.Util.isExpense
+import com.fredy.mysavings.Util.isIncome
+import com.fredy.mysavings.Util.isTransfer
+import com.fredy.mysavings.DI.AppModuleImpl
+import com.fredy.mysavings.Repository.RecordRepository
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -27,7 +27,7 @@ import kotlin.math.absoluteValue
 
 class AddRecordViewModel(
     private val itemId: Int,
-    private val recordRepository: RecordRepository = Graph.recordRepository,
+    private val recordRepository: RecordRepository = AppModuleImpl.recordRepository,
 ): ViewModel() {
     var state by mutableStateOf(AddRecordState())
     var calcState by mutableStateOf(CalcState())

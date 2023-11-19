@@ -1,4 +1,4 @@
-package com.fredy.mysavings.Data
+package com.fredy.mysavings.Util
 
 import com.fredy.mysavings.Data.RoomDatabase.Enum.FilterType
 import java.time.DayOfWeek

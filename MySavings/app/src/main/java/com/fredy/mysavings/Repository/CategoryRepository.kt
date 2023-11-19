@@ -1,4 +1,4 @@
-package com.fredy.mysavings.ui.Repository
+package com.fredy.mysavings.Repository
 
 import com.fredy.mysavings.Data.RoomDatabase.Dao.CategoryDao
 import com.fredy.mysavings.Data.RoomDatabase.Entity.Category

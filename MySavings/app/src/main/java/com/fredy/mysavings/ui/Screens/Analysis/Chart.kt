@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -29,9 +28,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import com.fredy.mysavings.Data.User.defaultColors
-import com.fredy.mysavings.Data.extractProportions
-import com.fredy.mysavings.Data.formatAmount
+import com.fredy.mysavings.Util.defaultColors
+import com.fredy.mysavings.Util.extractProportions
+import com.fredy.mysavings.Util.formatAmount
 
 
 @Composable

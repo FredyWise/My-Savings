@@ -1,27 +1,25 @@
 package com.fredy.mysavings.ViewModel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fredy.mysavings.Data.RoomDatabase.Entity.Account
 import com.fredy.mysavings.Data.RoomDatabase.Enum.RecordType
 import com.fredy.mysavings.Data.RoomDatabase.Enum.SortType
 import com.fredy.mysavings.Data.RoomDatabase.Event.AccountEvent
-import com.fredy.mysavings.ui.Repository.AccountRepositoryImpl
-import com.fredy.mysavings.ui.Repository.Graph
-import com.fredy.mysavings.ui.Repository.RecordRepositoryImpl
+import com.fredy.mysavings.Repository.AccountRepositoryImpl
+import com.fredy.mysavings.DI.AppModuleImpl
+import com.fredy.mysavings.Repository.RecordRepositoryImpl
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class AccountViewModel(
-    private val accountRepository: AccountRepositoryImpl = Graph.accountRepository,
-    private val recordRepository: RecordRepositoryImpl = Graph.recordRepository,
+    private val accountRepository: AccountRepositoryImpl = AppModuleImpl.accountRepository,
+    private val recordRepository: RecordRepositoryImpl = AppModuleImpl.recordRepository,
 ): ViewModel() {
     private val _sortType = MutableStateFlow(
         SortType.ASCENDING

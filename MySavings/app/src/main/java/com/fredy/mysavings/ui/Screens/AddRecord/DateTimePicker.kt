@@ -17,8 +17,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.Data.RoomDatabase.Event.AddRecordEvent
-import com.fredy.mysavings.Data.formatDate
-import com.fredy.mysavings.Data.formatTime
+import com.fredy.mysavings.Util.formatDate
+import com.fredy.mysavings.Util.formatTime
 import com.fredy.mysavings.ViewModel.AddRecordState
 import com.fredy.mysavings.ui.Screens.SimpleButton
 import com.vanpra.composematerialdialogs.MaterialDialog

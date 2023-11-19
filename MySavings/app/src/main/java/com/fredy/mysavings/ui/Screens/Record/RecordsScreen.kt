@@ -12,19 +12,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.fredy.mysavings.Data.BalanceItem
-import com.fredy.mysavings.Data.RoomDatabase.Enum.FilterType
-import com.fredy.mysavings.Data.formatDate
-import com.fredy.mysavings.Data.formatDateTime
-import com.fredy.mysavings.Data.formatRangeOfDate
-import com.fredy.mysavings.ViewModel.FilterState
+import com.fredy.mysavings.Util.BalanceItem
+import com.fredy.mysavings.Util.formatRangeOfDate
 import com.fredy.mysavings.ViewModel.RecordViewModel
 import com.fredy.mysavings.ui.NavigationComponent.Navigation.NavigationRoute
 import com.fredy.mysavings.ui.NavigationComponent.Navigation.navigateSingleTopTo
-import com.fredy.mysavings.ui.Screens.ValueWithName
-import java.time.LocalDateTime
-import java.time.LocalTime
-import java.time.temporal.TemporalAdjusters
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")

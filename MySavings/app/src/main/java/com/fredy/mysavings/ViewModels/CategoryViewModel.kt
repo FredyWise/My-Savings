@@ -7,8 +7,8 @@ import com.fredy.mysavings.Data.RoomDatabase.Enum.RecordType
 import com.fredy.mysavings.Data.RoomDatabase.Enum.SortType
 import com.fredy.mysavings.Data.RoomDatabase.Event.CategoryEvent
 import com.fredy.mysavings.R
-import com.fredy.mysavings.ui.Repository.CategoryRepositoryImpl
-import com.fredy.mysavings.ui.Repository.Graph
+import com.fredy.mysavings.Repository.CategoryRepositoryImpl
+import com.fredy.mysavings.DI.AppModuleImpl
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class CategoryViewModel(
-    private val categoryRepository: CategoryRepositoryImpl = Graph.categoryRepository,
+    private val categoryRepository: CategoryRepositoryImpl = AppModuleImpl.categoryRepository,
 ): ViewModel() {
     private val _sortType = MutableStateFlow(
         SortType.ASCENDING

@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("kotlin-kapt")
+//    id("dagger.hilt.android.plugin")
 }
 
 android {
@@ -72,7 +73,6 @@ dependencies {
     implementation("com.google.android.material:material:1.10.0")
     implementation("androidx.compose.material:material-icons-extended")
 
-
     //    View Model lifecycle
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
 
@@ -81,8 +81,7 @@ dependencies {
     implementation("androidx.room:room-ktx:$room_version")
     kapt("androidx.room:room-compiler:$room_version")
 
-
-    //    Date And Time
+    //    Date And Time Dialog
     implementation("io.github.vanpra.compose-material-dialogs:datetime:0.9.0")
 
     //    Navigation
@@ -97,4 +96,15 @@ dependencies {
 
     // Compose UI Tooling
     implementation("androidx.compose.ui:ui-tooling:$compose_version")
+
+    // Retrofit
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.okhttp3:okhttp:4.9.0")
+
+//    //Dagger - Hilt
+//    implementation("com.google.dagger:hilt-android:2.45")
+//    kapt("com.google.dagger:hilt-android-compiler:2.45")
+//    implementation("androidx.hilt:hilt-lifecycle-viewmodel:1.0.0")
+//    kapt("androidx.hilt:hilt-compiler:1.0.0")
 }
