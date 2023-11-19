@@ -31,8 +31,6 @@ interface AppModule {
 }
 
 object AppModuleImpl : AppModule {
-    private lateinit var savingsDatabase: SavingsDatabase
-
     override val currencyApi: CurrencyApi by lazy {
         Retrofit.Builder()
             .baseUrl(BASE_URL)
@@ -57,6 +55,8 @@ object AppModuleImpl : AppModule {
                 get() = Dispatchers.Unconfined
         }
     }
+
+    private lateinit var savingsDatabase: SavingsDatabase
 
     override val recordRepository by lazy {
         RecordRepositoryImpl(savingsDatabase.recordDao())
