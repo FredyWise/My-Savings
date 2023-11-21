@@ -4,8 +4,10 @@ import com.fredy.mysavings.Data.RoomDatabase.Dao.RecordDao
 import com.fredy.mysavings.Data.RoomDatabase.Dao.TrueRecord
 import com.fredy.mysavings.Data.RoomDatabase.Entity.Record
 import com.fredy.mysavings.Data.RoomDatabase.Enum.RecordType
+import com.fredy.mysavings.Data.RoomDatabase.SavingsDatabase
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDateTime
+import javax.inject.Inject
 
 
 interface RecordRepository {
@@ -31,37 +33,37 @@ interface RecordRepository {
     fun getUserTotalRecordBalance(): Flow<Double>
 }
 
-class RecordRepositoryImpl(
-    private val recordDao: RecordDao,
+class RecordRepositoryImpl @Inject constructor(
+    private val savingsDatabase: SavingsDatabase,
 ): RecordRepository {
     override suspend fun upsertRecordItem(
         recordItem: Record
     ) {
-        recordDao.upsertRecordItem(recordItem)
+        savingsDatabase.recordDao.upsertRecordItem(recordItem)
     }
 
     override suspend fun deleteRecordItem(
         recordItem: Record
     ) {
-        recordDao.deleteRecordItem(recordItem)
+        savingsDatabase.recordDao.deleteRecordItem(recordItem)
     }
 
     override fun getRecordById(id: Int): Flow<TrueRecord> {
-        return recordDao.getRecordById(id)
+        return savingsDatabase.recordDao.getRecordById(id)
     }
 
     override fun getUserRecordsOrderedAscending(): Flow<List<Record>> {
-        return recordDao.getUserRecordsOrderedAscending()
+        return savingsDatabase.recordDao.getUserRecordsOrderedAscending()
     }
 
     override fun getUserRecordsOrderedDescending(): Flow<List<TrueRecord>> {
-        return recordDao.getUserRecordsOrderedDescending()
+        return savingsDatabase.recordDao.getUserRecordsOrderedDescending()
     }
 
     override fun getUserRecordsFromSpecificTime(
         start: LocalDateTime, end: LocalDateTime
     ): Flow<List<TrueRecord>> {
-        return recordDao.getUserRecordsFromSpecificTime(
+        return savingsDatabase.recordDao.getUserRecordsFromSpecificTime(
             start, end
         )
     }
@@ -69,7 +71,7 @@ class RecordRepositoryImpl(
     override fun getUserCategoryRecordsOrderedByDateTime(
         categoryId: Int,
     ): Flow<List<TrueRecord>> {
-        return recordDao.getUserCategoryRecordsOrderedByDateTime(
+        return savingsDatabase.recordDao.getUserCategoryRecordsOrderedByDateTime(
             categoryId
         )
     }
@@ -77,7 +79,7 @@ class RecordRepositoryImpl(
     override fun getUserAccountRecordsOrderedByDateTime(
         accountId: Int,
     ): Flow<List<TrueRecord>> {
-        return recordDao.getUserAccountRecordsOrderedByDateTime(
+        return savingsDatabase.recordDao.getUserAccountRecordsOrderedByDateTime(
             accountId
         )
     }
@@ -85,7 +87,7 @@ class RecordRepositoryImpl(
     override fun getUserTotalAmountByType(
         recordType: RecordType
     ): Flow<Double> {
-        return recordDao.getUserTotalAmountByType(
+        return savingsDatabase.recordDao.getUserTotalAmountByType(
             recordType
         )
     }
@@ -95,12 +97,12 @@ class RecordRepositoryImpl(
         start: Int,
         end: Int
     ): Flow<Double> {
-        return recordDao.getUserTotalAmountByTypeFromSpecificTime(
+        return savingsDatabase.recordDao.getUserTotalAmountByTypeFromSpecificTime(
             recordType, start, end
         )
     }
 
     override fun getUserTotalRecordBalance(): Flow<Double> {
-        return recordDao.getUserTotalRecordBalance()
+        return savingsDatabase.recordDao.getUserTotalRecordBalance()
     }
 }

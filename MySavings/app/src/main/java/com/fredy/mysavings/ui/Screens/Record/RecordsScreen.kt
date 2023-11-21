@@ -10,10 +10,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.fredy.mysavings.Data.RoomDatabase.Event.AddRecordEvent
 import com.fredy.mysavings.Util.BalanceItem
 import com.fredy.mysavings.Util.formatRangeOfDate
+import com.fredy.mysavings.ViewModel.AddRecordViewModel
 import com.fredy.mysavings.ViewModel.RecordViewModel
 import com.fredy.mysavings.ui.NavigationComponent.Navigation.NavigationRoute
 import com.fredy.mysavings.ui.NavigationComponent.Navigation.navigateSingleTopTo
@@ -24,7 +26,7 @@ import com.fredy.mysavings.ui.NavigationComponent.Navigation.navigateSingleTopTo
 fun RecordsScreen(
     modifier: Modifier = Modifier,
     rootNavController: NavHostController,
-    viewModel: RecordViewModel = viewModel()
+    viewModel: RecordViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsState()
     Column(
@@ -38,17 +40,22 @@ fun RecordsScreen(
             )
         }
         state.trueRecord?.let {
-            RecordDialog(trueRecord = it,
+            RecordDialog(
+                trueRecord = it,
                 onEvent = viewModel::onEvent,
                 onEdit = {
                     rootNavController.navigateSingleTopTo(
                         NavigationRoute.Add.route + "?id=" + it.record.recordId
                     )
-                })
+                },
+            )
         }
         DisplayBar(
             onEvent = viewModel::onEvent,
-            selectedDate = formatRangeOfDate(state.chosenDate,state.filterType)
+            selectedDate = formatRangeOfDate(
+                state.chosenDate,
+                state.filterType
+            )
         )
         BalanceBar(
             modifier = Modifier

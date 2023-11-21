@@ -3,12 +3,13 @@ package com.fredy.mysavings.Repository
 import com.fredy.mysavings.Data.APIs.CurrencyApi
 import com.fredy.mysavings.Data.APIs.CurrencyModels.CurrencyResponse
 import com.fredy.mysavings.Util.Resource
+import javax.inject.Inject
 
 interface CurrencyRepository {
     suspend fun getRates(base: String): Resource<CurrencyResponse>
 }
 
-class CurrencyRepositoryImpl(
+class CurrencyRepositoryImpl @Inject constructor(
     private val api: CurrencyApi
 ) : CurrencyRepository {
     override suspend fun getRates(base: String): Resource<CurrencyResponse> {

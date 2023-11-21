@@ -4,8 +4,12 @@ plugins {
     id("org.jetbrains.kotlin.android") version "1.8.10" apply false
 }
 
-//buildscript {
-//    dependencies {
-//        classpath("com.google.dagger:hilt-android-gradle-plugin:2.45")
+buildscript {
+//    ext{
+//        compose_ui_version = 1.4.0
 //    }
-//}
+    dependencies {
+        classpath("com.google.dagger:hilt-android-gradle-plugin:2.45")
+
+    }
+}

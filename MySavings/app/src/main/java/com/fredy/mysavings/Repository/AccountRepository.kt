@@ -2,7 +2,9 @@ package com.fredy.mysavings.Repository
 
 import com.fredy.mysavings.Data.RoomDatabase.Dao.AccountDao
 import com.fredy.mysavings.Data.RoomDatabase.Entity.Account
+import com.fredy.mysavings.Data.RoomDatabase.SavingsDatabase
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
 interface AccountRepository {
     suspend fun upsertAccount(account: Account)
@@ -13,24 +15,24 @@ interface AccountRepository {
 }
 
 
-class AccountRepositoryImpl(private val accountDao: AccountDao) : AccountRepository {
+class AccountRepositoryImpl @Inject constructor(private val savingsDatabase: SavingsDatabase) : AccountRepository {
     override suspend fun upsertAccount(account: Account) {
-        accountDao.upsertContact(account)
+        savingsDatabase.accountDao.upsertContact(account)
     }
 
     override suspend fun deleteAccount(account: Account) {
-        accountDao.deleteContact(account)
+        savingsDatabase.accountDao.deleteContact(account)
     }
 
     override fun getAccount(accountId: Int): Flow<Account> {
-        return accountDao.getAccount(accountId)
+        return savingsDatabase.accountDao.getAccount(accountId)
     }
 
     override fun getUserAccountOrderedByName(): Flow<List<Account>> {
-        return accountDao.getUserAccountOrderedByName()
+        return savingsDatabase.accountDao.getUserAccountOrderedByName()
     }
 
     override fun getUserAccountTotalBalance(): Flow<Double> {
-        return accountDao.getUserAccountTotalBalance()
+        return savingsDatabase.accountDao.getUserAccountTotalBalance()
     }
 }

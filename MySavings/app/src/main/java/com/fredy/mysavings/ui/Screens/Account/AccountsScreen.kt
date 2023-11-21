@@ -15,6 +15,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.fredy.mysavings.Data.RoomDatabase.Entity.Account
 import com.fredy.mysavings.Data.RoomDatabase.Event.AccountEvent
@@ -25,7 +26,7 @@ import com.fredy.mysavings.ui.Screens.SimpleButton
 @Composable
 fun AccountsScreen(
     modifier: Modifier = Modifier,
-    viewModel: AccountViewModel = viewModel()
+    viewModel: AccountViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
     Column(modifier = modifier) {

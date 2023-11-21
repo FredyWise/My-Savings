@@ -9,15 +9,19 @@ import com.fredy.mysavings.Data.RoomDatabase.Event.CategoryEvent
 import com.fredy.mysavings.R
 import com.fredy.mysavings.Repository.CategoryRepositoryImpl
 import com.fredy.mysavings.DI.AppModuleImpl
+import com.fredy.mysavings.Repository.CategoryRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class CategoryViewModel(
-    private val categoryRepository: CategoryRepositoryImpl = AppModuleImpl.categoryRepository,
+@HiltViewModel
+class CategoryViewModel @Inject constructor(
+    private val categoryRepository: CategoryRepository,
 ): ViewModel() {
     private val _sortType = MutableStateFlow(
         SortType.ASCENDING

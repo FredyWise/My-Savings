@@ -1,11 +1,13 @@
 package com.fredy.mysavings
 
 import android.app.Application
-import com.fredy.mysavings.DI.AppModule
-import com.fredy.mysavings.DI.AppModuleImpl
+//import com.fredy.mysavings.DI.AppModule
+//import com.fredy.mysavings.DI.AppModuleImpl
+import dagger.hilt.android.HiltAndroidApp
 
-//class MySavingsApp: Application() {
-//
+@HiltAndroidApp
+class MySavingsApp: Application()
+//{
 //    companion object {
 //        lateinit var appModule: AppModule
 //    }

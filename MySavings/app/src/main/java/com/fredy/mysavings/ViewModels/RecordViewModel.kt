@@ -8,10 +8,13 @@ import com.fredy.mysavings.Data.RoomDatabase.Enum.RecordType
 import com.fredy.mysavings.Data.RoomDatabase.Enum.SortType
 import com.fredy.mysavings.Data.RoomDatabase.Event.RecordsEvent
 import com.fredy.mysavings.DI.AppModuleImpl
+import com.fredy.mysavings.Repository.RecordRepository
 import com.fredy.mysavings.Repository.RecordRepositoryImpl
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
@@ -22,9 +25,13 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.temporal.TemporalAdjusters
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class RecordViewModel(
-    private val recordRepository: RecordRepositoryImpl = AppModuleImpl.recordRepository,
+
+@HiltViewModel
+class RecordViewModel @Inject constructor(
+    private val recordRepository: RecordRepository,
 ): ViewModel() {
     private val _sortType = MutableStateFlow(
         SortType.DESCENDING
@@ -302,9 +309,8 @@ class RecordViewModel(
                 updateFilterState(state.value.filterType)
             }
 
-//            is RecordsEvent.SortRecord -> {
-//                _sortType.value = event.sortType
-//            }
+
+
         }
     }
 

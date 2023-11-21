@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.Util.BalanceColor
 import com.fredy.mysavings.Data.RoomDatabase.Enum.RecordType
 import com.fredy.mysavings.Data.RoomDatabase.Event.RecordsEvent
+import com.fredy.mysavings.R
 import com.fredy.mysavings.Util.formatBalanceAmount
 import com.fredy.mysavings.Util.formatDay
 import com.fredy.mysavings.Util.isTransfer
@@ -62,18 +63,19 @@ fun RecordBody(
                         alpha = 0.4f
                     )
                 )
-                SimpleEntityItem(modifier = Modifier
-                    .background(
-                        backgroundColor
-                    )
-                    .padding(bottom = 5.dp)
-                    .clickable {
-                        onEvent(
-                            RecordsEvent.ShowDialog(
-                                item
-                            )
+                SimpleEntityItem(
+                    modifier = Modifier
+                        .background(
+                            backgroundColor
                         )
-                    },
+                        .padding(bottom = 5.dp)
+                        .clickable {
+                            onEvent(
+                                RecordsEvent.ShowDialog(
+                                    item
+                                )
+                            )
+                        },
                     icon = item.toCategory.categoryIcon,
                     iconModifier = Modifier
                         .size(
@@ -102,7 +104,8 @@ fun RecordBody(
                             ),
                             textAlign = TextAlign.End
                         )
-                    }) {
+                    },
+                ) {
                     Text(
                         text = if (isTransfer(item.record.recordType)) {
                             RecordType.Transfer.name

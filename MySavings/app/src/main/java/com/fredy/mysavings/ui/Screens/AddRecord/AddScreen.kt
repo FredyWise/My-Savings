@@ -25,18 +25,17 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.fredy.mysavings.Data.RoomDatabase.Entity.Account
 import com.fredy.mysavings.Data.RoomDatabase.Entity.Category
 import com.fredy.mysavings.Data.RoomDatabase.Enum.RecordType
 import com.fredy.mysavings.Data.RoomDatabase.Event.AccountEvent
 import com.fredy.mysavings.Data.RoomDatabase.Event.AddRecordEvent
 import com.fredy.mysavings.Data.RoomDatabase.Event.CategoryEvent
-import com.fredy.mysavings.Util.isTransfer
 import com.fredy.mysavings.R
+import com.fredy.mysavings.Util.isTransfer
 import com.fredy.mysavings.ViewModel.AccountViewModel
 import com.fredy.mysavings.ViewModel.AddRecordViewModel
-import com.fredy.mysavings.ViewModel.AddRecordViewModelFactory
 import com.fredy.mysavings.ViewModel.CategoryViewModel
 import com.fredy.mysavings.ui.Screens.Account.AccountAddDialog
 import com.fredy.mysavings.ui.Screens.ActionWithName
@@ -54,11 +53,9 @@ fun AddScreen(
     onBackground: Color = MaterialTheme.colorScheme.onBackground,
     id: Int,
     navigateUp: () -> Unit,
-    viewModel: AddRecordViewModel = viewModel(
-        factory = AddRecordViewModelFactory(id)
-    ),
-    categoryViewModel: CategoryViewModel = viewModel(),
-    accountViewModel: AccountViewModel = viewModel()
+    viewModel: AddRecordViewModel = hiltViewModel(),
+    categoryViewModel: CategoryViewModel = hiltViewModel(),
+    accountViewModel: AccountViewModel = hiltViewModel()
 ) {
     val state = viewModel.state
     val categoryState by categoryViewModel.state.collectAsState()
@@ -68,7 +65,9 @@ fun AddScreen(
     val scaffoldState = rememberBottomSheetScaffoldState()
     val scope = rememberCoroutineScope()
     var isLeft by remember { mutableStateOf(true) }
-
+    viewModel.onEvent(
+        AddRecordEvent.SetId(id)
+    )
     BottomSheetScaffold(
         scaffoldState = scaffoldState,
         sheetPeekHeight = 0.dp,
@@ -180,9 +179,19 @@ fun AddScreen(
                     onClick = {
                         viewModel.onEvent(
                             AddRecordEvent.SaveRecord {
-                                accountViewModel.onEvent(AccountEvent.UpdateAccountBalance(state.fromAccount))
-                                if (isTransfer(state.recordType)){
-                                    accountViewModel.onEvent(AccountEvent.UpdateAccountBalance(state.toAccount))
+                                accountViewModel.onEvent(
+                                    AccountEvent.UpdateAccountBalance(
+                                        state.fromAccount
+                                    )
+                                )
+                                if (isTransfer(
+                                        state.recordType
+                                    )) {
+                                    accountViewModel.onEvent(
+                                        AccountEvent.UpdateAccountBalance(
+                                            state.toAccount
+                                        )
+                                    )
                                 }
                                 navigateUp()
                             },

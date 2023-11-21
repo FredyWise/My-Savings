@@ -11,6 +11,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.fredy.mysavings.Data.RoomDatabase.Entity.Category
 import com.fredy.mysavings.Data.RoomDatabase.Event.CategoryEvent
@@ -21,7 +22,7 @@ import com.fredy.mysavings.ui.Screens.SimpleButton
 @Composable
 fun CategoriesScreen(
     modifier: Modifier = Modifier,
-    viewModel: CategoryViewModel = viewModel()
+    viewModel: CategoryViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
     Column(modifier = modifier) {

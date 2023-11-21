@@ -17,5 +17,6 @@ sealed interface AddRecordEvent {
     data class RecordCurrency(val currency: String): AddRecordEvent
     data class RecordTypes(val recordType: RecordType): AddRecordEvent
     data class RecordNotes(val notes: String): AddRecordEvent
+    data class SetId(val id: Int): AddRecordEvent
 
 }

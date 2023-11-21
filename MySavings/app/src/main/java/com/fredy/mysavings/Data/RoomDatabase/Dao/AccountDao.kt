@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
 import com.fredy.mysavings.Data.RoomDatabase.Entity.Account
+import dagger.Provides
 import kotlinx.coroutines.flow.Flow
 
 @Dao

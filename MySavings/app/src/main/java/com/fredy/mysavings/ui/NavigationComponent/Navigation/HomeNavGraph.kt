@@ -16,6 +16,7 @@ import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.fredy.mysavings.ui.Screens.Account.AccountsScreen
 import com.fredy.mysavings.ui.Screens.AddRecord.AddScreen
+import com.fredy.mysavings.ui.Screens.Analysis.AnalysisScreen
 import com.fredy.mysavings.ui.Screens.Category.CategoriesScreen
 import com.fredy.mysavings.ui.Screens.Record.RecordsScreen
 
@@ -39,7 +40,7 @@ fun HomeNavGraph(
         composable(
             route = NavigationRoute.Analysis.route
         ) {
-//            AnalysisScreen()
+            AnalysisScreen()
         }
         composable(
             route = NavigationRoute.Categories.route

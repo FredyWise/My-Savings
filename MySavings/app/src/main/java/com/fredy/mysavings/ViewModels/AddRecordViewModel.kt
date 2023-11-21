@@ -5,7 +5,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.fredy.mysavings.Data.RoomDatabase.Entity.Account
 import com.fredy.mysavings.Data.RoomDatabase.Entity.Category
@@ -17,50 +16,52 @@ import com.fredy.mysavings.Data.RoomDatabase.Event.CalcOperation
 import com.fredy.mysavings.Util.isExpense
 import com.fredy.mysavings.Util.isIncome
 import com.fredy.mysavings.Util.isTransfer
-import com.fredy.mysavings.DI.AppModuleImpl
 import com.fredy.mysavings.Repository.RecordRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalTime
+import javax.inject.Inject
 import kotlin.math.absoluteValue
 
-class AddRecordViewModel(
-    private val itemId: Int,
-    private val recordRepository: RecordRepository = AppModuleImpl.recordRepository,
+
+@HiltViewModel
+class AddRecordViewModel @Inject constructor(
+    private val recordRepository: RecordRepository,
 ): ViewModel() {
     var state by mutableStateOf(AddRecordState())
     var calcState by mutableStateOf(CalcState())
 
-    init {
-        if (itemId != -1) {
-            viewModelScope.launch {
-                recordRepository.getRecordById(
-                    itemId
-                ).collectLatest {
-                    state = state.copy(
-                        fromAccount = it.fromAccount,
-                        toAccount = it.toAccount,
-                        toCategory = it.toCategory,
-                        recordId = it.record.recordId,
-                        accountIdFromFk = it.record.accountIdFromFk,
-                        accountIdToFk = it.record.accountIdToFk,
-                        categoryIdFk = it.record.categoryIdFk,
-                        recordDate = it.record.recordDateTime.toLocalDate(),
-                        recordTime = it.record.recordDateTime.toLocalTime(),
-                        recordAmount = it.record.recordAmount,
-                        recordCurrency = it.record.recordCurrency,
-                        recordType = it.record.recordType,
-                        recordNotes = it.record.recordNotes
-                    )
-                    calcState = calcState.copy(number1 = it.record.recordAmount.toString())
-                }
-            }
-        }
-    }
-
     fun onEvent(event: AddRecordEvent) {
         when (event) {
+            is AddRecordEvent.SetId -> {
+                if (event.id != -1 && state.isFirst) {
+                    viewModelScope.launch {
+                        recordRepository.getRecordById(
+                            event.id
+                        ).collectLatest {
+                            state = state.copy(
+                                fromAccount = it.fromAccount,
+                                toAccount = it.toAccount,
+                                toCategory = it.toCategory,
+                                recordId = it.record.recordId,
+                                accountIdFromFk = it.record.accountIdFromFk,
+                                accountIdToFk = it.record.accountIdToFk,
+                                categoryIdFk = it.record.categoryIdFk,
+                                recordDate = it.record.recordDateTime.toLocalDate(),
+                                recordTime = it.record.recordDateTime.toLocalTime(),
+                                recordAmount = it.record.recordAmount,
+                                recordCurrency = it.record.recordCurrency,
+                                recordType = it.record.recordType,
+                                recordNotes = it.record.recordNotes,
+                                isFirst = !state.isFirst
+                            )
+                            calcState = calcState.copy(number1 = it.record.recordAmount.toString())
+                        }
+                    }
+                }
+            }
             is AddRecordEvent.SaveRecord -> {
                 val recordId = state.recordId
                 val accountIdFromFk = state.accountIdFromFk
@@ -356,12 +357,12 @@ class AddRecordViewModel(
     }
 }
 
-@Suppress("UNCHECKED_CAST")
-class AddRecordViewModelFactory(private val id: Int): ViewModelProvider.Factory {
-    override fun <T: ViewModel> create(modelClass: Class<T>): T {
-        return AddRecordViewModel(itemId = id) as T
-    }
-}
+//@Suppress("UNCHECKED_CAST")
+//class AddRecordViewModelFactory(private val id: Int): ViewModelProvider.Factory {
+//    override fun <T: ViewModel> create(modelClass: Class<T>): T {
+//        return AddRecordViewModel(itemId = id) as T
+//    }
+//}
 
 
 data class AddRecordState(
@@ -377,7 +378,8 @@ data class AddRecordState(
     val recordAmount: Double = 0.0,
     val recordCurrency: String = "",
     val recordNotes: String = "",
-    val recordType: RecordType = RecordType.Expense
+    val recordType: RecordType = RecordType.Expense,
+    val isFirst: Boolean = true
 )
 
 data class CalcState(

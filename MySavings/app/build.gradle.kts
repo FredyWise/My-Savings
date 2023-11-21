@@ -2,7 +2,8 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("kotlin-kapt")
-//    id("dagger.hilt.android.plugin")
+    id("dagger.hilt.android.plugin")
+//    id("com.google.gms.google-services")
 }
 
 android {
@@ -69,12 +70,20 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
+    // Fire Base
+//    implementation ("com.google.firebase:firebase-auth-ktx:22.3.0")
+//    implementation ("com.google.android.gms:play-services-auth:20.7.0")
+
+    // Coil
+//    implementation ("io.coil-kt:coil-compose:2.4.0")
+
     //    More Icons
     implementation("com.google.android.material:material:1.10.0")
     implementation("androidx.compose.material:material-icons-extended")
 
     //    View Model lifecycle
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
+    implementation ("androidx.lifecycle:lifecycle-runtime-compose:2.6.2")
 
     // Room works with plugin kapt
     val room_version = "2.6.0"
@@ -100,11 +109,11 @@ dependencies {
     // Retrofit
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation("com.squareup.okhttp3:okhttp:4.9.0")
+    implementation("com.squareup.okhttp3:okhttp:4.11.0")
 
-//    //Dagger - Hilt
-//    implementation("com.google.dagger:hilt-android:2.45")
-//    kapt("com.google.dagger:hilt-android-compiler:2.45")
-//    implementation("androidx.hilt:hilt-lifecycle-viewmodel:1.0.0")
-//    kapt("androidx.hilt:hilt-compiler:1.0.0")
+    //Dagger - Hilt
+    implementation("com.google.dagger:hilt-android:2.48")
+    kapt("com.google.dagger:hilt-android-compiler:2.45")
+    kapt("androidx.hilt:hilt-compiler:1.1.0")
+    implementation ("androidx.hilt:hilt-navigation-compose:1.1.0")
 }
