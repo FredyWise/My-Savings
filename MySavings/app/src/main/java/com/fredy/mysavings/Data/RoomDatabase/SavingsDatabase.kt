@@ -9,6 +9,7 @@ import com.fredy.mysavings.Data.RoomDatabase.Converter.DateTimeConverter
 import com.fredy.mysavings.Data.RoomDatabase.Dao.AccountDao
 import com.fredy.mysavings.Data.RoomDatabase.Dao.CategoryDao
 import com.fredy.mysavings.Data.RoomDatabase.Dao.RecordDao
+import com.fredy.mysavings.Data.RoomDatabase.Dao.UserDao
 import com.fredy.mysavings.Data.RoomDatabase.Entity.Account
 import com.fredy.mysavings.Data.RoomDatabase.Entity.Category
 import com.fredy.mysavings.Data.RoomDatabase.Entity.Record
@@ -22,5 +23,6 @@ abstract class SavingsDatabase: RoomDatabase() {
     abstract val recordDao: RecordDao
     abstract val accountDao: AccountDao
     abstract val categoryDao: CategoryDao
+    abstract val userDao: UserDao
 }
 

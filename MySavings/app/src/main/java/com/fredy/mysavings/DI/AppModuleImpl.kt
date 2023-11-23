@@ -15,6 +15,8 @@ import com.fredy.mysavings.Repository.CurrencyRepository
 import com.fredy.mysavings.Repository.CurrencyRepositoryImpl
 import com.fredy.mysavings.Repository.RecordRepository
 import com.fredy.mysavings.Repository.RecordRepositoryImpl
+import com.fredy.mysavings.Repository.UserRepository
+import com.fredy.mysavings.Repository.UserRepositoryImpl
 import com.fredy.mysavings.Util.DispatcherProvider
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.firebase.auth.FirebaseAuth
@@ -122,6 +124,14 @@ object AppModuleImpl/*: AppModule*/ {
     @Singleton
     fun categoryRepository(savingsDatabase: SavingsDatabase): CategoryRepository {
         return CategoryRepositoryImpl(
+            savingsDatabase
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun userRepository(savingsDatabase: SavingsDatabase): UserRepository {
+        return UserRepositoryImpl(
             savingsDatabase
         )
     }
