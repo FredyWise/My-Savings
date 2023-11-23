@@ -14,22 +14,23 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.fredy.mysavings.Data.RoomDatabase.Entity.Category
-import com.fredy.mysavings.Data.RoomDatabase.Event.CategoryEvent
+import com.fredy.mysavings.ViewModels.Event.CategoryEvent
 import com.fredy.mysavings.R
+import com.fredy.mysavings.ViewModel.CategoryState
 import com.fredy.mysavings.ViewModel.CategoryViewModel
 import com.fredy.mysavings.ui.Screens.SimpleButton
 
 @Composable
 fun CategoriesScreen(
     modifier: Modifier = Modifier,
-    viewModel: CategoryViewModel = hiltViewModel()
+    state: CategoryState,
+    onEvent: (CategoryEvent) -> Unit,
 ) {
-    val state by viewModel.state.collectAsState()
     Column(modifier = modifier) {
         if (state.isAddingCategory) {
             CategoryAddDialog(
                 state = state,
-                onEvent = viewModel::onEvent
+                onEvent = onEvent
             )
         }
         SimpleButton(
@@ -49,7 +50,7 @@ fun CategoriesScreen(
             image = R.drawable.ic_add_foreground,
             imageColor = MaterialTheme.colorScheme.onBackground,
             onClick = {
-                viewModel.onEvent(
+                onEvent(
                     CategoryEvent.ShowDialog(
                         Category(categoryName = "")
                     )
@@ -60,7 +61,7 @@ fun CategoriesScreen(
         )
         CategoryBody(
             categoryMaps = state.categories,
-            onEvent = viewModel::onEvent
+            onEvent = onEvent
         )
     }
 }

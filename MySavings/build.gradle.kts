@@ -9,6 +9,7 @@ buildscript {
 //        compose_ui_version = 1.4.0
 //    }
     dependencies {
+        classpath("com.google.gms:google-services:4.4.0")
         classpath("com.google.dagger:hilt-android-gradle-plugin:2.45")
 
     }

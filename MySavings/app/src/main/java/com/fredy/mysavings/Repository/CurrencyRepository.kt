@@ -1,6 +1,6 @@
 package com.fredy.mysavings.Repository
 
-import com.fredy.mysavings.Data.APIs.CurrencyApi
+import com.fredy.mysavings.Data.APIs.CurrencyModels.CurrencyApi
 import com.fredy.mysavings.Data.APIs.CurrencyModels.CurrencyResponse
 import com.fredy.mysavings.Util.Resource
 import javax.inject.Inject

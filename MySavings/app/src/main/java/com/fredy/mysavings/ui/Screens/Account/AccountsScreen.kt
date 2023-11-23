@@ -8,32 +8,26 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.fredy.mysavings.Data.RoomDatabase.Entity.Account
-import com.fredy.mysavings.Data.RoomDatabase.Event.AccountEvent
+import com.fredy.mysavings.ViewModels.Event.AccountEvent
 import com.fredy.mysavings.R
-import com.fredy.mysavings.ViewModel.AccountViewModel
+import com.fredy.mysavings.ViewModel.AccountState
 import com.fredy.mysavings.ui.Screens.SimpleButton
 
 @Composable
 fun AccountsScreen(
     modifier: Modifier = Modifier,
-    viewModel: AccountViewModel = hiltViewModel()
+    state: AccountState,
+    onEvent: (AccountEvent) -> Unit,
 ) {
-    val state by viewModel.state.collectAsState()
     Column(modifier = modifier) {
         if (state.isAddingAccount) {
             AccountAddDialog(
                 state = state,
-                onEvent = viewModel::onEvent
+                onEvent = onEvent
             )
         }
         AccountHeader(
@@ -70,7 +64,7 @@ fun AccountsScreen(
             image = R.drawable.ic_add_foreground,
             imageColor = MaterialTheme.colorScheme.onBackground,
             onClick = {
-                viewModel.onEvent(
+                onEvent(
                     AccountEvent.ShowDialog(
                         Account(accountName = "")
                     )
@@ -81,7 +75,7 @@ fun AccountsScreen(
         )
         AccountBody(
             accounts = state.accounts,
-            onEvent = viewModel::onEvent
+            onEvent = onEvent
         )
     }
 }

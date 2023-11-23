@@ -28,7 +28,7 @@ import androidx.compose.ui.window.Dialog
 import com.fredy.mysavings.Util.BalanceColor
 import com.fredy.mysavings.Data.RoomDatabase.Dao.TrueRecord
 import com.fredy.mysavings.Data.RoomDatabase.Enum.RecordType
-import com.fredy.mysavings.Data.RoomDatabase.Event.RecordsEvent
+import com.fredy.mysavings.ViewModels.Event.RecordsEvent
 import com.fredy.mysavings.Util.formatDateTime
 import com.fredy.mysavings.Util.isTransfer
 import com.fredy.mysavings.ui.Screens.BalanceItem

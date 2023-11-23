@@ -1,4 +1,4 @@
-package com.fredy.mysavings.Data.RoomDatabase.Event
+package com.fredy.mysavings.ViewModels.Event
 
 sealed interface CalcEvent {
 

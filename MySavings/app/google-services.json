@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "895326687881",
+    "project_id": "my-savings-fe15d",
+    "storage_bucket": "my-savings-fe15d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:895326687881:android:e3deb907474c9afd73ac58",
+        "android_client_info": {
+          "package_name": "com.fredy.mysavings"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "895326687881-h5nan7kqbg0fmlibmpigt8mpr5bpfamj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.fredy.mysavings",
+            "certificate_hash": "f3055ddb1a933ef8a6a24af5f9012327c7ec89fb"
+          }
+        },
+        {
+          "client_id": "895326687881-e2kh5jh12kjvpf9se1cehbeias0iuvmq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD1960Urml_2WDObSAFHdOjeq8DA3iLUdQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "895326687881-e2kh5jh12kjvpf9se1cehbeias0iuvmq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

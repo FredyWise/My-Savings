@@ -20,7 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.Data.RoomDatabase.Enum.FilterType
-import com.fredy.mysavings.Data.RoomDatabase.Event.RecordsEvent
+import com.fredy.mysavings.ViewModels.Event.RecordsEvent
 import com.fredy.mysavings.ViewModel.FilterState
 import com.fredy.mysavings.ui.Screens.CustomStickyHeader
 import com.fredy.mysavings.ui.Screens.ValueWithName

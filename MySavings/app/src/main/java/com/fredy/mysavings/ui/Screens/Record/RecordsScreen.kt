@@ -6,17 +6,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.fredy.mysavings.Data.RoomDatabase.Event.AddRecordEvent
+import com.fredy.mysavings.ViewModels.Event.RecordsEvent
 import com.fredy.mysavings.Util.BalanceItem
 import com.fredy.mysavings.Util.formatRangeOfDate
-import com.fredy.mysavings.ViewModel.AddRecordViewModel
-import com.fredy.mysavings.ViewModel.RecordViewModel
+import com.fredy.mysavings.ViewModel.RecordState
 import com.fredy.mysavings.ui.NavigationComponent.Navigation.NavigationRoute
 import com.fredy.mysavings.ui.NavigationComponent.Navigation.navigateSingleTopTo
 
@@ -26,9 +22,9 @@ import com.fredy.mysavings.ui.NavigationComponent.Navigation.navigateSingleTopTo
 fun RecordsScreen(
     modifier: Modifier = Modifier,
     rootNavController: NavHostController,
-    viewModel: RecordViewModel = hiltViewModel(),
+    state: RecordState,
+    onEvent: (RecordsEvent) -> Unit,
 ) {
-    val state by viewModel.state.collectAsState()
     Column(
         modifier = modifier,
     ) {
@@ -36,22 +32,22 @@ fun RecordsScreen(
             FilterDialog(
                 title = "DisplayOption",
                 selectedName = state.filterType.name,
-                onEvent = viewModel::onEvent,
+                onEvent = onEvent,
             )
         }
         state.trueRecord?.let {
             RecordDialog(
                 trueRecord = it,
-                onEvent = viewModel::onEvent,
+                onEvent = onEvent,
                 onEdit = {
-                    rootNavController.navigateSingleTopTo(
+                    rootNavController.navigate(
                         NavigationRoute.Add.route + "?id=" + it.record.recordId
                     )
                 },
             )
         }
         DisplayBar(
-            onEvent = viewModel::onEvent,
+            onEvent = onEvent,
             selectedDate = formatRangeOfDate(
                 state.chosenDate,
                 state.filterType
@@ -80,7 +76,7 @@ fun RecordsScreen(
         )
         RecordBody(
             trueRecords = state.trueRecords,
-            onEvent = viewModel::onEvent
+            onEvent = onEvent
         )
     }
 }

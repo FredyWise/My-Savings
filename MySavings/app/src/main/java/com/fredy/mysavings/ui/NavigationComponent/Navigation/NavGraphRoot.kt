@@ -7,6 +7,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -14,16 +16,18 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
+import com.fredy.mysavings.ViewModels.MainScreenViewModel
 import com.fredy.mysavings.ui.Screens.AddRecord.AddScreen
-import com.fredy.mysavings.ui.Screens.MainScreen
+import com.fredy.mysavings.ui.NavigationComponent.MainScreen
 
 @Composable
 fun NavGraphRoot(
     navController: NavHostController,
 ) {
     NavHost(
+        modifier = Modifier.background(MaterialTheme.colorScheme.background),
         navController = navController,
-        startDestination = Graph.MainNav,
+        startDestination = Graph.Auth,
         route = Graph.Root
     ) {
         authenticationNavGraph(navController = navController)
@@ -34,8 +38,11 @@ fun NavGraphRoot(
             composable(
                 route = Graph.HomeNav
             ) {
+                val viewModel: MainScreenViewModel = hiltViewModel()
+
                 MainScreen(
                     rootNavController = navController,
+                    signOut = viewModel::signOut
                 )
             }
             composable(

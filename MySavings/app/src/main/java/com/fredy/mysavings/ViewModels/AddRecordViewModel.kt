@@ -10,9 +10,9 @@ import com.fredy.mysavings.Data.RoomDatabase.Entity.Account
 import com.fredy.mysavings.Data.RoomDatabase.Entity.Category
 import com.fredy.mysavings.Data.RoomDatabase.Entity.Record
 import com.fredy.mysavings.Data.RoomDatabase.Enum.RecordType
-import com.fredy.mysavings.Data.RoomDatabase.Event.AddRecordEvent
-import com.fredy.mysavings.Data.RoomDatabase.Event.CalcEvent
-import com.fredy.mysavings.Data.RoomDatabase.Event.CalcOperation
+import com.fredy.mysavings.ViewModels.Event.AddRecordEvent
+import com.fredy.mysavings.ViewModels.Event.CalcEvent
+import com.fredy.mysavings.ViewModels.Event.CalcOperation
 import com.fredy.mysavings.Util.isExpense
 import com.fredy.mysavings.Util.isIncome
 import com.fredy.mysavings.Util.isTransfer
@@ -57,12 +57,13 @@ class AddRecordViewModel @Inject constructor(
                                 recordNotes = it.record.recordNotes,
                                 isFirst = !state.isFirst
                             )
-                            calcState = calcState.copy(number1 = it.record.recordAmount.toString())
+                            calcState = calcState.copy(number1 = it.record.recordAmount.absoluteValue.toString())
                         }
                     }
                 }
             }
             is AddRecordEvent.SaveRecord -> {
+                performCalculation()
                 val recordId = state.recordId
                 val accountIdFromFk = state.accountIdFromFk
                 var accountIdToFk = state.accountIdToFk
@@ -121,20 +122,7 @@ class AddRecordViewModel @Inject constructor(
                         record
                     )
                 }
-                state = state.copy(
-                    recordId = 0,
-                    fromAccount = Account(),
-                    accountIdFromFk = null,
-                    accountIdToFk = null,
-                    toCategory = Category(),
-                    categoryIdFk = null,
-                    recordDate = LocalDate.now(),
-                    recordTime = LocalTime.now(),
-                    recordAmount = 0.0,
-                    recordCurrency = "",
-                    recordType = RecordType.Expense,
-                    recordNotes = ""
-                )
+                state = AddRecordState()
 
                 event.navigateUp()
             }

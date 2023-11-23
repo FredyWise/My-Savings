@@ -1,11 +1,11 @@
-package com.fredy.mysavings.Data.RoomDatabase.Event
+package com.fredy.mysavings.ViewModels.Event
 
 import com.fredy.mysavings.Data.RoomDatabase.Entity.Account
 import com.fredy.mysavings.Data.RoomDatabase.Enum.SortType
 
 sealed interface AccountEvent{
     object SaveAccount: AccountEvent
-    data class AccountName(val accountName: String) :AccountEvent
+    data class AccountName(val accountName: String) : AccountEvent
     data class AccountAmount(val amount: String): AccountEvent
     data class AccountCurrency(val currency: String): AccountEvent
     data class AccountIcon(

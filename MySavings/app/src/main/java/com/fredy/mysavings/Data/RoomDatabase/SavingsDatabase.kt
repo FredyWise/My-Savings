@@ -22,17 +22,5 @@ abstract class SavingsDatabase: RoomDatabase() {
     abstract val recordDao: RecordDao
     abstract val accountDao: AccountDao
     abstract val categoryDao: CategoryDao
-
-//    companion object{
-//        @Volatile
-//        var INSTANCE: SavingsDatabase? = null
-//        fun getDatabase(context: Context): SavingsDatabase {
-//            return INSTANCE ?: synchronized(this){
-//                val instance =
-//                INSTANCE = instance
-//                return instance
-//            }
-//        }
-//    }
 }
 

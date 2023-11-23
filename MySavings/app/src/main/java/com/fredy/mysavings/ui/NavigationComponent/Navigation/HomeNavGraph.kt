@@ -1,21 +1,19 @@
 package com.fredy.mysavings.ui.NavigationComponent.Navigation
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
-import androidx.navigation.navigation
+import com.fredy.mysavings.ViewModel.AccountViewModel
+import com.fredy.mysavings.ViewModel.CategoryViewModel
+import com.fredy.mysavings.ViewModel.RecordViewModel
 import com.fredy.mysavings.ui.Screens.Account.AccountsScreen
-import com.fredy.mysavings.ui.Screens.AddRecord.AddScreen
 import com.fredy.mysavings.ui.Screens.Analysis.AnalysisScreen
 import com.fredy.mysavings.ui.Screens.Category.CategoriesScreen
 import com.fredy.mysavings.ui.Screens.Record.RecordsScreen
@@ -35,22 +33,46 @@ fun HomeNavGraph(
         composable(
             route = NavigationRoute.Records.route
         ) {
-            RecordsScreen(rootNavController = rootNavController)
+            val viewModel: RecordViewModel = hiltViewModel()
+            val state by viewModel.state.collectAsState()
+
+            RecordsScreen(
+                rootNavController = rootNavController,
+                state = state,
+                onEvent = viewModel::onEvent
+            )
         }
         composable(
             route = NavigationRoute.Analysis.route
         ) {
+
             AnalysisScreen()
         }
         composable(
             route = NavigationRoute.Categories.route
         ) {
-            CategoriesScreen(modifier = Modifier.padding(8.dp))
+            val viewModel: CategoryViewModel = hiltViewModel()
+            val state by viewModel.state.collectAsState()
+
+            CategoriesScreen(
+                modifier = Modifier.padding(8.dp),
+                state = state,
+                onEvent = viewModel::onEvent
+            )
         }
         composable(
             route = NavigationRoute.Account.route
         ) {
-            AccountsScreen(modifier = Modifier.padding(8.dp))
+            val viewModel: AccountViewModel = hiltViewModel()
+            val state by viewModel.state.collectAsState()
+
+            AccountsScreen(
+                modifier = Modifier.padding(
+                    8.dp
+                ),
+                state = state,
+                onEvent = viewModel::onEvent
+            )
         }
 //        composable(
 //            route = BottomBarRoute.Profile.route,
@@ -69,7 +91,6 @@ fun HomeNavGraph(
 //        }
     }
 }
-
 
 
 //private fun NavHostController.navigateToSingleAccount(accountType: String) {

@@ -29,9 +29,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.fredy.mysavings.Data.RoomDatabase.Entity.Account
 import com.fredy.mysavings.Data.RoomDatabase.Entity.Category
 import com.fredy.mysavings.Data.RoomDatabase.Enum.RecordType
-import com.fredy.mysavings.Data.RoomDatabase.Event.AccountEvent
-import com.fredy.mysavings.Data.RoomDatabase.Event.AddRecordEvent
-import com.fredy.mysavings.Data.RoomDatabase.Event.CategoryEvent
+import com.fredy.mysavings.ViewModels.Event.AccountEvent
+import com.fredy.mysavings.ViewModels.Event.AddRecordEvent
+import com.fredy.mysavings.ViewModels.Event.CategoryEvent
 import com.fredy.mysavings.R
 import com.fredy.mysavings.Util.isTransfer
 import com.fredy.mysavings.ViewModel.AccountViewModel

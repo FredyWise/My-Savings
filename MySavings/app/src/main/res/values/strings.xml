@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">My Savings</string>
     <string name="version">0.0.1</string>
+    <string name="web_client_id">895326687881-e2kh5jh12kjvpf9se1cehbeias0iuvmq.apps.googleusercontent.com</string>
+
+
     <string name="income_upper">INCOME</string>
     <string name="income_capitalized">Income</string>
 

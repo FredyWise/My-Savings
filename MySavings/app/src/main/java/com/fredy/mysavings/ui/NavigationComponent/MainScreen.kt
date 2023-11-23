@@ -1,13 +1,20 @@
-package com.fredy.mysavings.ui.Screens
+package com.fredy.mysavings.ui.NavigationComponent
 
-import android.annotation.SuppressLint
+import android.widget.Toast
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.rememberScaffoldState
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -15,32 +22,34 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.fredy.mysavings.ui.NavigationComponent.AppBar
-import com.fredy.mysavings.ui.NavigationComponent.BottomBar
-import com.fredy.mysavings.ui.NavigationComponent.DrawerBody
-import com.fredy.mysavings.ui.NavigationComponent.DrawerHeader
+import com.fredy.mysavings.ui.NavigationComponent.Navigation.Graph
 import com.fredy.mysavings.ui.NavigationComponent.Navigation.HomeNavGraph
 import com.fredy.mysavings.ui.NavigationComponent.Navigation.NavigationRoute
 import com.fredy.mysavings.ui.NavigationComponent.Navigation.bottomBarScreens
 import com.fredy.mysavings.ui.NavigationComponent.Navigation.drawerScreens
 import com.fredy.mysavings.ui.NavigationComponent.Navigation.navigateSingleTopTo
 import kotlinx.coroutines.launch
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 fun MainScreen(
     modifier: Modifier = Modifier,
     backgroundColor: Color = MaterialTheme.colorScheme.background,
     contentColor: Color = MaterialTheme.colorScheme.surface,
     onContentColor: Color = MaterialTheme.colorScheme.onSurface,
-    rootNavController: NavHostController
+    rootNavController: NavHostController,
+    signOut: () -> Unit,
 ) {
     val navController = rememberNavController()
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
     val currentBackStack by navController.currentBackStackEntryAsState()
     val currentDestination = currentBackStack?.destination
     val currentScreen = bottomBarScreens.find { it.route == currentDestination?.route } ?: NavigationRoute.Records
@@ -49,13 +58,15 @@ fun MainScreen(
         backgroundColor = backgroundColor,
         scaffoldState = scaffoldState,
         topBar = {
-            AppBar(backgroundColor = contentColor,
+            AppBar(
+                backgroundColor = contentColor,
                 contentColor = onContentColor,
                 onNavigationIconClick = {
                     scope.launch {
                         scaffoldState.drawerState.open()
                     }
-                })
+                },
+            )
         },
         drawerGesturesEnabled = scaffoldState.drawerState.isOpen,
         drawerBackgroundColor = contentColor,
@@ -67,6 +78,47 @@ fun MainScreen(
                     rootNavController.navigateSingleTopTo(
                         newScreen.route
                     )
+                },
+                additionalItem = {
+                    Row(modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            scope.launch {
+                                signOut()
+                                Toast
+                                    .makeText(
+                                        context,
+                                        "Signed out",
+                                        Toast.LENGTH_SHORT
+                                    )
+                                    .show()
+                                rootNavController.popBackStack()
+                                rootNavController.popBackStack()
+                                rootNavController.navigate(
+                                    Graph.Auth
+                                )
+                            }
+                        }
+                        .padding(16.dp)) {
+                        Icon(
+                            imageVector = Icons.Default.Logout,
+                            contentDescription = ""
+                        )
+                        Spacer(
+                            modifier = Modifier.width(
+                                16.dp
+                            )
+                        )
+                        Text(
+                            text = "Sign Out",
+                            style = TextStyle(
+                                fontSize = 18.sp
+                            ),
+                            modifier = Modifier.weight(
+                                1f
+                            )
+                        )
+                    }
                 })
         },
         bottomBar = {
@@ -88,7 +140,7 @@ fun MainScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    rootNavController.navigateSingleTopTo(
+                    rootNavController.navigate(
                         NavigationRoute.Add.route + "?id=-1"
                     )
                 },

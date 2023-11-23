@@ -5,12 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.fredy.mysavings.Data.RoomDatabase.Entity.Account
 import com.fredy.mysavings.Data.RoomDatabase.Enum.RecordType
 import com.fredy.mysavings.Data.RoomDatabase.Enum.SortType
-import com.fredy.mysavings.Data.RoomDatabase.Event.AccountEvent
-import com.fredy.mysavings.Repository.AccountRepositoryImpl
-import com.fredy.mysavings.DI.AppModuleImpl
+import com.fredy.mysavings.ViewModels.Event.AccountEvent
 import com.fredy.mysavings.Repository.AccountRepository
 import com.fredy.mysavings.Repository.RecordRepository
-import com.fredy.mysavings.Repository.RecordRepositoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -157,17 +154,7 @@ class AccountViewModel @Inject constructor(
                         account
                     )
                 }
-                _state.update {
-                    it.copy(
-                        accountId = 0,
-                        accountName = "",
-                        accountAmount = "",
-                        accountCurrency = "",
-                        accountIcon = 0,
-                        accountIconDescription = "",
-                        isAddingAccount = false
-                    )
-                }
+                _state.update { AccountState()}
             }
 
             is AccountEvent.AccountName -> {

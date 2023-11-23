@@ -1,4 +1,4 @@
-package com.fredy.mysavings.Data.RoomDatabase.Event
+package com.fredy.mysavings.ViewModels.Event
 
 import com.fredy.mysavings.Data.RoomDatabase.Entity.Category
 import com.fredy.mysavings.Data.RoomDatabase.Enum.RecordType

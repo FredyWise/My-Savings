@@ -1,4 +1,4 @@
-package com.fredy.mysavings.Data.APIs
+package com.fredy.mysavings.Data.APIs.CurrencyModels
 
 import com.fredy.mysavings.Data.APIs.CurrencyModels.CurrencyResponse
 import retrofit2.Response

@@ -15,7 +15,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.Data.RoomDatabase.Enum.RecordType
-import com.fredy.mysavings.Data.RoomDatabase.Event.CategoryEvent
+import com.fredy.mysavings.ViewModels.Event.CategoryEvent
 import com.fredy.mysavings.Util.categoryIcons
 import com.fredy.mysavings.ViewModel.CategoryState
 import com.fredy.mysavings.ui.Screens.ActionWithName

@@ -6,7 +6,7 @@ import com.fredy.mysavings.Data.RoomDatabase.Dao.TrueRecord
 import com.fredy.mysavings.Data.RoomDatabase.Enum.FilterType
 import com.fredy.mysavings.Data.RoomDatabase.Enum.RecordType
 import com.fredy.mysavings.Data.RoomDatabase.Enum.SortType
-import com.fredy.mysavings.Data.RoomDatabase.Event.RecordsEvent
+import com.fredy.mysavings.ViewModels.Event.RecordsEvent
 import com.fredy.mysavings.DI.AppModuleImpl
 import com.fredy.mysavings.Repository.RecordRepository
 import com.fredy.mysavings.Repository.RecordRepositoryImpl

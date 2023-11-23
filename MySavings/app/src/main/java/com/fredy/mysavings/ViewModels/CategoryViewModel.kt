@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.fredy.mysavings.Data.RoomDatabase.Entity.Category
 import com.fredy.mysavings.Data.RoomDatabase.Enum.RecordType
 import com.fredy.mysavings.Data.RoomDatabase.Enum.SortType
-import com.fredy.mysavings.Data.RoomDatabase.Event.CategoryEvent
+import com.fredy.mysavings.ViewModels.Event.CategoryEvent
 import com.fredy.mysavings.R
 import com.fredy.mysavings.Repository.CategoryRepositoryImpl
 import com.fredy.mysavings.DI.AppModuleImpl
@@ -119,15 +119,7 @@ class CategoryViewModel @Inject constructor(
                         category
                     )
                 }
-                _state.update {
-                    it.copy(
-                        categoryId = 0,
-                        categoryName = "",
-                        categoryIcon = 0,
-                        categoryIconDescription = "",
-                        isAddingCategory = false,
-                    )
-                }
+                _state.update { CategoryState() }
             }
 
             is CategoryEvent.CategoryName -> {

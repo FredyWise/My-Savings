@@ -2,10 +2,13 @@ package com.fredy.mysavings.DI
 
 import android.content.Context
 import androidx.room.Room
-import com.fredy.mysavings.Data.APIs.CurrencyApi
+import com.fredy.mysavings.Data.APIs.CurrencyModels.CurrencyApi
+import com.fredy.mysavings.Data.GoogleAuth.GoogleAuthUiClient
 import com.fredy.mysavings.Data.RoomDatabase.SavingsDatabase
 import com.fredy.mysavings.Repository.AccountRepository
 import com.fredy.mysavings.Repository.AccountRepositoryImpl
+import com.fredy.mysavings.Repository.AuthRepository
+import com.fredy.mysavings.Repository.AuthRepositoryImpl
 import com.fredy.mysavings.Repository.CategoryRepository
 import com.fredy.mysavings.Repository.CategoryRepositoryImpl
 import com.fredy.mysavings.Repository.CurrencyRepository
@@ -13,6 +16,8 @@ import com.fredy.mysavings.Repository.CurrencyRepositoryImpl
 import com.fredy.mysavings.Repository.RecordRepository
 import com.fredy.mysavings.Repository.RecordRepositoryImpl
 import com.fredy.mysavings.Util.DispatcherProvider
+import com.google.android.gms.auth.api.identity.Identity
+import com.google.firebase.auth.FirebaseAuth
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -39,6 +44,23 @@ private const val BASE_URL = "https://api.apilayer.com/exchangerates_data/latest
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModuleImpl/*: AppModule*/ {
+    @Provides
+    @Singleton
+    fun providesGoogleAuthUiClient(@ApplicationContext appContext: Context): GoogleAuthUiClient {
+        return GoogleAuthUiClient(
+            context = appContext,
+            oneTapClient = Identity.getSignInClient(appContext)
+        )
+    }
+    @Provides
+    @Singleton
+    fun providesFirebaseAuth()  = FirebaseAuth.getInstance()
+
+    @Provides
+    @Singleton
+    fun providesAuthRepositoryImpl(googleAuthUiClient: GoogleAuthUiClient,firebaseAuth: FirebaseAuth): AuthRepository {
+        return AuthRepositoryImpl(googleAuthUiClient,firebaseAuth)
+    }
 
     @Provides
     @Singleton

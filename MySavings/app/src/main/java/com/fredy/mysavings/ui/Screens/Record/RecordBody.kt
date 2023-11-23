@@ -25,7 +25,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.Util.BalanceColor
 import com.fredy.mysavings.Data.RoomDatabase.Enum.RecordType
-import com.fredy.mysavings.Data.RoomDatabase.Event.RecordsEvent
+import com.fredy.mysavings.ViewModels.Event.RecordsEvent
 import com.fredy.mysavings.R
 import com.fredy.mysavings.Util.formatBalanceAmount
 import com.fredy.mysavings.Util.formatDay

@@ -20,7 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.fredy.mysavings.Data.RoomDatabase.Event.RecordsEvent
+import com.fredy.mysavings.ViewModels.Event.RecordsEvent
 
 @Composable
 fun DisplayBar(
