@@ -16,6 +16,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -27,6 +29,7 @@ fun CustomTextField(
     enabled: Boolean = true,
     modifier: Modifier = Modifier,
     singleLine: Boolean = true,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
     keyboardType: KeyboardType = KeyboardType.Text,
 ) {
     var text by remember { mutableStateOf(value) }
@@ -69,6 +72,7 @@ fun CustomTextField(
                 bottom = 16.dp
             ),
         shape = RoundedCornerShape(8.dp),
+        visualTransformation = visualTransformation,
         keyboardOptions = KeyboardOptions(
             keyboardType = keyboardType
         ),

@@ -1,8 +1,6 @@
 package com.fredy.mysavings.Repository
 
-import com.fredy.mysavings.Data.RoomDatabase.Dao.UserDao
 import com.fredy.mysavings.Data.RoomDatabase.Entity.UserData
-import com.fredy.mysavings.Data.RoomDatabase.Enum.RecordType
 import com.fredy.mysavings.Data.RoomDatabase.SavingsDatabase
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -15,7 +13,9 @@ interface UserRepository {
     fun searchUsers(usernameEmail: String): Flow<List<UserData>>
 }
 
-class UserRepositoryImpl @Inject constructor(private val savingsDatabase: SavingsDatabase) : UserRepository {
+class UserRepositoryImpl @Inject constructor(
+    private val savingsDatabase: SavingsDatabase
+): UserRepository {
     override suspend fun upsertUser(user: UserData) {
         savingsDatabase.userDao.upsertUser(user)
     }
@@ -25,7 +25,9 @@ class UserRepositoryImpl @Inject constructor(private val savingsDatabase: Saving
     }
 
     override fun getUser(userId: String): Flow<UserData> {
-        return savingsDatabase.userDao.getUser(userId)
+        return savingsDatabase.userDao.getUser(
+            userId
+        )
     }
 
     override fun getAllUsersOrderedByName(): Flow<List<UserData>> {
@@ -33,6 +35,8 @@ class UserRepositoryImpl @Inject constructor(private val savingsDatabase: Saving
     }
 
     override fun searchUsers(usernameEmail: String): Flow<List<UserData>> {
-        return savingsDatabase.userDao.searchUsers(usernameEmail)
+        return savingsDatabase.userDao.searchUsers(
+            usernameEmail
+        )
     }
 }

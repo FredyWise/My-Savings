@@ -6,19 +6,23 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fredy.mysavings.Data.RoomDatabase.Entity.UserData
 import com.fredy.mysavings.Repository.AuthRepository
+import com.fredy.mysavings.Repository.UserRepository
 import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.ViewModels.Event.SignInEvent
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.firebase.auth.AuthResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class SignInViewModel @Inject constructor(
-    private val repository: AuthRepository
+    private val repository: AuthRepository,
+    private val userRepository: UserRepository
 ): ViewModel() {
 
     val _signInState = Channel<AuthState>()
@@ -36,9 +40,19 @@ class SignInViewModel @Inject constructor(
                     repository.googleSignIn(event.credential).collect { result ->
                         when (result) {
                             is Resource.Success -> {
-                                _googleState.value = GoogleSignInState(
-                                    success = result.data
-                                )
+                                var userData:UserData? = null
+                                result.data?.user?.let {
+                                    userData = userRepository.getUser(it.uid).firstOrNull()
+                                }
+                                if (userData != null) {
+                                    _googleState.value = GoogleSignInState(
+                                        success = result.data
+                                    )
+                                }else {
+                                    _googleState.value = GoogleSignInState(
+                                        error = "User Not Found!!!"
+                                    )
+                                }
                             }
 
                             is Resource.Loading -> {

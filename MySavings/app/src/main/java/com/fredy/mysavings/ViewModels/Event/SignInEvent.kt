@@ -7,7 +7,7 @@ sealed interface SignInEvent {
     data class googleSignIn(val credential: AuthCredential): SignInEvent
     data class loginUser(
         val email: String,
-        val password: String
+        val password: String,
     ): SignInEvent
 
     object getSignedInUser: SignInEvent

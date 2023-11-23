@@ -31,6 +31,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.fredy.mysavings.R
@@ -127,6 +129,7 @@ fun SignIn(
             value = password,
             onValueChange = { password = it },
             placeholder = "typePassword...",
+            visualTransformation = PasswordVisualTransformation(),
             keyboardType = KeyboardType.Password
         )
 

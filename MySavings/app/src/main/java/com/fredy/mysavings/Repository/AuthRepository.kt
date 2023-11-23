@@ -21,7 +21,7 @@ interface AuthRepository {
 
     fun registerUser(
         email: String,
-        password: String
+        password: String,
     ): Flow<Resource<AuthResult>>
 
     fun googleSignIn(credential: AuthCredential): Flow<Resource<AuthResult>>
@@ -53,7 +53,7 @@ class AuthRepositoryImpl @Inject constructor(
 
     override fun registerUser(
         email: String,
-        password: String
+        password: String,
     ): Flow<Resource<AuthResult>> {
         return flow {
             emit(Resource.Loading())

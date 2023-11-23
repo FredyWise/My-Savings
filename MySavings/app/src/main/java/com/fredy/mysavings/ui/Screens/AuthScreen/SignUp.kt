@@ -30,15 +30,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.fredy.mysavings.R
 import com.fredy.mysavings.ViewModels.AuthState
-import com.fredy.mysavings.ViewModels.Event.SignInEvent
 import com.fredy.mysavings.ViewModels.Event.SignUpEvent
 import com.fredy.mysavings.ViewModels.GoogleSignInState
-import com.fredy.mysavings.ui.NavigationComponent.Navigation.NavigationRoute
-import com.fredy.mysavings.ui.NavigationComponent.Navigation.navigateSingleTopTo
 import com.fredy.mysavings.ui.Screens.AuthScreen.CustomTextField
 import com.fredy.mysavings.ui.Screens.AuthScreen.GoogleButton
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -53,7 +51,7 @@ fun SignUp(
     onPrimaryColor: Color = MaterialTheme.colorScheme.onPrimary,
     onBackgroundColor: Color = MaterialTheme.colorScheme.onBackground,
     state: AuthState?,
-    googleSignInState:GoogleSignInState,
+    googleSignInState: GoogleSignInState,
     onEvent: (SignUpEvent) -> Unit
 ) {
     val context = LocalContext.current
@@ -132,6 +130,7 @@ fun SignUp(
             value = password,
             onValueChange = { password = it },
             placeholder = "typePassword...",
+            visualTransformation = PasswordVisualTransformation(),
             keyboardType = KeyboardType.Password
         )
 
@@ -140,15 +139,28 @@ fun SignUp(
             value = confirmPassword,
             onValueChange = { confirmPassword = it },
             placeholder = "typeConfirmPassword...",
+            visualTransformation = PasswordVisualTransformation(),
             keyboardType = KeyboardType.Password
         )
 
         Button(
             onClick = {
-                if (password == confirmPassword) {
-                    onEvent(SignUpEvent.registerUser(email, password))
+                if (password == confirmPassword && password.length >= 8) {
+                    onEvent(
+                        SignUpEvent.registerUser(
+                            username = username,
+                            email = email,
+                            password = password
+                        )
+                    )
                     navController.navigateUp()
-                }else {
+                } else if (password.length < 8) {
+                    Toast.makeText(
+                        context,
+                        "Password need to be at least 8 character",
+                        Toast.LENGTH_LONG,
+                    ).show()
+                } else {
                     Toast.makeText(
                         context,
                         "Passwords are not the same",
@@ -209,8 +221,7 @@ fun SignUp(
             ).build()
 
             val googleSignInClient = GoogleSignIn.getClient(
-                context,
-                gso
+                context, gso
             )
             launcher.launch(googleSignInClient.signInIntent)
         }

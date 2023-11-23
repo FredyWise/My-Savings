@@ -1,8 +1,6 @@
 package com.fredy.mysavings.Data.RoomDatabase
 
-import android.content.Context
 import androidx.room.Database
-import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.fredy.mysavings.Data.RoomDatabase.Converter.DateTimeConverter
@@ -13,10 +11,11 @@ import com.fredy.mysavings.Data.RoomDatabase.Dao.UserDao
 import com.fredy.mysavings.Data.RoomDatabase.Entity.Account
 import com.fredy.mysavings.Data.RoomDatabase.Entity.Category
 import com.fredy.mysavings.Data.RoomDatabase.Entity.Record
+import com.fredy.mysavings.Data.RoomDatabase.Entity.UserData
 
 @TypeConverters(value = [DateTimeConverter::class])
 @Database(
-    entities = [ Record::class, Account::class, Category::class],
+    entities = [Record::class, Account::class, Category::class, UserData::class],
     version = 1
 )
 abstract class SavingsDatabase: RoomDatabase() {
