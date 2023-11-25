@@ -17,7 +17,7 @@ interface CategoryDao {
 
     @Query("SELECT * FROM category " +
             "WHERE categoryId=:categoryId")
-    fun getCategory(categoryId:Int): Flow<Category>
+    fun getCategory(categoryId:String): Flow<Category>
 
     @Query("SELECT * FROM category " +
             "ORDER BY categoryName ASC")

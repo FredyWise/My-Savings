@@ -7,11 +7,12 @@ import java.time.LocalDateTime
 
 @Entity
 data class Record(
-    @PrimaryKey(autoGenerate = true)
-    val recordId: Int = 0,
-    val accountIdFromFk: Int = -1,
-    val accountIdToFk: Int = -1,
-    val categoryIdFk: Int = -1,
+    @PrimaryKey(autoGenerate = false)
+    var recordId: String = "",
+    val accountIdFromFk: String = "",
+    val accountIdToFk: String = "",
+    val categoryIdFk: String = "",
+    val userIdFk: String = "",
     val recordDateTime: LocalDateTime = LocalDateTime.now(),
     val recordAmount: Double = 0.0,
     val recordCurrency: String = "",

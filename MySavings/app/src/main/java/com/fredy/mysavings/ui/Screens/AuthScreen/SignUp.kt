@@ -42,7 +42,9 @@ import com.fredy.mysavings.ui.Screens.AuthScreen.GoogleButton
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import com.google.firebase.Firebase
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.firestore.firestore
 
 @Composable
 fun SignUp(
@@ -63,6 +65,8 @@ fun SignUp(
             ""
         )
     }
+    //in firebase db use .where after deciding the collection to add stupid query
+
 
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
@@ -153,7 +157,6 @@ fun SignUp(
                             password = password
                         )
                     )
-                    navController.navigateUp()
                 } else if (password.length < 8) {
                     Toast.makeText(
                         context,
@@ -195,7 +198,7 @@ fun SignUp(
         }
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "Already have an account? Sign In ",
+            text = "Already have an account? Sign In Now ",
             modifier = Modifier.clickable {
                 navController.navigateUp()
             },
@@ -209,6 +212,12 @@ fun SignUp(
                 alpha = 0.08f
             )
         )
+        Text(
+            text = "or connect with",
+            fontWeight = FontWeight.Medium,
+            color = onBackgroundColor.copy(0.7f)
+        )
+        Spacer(modifier = Modifier.height(8.dp))
         GoogleButton(
             text = "Sign Up With Google",
             loadingText = "Signing Up ...",

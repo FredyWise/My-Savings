@@ -8,8 +8,9 @@ import com.fredy.mysavings.R
 
 @Entity
 data class Account(
-    @PrimaryKey(autoGenerate = true)
-    val accountId: Int = 0,
+    @PrimaryKey(autoGenerate = false)
+    var accountId: String = "",
+    val userIdFk: String = "",
     val accountName: String = "Account",
     var accountAmount: Double = 0.0,
     var accountCurrency: String = "",

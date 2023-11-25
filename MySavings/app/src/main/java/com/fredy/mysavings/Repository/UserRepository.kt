@@ -2,6 +2,8 @@ package com.fredy.mysavings.Repository
 
 import com.fredy.mysavings.Data.RoomDatabase.Entity.UserData
 import com.fredy.mysavings.Data.RoomDatabase.SavingsDatabase
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -17,10 +19,19 @@ class UserRepositoryImpl @Inject constructor(
     private val savingsDatabase: SavingsDatabase
 ): UserRepository {
     override suspend fun upsertUser(user: UserData) {
+        Firebase.firestore
+            .collection("user")
+            .document(user.firebaseUserId)
+            .set(user)
         savingsDatabase.userDao.upsertUser(user)
     }
 
     override suspend fun deleteUser(user: UserData) {
+        Firebase.firestore
+            .collection("user")
+            .document(user.firebaseUserId)
+            .delete()
+
         savingsDatabase.userDao.deleteUser(user)
     }
 

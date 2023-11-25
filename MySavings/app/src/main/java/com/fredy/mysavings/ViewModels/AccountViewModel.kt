@@ -210,7 +210,7 @@ data class AccountState(
     val totalExpense: Double = 0.0,
     val totalIncome: Double = 0.0,
     val totalAll: Double = 0.0,
-    val accountId: Int = 0,
+    val accountId: String = "",
     val accountName: String = "",
     val accountAmount: String = "",
     val accountCurrency: String = "",

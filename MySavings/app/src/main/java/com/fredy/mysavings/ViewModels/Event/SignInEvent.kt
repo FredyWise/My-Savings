@@ -11,5 +11,6 @@ sealed interface SignInEvent {
     ): SignInEvent
 
     object getSignedInUser: SignInEvent
+    object signOut: SignInEvent
 
 }

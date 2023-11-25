@@ -1,10 +1,14 @@
 package com.fredy.mysavings.Repository
 
-import com.fredy.mysavings.Data.RoomDatabase.Dao.RecordDao
-import com.fredy.mysavings.Data.RoomDatabase.Dao.TrueRecord
+import androidx.room.Embedded
+import androidx.room.Relation
+import com.fredy.mysavings.Data.RoomDatabase.Entity.Account
+import com.fredy.mysavings.Data.RoomDatabase.Entity.Category
 import com.fredy.mysavings.Data.RoomDatabase.Entity.Record
 import com.fredy.mysavings.Data.RoomDatabase.Enum.RecordType
 import com.fredy.mysavings.Data.RoomDatabase.SavingsDatabase
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDateTime
 import javax.inject.Inject
@@ -13,7 +17,7 @@ import javax.inject.Inject
 interface RecordRepository {
     suspend fun upsertRecordItem(recordItem: Record)
     suspend fun deleteRecordItem(recordItem: Record)
-    fun getRecordById(id: Int): Flow<TrueRecord>
+    fun getRecordById(id: String): Flow<TrueRecord>
     fun getUserRecordsOrderedAscending(): Flow<List<Record>>
     fun getUserRecordsOrderedDescending(): Flow<List<TrueRecord>>
     fun getUserRecordsFromSpecificTime(
@@ -29,7 +33,12 @@ interface RecordRepository {
     ): Flow<List<TrueRecord>>
 
     fun getUserTotalAmountByType(recordType: RecordType): Flow<Double>
-    fun getUserTotalAmountByTypeFromSpecificTime(recordType: RecordType, start: Int, end: Int): Flow<Double>
+    fun getUserTotalAmountByTypeFromSpecificTime(
+        recordType: RecordType,
+        start: Int,
+        end: Int
+    ): Flow<Double>
+
     fun getUserTotalRecordBalance(): Flow<Double>
 }
 
@@ -39,17 +48,32 @@ class RecordRepositoryImpl @Inject constructor(
     override suspend fun upsertRecordItem(
         recordItem: Record
     ) {
-        savingsDatabase.recordDao.upsertRecordItem(recordItem)
+        Firebase.firestore.collection("record").add(
+                recordItem
+            ).addOnSuccessListener { documentReference ->
+                val generatedId = documentReference.id
+                recordItem.recordId = generatedId
+            }
+        savingsDatabase.recordDao.upsertRecordItem(
+            recordItem
+        )
     }
 
     override suspend fun deleteRecordItem(
         recordItem: Record
     ) {
-        savingsDatabase.recordDao.deleteRecordItem(recordItem)
+        Firebase.firestore.collection("record").document(
+                recordItem.recordId
+            ).delete()
+        savingsDatabase.recordDao.deleteRecordItem(
+            recordItem
+        )
     }
 
-    override fun getRecordById(id: Int): Flow<TrueRecord> {
-        return savingsDatabase.recordDao.getRecordById(id)
+    override fun getRecordById(id: String): Flow<TrueRecord> {
+        return savingsDatabase.recordDao.getRecordById(
+            id
+        )
     }
 
     override fun getUserRecordsOrderedAscending(): Flow<List<Record>> {
@@ -106,3 +130,19 @@ class RecordRepositoryImpl @Inject constructor(
         return savingsDatabase.recordDao.getUserTotalRecordBalance()
     }
 }
+
+data class TrueRecord(
+    @Embedded val record: Record = Record(),
+    @Relation(
+        parentColumn = "accountIdFromFk",
+        entityColumn = "accountId"
+    ) val fromAccount: Account = Account(),
+    @Relation(
+        parentColumn = "accountIdToFk",
+        entityColumn = "accountId"
+    ) val toAccount: Account = Account(),
+    @Relation(
+        parentColumn = "categoryIdFk",
+        entityColumn = "categoryId"
+    ) val toCategory: Category = Category(),
+)

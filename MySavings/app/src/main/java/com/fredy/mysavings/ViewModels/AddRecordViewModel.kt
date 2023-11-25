@@ -36,7 +36,7 @@ class AddRecordViewModel @Inject constructor(
     fun onEvent(event: AddRecordEvent) {
         when (event) {
             is AddRecordEvent.SetId -> {
-                if (event.id != -1 && state.isFirst) {
+                if (event.id != "-1" && state.isFirst) {
                     viewModelScope.launch {
                         recordRepository.getRecordById(
                             event.id
@@ -76,7 +76,7 @@ class AddRecordViewModel @Inject constructor(
                 val recordType = state.recordType
                 val recordNotes = state.recordNotes
                 var difference = state.recordAmount.absoluteValue
-                if (recordId == 0){
+                if (recordId == ""){
                     difference += recordAmount
                 }else{
                     difference -= recordAmount
@@ -84,7 +84,7 @@ class AddRecordViewModel @Inject constructor(
                 }
 
                 if (isTransfer(recordType)) {
-                    categoryIdToFk = 1
+                    categoryIdToFk = "1"
                 } else {
                     accountIdToFk = accountIdFromFk
                 }
@@ -116,12 +116,14 @@ class AddRecordViewModel @Inject constructor(
                     isTransfer = recordType == RecordType.Transfer,
                     recordNotes = recordNotes,
                 )
+                Log.e("BABI", "onEvent: "+record, )
 
                 viewModelScope.launch {
                     recordRepository.upsertRecordItem(
                         record
                     )
                 }
+                Log.e("BABI", "onEvent: "+record, )
                 state = AddRecordState()
 
                 event.navigateUp()
@@ -354,12 +356,12 @@ class AddRecordViewModel @Inject constructor(
 
 
 data class AddRecordState(
-    val recordId: Int = 0,
-    val accountIdFromFk: Int? = null,
+    val recordId: String = "",
+    val accountIdFromFk: String? = null,
     val fromAccount: Account = Account(),
-    val accountIdToFk: Int? = null,
+    val accountIdToFk: String? = null,
     val toAccount: Account = Account(),
-    val categoryIdFk: Int? = null,
+    val categoryIdFk: String? = null,
     val toCategory: Category = Category(),
     val recordDate: LocalDate = LocalDate.now(),
     val recordTime: LocalTime = LocalTime.now(),

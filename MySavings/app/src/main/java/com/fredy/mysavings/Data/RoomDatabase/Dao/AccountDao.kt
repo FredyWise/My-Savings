@@ -16,7 +16,7 @@ interface AccountDao {
     suspend fun deleteContact(account: Account)
     @Query("SELECT * FROM account " +
             "WHERE accountId=:accountId")
-    fun getAccount(accountId:Int): Flow<Account>
+    fun getAccount(accountId:String): Flow<Account>
     @Query("SELECT * FROM account " +
             "ORDER BY accountName ASC")
     fun getUserAccountOrderedByName(): Flow<List<Account>>

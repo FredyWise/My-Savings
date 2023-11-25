@@ -11,6 +11,7 @@ import com.fredy.mysavings.Data.RoomDatabase.Entity.Account
 import com.fredy.mysavings.Data.RoomDatabase.Entity.Category
 import com.fredy.mysavings.Data.RoomDatabase.Entity.Record
 import com.fredy.mysavings.Data.RoomDatabase.Enum.RecordType
+import com.fredy.mysavings.Repository.TrueRecord
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDateTime
 
@@ -23,7 +24,7 @@ interface RecordDao {
 
     @Query("SELECT * FROM record " +
             "WHERE recordId = :id")
-    fun getRecordById(id: Int): Flow<TrueRecord>
+    fun getRecordById(id: String): Flow<TrueRecord>
 
     @Query("SELECT * FROM record "+
             "ORDER BY recordDateTime DESC")
@@ -80,18 +81,3 @@ interface RecordDao {
     fun getUserTotalIncomesFromSpecificTime(start:Int,end: Int): Flow<Double> //x
 }
 
-data class TrueRecord(
-    @Embedded val record: Record = Record(),
-    @Relation(
-        parentColumn = "accountIdFromFk",
-        entityColumn = "accountId"
-    ) val fromAccount: Account = Account(),
-    @Relation(
-        parentColumn = "accountIdToFk",
-        entityColumn = "accountId"
-    ) val toAccount: Account = Account(),
-    @Relation(
-        parentColumn = "categoryIdFk",
-        entityColumn = "categoryId"
-    ) val toCategory: Category = Category(),
-)

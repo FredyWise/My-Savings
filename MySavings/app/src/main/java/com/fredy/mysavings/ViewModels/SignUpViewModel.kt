@@ -9,18 +9,12 @@ import com.fredy.mysavings.Data.RoomDatabase.Entity.UserData
 import com.fredy.mysavings.Repository.AuthRepository
 import com.fredy.mysavings.Repository.UserRepository
 import com.fredy.mysavings.Util.Resource
-import com.fredy.mysavings.ViewModel.CategoryMap
-import com.fredy.mysavings.ViewModel.CategoryState
 import com.fredy.mysavings.ViewModels.Event.SignUpEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import okhttp3.internal.wait
 import javax.inject.Inject
 
 @HiltViewModel
@@ -42,20 +36,24 @@ class SignUpViewModel @Inject constructor(
         when (event) {
             is SignUpEvent.googleSignIn -> {
                 viewModelScope.launch {
-                    authRepository.googleSignIn(event.credential).collect { result ->
+                    authRepository.googleSignIn(
+                        event.credential
+                    ).collect { result ->
                         when (result) {
                             is Resource.Success -> {
-                                result.data?.let {
-                                    it.user?.let { user ->
-                                        val userData = UserData(
-                                            firebaseUserId = user.uid,
-                                            username = user.displayName,
-                                            email = user.email,
-                                            profilePictureUrl = user.photoUrl.toString()
-                                        )
-                                        userRepository.upsertUser(userData).wait()
-                                    }
+                                val user = result.data!!.user
+                                val userData = user?.run {
+                                    UserData(
+                                        firebaseUserId = uid,
+                                        username = displayName,
+                                        email = email,
+                                        profilePictureUrl = photoUrl.toString()
+                                    )
                                 }
+                                userRepository.upsertUser(
+                                    userData!!
+                                )
+
                                 _googleState.value = GoogleSignInState(
                                     success = result.data
                                 )
@@ -83,23 +81,23 @@ class SignUpViewModel @Inject constructor(
                         event.email,
                         event.password
                     ).collect { result ->
-
                         when (result) {
                             is Resource.Success -> {
-                                result.data?.let {
-                                    it.user?.let { user ->
-                                        val userData = UserData(
-                                            firebaseUserId = user.uid,
-                                            username = event.username,
-                                            email = user.email,
-                                            profilePictureUrl = user.photoUrl.toString()
-                                        )
-                                        userRepository.upsertUser(userData)
-                                    }
+                                val user = result.data!!.user
+                                val userData = user?.run {
+                                    UserData(
+                                        firebaseUserId = uid,
+                                        username = event.username,
+                                        email = email,
+                                        profilePictureUrl = photoUrl.toString()
+                                    )
                                 }
+                                userRepository.upsertUser(
+                                    userData!!
+                                )
                                 _state.update {
                                     AuthState(
-                                        isSuccess = "Sign Up Success "
+                                        isSuccess = "Sign Up Success"
                                     )
                                 }
                             }
@@ -130,7 +128,7 @@ class SignUpViewModel @Inject constructor(
 
 data class AuthState(
     val isLoading: Boolean = false,
-    val isSuccess: String? = "",
-    val isError: String? = "",
+    val isSuccess: String? = null,
+    val isError: String? = null,
     val signedInUser: UserData? = null
 )

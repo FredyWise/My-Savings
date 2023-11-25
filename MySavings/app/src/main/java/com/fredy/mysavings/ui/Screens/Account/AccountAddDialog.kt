@@ -27,7 +27,7 @@ fun AccountAddDialog(
 ) {
     SimpleAddDialog(
         modifier = modifier,
-        title = if (state.accountId == 0) "Add New Account" else "Update Account",
+        title = if (state.accountId.isEmpty()) "Add New Account" else "Update Account",
         onDismissRequest = { onEvent(AccountEvent.HideDialog) },
         onCancelClicked = { onEvent(AccountEvent.HideDialog) },
         onSaveClicked = { onEvent(AccountEvent.SaveAccount) },
@@ -57,7 +57,7 @@ fun AccountAddDialog(
                     KeyboardActions.Default.onNext
                 }),
             label = {
-                Text(text = if (state.accountId == 0) "Initial Amount" else "Current Amount")
+                Text(text = if (state.accountId.isEmpty()) "Initial Amount" else "Current Amount")
             },
             placeholder = {
                 Text(text = "0")

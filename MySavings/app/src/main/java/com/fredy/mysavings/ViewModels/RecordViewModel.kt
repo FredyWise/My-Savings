@@ -2,19 +2,16 @@ package com.fredy.mysavings.ViewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.fredy.mysavings.Data.RoomDatabase.Dao.TrueRecord
 import com.fredy.mysavings.Data.RoomDatabase.Enum.FilterType
 import com.fredy.mysavings.Data.RoomDatabase.Enum.RecordType
 import com.fredy.mysavings.Data.RoomDatabase.Enum.SortType
-import com.fredy.mysavings.ViewModels.Event.RecordsEvent
-import com.fredy.mysavings.DI.AppModuleImpl
 import com.fredy.mysavings.Repository.RecordRepository
-import com.fredy.mysavings.Repository.RecordRepositoryImpl
+import com.fredy.mysavings.Repository.TrueRecord
+import com.fredy.mysavings.ViewModels.Event.RecordsEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
@@ -26,7 +23,6 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.temporal.TemporalAdjusters
 import javax.inject.Inject
-import javax.inject.Singleton
 
 
 @HiltViewModel
@@ -310,11 +306,10 @@ class RecordViewModel @Inject constructor(
             }
 
 
-
         }
     }
 
-    private fun updateFilterState(event: FilterType){
+    private fun updateFilterState(event: FilterType) {
         when (event) {
             FilterType.Daily -> _filterState.value = FilterState(
                 FilterType.Daily,
@@ -369,7 +364,9 @@ class RecordViewModel @Inject constructor(
                     ), LocalTime.MIN
                 ),
                 LocalDateTime.of(
-                    state.value.chosenDate.plusMonths(2).with(
+                    state.value.chosenDate.plusMonths(
+                        2
+                    ).with(
                         TemporalAdjusters.lastDayOfMonth()
                     ), LocalTime.MAX
                 )
@@ -383,7 +380,9 @@ class RecordViewModel @Inject constructor(
                     ), LocalTime.MIN
                 ),
                 LocalDateTime.of(
-                    state.value.chosenDate.plusMonths(5).with(
+                    state.value.chosenDate.plusMonths(
+                        5
+                    ).with(
                         TemporalAdjusters.lastDayOfMonth()
                     ), LocalTime.MAX
                 )

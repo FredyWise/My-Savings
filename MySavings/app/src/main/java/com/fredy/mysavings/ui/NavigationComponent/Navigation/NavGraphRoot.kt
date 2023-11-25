@@ -69,7 +69,7 @@ fun NavGraphRoot(
                 route = "${NavigationRoute.Add.route}?id={id}",
                 arguments = listOf(navArgument("id") { type = NavType.IntType })
             ) {
-                val id = it.arguments?.getInt("id") ?: -1
+                val id = it.arguments?.getString("id") ?: "-1"
                 AddScreen(modifier = Modifier
                     .fillMaxWidth()
                     .background(

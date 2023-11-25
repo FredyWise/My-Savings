@@ -51,7 +51,7 @@ import kotlinx.coroutines.launch
 fun AddScreen(
     modifier: Modifier = Modifier,
     onBackground: Color = MaterialTheme.colorScheme.onBackground,
-    id: Int,
+    id: String,
     navigateUp: () -> Unit,
     viewModel: AddRecordViewModel = hiltViewModel(),
     categoryViewModel: CategoryViewModel = hiltViewModel(),

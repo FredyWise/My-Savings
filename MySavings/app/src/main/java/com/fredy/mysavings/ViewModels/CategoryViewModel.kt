@@ -108,7 +108,7 @@ class CategoryViewModel @Inject constructor(
                 viewModelScope.launch {
                     categoryRepository.upsertCategory(
                         Category(
-                            categoryId = 1,
+                            categoryId = "1",
                             categoryName = RecordType.Transfer.name,
                             categoryType = RecordType.Transfer,
                             categoryIconDescription = RecordType.Transfer.name,
@@ -157,7 +157,7 @@ class CategoryViewModel @Inject constructor(
 
 data class CategoryState(
     val categories: List<CategoryMap> = listOf(),
-    val categoryId: Int = 0,
+    val categoryId: String = "",
     val categoryName: String = "",
     val categoryType: RecordType = RecordType.Expense,
     val categoryIcon: Int = 0,
