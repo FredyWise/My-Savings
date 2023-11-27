@@ -21,9 +21,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.fredy.mysavings.ViewModel.CalcState
 import com.fredy.mysavings.ViewModels.Event.CalcEvent
 import com.fredy.mysavings.ViewModels.Event.CalcOperation
-import com.fredy.mysavings.ViewModel.CalcState
 
 @Composable
 fun Calculator(
@@ -31,17 +31,18 @@ fun Calculator(
     modifier: Modifier = Modifier,
     btnSpacing: Dp = 10.dp,
     onAction: (CalcEvent) -> Unit,
+    leftObject: @Composable () -> Unit = {},
     calculatorShape: Shape = MaterialTheme.shapes.small,
-    textStyle: TextStyle = MaterialTheme.typography.displayLarge,
+    textStyle: TextStyle = MaterialTheme.typography.displaySmall,
     textColor: Color = MaterialTheme.colorScheme.onSecondary,
     textBackgroundColor: Color = MaterialTheme.colorScheme.secondary,
     buttonTextColor: Color = MaterialTheme.colorScheme.onSecondary,
     numberButtonBackgroundColor: Color = MaterialTheme.colorScheme.secondary,
     operandButtonBackgroundColor: Color = MaterialTheme.colorScheme.primary,
     borderColor: Color = Color.Transparent,
-    buttonAspectRatio: Float = 1f
+    buttonAspectRatio: Float = 1f,
 
-) {
+    ) {
     Box(modifier = modifier) {
         Column(
             modifier = Modifier
@@ -54,24 +55,31 @@ fun Calculator(
             ),
 
             ) {
-            Text(
-                text = state.number1 + (state.operation?.symbol ?: "") + state.number2,
-                textAlign = TextAlign.End,
+            Row(
                 modifier = Modifier
                     .background(
                         textBackgroundColor,
                         calculatorShape
                     )
-                    .border(1.dp, color = borderColor, calculatorShape)
-                    .fillMaxWidth()
-                    .padding(
-                        vertical = 5.dp
+                    .border(
+                        1.dp,
+                        color = borderColor,
+                        calculatorShape
                     )
-                    .padding(horizontal = 25.dp),
-                style = textStyle,
-                color = textColor,
-                maxLines = 2
-            )
+                    .fillMaxWidth()
+                    .padding(5.dp )
+            ) {
+                leftObject()
+                Text(
+                    modifier = Modifier.weight(0.75f)
+                        .padding(end = 20.dp, start = 8.dp),
+                    text = state.number1 + (state.operation?.symbol ?: "") + state.number2,
+                    textAlign = TextAlign.End,
+                    style = textStyle,
+                    color = textColor,
+                    maxLines = 1
+                )
+            }
             // First row (AC - Del - /)
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -86,7 +94,11 @@ fun Calculator(
                             operandButtonBackgroundColor,
                             calculatorShape
                         )
-                        .border(2.dp, color = borderColor, calculatorShape)
+                        .border(
+                            2.dp,
+                            color = borderColor,
+                            calculatorShape
+                        )
                         .aspectRatio(
                             buttonAspectRatio
                         )
@@ -101,7 +113,11 @@ fun Calculator(
                             operandButtonBackgroundColor,
                             calculatorShape
                         )
-                        .border(1.dp, color = borderColor, calculatorShape)
+                        .border(
+                            1.dp,
+                            color = borderColor,
+                            calculatorShape
+                        )
                         .aspectRatio(
                             buttonAspectRatio
                         )
@@ -116,7 +132,11 @@ fun Calculator(
                             operandButtonBackgroundColor,
                             calculatorShape
                         )
-                        .border(1.dp, color = borderColor, calculatorShape)
+                        .border(
+                            1.dp,
+                            color = borderColor,
+                            calculatorShape
+                        )
                         .aspectRatio(
                             buttonAspectRatio
                         )
@@ -131,7 +151,11 @@ fun Calculator(
                             operandButtonBackgroundColor,
                             calculatorShape
                         )
-                        .border(1.dp, color = borderColor, calculatorShape)
+                        .border(
+                            1.dp,
+                            color = borderColor,
+                            calculatorShape
+                        )
                         .aspectRatio(
                             buttonAspectRatio
                         )
@@ -158,7 +182,11 @@ fun Calculator(
                             numberButtonBackgroundColor,
                             calculatorShape
                         )
-                        .border(1.dp, color = borderColor, calculatorShape)
+                        .border(
+                            1.dp,
+                            color = borderColor,
+                            calculatorShape
+                        )
                         .aspectRatio(
                             buttonAspectRatio
                         )
@@ -177,7 +205,11 @@ fun Calculator(
                             numberButtonBackgroundColor,
                             calculatorShape
                         )
-                        .border(1.dp, color = borderColor, calculatorShape)
+                        .border(
+                            1.dp,
+                            color = borderColor,
+                            calculatorShape
+                        )
                         .aspectRatio(
                             buttonAspectRatio
                         )
@@ -196,7 +228,11 @@ fun Calculator(
                             numberButtonBackgroundColor,
                             calculatorShape
                         )
-                        .border(1.dp, color = borderColor, calculatorShape)
+                        .border(
+                            1.dp,
+                            color = borderColor,
+                            calculatorShape
+                        )
                         .aspectRatio(
                             buttonAspectRatio
                         )
@@ -215,7 +251,11 @@ fun Calculator(
                             operandButtonBackgroundColor,
                             calculatorShape
                         )
-                        .border(1.dp, color = borderColor, calculatorShape)
+                        .border(
+                            1.dp,
+                            color = borderColor,
+                            calculatorShape
+                        )
                         .aspectRatio(
                             buttonAspectRatio
                         )
@@ -242,7 +282,11 @@ fun Calculator(
                             numberButtonBackgroundColor,
                             calculatorShape
                         )
-                        .border(1.dp, color = borderColor, calculatorShape)
+                        .border(
+                            1.dp,
+                            color = borderColor,
+                            calculatorShape
+                        )
                         .aspectRatio(
                             buttonAspectRatio
                         )
@@ -261,7 +305,11 @@ fun Calculator(
                             numberButtonBackgroundColor,
                             calculatorShape
                         )
-                        .border(1.dp, color = borderColor, calculatorShape)
+                        .border(
+                            1.dp,
+                            color = borderColor,
+                            calculatorShape
+                        )
                         .aspectRatio(
                             buttonAspectRatio
                         )
@@ -280,7 +328,11 @@ fun Calculator(
                             numberButtonBackgroundColor,
                             calculatorShape
                         )
-                        .border(1.dp, color = borderColor, calculatorShape)
+                        .border(
+                            1.dp,
+                            color = borderColor,
+                            calculatorShape
+                        )
                         .aspectRatio(
                             buttonAspectRatio
                         )
@@ -299,7 +351,11 @@ fun Calculator(
                             operandButtonBackgroundColor,
                             calculatorShape
                         )
-                        .border(1.dp, color = borderColor, calculatorShape)
+                        .border(
+                            1.dp,
+                            color = borderColor,
+                            calculatorShape
+                        )
                         .aspectRatio(
                             buttonAspectRatio
                         )
@@ -326,7 +382,11 @@ fun Calculator(
                             numberButtonBackgroundColor,
                             calculatorShape
                         )
-                        .border(1.dp, color = borderColor, calculatorShape)
+                        .border(
+                            1.dp,
+                            color = borderColor,
+                            calculatorShape
+                        )
                         .aspectRatio(
                             buttonAspectRatio
                         )
@@ -345,7 +405,11 @@ fun Calculator(
                             numberButtonBackgroundColor,
                             calculatorShape
                         )
-                        .border(1.dp, color = borderColor, calculatorShape)
+                        .border(
+                            1.dp,
+                            color = borderColor,
+                            calculatorShape
+                        )
                         .aspectRatio(
                             buttonAspectRatio
                         )
@@ -364,7 +428,11 @@ fun Calculator(
                             numberButtonBackgroundColor,
                             calculatorShape
                         )
-                        .border(1.dp, color = borderColor, calculatorShape)
+                        .border(
+                            1.dp,
+                            color = borderColor,
+                            calculatorShape
+                        )
                         .aspectRatio(
                             buttonAspectRatio
                         )
@@ -383,7 +451,11 @@ fun Calculator(
                             operandButtonBackgroundColor,
                             calculatorShape
                         )
-                        .border(1.dp, color = borderColor, calculatorShape)
+                        .border(
+                            1.dp,
+                            color = borderColor,
+                            calculatorShape
+                        )
                         .aspectRatio(
                             buttonAspectRatio
                         )
@@ -410,7 +482,11 @@ fun Calculator(
                             numberButtonBackgroundColor,
                             calculatorShape
                         )
-                        .border(1.dp, color = borderColor, calculatorShape)
+                        .border(
+                            1.dp,
+                            color = borderColor,
+                            calculatorShape
+                        )
                         .aspectRatio(
                             buttonAspectRatio
                         )
@@ -429,7 +505,11 @@ fun Calculator(
                             numberButtonBackgroundColor,
                             calculatorShape
                         )
-                        .border(1.dp, color = borderColor, calculatorShape)
+                        .border(
+                            1.dp,
+                            color = borderColor,
+                            calculatorShape
+                        )
                         .aspectRatio(
                             buttonAspectRatio
                         )
@@ -448,7 +528,11 @@ fun Calculator(
                             numberButtonBackgroundColor,
                             calculatorShape
                         )
-                        .border(1.dp, color = borderColor, calculatorShape)
+                        .border(
+                            1.dp,
+                            color = borderColor,
+                            calculatorShape
+                        )
                         .aspectRatio(
                             buttonAspectRatio
                         )
@@ -463,7 +547,11 @@ fun Calculator(
                             operandButtonBackgroundColor,
                             calculatorShape
                         )
-                        .border(1.dp, color = borderColor, calculatorShape)
+                        .border(
+                            1.dp,
+                            color = borderColor,
+                            calculatorShape
+                        )
                         .aspectRatio(
                             buttonAspectRatio
                         )

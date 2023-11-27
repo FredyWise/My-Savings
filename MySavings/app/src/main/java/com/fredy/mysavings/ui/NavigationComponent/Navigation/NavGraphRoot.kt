@@ -67,7 +67,7 @@ fun NavGraphRoot(
             }
             composable(
                 route = "${NavigationRoute.Add.route}?id={id}",
-                arguments = listOf(navArgument("id") { type = NavType.IntType })
+                arguments = listOf(navArgument("id") { type = NavType.StringType })
             ) {
                 val id = it.arguments?.getString("id") ?: "-1"
                 AddScreen(modifier = Modifier

@@ -1,6 +1,6 @@
 package com.fredy.mysavings.Util
 
-import com.fredy.mysavings.Data.RoomDatabase.Enum.FilterType
+import com.fredy.mysavings.Data.Database.Enum.FilterType
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime

@@ -23,14 +23,21 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldColors
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -51,7 +58,82 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.Util.BalanceColor
 import com.fredy.mysavings.Util.SavingsIcon
+import com.fredy.mysavings.Util.currencyCodes
 import com.fredy.mysavings.Util.formatBalanceAmount
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CurrencyDropdown(
+    modifier: Modifier = Modifier,
+    textFieldColors: TextFieldColors = TextFieldDefaults.textFieldColors(),
+    selectedText: String,
+    onClick: (String) -> Unit
+) {
+    var selectedText by remember {
+        mutableStateOf(
+            selectedText
+        )
+    }
+    var expanded by remember {
+        mutableStateOf(
+            false
+        )
+    }
+    var filteredData by remember {
+        mutableStateOf(currencyCodes)
+    }
+
+    val icon = if (expanded) Icons.Filled.KeyboardArrowUp
+    else Icons.Filled.KeyboardArrowDown
+
+    ExposedDropdownMenuBox(modifier = modifier,
+        expanded = expanded,
+        onExpandedChange = { expanded = !expanded }) {
+        TextField(
+            value = selectedText,
+            singleLine = true,
+            onValueChange = {
+                selectedText = it
+                expanded = true
+                filteredData = currencyCodes.filter { data ->
+                    data.contains(
+                        it, ignoreCase = true
+                    )
+                }
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .menuAnchor(),
+            colors = textFieldColors,
+            trailingIcon = {
+                Icon(
+                    icon,
+                    "contentDescription",
+                )
+            },
+        )
+        ExposedDropdownMenu(
+            modifier = Modifier,
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+        ) {
+            filteredData.forEach { label ->
+                DropdownMenuItem(
+                    onClick = {
+                        expanded = false
+                        selectedText = label
+                        onClick(label)
+                    },
+                    text = {
+                        Text(
+                            text = label,
+                        )
+                    },
+                )
+            }
+        }
+    }
+}
 
 @Composable
 fun SimpleAddDialog(
@@ -446,6 +528,7 @@ fun CustomDropDownMenu(
 data class ActionWithName(
     val name: String, val action: () -> Unit
 )
+
 data class ValueWithName<T>(
     val name: String, val value: T
 )

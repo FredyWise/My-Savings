@@ -1,9 +1,8 @@
 package com.fredy.mysavings.ViewModels.Event
 
-import com.fredy.mysavings.Data.RoomDatabase.Entity.Record
-import com.fredy.mysavings.Data.RoomDatabase.Enum.FilterType
+import com.fredy.mysavings.Data.Database.Entity.Record
+import com.fredy.mysavings.Data.Database.Enum.FilterType
 import com.fredy.mysavings.Repository.TrueRecord
-import com.fredy.mysavings.ViewModel.FilterState
 
 sealed interface RecordsEvent{
     data class ShowDialog(val trueRecord: TrueRecord): RecordsEvent

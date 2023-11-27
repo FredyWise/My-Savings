@@ -1,14 +1,8 @@
-package com.fredy.mysavings.Data.RoomDatabase.Entity
+package com.fredy.mysavings.Data.Database.Entity
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountBalanceWallet
-import androidx.room.Entity
-import androidx.room.PrimaryKey
 import com.fredy.mysavings.R
 
-@Entity
 data class Account(
-    @PrimaryKey(autoGenerate = false)
     var accountId: String = "",
     val userIdFk: String = "",
     val accountName: String = "Account",

@@ -1,28 +1,43 @@
 package com.fredy.mysavings.Repository
 
+import android.util.Log
 import com.fredy.mysavings.Data.APIs.CurrencyModels.CurrencyApi
 import com.fredy.mysavings.Data.APIs.CurrencyModels.CurrencyResponse
 import com.fredy.mysavings.Util.Resource
+import com.fredy.mysavings.Util.TAG
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 interface CurrencyRepository {
-    suspend fun getRates(base: String): Resource<CurrencyResponse>
+     fun getRates(base: String): Flow<Resource<CurrencyResponse>>
 }
 
 class CurrencyRepositoryImpl @Inject constructor(
     private val api: CurrencyApi
 ) : CurrencyRepository {
-    override suspend fun getRates(base: String): Resource<CurrencyResponse> {
-        return try {
+    override fun getRates(base: String): Flow<Resource<CurrencyResponse>> {
+        return flow {
+            emit(Resource.Loading())
             val response = api.getRates(base)
+            Log.e(
+                TAG,
+                "convert: test success"+response,
+
+                )
             val result = response.body()
-            if(response.isSuccessful && result != null) {
-                Resource.Success(result)
-            } else {
-                Resource.Error(response.message())
-            }
-        } catch(e: Exception) {
-            Resource.Error(e.message ?: "An error occured")
+            Log.e(
+                TAG,
+                "convert: test success"+result,
+
+                )
+            emit(Resource.Success(result!!))
+        }.catch {
+            emit(Resource.Error(it.message.toString()))
         }
     }
 }
+
+

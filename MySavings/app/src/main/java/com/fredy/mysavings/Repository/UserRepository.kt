@@ -1,10 +1,18 @@
 package com.fredy.mysavings.Repository
 
-import com.fredy.mysavings.Data.RoomDatabase.Entity.UserData
-import com.fredy.mysavings.Data.RoomDatabase.SavingsDatabase
+import com.fredy.mysavings.Data.Database.Entity.UserData
+import com.fredy.mysavings.Data.GoogleAuth.GoogleAuthUiClient
 import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.Filter
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.firestore
+import com.google.firebase.firestore.toObject
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 interface UserRepository {
@@ -16,38 +24,89 @@ interface UserRepository {
 }
 
 class UserRepositoryImpl @Inject constructor(
-    private val savingsDatabase: SavingsDatabase
+    private val firebaseAuth: FirebaseAuth,
+    private val googleAuthUiClient: GoogleAuthUiClient,
 ): UserRepository {
+    val currentUser = googleAuthUiClient.getSignedInUser(
+        firebaseAuth
+    )
+
     override suspend fun upsertUser(user: UserData) {
-        Firebase.firestore
-            .collection("user")
-            .document(user.firebaseUserId)
-            .set(user)
-        savingsDatabase.userDao.upsertUser(user)
+        Firebase.firestore.collection("user").document(
+            user.firebaseUserId
+        ).set(user)
     }
 
     override suspend fun deleteUser(user: UserData) {
-        Firebase.firestore
-            .collection("user")
-            .document(user.firebaseUserId)
-            .delete()
-
-        savingsDatabase.userDao.deleteUser(user)
+        Firebase.firestore.collection("user").document(
+            user.firebaseUserId
+        ).delete()
     }
 
     override fun getUser(userId: String): Flow<UserData> {
-        return savingsDatabase.userDao.getUser(
-            userId
-        )
+        return flow {
+            var data = UserData()
+            val result = Firebase.firestore.collection(
+                "user"
+            ).document(
+                userId
+            ).get().await()
+            if (result.exists()) {
+                data = result.toObject<UserData>()!!
+            }
+            emit(data)
+        }
     }
 
-    override fun getAllUsersOrderedByName(): Flow<List<UserData>> {
-        return savingsDatabase.userDao.getAllUsersOrderedByName()
+    override fun getAllUsersOrderedByName() = callbackFlow<List<UserData>> {
+        val listener = Firebase.firestore.collection(
+            "user"
+        ).orderBy(
+            "username", Query.Direction.ASCENDING
+        ).addSnapshotListener { value, error ->
+            error?.let {
+                close(it)
+            }
+            value?.let {
+                val data = it.documents.map { document ->
+                    document.toObject<UserData>()!!
+                }
+                trySend(data)
+            }
+        }
+
+        awaitClose {
+            listener.remove()
+        }
     }
 
-    override fun searchUsers(usernameEmail: String): Flow<List<UserData>> {
-        return savingsDatabase.userDao.searchUsers(
-            usernameEmail
-        )
+    override fun searchUsers(usernameEmail: String) = callbackFlow<List<UserData>> {
+        val listener = Firebase.firestore.collection(
+            "user"
+        ).where(
+            Filter.arrayContains(
+                "username", usernameEmail
+            )
+        ).where(
+            Filter.arrayContains(
+                "email", usernameEmail
+            )
+        ).orderBy(
+            "username", Query.Direction.ASCENDING
+        ).addSnapshotListener { value, error ->
+            error?.let {
+                close(it)
+            }
+            value?.let {
+                val data = it.documents.map { document ->
+                    document.toObject<UserData>()!!
+                }
+                trySend(data)
+            }
+        }
+
+        awaitClose {
+            listener.remove()
+        }
     }
 }

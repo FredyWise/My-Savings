@@ -1,4 +1,4 @@
-package com.fredy.mysavings.Data.RoomDatabase.Enum
+package com.fredy.mysavings.Data.Database.Enum
 
 enum class SortType {
     ASCENDING,

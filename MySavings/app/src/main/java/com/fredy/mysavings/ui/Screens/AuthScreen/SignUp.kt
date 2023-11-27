@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.fredy.mysavings.R
 import com.fredy.mysavings.ViewModels.AuthState
-import com.fredy.mysavings.ViewModels.Event.SignUpEvent
+import com.fredy.mysavings.ViewModels.Event.AuthEvent
 import com.fredy.mysavings.ViewModels.GoogleSignInState
 import com.fredy.mysavings.ui.Screens.AuthScreen.CustomTextField
 import com.fredy.mysavings.ui.Screens.AuthScreen.GoogleButton
@@ -54,7 +54,7 @@ fun SignUp(
     onBackgroundColor: Color = MaterialTheme.colorScheme.onBackground,
     state: AuthState?,
     googleSignInState: GoogleSignInState,
-    onEvent: (SignUpEvent) -> Unit
+    onEvent: (AuthEvent) -> Unit
 ) {
     val context = LocalContext.current
     var username by remember { mutableStateOf("") }
@@ -82,7 +82,7 @@ fun SignUp(
                 result.idToken, null
             )
             onEvent(
-                SignUpEvent.googleSignIn(
+                AuthEvent.googleAuth(
                     credentials
                 )
             )
@@ -151,7 +151,7 @@ fun SignUp(
             onClick = {
                 if (password == confirmPassword && password.length >= 8) {
                     onEvent(
-                        SignUpEvent.registerUser(
+                        AuthEvent.registerUser(
                             username = username,
                             email = email,
                             password = password

@@ -1,5 +1,6 @@
 package com.fredy.mysavings.ui.Screens.AddRecord
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -9,7 +10,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.BottomSheetScaffold
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material.rememberBottomSheetScaffoldState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,26 +29,28 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.fredy.mysavings.Data.RoomDatabase.Entity.Account
-import com.fredy.mysavings.Data.RoomDatabase.Entity.Category
-import com.fredy.mysavings.Data.RoomDatabase.Enum.RecordType
-import com.fredy.mysavings.ViewModels.Event.AccountEvent
-import com.fredy.mysavings.ViewModels.Event.AddRecordEvent
-import com.fredy.mysavings.ViewModels.Event.CategoryEvent
+import com.fredy.mysavings.Data.Database.Entity.Account
+import com.fredy.mysavings.Data.Database.Entity.Category
+import com.fredy.mysavings.Data.Database.Enum.RecordType
 import com.fredy.mysavings.R
 import com.fredy.mysavings.Util.isTransfer
 import com.fredy.mysavings.ViewModel.AccountViewModel
 import com.fredy.mysavings.ViewModel.AddRecordViewModel
 import com.fredy.mysavings.ViewModel.CategoryViewModel
+import com.fredy.mysavings.ViewModels.Event.AccountEvent
+import com.fredy.mysavings.ViewModels.Event.AddRecordEvent
+import com.fredy.mysavings.ViewModels.Event.CategoryEvent
 import com.fredy.mysavings.ui.Screens.Account.AccountAddDialog
 import com.fredy.mysavings.ui.Screens.ActionWithName
 import com.fredy.mysavings.ui.Screens.Category.CategoryAddDialog
+import com.fredy.mysavings.ui.Screens.CurrencyDropdown
 import com.fredy.mysavings.ui.Screens.SimpleButton
 import com.fredy.mysavings.ui.Screens.TypeRadioButton
 import kotlinx.coroutines.launch
 
 @OptIn(
-    ExperimentalMaterialApi::class
+    ExperimentalMaterialApi::class,
+    ExperimentalMaterial3Api::class
 )
 @Composable
 fun AddScreen(
@@ -70,6 +75,7 @@ fun AddScreen(
     )
     BottomSheetScaffold(
         scaffoldState = scaffoldState,
+        backgroundColor = MaterialTheme.colorScheme.secondary,
         sheetPeekHeight = 0.dp,
         sheetContent = {
             if (isLeft) {
@@ -363,13 +369,29 @@ fun AddScreen(
                     )
                 }
             }
-            Calculator(
+            Calculator(modifier = Modifier.fillMaxWidth(),
                 state = calculatorState,
                 onAction = viewModel::onAction,
                 textStyle = MaterialTheme.typography.displayMedium,
                 buttonAspectRatio = 1.8f,
-                modifier = Modifier.fillMaxWidth()
-            )
+                leftObject = {
+                    CurrencyDropdown(modifier = Modifier
+                        .weight(
+                            0.26f
+                        ),
+                        textFieldColors = TextFieldDefaults.textFieldColors(
+                            focusedIndicatorColor = Color.Unspecified,
+                            unfocusedIndicatorColor = Color.Unspecified
+                        ),
+                        selectedText = state.recordCurrency,
+                        onClick = {
+                            viewModel.onEvent(
+                                AddRecordEvent.RecordCurrency(
+                                    it
+                                )
+                            )
+                        })
+                })
             DateAndTimePicker(
                 applicationContext = applicationContext,
                 state = state,

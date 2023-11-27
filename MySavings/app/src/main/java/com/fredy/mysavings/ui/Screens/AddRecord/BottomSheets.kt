@@ -24,11 +24,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.fredy.mysavings.Data.RoomDatabase.Entity.Account
-import com.fredy.mysavings.Data.RoomDatabase.Entity.Category
-import com.fredy.mysavings.Data.RoomDatabase.Enum.RecordType
-import com.fredy.mysavings.Util.formatBalanceAmount
+import com.fredy.mysavings.Data.Database.Entity.Account
+import com.fredy.mysavings.Data.Database.Entity.Category
+import com.fredy.mysavings.Data.Database.Enum.RecordType
 import com.fredy.mysavings.R
+import com.fredy.mysavings.Util.formatBalanceAmount
 import com.fredy.mysavings.ViewModel.CategoryMap
 import com.fredy.mysavings.ui.Screens.SimpleButton
 import com.fredy.mysavings.ui.Screens.SimpleEntityItem
@@ -36,6 +36,7 @@ import com.fredy.mysavings.ui.Screens.SimpleEntityItem
 @Composable
 fun AccountBottomSheet(
     modifier: Modifier = Modifier,
+    textColor: Color = MaterialTheme.colorScheme.onSecondary,
     accounts: List<Account>,
     onSelectAccount: (Account) -> Unit,
     onAddAccount: () -> Unit
@@ -47,6 +48,7 @@ fun AccountBottomSheet(
                 vertical = 8.dp
             ),
         text = "Select a Account",
+        color = textColor,
         textAlign = TextAlign.Center,
         style = MaterialTheme.typography.headlineSmall
     )
@@ -73,15 +75,17 @@ fun AccountBottomSheet(
                             amount = account.accountAmount,
                             currency = account.accountCurrency
                         ),
-                        style = MaterialTheme.typography.headlineSmall.copy(fontSize = 20.sp),
-                        color = MaterialTheme.colorScheme.onSurface
+                        style = MaterialTheme.typography.headlineSmall.copy(
+                            fontSize = 20.sp
+                        ),
+                        color = textColor,
                     )
                 },
             ) {
                 Text(
                     text = account.accountName,
                     style = MaterialTheme.typography.headlineSmall,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    color = textColor,
                     maxLines = 2,
                 )
             }
@@ -91,7 +95,8 @@ fun AccountBottomSheet(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(
-                        horizontal = 70.dp, vertical = 8.dp
+                        horizontal = 70.dp,
+                        vertical = 8.dp
                     )
                     .clip(
                         MaterialTheme.shapes.medium
@@ -115,6 +120,7 @@ fun AccountBottomSheet(
 @Composable
 fun CategoryBottomSheet(
     modifier: Modifier = Modifier,
+    textColor: Color = MaterialTheme.colorScheme.onSecondary,
     categoryMaps: List<CategoryMap>,
     recordType: RecordType,
     onSelectCategory: (Category) -> Unit,
@@ -131,6 +137,7 @@ fun CategoryBottomSheet(
                     vertical = 8.dp
                 ),
             text = "Select a Category",
+            color = textColor,
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.headlineSmall
         )
@@ -168,7 +175,7 @@ fun CategoryBottomSheet(
                     Text(
                         text = category.categoryName,
                         style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.onSurface,
+                        color = textColor,
                         textAlign = TextAlign.Center,
                         maxLines = 2
                     )
@@ -203,7 +210,7 @@ fun CategoryBottomSheet(
                     Text(
                         text = "Add Category",
                         style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = textColor,
                     )
                 }
             }

@@ -11,7 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import com.fredy.mysavings.Data.RoomDatabase.Entity.Account
+import com.fredy.mysavings.Data.Database.Entity.Account
 import com.fredy.mysavings.ViewModels.Event.AccountEvent
 import com.fredy.mysavings.R
 import com.fredy.mysavings.ViewModel.AccountState

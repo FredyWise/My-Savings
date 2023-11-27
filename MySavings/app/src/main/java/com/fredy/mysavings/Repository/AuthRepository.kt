@@ -1,10 +1,8 @@
 package com.fredy.mysavings.Repository
 
-import android.util.Log
 import com.fredy.mysavings.Data.GoogleAuth.GoogleAuthUiClient
-import com.fredy.mysavings.Data.RoomDatabase.Entity.UserData
+import com.fredy.mysavings.Data.Database.Entity.UserData
 import com.fredy.mysavings.Util.Resource
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
@@ -87,6 +85,4 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun signOut() {
         googleAuthUiClient.signOut(firebaseAuth)
     }
-
-
 }

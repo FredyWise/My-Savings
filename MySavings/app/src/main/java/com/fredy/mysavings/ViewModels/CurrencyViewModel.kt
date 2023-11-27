@@ -1,86 +1,82 @@
 package com.fredy.mysavings.ViewModels
 
+import android.util.Log
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fredy.mysavings.Data.APIs.CurrencyModels.Rates
+import com.fredy.mysavings.Repository.AuthRepository
 import com.fredy.mysavings.Repository.CurrencyRepository
-import com.fredy.mysavings.Util.DispatcherProvider
 import com.fredy.mysavings.Util.Resource
+import com.fredy.mysavings.Util.TAG
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.lang.Math.round
 import javax.inject.Inject
 
 @HiltViewModel
-class MainViewModel @Inject constructor(
+class CurrencyViewModel @Inject constructor(
     private val repository: CurrencyRepository,
-    private val dispatchers: DispatcherProvider,
+    private val authRepository: AuthRepository,
 ): ViewModel() {
-
-    sealed class CurrencyEvent {
-        class Success(val resultText: String): CurrencyEvent()
-        class Failure(val errorText: String): CurrencyEvent()
-        object Loading: CurrencyEvent()
-        object Empty: CurrencyEvent()
-    }
-
-    private val _conversion = MutableStateFlow<CurrencyEvent>(
-        CurrencyEvent.Empty
+    private val _resource = mutableStateOf(
+        ResourceState()
     )
-    val conversion: StateFlow<CurrencyEvent> = _conversion
+    val resource: State<ResourceState> = _resource
 
     fun convert(
         amountStr: String,
-        fromCurrency: String,
         toCurrency: String
     ) {
+        Log.e(TAG, "convert: "+amountStr+toCurrency )
         val fromAmount = amountStr.toFloatOrNull()
+        val fromCurrency = authRepository.getSignedInUser()!!.userCurrency
+
         if (fromAmount == null) {
-            _conversion.value = CurrencyEvent.Failure(
-                "Not a valid amount"
-            )
+            _resource.value = ResourceState(error = "Amount is Empty")
             return
         }
 
-        viewModelScope.launch(dispatchers.io) {
-            _conversion.value = CurrencyEvent.Loading
-            when (val ratesResponse = repository.getRates(
-                fromCurrency
-            )) {
-                is Resource.Error -> _conversion.value = CurrencyEvent.Failure(
-                    ratesResponse.message!!
-                )
-
-                is Resource.Success -> {
-                    val rates = ratesResponse.data!!.rates
-                    val rate = getRateForCurrency(
-                        toCurrency,
-                        rates
+        viewModelScope.launch {
+            repository.getRates(
+                fromCurrency.ifBlank { "USD" }
+            ).collect { result ->
+                when (result) {
+                    is Resource.Error -> _resource.value = ResourceState(
+                        error = result.message!!
                     )
-                    if (rate == null) {
-                        _conversion.value = CurrencyEvent.Failure(
-                            "Unexpected error"
-                        )
-                    } else {
-                        val convertedCurrency = round(
-                            fromAmount * rate * 100
-                        ) / 100
-                        _conversion.value = CurrencyEvent.Success(
-                            "$fromAmount $fromCurrency = $convertedCurrency $toCurrency"
-                        )
-                    }
-                }
 
-                else -> {}
+                    is Resource.Success -> {
+                        val rates = result.data!!.rates
+                        val rate = getRateForCurrency(
+                            toCurrency, rates
+                        )?.toDouble()
+
+                        if (rate == null) {
+                            _resource.value = ResourceState(
+                                "Unexpected error"
+                            )
+                        } else {
+                            val convertedCurrency = fromAmount * rate
+                            _resource.value = ResourceState(
+                                success = "$fromAmount $fromCurrency = $convertedCurrency $toCurrency"
+                            )
+                        }
+                    }
+
+                    is Resource.Loading -> _resource.value = ResourceState(
+                        loading = true
+                    )
+                }
             }
         }
-    }
 
+    }
     private fun getRateForCurrency(
-        currency: String,
-        rates: Rates
+        currency: String, rates: Rates
     ) = when (currency) {
         "AED" -> rates.AED
         "AFN" -> rates.AFN
@@ -255,3 +251,10 @@ class MainViewModel @Inject constructor(
     }
 
 }
+
+data class ResourceState(
+    val success: String? = null,
+    val error: String? = null,
+    val loading: Boolean = false,
+)
+

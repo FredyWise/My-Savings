@@ -13,10 +13,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.fredy.mysavings.ViewModels.Event.AccountEvent
 import com.fredy.mysavings.Util.accountIcons
 import com.fredy.mysavings.ViewModel.AccountState
+import com.fredy.mysavings.ViewModels.Event.AccountEvent
 import com.fredy.mysavings.ui.Screens.ChooseIcon
+import com.fredy.mysavings.ui.Screens.CurrencyDropdown
 import com.fredy.mysavings.ui.Screens.SimpleAddDialog
 
 @Composable
@@ -35,7 +36,9 @@ fun AccountAddDialog(
         TextField(
             value = state.accountAmount,
             onValueChange = {
-                if (it.isEmpty() || it.matches(Regex("^(\\d+\\.?\\d*|\\d*\\.\\d+)$"))) {
+                if (it.isEmpty() || it.matches(
+                        Regex("^(\\d+\\.?\\d*|\\d*\\.\\d+)$")
+                    )) {
                     onEvent(
                         AccountEvent.AccountAmount(
                             it
@@ -63,7 +66,14 @@ fun AccountAddDialog(
                 Text(text = "0")
             },
         )
-        //choose currency here
+        CurrencyDropdown(selectedText = state.accountCurrency,
+            onClick = {
+                onEvent(
+                    AccountEvent.AccountCurrency(
+                        it
+                    )
+                )
+            })
         TextField(
             value = state.accountName,
             onValueChange = {

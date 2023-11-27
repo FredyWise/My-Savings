@@ -2,9 +2,10 @@ package com.fredy.mysavings.ViewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.fredy.mysavings.Data.RoomDatabase.Enum.FilterType
-import com.fredy.mysavings.Data.RoomDatabase.Enum.RecordType
-import com.fredy.mysavings.Data.RoomDatabase.Enum.SortType
+import com.fredy.mysavings.Data.Database.Converter.TimestampConverter
+import com.fredy.mysavings.Data.Database.Enum.FilterType
+import com.fredy.mysavings.Data.Database.Enum.RecordType
+import com.fredy.mysavings.Data.Database.Enum.SortType
 import com.fredy.mysavings.Repository.RecordRepository
 import com.fredy.mysavings.Repository.TrueRecord
 import com.fredy.mysavings.ViewModels.Event.RecordsEvent

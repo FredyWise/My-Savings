@@ -2,13 +2,11 @@ package com.fredy.mysavings.ViewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.fredy.mysavings.Data.RoomDatabase.Entity.Category
-import com.fredy.mysavings.Data.RoomDatabase.Enum.RecordType
-import com.fredy.mysavings.Data.RoomDatabase.Enum.SortType
+import com.fredy.mysavings.Data.Database.Entity.Category
+import com.fredy.mysavings.Data.Database.Enum.RecordType
+import com.fredy.mysavings.Data.Database.Enum.SortType
 import com.fredy.mysavings.ViewModels.Event.CategoryEvent
 import com.fredy.mysavings.R
-import com.fredy.mysavings.Repository.CategoryRepositoryImpl
-import com.fredy.mysavings.DI.AppModuleImpl
 import com.fredy.mysavings.Repository.CategoryRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

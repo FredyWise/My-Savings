@@ -3,7 +3,7 @@ package com.fredy.mysavings.Util
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import com.fredy.mysavings.Data.RoomDatabase.Enum.RecordType
+import com.fredy.mysavings.Data.Database.Enum.RecordType
 import java.text.DecimalFormat
 
 

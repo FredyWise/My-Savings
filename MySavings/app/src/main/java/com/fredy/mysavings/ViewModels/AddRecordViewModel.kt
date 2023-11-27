@@ -6,10 +6,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.fredy.mysavings.Data.RoomDatabase.Entity.Account
-import com.fredy.mysavings.Data.RoomDatabase.Entity.Category
-import com.fredy.mysavings.Data.RoomDatabase.Entity.Record
-import com.fredy.mysavings.Data.RoomDatabase.Enum.RecordType
+import com.fredy.mysavings.Data.Database.Converter.TimestampConverter
+import com.fredy.mysavings.Data.Database.Entity.Account
+import com.fredy.mysavings.Data.Database.Entity.Category
+import com.fredy.mysavings.Data.Database.Entity.Record
+import com.fredy.mysavings.Data.Database.Enum.RecordType
+import com.fredy.mysavings.Repository.AuthRepository
 import com.fredy.mysavings.ViewModels.Event.AddRecordEvent
 import com.fredy.mysavings.ViewModels.Event.CalcEvent
 import com.fredy.mysavings.ViewModels.Event.CalcOperation
@@ -29,6 +31,7 @@ import kotlin.math.absoluteValue
 @HiltViewModel
 class AddRecordViewModel @Inject constructor(
     private val recordRepository: RecordRepository,
+    private val authRepository: AuthRepository
 ): ViewModel() {
     var state by mutableStateOf(AddRecordState())
     var calcState by mutableStateOf(CalcState())
@@ -60,6 +63,10 @@ class AddRecordViewModel @Inject constructor(
                             calcState = calcState.copy(number1 = it.record.recordAmount.absoluteValue.toString())
                         }
                     }
+                } else {
+                    state = state.copy(
+                        recordCurrency = authRepository.getSignedInUser()!!.userCurrency
+                    )
                 }
             }
             is AddRecordEvent.SaveRecord -> {
@@ -72,7 +79,7 @@ class AddRecordViewModel @Inject constructor(
                     state.recordTime
                 )
                 var recordAmount = calcState.number1.toDouble().absoluteValue
-                val recordCurrency = "baba"//state.recordCurrency
+                val recordCurrency = state.recordCurrency
                 val recordType = state.recordType
                 val recordNotes = state.recordNotes
                 var difference = state.recordAmount.absoluteValue
@@ -113,7 +120,6 @@ class AddRecordViewModel @Inject constructor(
                     recordAmount = recordAmount,
                     recordCurrency = recordCurrency,
                     recordType = recordType,
-                    isTransfer = recordType == RecordType.Transfer,
                     recordNotes = recordNotes,
                 )
                 Log.e("BABI", "onEvent: "+record, )

@@ -12,9 +12,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.example.myapplication.ui.screens.authentication.SignIn
 import com.example.myapplication.ui.screens.authentication.SignUp
-import com.fredy.mysavings.ViewModels.Event.SignInEvent
-import com.fredy.mysavings.ViewModels.SignInViewModel
-import com.fredy.mysavings.ViewModels.SignUpViewModel
+import com.fredy.mysavings.ViewModels.Event.AuthEvent
+import com.fredy.mysavings.ViewModels.AuthViewModel
 
 fun NavGraphBuilder.authenticationNavGraph(
     navController: NavHostController
@@ -26,12 +25,12 @@ fun NavGraphBuilder.authenticationNavGraph(
         composable(
             route = NavigationRoute.SignIn.route
         ) {
-            val viewModel: SignInViewModel = hiltViewModel()
+            val viewModel: AuthViewModel = hiltViewModel()
             val state by viewModel.state.collectAsState()
             val googleSignInState by viewModel.googleState
             val context = LocalContext.current
 
-            viewModel.onEvent(SignInEvent.getSignedInUser)
+            viewModel.onEvent(AuthEvent.getSignedInUser)
             if (state.signedInUser != null) {
                 navController.popBackStack()
                 navController.navigate(
@@ -44,7 +43,7 @@ fun NavGraphBuilder.authenticationNavGraph(
                 key2 = googleSignInState.error
             ) {
                 if (state.isError?.isNotEmpty() == true) {
-                    viewModel.onEvent(SignInEvent.signOut)
+                    viewModel.onEvent(AuthEvent.signOut)
                     val error = state.isError
                     Toast.makeText(
                         context,
@@ -52,8 +51,8 @@ fun NavGraphBuilder.authenticationNavGraph(
                         Toast.LENGTH_LONG
                     ).show()
                 }
-                if (googleSignInState.error.isNotEmpty()){
-                    viewModel.onEvent(SignInEvent.signOut)
+                if (googleSignInState.error.isNotEmpty()) {
+                    viewModel.onEvent(AuthEvent.signOut)
                     Toast.makeText(
                         context,
                         googleSignInState.error,
@@ -99,7 +98,7 @@ fun NavGraphBuilder.authenticationNavGraph(
         composable(
             route = NavigationRoute.SignUp.route
         ) {
-            val viewModel: SignUpViewModel = hiltViewModel()
+            val viewModel: AuthViewModel = hiltViewModel()
             val state by viewModel.state.collectAsState()
             val googleSignInState by viewModel.googleState
             val context = LocalContext.current
@@ -115,7 +114,7 @@ fun NavGraphBuilder.authenticationNavGraph(
                         Toast.LENGTH_LONG
                     ).show()
                 }
-                if (googleSignInState.error.isNotEmpty()){
+                if (googleSignInState.error.isNotEmpty()) {
                     Toast.makeText(
                         context,
                         googleSignInState.error,

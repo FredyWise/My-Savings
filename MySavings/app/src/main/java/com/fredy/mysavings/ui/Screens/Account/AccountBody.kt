@@ -15,7 +15,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.Util.BalanceColor
-import com.fredy.mysavings.Data.RoomDatabase.Entity.Account
+import com.fredy.mysavings.Data.Database.Entity.Account
 import com.fredy.mysavings.ViewModels.Event.AccountEvent
 import com.fredy.mysavings.Util.formatBalanceAmount
 import com.fredy.mysavings.ui.Screens.ActionWithName

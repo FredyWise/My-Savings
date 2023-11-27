@@ -2,12 +2,13 @@ package com.fredy.mysavings.ViewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.fredy.mysavings.Data.RoomDatabase.Entity.Account
-import com.fredy.mysavings.Data.RoomDatabase.Enum.RecordType
-import com.fredy.mysavings.Data.RoomDatabase.Enum.SortType
-import com.fredy.mysavings.ViewModels.Event.AccountEvent
+import com.fredy.mysavings.Data.Database.Entity.Account
+import com.fredy.mysavings.Data.Database.Enum.RecordType
+import com.fredy.mysavings.Data.Database.Enum.SortType
 import com.fredy.mysavings.Repository.AccountRepository
+import com.fredy.mysavings.Repository.AuthRepository
 import com.fredy.mysavings.Repository.RecordRepository
+import com.fredy.mysavings.ViewModels.Event.AccountEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -22,6 +23,7 @@ import javax.inject.Inject
 class AccountViewModel @Inject constructor(
     private val accountRepository: AccountRepository,
     private val recordRepository: RecordRepository,
+    private val authRepository: AuthRepository,
 ): ViewModel() {
     private val _sortType = MutableStateFlow(
         SortType.ASCENDING
@@ -133,11 +135,11 @@ class AccountViewModel @Inject constructor(
                 val accountId = state.value.accountId
                 val accountName = state.value.accountName
                 val accountAmount = state.value.accountAmount
-                val accountCurrency = "hello"//state.value.accountCurrency
+                val accountCurrency = state.value.accountCurrency
                 val accountIcon = state.value.accountIcon
                 val accountIconDescription = state.value.accountIconDescription
 
-                if (accountName.isBlank() || accountAmount == "" || accountCurrency.isBlank() || accountIcon == 0 || accountIconDescription.isBlank()) {
+                if (accountName.isBlank() || accountAmount.isBlank() || accountCurrency.isBlank() || accountIconDescription.isBlank()) {
                     return
                 }
 
@@ -146,15 +148,19 @@ class AccountViewModel @Inject constructor(
                     accountName = accountName,
                     accountAmount = accountAmount.toDouble(),
                     accountCurrency = accountCurrency,
-                    accountIconDescription = accountIconDescription,
                     accountIcon = accountIcon,
+                    accountIconDescription = accountIconDescription,
                 )
                 viewModelScope.launch {
                     accountRepository.upsertAccount(
                         account
                     )
                 }
-                _state.update { AccountState()}
+                _state.update {
+                    AccountState(
+                        accountCurrency = authRepository.getSignedInUser()!!.userCurrency,
+                    )
+                }
             }
 
             is AccountEvent.AccountName -> {

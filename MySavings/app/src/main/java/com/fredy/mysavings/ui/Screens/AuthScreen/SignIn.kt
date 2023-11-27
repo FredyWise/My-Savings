@@ -1,7 +1,6 @@
 package com.example.myapplication.ui.screens.authentication
 
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -15,8 +14,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Divider
-import androidx.compose.material.TextField
-import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -32,12 +29,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.fredy.mysavings.R
 import com.fredy.mysavings.ViewModels.AuthState
-import com.fredy.mysavings.ViewModels.Event.SignInEvent
+import com.fredy.mysavings.ViewModels.Event.AuthEvent
 import com.fredy.mysavings.ViewModels.GoogleSignInState
 import com.fredy.mysavings.ui.NavigationComponent.Navigation.NavigationRoute
 import com.fredy.mysavings.ui.NavigationComponent.Navigation.navigateSingleTopTo
@@ -56,7 +52,7 @@ fun SignIn(
     onBackgroundColor: Color = MaterialTheme.colorScheme.onBackground,
     state: AuthState?,
     googleSignInState: GoogleSignInState,
-    onEvent: (SignInEvent) -> Unit
+    onEvent: (AuthEvent) -> Unit
 ) {
     val context = LocalContext.current
     var email by rememberSaveable {
@@ -84,7 +80,7 @@ fun SignIn(
                 result.idToken, null
             )
             onEvent(
-                SignInEvent.googleSignIn(
+                AuthEvent.googleAuth(
                     credentials
                 )
             )
@@ -136,7 +132,7 @@ fun SignIn(
         Button(
             onClick = {
                 onEvent(
-                    SignInEvent.loginUser(
+                    AuthEvent.loginUser(
                         email, password
                     )
                 )
