@@ -13,6 +13,8 @@ import com.fredy.mysavings.Data.Database.Entity.Category
 import com.fredy.mysavings.ViewModels.Event.CategoryEvent
 import com.fredy.mysavings.R
 import com.fredy.mysavings.ViewModel.CategoryState
+import com.fredy.mysavings.ViewModels.Event.AccountEvent
+import com.fredy.mysavings.ui.Screens.SearchBar
 import com.fredy.mysavings.ui.Screens.SimpleButton
 
 @Composable
@@ -54,9 +56,22 @@ fun CategoriesScreen(
             title = "ADD NEW CATEGORY",
             titleStyle = MaterialTheme.typography.titleLarge.copy(MaterialTheme.colorScheme.onBackground)
         )
-        CategoryBody(
-            categoryMaps = state.categories,
-            onEvent = onEvent
-        )
+
+        SearchBar(
+            searchText = state.searchText,
+            onValueChange = {
+                onEvent(
+                    CategoryEvent.SearchCategory(
+                        it
+                    )
+                )
+            },
+            isSearching = state.isSearching
+        ) {
+            CategoryBody(
+                categoryMaps = state.categories,
+                onEvent = onEvent
+            )
+        }
     }
 }

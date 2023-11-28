@@ -27,9 +27,9 @@ fun isIncome(recordType: RecordType):Boolean{
 @Composable
 fun BalanceColor(amount: Double, isTransfer: Boolean = false): Color {
     return when {
-        amount < 0.0 -> MaterialTheme.colorScheme.secondary
-        isTransfer -> MaterialTheme.colorScheme.tertiary
-        else -> MaterialTheme.colorScheme.primary
+        amount < 0.0 -> MaterialTheme.colorScheme.primary
+        isTransfer -> MaterialTheme.colorScheme.secondary
+        else -> MaterialTheme.colorScheme.tertiary
     }
 }
 

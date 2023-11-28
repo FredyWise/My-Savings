@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.fredy.mysavings.Data.Database.Entity.UserData
 import com.fredy.mysavings.ui.NavigationComponent.Navigation.Graph
 import com.fredy.mysavings.ui.NavigationComponent.Navigation.HomeNavGraph
 import com.fredy.mysavings.ui.NavigationComponent.Navigation.NavigationRoute
@@ -44,6 +45,7 @@ fun MainScreen(
     contentColor: Color = MaterialTheme.colorScheme.surface,
     onContentColor: Color = MaterialTheme.colorScheme.onSurface,
     rootNavController: NavHostController,
+    currentUser: UserData,
     signOut: () -> Unit,
 ) {
     val navController = rememberNavController()
@@ -66,6 +68,7 @@ fun MainScreen(
                         scaffoldState.drawerState.open()
                     }
                 },
+                currentUser = currentUser
             )
         },
         drawerGesturesEnabled = scaffoldState.drawerState.isOpen,
@@ -83,26 +86,21 @@ fun MainScreen(
                     Row(modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
-                            scope.launch {
-                                signOut()
-                                Toast
-                                    .makeText(
-                                        context,
-                                        "Signed out",
-                                        Toast.LENGTH_SHORT
-                                    )
-                                    .show()
-                                rootNavController.popBackStack()
-                                rootNavController.popBackStack()
-                                rootNavController.navigate(
-                                    Graph.Auth
+                            signOut()
+                            Toast
+                                .makeText(
+                                    context,
+                                    "Signed out",
+                                    Toast.LENGTH_SHORT
                                 )
-                            }
+                                .show()
+                            rootNavController.navigateSingleTopTo(Graph.Auth)
                         }
                         .padding(16.dp)) {
                         Icon(
                             imageVector = Icons.Default.Logout,
-                            contentDescription = ""
+                            contentDescription = "",
+                            tint = MaterialTheme.colorScheme.onSurface
                         )
                         Spacer(
                             modifier = Modifier.width(

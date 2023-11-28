@@ -16,7 +16,6 @@ sealed interface AuthEvent {
         val password: String
     ): AuthEvent
 
-    object getSignedInUser: AuthEvent
     object signOut: AuthEvent
 
 }

@@ -2,11 +2,17 @@ package com.fredy.mysavings.ui.Screens.Record
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FilterList
+import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.fredy.mysavings.Util.BalanceItem
@@ -46,10 +52,41 @@ fun RecordsScreen(
             )
         }
         DisplayBar(
-            onEvent = onEvent,
-            selectedDate = formatRangeOfDate(
+            selectedData = formatRangeOfDate(
                 state.chosenDate, state.filterType
-            )
+            ),
+            onPrevious = { onEvent(RecordsEvent.ShowPreviousList) },
+            onNext = { onEvent(RecordsEvent.ShowNextList) },
+            leadingIcon = {
+                Icon(
+                    modifier = Modifier
+                        .clip(
+                            MaterialTheme.shapes.extraLarge
+                        )
+                        .clickable {
+
+                        }
+                        .padding(4.dp),
+                    imageVector = Icons.Outlined.Info,
+                    contentDescription = "",
+                    tint = MaterialTheme.colorScheme.onSurface,
+                )
+            },
+            trailingIcon = {
+                Icon(
+                    modifier = Modifier
+                        .clip(
+                            MaterialTheme.shapes.extraLarge
+                        )
+                        .clickable {
+                            onEvent(RecordsEvent.ShowFilterDialog)
+                        }
+                        .padding(4.dp),
+                    imageVector = Icons.Default.FilterList,
+                    contentDescription = "",
+                    tint = MaterialTheme.colorScheme.onSurface,
+                )
+            },
         )
         BalanceBar(
             modifier = Modifier

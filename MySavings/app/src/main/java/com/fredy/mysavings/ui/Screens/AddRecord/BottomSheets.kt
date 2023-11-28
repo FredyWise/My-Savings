@@ -1,5 +1,6 @@
 package com.fredy.mysavings.ui.Screens.AddRecord
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -36,82 +37,94 @@ import com.fredy.mysavings.ui.Screens.SimpleEntityItem
 @Composable
 fun AccountBottomSheet(
     modifier: Modifier = Modifier,
-    textColor: Color = MaterialTheme.colorScheme.onSecondary,
+    textColor: Color = MaterialTheme.colorScheme.onSurface,
+    backgroundColor: Color = MaterialTheme.colorScheme.surface,
     accounts: List<Account>,
     onSelectAccount: (Account) -> Unit,
     onAddAccount: () -> Unit
 ) {
-    Text(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(
-                vertical = 8.dp
-            ),
-        text = "Select a Account",
-        color = textColor,
-        textAlign = TextAlign.Center,
-        style = MaterialTheme.typography.headlineSmall
-    )
-    LazyColumn(modifier = modifier) {
-        items(accounts) { account ->
-            SimpleEntityItem(
-                modifier = Modifier
-                    .clickable {
-                        onSelectAccount(account)
-                    }
-                    .padding(
-                        vertical = 4.dp
-                    ),
-                icon = account.accountIcon,
-                iconDescription = account.accountIconDescription,
-                iconModifier = Modifier
-                    .size(65.dp)
-                    .clip(
-                        shape = MaterialTheme.shapes.medium
-                    ),
-                endContent = {
+    Column(Modifier.background(backgroundColor)) {
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    vertical = 8.dp
+                ),
+            text = "Select a Account",
+            color = textColor,
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.headlineSmall
+        )
+        LazyColumn(
+            modifier = modifier.padding(
+                horizontal = 8.dp
+            )
+        ) {
+            items(accounts) { account ->
+                SimpleEntityItem(
+                    modifier = Modifier
+                        .clickable {
+                            onSelectAccount(
+                                account
+                            )
+                        }
+                        .padding(
+                            vertical = 4.dp
+                        ),
+                    icon = account.accountIcon,
+                    iconDescription = account.accountIconDescription,
+                    iconModifier = Modifier
+                        .size(
+                            65.dp
+                        )
+                        .clip(
+                            shape = MaterialTheme.shapes.medium
+                        ),
+                    endContent = {
+                        Text(
+                            text = formatBalanceAmount(
+                                amount = account.accountAmount,
+                                currency = account.accountCurrency
+                            ),
+                            style = MaterialTheme.typography.headlineSmall.copy(
+                                fontSize = 20.sp
+                            ),
+                            color = textColor,
+                        )
+                    },
+                ) {
                     Text(
-                        text = formatBalanceAmount(
-                            amount = account.accountAmount,
-                            currency = account.accountCurrency
-                        ),
-                        style = MaterialTheme.typography.headlineSmall.copy(
-                            fontSize = 20.sp
-                        ),
+                        text = account.accountName,
+                        style = MaterialTheme.typography.headlineSmall,
                         color = textColor,
+                        maxLines = 2,
                     )
-                },
-            ) {
-                Text(
-                    text = account.accountName,
-                    style = MaterialTheme.typography.headlineSmall,
-                    color = textColor,
-                    maxLines = 2,
+                }
+            }
+            item {
+                SimpleButton(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            horizontal = 70.dp,
+                            vertical = 8.dp
+                        )
+                        .clip(
+                            MaterialTheme.shapes.medium
+                        )
+                        .border(
+                            width = 2.dp,
+                            color = MaterialTheme.colorScheme.secondary,
+                            shape = MaterialTheme.shapes.medium
+                        ),
+                    image = R.drawable.ic_add_foreground,
+                    onClick = {
+                        onAddAccount()
+                    },
+                    title = "Add Account",
+                    titleColor = textColor
                 )
             }
-        }
-        item {
-            SimpleButton(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        horizontal = 70.dp,
-                        vertical = 8.dp
-                    )
-                    .clip(
-                        MaterialTheme.shapes.medium
-                    )
-                    .border(
-                        width = 2.dp,
-                        color = MaterialTheme.colorScheme.secondary,
-                        shape = MaterialTheme.shapes.medium
-                    ),
-                image = R.drawable.ic_add_foreground,
-                onClick = {
-                    onAddAccount()
-                },
-                title = "Add Account",
-            )
         }
     }
 
@@ -120,7 +133,8 @@ fun AccountBottomSheet(
 @Composable
 fun CategoryBottomSheet(
     modifier: Modifier = Modifier,
-    textColor: Color = MaterialTheme.colorScheme.onSecondary,
+    textColor: Color = MaterialTheme.colorScheme.onSurface,
+    backgroundColor: Color = MaterialTheme.colorScheme.surface,
     categoryMaps: List<CategoryMap>,
     recordType: RecordType,
     onSelectCategory: (Category) -> Unit,
@@ -129,7 +143,7 @@ fun CategoryBottomSheet(
     val categoryMap = categoryMaps.find { c ->
         c.categoryType == recordType
     } ?: CategoryMap()
-    Column {
+    Column(Modifier.background(backgroundColor)) {
         Text(
             modifier = Modifier
                 .fillMaxWidth()
@@ -142,7 +156,7 @@ fun CategoryBottomSheet(
             style = MaterialTheme.typography.headlineSmall
         )
         LazyVerticalGrid(
-            modifier = modifier,
+            modifier = modifier.padding(horizontal = 8.dp),
             columns = GridCells.Fixed(3)
         ) {
 

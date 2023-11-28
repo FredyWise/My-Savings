@@ -1,10 +1,15 @@
 package com.fredy.mysavings.ui.NavigationComponent.Navigation
 
+import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -16,6 +21,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
+import com.fredy.mysavings.Util.TAG
+import com.fredy.mysavings.ViewModels.AuthViewModel
+import com.fredy.mysavings.ViewModels.Event.AuthEvent
 import com.fredy.mysavings.ViewModels.MainScreenViewModel
 import com.fredy.mysavings.ui.Screens.AddRecord.AddScreen
 import com.fredy.mysavings.ui.NavigationComponent.MainScreen
@@ -27,9 +35,19 @@ fun NavGraphRoot(
     NavHost(
         modifier = Modifier.background(MaterialTheme.colorScheme.background),
         navController = navController,
-        startDestination = Graph.Auth,
+        startDestination = Graph.FirstNav,
         route = Graph.Root
     ) {
+        composable(
+            route = Graph.FirstNav
+        ){
+            Log.e(TAG, "NavGraphRoot: ", )
+            val viewModel: AuthViewModel = hiltViewModel()
+            val state by viewModel.state.collectAsState()
+            val startDestination = if (state.signedInUser != null) Graph.HomeNav else Graph.Auth
+            Log.e(TAG, "NavGraphRoot: ", )
+            navController.navigate(startDestination)
+        }
         authenticationNavGraph(navController = navController)
         navigation(
             route = Graph.MainNav,
@@ -39,10 +57,12 @@ fun NavGraphRoot(
                 route = Graph.HomeNav
             ) {
                 val viewModel: MainScreenViewModel = hiltViewModel()
+                val currentUser = viewModel.currentUser.collectAsState().value
 
                 MainScreen(
                     rootNavController = navController,
-                    signOut = viewModel::signOut
+                    signOut = viewModel::signOut,
+                    currentUser = currentUser
                 )
             }
             composable(

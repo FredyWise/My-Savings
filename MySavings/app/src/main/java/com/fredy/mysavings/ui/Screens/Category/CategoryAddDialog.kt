@@ -20,7 +20,7 @@ import com.fredy.mysavings.Util.categoryIcons
 import com.fredy.mysavings.ViewModel.CategoryState
 import com.fredy.mysavings.ui.Screens.ActionWithName
 import com.fredy.mysavings.ui.Screens.ChooseIcon
-import com.fredy.mysavings.ui.Screens.SimpleAddDialog
+import com.fredy.mysavings.ui.Screens.SimpleDialog
 import com.fredy.mysavings.ui.Screens.TypeRadioButton
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -30,7 +30,7 @@ fun CategoryAddDialog(
     state: CategoryState,
     onEvent: (CategoryEvent) -> Unit
 ) {
-    SimpleAddDialog(
+    SimpleDialog(
         modifier = modifier,
         title = if (state.categoryId.isEmpty()) "Add New Category" else "Update Category",
         onDismissRequest = { onEvent(CategoryEvent.HideDialog) },

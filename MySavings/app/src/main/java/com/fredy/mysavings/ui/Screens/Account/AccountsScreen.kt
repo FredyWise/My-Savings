@@ -12,9 +12,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.Data.Database.Entity.Account
-import com.fredy.mysavings.ViewModels.Event.AccountEvent
 import com.fredy.mysavings.R
 import com.fredy.mysavings.ViewModel.AccountState
+import com.fredy.mysavings.ViewModels.Event.AccountEvent
+import com.fredy.mysavings.ui.Screens.SearchBar
 import com.fredy.mysavings.ui.Screens.SimpleButton
 
 @Composable
@@ -26,8 +27,7 @@ fun AccountsScreen(
     Column(modifier = modifier) {
         if (state.isAddingAccount) {
             AccountAddDialog(
-                state = state,
-                onEvent = onEvent
+                state = state, onEvent = onEvent
             )
         }
         AccountHeader(
@@ -44,8 +44,7 @@ fun AccountsScreen(
                 .clip(MaterialTheme.shapes.large)
                 .background(
                     MaterialTheme.colorScheme.surface
-                ),
-            state = state
+                ), state = state
         )
         SimpleButton(
             modifier = Modifier
@@ -71,12 +70,26 @@ fun AccountsScreen(
                 )
             },
             title = "ADD NEW ACCOUNT",
-            titleStyle = MaterialTheme.typography.titleLarge.copy(MaterialTheme.colorScheme.onBackground)
+            titleStyle = MaterialTheme.typography.titleLarge.copy(
+                MaterialTheme.colorScheme.onBackground
+            )
         )
-        AccountBody(
-            accounts = state.accounts,
-            onEvent = onEvent
-        )
+        SearchBar(
+            searchText = state.searchText,
+            onValueChange = {
+                onEvent(
+                    AccountEvent.SearchAccount(
+                        it
+                    )
+                )
+            },
+            isSearching = state.isSearching
+        ) {
+            AccountBody(
+                accounts = state.accounts,
+                onEvent = onEvent
+            )
+        }
     }
 }
 

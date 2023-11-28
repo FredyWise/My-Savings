@@ -1,6 +1,6 @@
 package com.fredy.mysavings.ui.Screens.AddRecord
 
-import androidx.compose.foundation.background
+import android.widget.Toast
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,12 +10,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.BottomSheetScaffold
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material.rememberBottomSheetScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -27,6 +27,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.fredy.mysavings.Data.Database.Entity.Account
@@ -39,12 +41,13 @@ import com.fredy.mysavings.ViewModel.AddRecordViewModel
 import com.fredy.mysavings.ViewModel.CategoryViewModel
 import com.fredy.mysavings.ViewModels.Event.AccountEvent
 import com.fredy.mysavings.ViewModels.Event.AddRecordEvent
+import com.fredy.mysavings.ViewModels.Event.AuthEvent
 import com.fredy.mysavings.ViewModels.Event.CategoryEvent
 import com.fredy.mysavings.ui.Screens.Account.AccountAddDialog
 import com.fredy.mysavings.ui.Screens.ActionWithName
 import com.fredy.mysavings.ui.Screens.Category.CategoryAddDialog
-import com.fredy.mysavings.ui.Screens.CurrencyDropdown
 import com.fredy.mysavings.ui.Screens.SimpleButton
+import com.fredy.mysavings.ui.Screens.SimpleDialog
 import com.fredy.mysavings.ui.Screens.TypeRadioButton
 import kotlinx.coroutines.launch
 
@@ -63,22 +66,49 @@ fun AddScreen(
     accountViewModel: AccountViewModel = hiltViewModel()
 ) {
     val state = viewModel.state
+    val resource = viewModel.resource.value
+    val context = LocalContext.current
     val categoryState by categoryViewModel.state.collectAsState()
     val accountState by accountViewModel.state.collectAsState()
     val calculatorState = viewModel.calcState
     val applicationContext = LocalContext.current
     val scaffoldState = rememberBottomSheetScaffoldState()
     val scope = rememberCoroutineScope()
-    var isLeft by remember { mutableStateOf(true) }
+    var isLeading by remember {
+        mutableStateOf(
+            true
+        )
+    }
     viewModel.onEvent(
         AddRecordEvent.SetId(id)
     )
+    LaunchedEffect(
+        key1 = resource.error,
+    ) {
+        if (resource.error?.isNotEmpty() == true) {
+            val error = resource.error
+            Toast.makeText(
+                context,
+                "${error}",
+                Toast.LENGTH_LONG
+            ).show()
+        }
+        if (resource.success?.isNotEmpty() == true) {
+//            SimpleDialog(
+//                title = ,
+//                onDismissRequest = { /*TODO*/ },
+//                onCancelClicked = { /*TODO*/ },
+//                onSaveClicked = { /*TODO*/ }) {
+//            }
+        }
+    }
+
     BottomSheetScaffold(
         scaffoldState = scaffoldState,
-        backgroundColor = MaterialTheme.colorScheme.secondary,
+        backgroundColor = MaterialTheme.colorScheme.surface,
         sheetPeekHeight = 0.dp,
         sheetContent = {
-            if (isLeft) {
+            if (isLeading) {
                 AccountBottomSheet(
                     accounts = accountState.accounts,
                     onSelectAccount = {
@@ -302,7 +332,7 @@ fun AddScreen(
                         image = state.fromAccount.accountIcon,
                         imageColor = if (state.fromAccount.accountIconDescription == "") onBackground else Color.Unspecified,
                         onClick = {
-                            isLeft = true
+                            isLeading = true
                             scope.launch {
                                 scaffoldState.bottomSheetState.expand()
                             }
@@ -355,7 +385,7 @@ fun AddScreen(
                             onBackground
                         },
                         onClick = {
-                            isLeft = false
+                            isLeading = false
                             scope.launch {
                                 scaffoldState.bottomSheetState.expand()
                             }
@@ -369,29 +399,28 @@ fun AddScreen(
                     )
                 }
             }
-            Calculator(modifier = Modifier.fillMaxWidth(),
+            Calculator(
+                modifier = Modifier.fillMaxWidth(),
                 state = calculatorState,
                 onAction = viewModel::onAction,
                 textStyle = MaterialTheme.typography.displayMedium,
                 buttonAspectRatio = 1.8f,
-                leftObject = {
-                    CurrencyDropdown(modifier = Modifier
-                        .weight(
-                            0.26f
-                        ),
-                        textFieldColors = TextFieldDefaults.textFieldColors(
-                            focusedIndicatorColor = Color.Unspecified,
-                            unfocusedIndicatorColor = Color.Unspecified
-                        ),
-                        selectedText = state.recordCurrency,
-                        onClick = {
-                            viewModel.onEvent(
-                                AddRecordEvent.RecordCurrency(
-                                    it
-                                )
+                leadingObject = {
+                    Text(
+                        modifier = Modifier
+                            .weight(
+                                0.15f
                             )
-                        })
-                })
+                            .padding(8.dp),
+                        text = state.recordCurrency,
+                        color = MaterialTheme.colorScheme.onSecondary,
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = FontWeight.Bold
+                        ),
+                        textAlign = TextAlign.Center,
+                    )
+                },
+            )
             DateAndTimePicker(
                 applicationContext = applicationContext,
                 state = state,

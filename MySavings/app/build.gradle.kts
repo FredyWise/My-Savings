@@ -77,7 +77,7 @@ dependencies {
     implementation("com.google.android.gms:play-services-auth:20.7.0")
 
     // Coil
-//    implementation ("io.coil-kt:coil-compose:2.4.0")
+    implementation ("io.coil-kt:coil-compose:2.4.0")
 
     //    More Icons
     implementation("com.google.android.material:material:1.10.0")

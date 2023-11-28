@@ -4,12 +4,12 @@ import android.util.Log
 import com.fredy.mysavings.Data.Database.Entity.Account
 import com.fredy.mysavings.Data.Database.Entity.Category
 import com.fredy.mysavings.Data.Database.Entity.Record
+import com.fredy.mysavings.Data.Database.Entity.UserData
 import com.fredy.mysavings.Data.Database.Enum.RecordType
-import com.fredy.mysavings.Data.GoogleAuth.GoogleAuthUiClient
 import com.fredy.mysavings.Util.TAG
 import com.google.android.gms.tasks.Task
 import com.google.firebase.Firebase
-import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.firestore
@@ -52,22 +52,13 @@ interface RecordRepository {
     fun getUserTotalRecordBalance(): Flow<Double>
 }
 
-class RecordRepositoryImpl @Inject constructor(
-    private val firebaseAuth: FirebaseAuth,
-    private val googleAuthUiClient: GoogleAuthUiClient,
-): RecordRepository {
-
-    val currentUser = googleAuthUiClient.getSignedInUser(
-        firebaseAuth
-    )
+class RecordRepositoryImpl(): RecordRepository {
 
     override suspend fun upsertRecordItem(
         record: Record
     ) {
+        val currentUser = Firebase.auth.currentUser
         Log.e(TAG, "upsertRecordItem: " + record)
-        val currentUser = googleAuthUiClient.getSignedInUser(
-            firebaseAuth
-        )
         val recordCollection = Firebase.firestore.collection(
             "record"
         )
@@ -80,7 +71,7 @@ class RecordRepositoryImpl @Inject constructor(
                 ).set(
                     record.copy(
                         recordId = document.id,
-                        userIdFk = currentUser!!.firebaseUserId
+                        userIdFk = currentUser!!.uid
                     )
                 )
             }
@@ -89,7 +80,7 @@ class RecordRepositoryImpl @Inject constructor(
                 record.recordId
             ).set(
                 record.copy(
-                    userIdFk = currentUser!!.firebaseUserId
+                    userIdFk = currentUser!!.uid
                 )
             )
         }
@@ -131,6 +122,7 @@ class RecordRepositoryImpl @Inject constructor(
         startDate: LocalDateTime,
         endDate: LocalDateTime
     ) = callbackFlow<List<TrueRecord>> {
+        val currentUser = Firebase.auth.currentUser
         Log.e(
             TAG,
             "getUserRecordsFromSpecificTime: $startDate\n:\n$endDate"
@@ -144,7 +136,7 @@ class RecordRepositoryImpl @Inject constructor(
             "recordDateTime", endDate
         ).whereEqualTo(
             "userIdFk",
-            currentUser!!.firebaseUserId
+            currentUser!!.uid
         ).orderBy(
             "recordDateTime",
             Query.Direction.DESCENDING
@@ -175,15 +167,15 @@ class RecordRepositoryImpl @Inject constructor(
                         val result = getDocuments(
                             record
                         )
-                        val fromAccount = async { result.fromAccount.await().toObject<Account>()!! }
-                        val toAccount = async { result.toAccount.await().toObject<Account>()!! }
-                        val toCategory = async { result.toCategory.await().toObject<Category>()!! }
+                        val fromAccount =  result.fromAccount.await().toObject<Account>()!!
+                        val toAccount =result.toAccount.await().toObject<Account>()!!
+                        val toCategory =  result.toCategory.await().toObject<Category>()!!
 
                         TrueRecord(
                             record = record,
-                            fromAccount = fromAccount.await(),
-                            toAccount = toAccount.await(),
-                            toCategory = toCategory.await()
+                            fromAccount = fromAccount,
+                            toAccount = toAccount,
+                            toCategory = toCategory
                         )
                     }
                     Log.e(
@@ -209,6 +201,7 @@ class RecordRepositoryImpl @Inject constructor(
     override fun getUserCategoryRecordsOrderedByDateTime(
         categoryId: String,
     ) = callbackFlow<List<TrueRecord>> {
+        val currentUser = Firebase.auth.currentUser
         Log.e(
             TAG,
             "getUserCategoryRecordsOrderedByDateTime: " + categoryId,
@@ -220,7 +213,7 @@ class RecordRepositoryImpl @Inject constructor(
             "categoryIdFk", categoryId
         ).whereEqualTo(
             "userIdFk",
-            currentUser!!.firebaseUserId
+            currentUser!!.uid
         ).orderBy(
             "recordDateTime",
             Query.Direction.DESCENDING
@@ -273,6 +266,7 @@ class RecordRepositoryImpl @Inject constructor(
     override fun getUserAccountRecordsOrderedByDateTime(
         accountId: String,
     ) = callbackFlow<List<TrueRecord>> {
+        val currentUser = Firebase.auth.currentUser
         Log.e(
             TAG,
             "getUserAccountRecordsOrderedByDateTime: " + accountId,
@@ -286,7 +280,7 @@ class RecordRepositoryImpl @Inject constructor(
             "accountfk", listOf(accountId)
         ).whereEqualTo(
             "userIdFk",
-            currentUser!!.firebaseUserId
+            currentUser!!.uid
         ).orderBy(
             "recordDateTime",
             Query.Direction.DESCENDING
@@ -338,6 +332,7 @@ class RecordRepositoryImpl @Inject constructor(
     override fun getUserTotalAmountByType(
         recordType: RecordType
     ) = callbackFlow<Double> {
+        val currentUser = Firebase.auth.currentUser
         Log.e(
             TAG,
             "getUserTotalAmountByType: " + recordType,
@@ -349,7 +344,7 @@ class RecordRepositoryImpl @Inject constructor(
             "recordType", recordType
         ).whereEqualTo(
             "userIdFk",
-            currentUser!!.firebaseUserId
+            currentUser!!.uid
         ).addSnapshotListener { value, error ->
             error?.let {
                 Log.e(
@@ -380,6 +375,7 @@ class RecordRepositoryImpl @Inject constructor(
         startDate: LocalDateTime,
         endDate: LocalDateTime
     ) = callbackFlow<Double> {
+        val currentUser = Firebase.auth.currentUser
         Log.e(
             TAG,
             "getUserTotalAmountByTypeFromSpecificTime: " + recordType,
@@ -395,7 +391,7 @@ class RecordRepositoryImpl @Inject constructor(
             "recordType", recordType
         ).whereEqualTo(
             "userIdFk",
-            currentUser!!.firebaseUserId
+            currentUser!!.uid
         ).orderBy(
             "recordDateTime",
             Query.Direction.DESCENDING
@@ -420,6 +416,7 @@ class RecordRepositoryImpl @Inject constructor(
     }
 
     override fun getUserTotalRecordBalance() = callbackFlow<Double> {
+        val currentUser = Firebase.auth.currentUser
         Log.e(
             TAG,
             "getUserTotalRecordBalance: ",
@@ -429,7 +426,7 @@ class RecordRepositoryImpl @Inject constructor(
             "record"
         ).whereEqualTo(
             "userIdFk",
-            currentUser!!.firebaseUserId
+            currentUser!!.uid
         ).addSnapshotListener { value, error ->
             error?.let {
                 Log.e(

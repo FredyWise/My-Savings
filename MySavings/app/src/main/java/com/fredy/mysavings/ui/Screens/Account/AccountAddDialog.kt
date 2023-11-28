@@ -18,7 +18,7 @@ import com.fredy.mysavings.ViewModel.AccountState
 import com.fredy.mysavings.ViewModels.Event.AccountEvent
 import com.fredy.mysavings.ui.Screens.ChooseIcon
 import com.fredy.mysavings.ui.Screens.CurrencyDropdown
-import com.fredy.mysavings.ui.Screens.SimpleAddDialog
+import com.fredy.mysavings.ui.Screens.SimpleDialog
 
 @Composable
 fun AccountAddDialog(
@@ -26,7 +26,7 @@ fun AccountAddDialog(
     onEvent: (AccountEvent) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    SimpleAddDialog(
+    SimpleDialog(
         modifier = modifier,
         title = if (state.accountId.isEmpty()) "Add New Account" else "Update Account",
         onDismissRequest = { onEvent(AccountEvent.HideDialog) },

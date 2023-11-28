@@ -2,10 +2,9 @@ package com.fredy.mysavings.Repository
 
 import android.util.Log
 import com.fredy.mysavings.Data.Database.Entity.Account
-import com.fredy.mysavings.Data.GoogleAuth.GoogleAuthUiClient
 import com.fredy.mysavings.Util.TAG
 import com.google.firebase.Firebase
-import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.channels.awaitClose
@@ -13,7 +12,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
-import javax.inject.Inject
 
 interface AccountRepository {
     suspend fun upsertAccount(account: Account)
@@ -21,18 +19,14 @@ interface AccountRepository {
     fun getAccount(accountId: String): Flow<Account>
     fun getUserAccountOrderedByName(): Flow<List<Account>>
     fun getUserAccountTotalBalance(): Flow<Double>
+    fun getUserAvailableCurrency(): Flow<List<String>>
 }
 
 
-class AccountRepositoryImpl @Inject constructor(
-    private val firebaseAuth: FirebaseAuth,
-    private val googleAuthUiClient: GoogleAuthUiClient,
-): AccountRepository {
-    val currentUser = googleAuthUiClient.getSignedInUser(
-        firebaseAuth
-    )
+class AccountRepositoryImpl(): AccountRepository {
 
     override suspend fun upsertAccount(account: Account) {
+        val currentUser = Firebase.auth.currentUser
         val accountCollection = Firebase.firestore.collection(
             "account"
         )
@@ -45,7 +39,7 @@ class AccountRepositoryImpl @Inject constructor(
                 ).set(
                     account.copy(
                         accountId = document.id,
-                        userIdFk = currentUser!!.firebaseUserId
+                        userIdFk = currentUser!!.uid
                     )
                 )
             }
@@ -54,7 +48,7 @@ class AccountRepositoryImpl @Inject constructor(
                 account.accountId
             ).set(
                 account.copy(
-                    userIdFk = currentUser!!.firebaseUserId
+                    userIdFk = currentUser!!.uid
                 )
             )
         }
@@ -78,11 +72,16 @@ class AccountRepositoryImpl @Inject constructor(
     }
 
     override fun getUserAccountOrderedByName() = callbackFlow<List<Account>> {
+        val currentUser = Firebase.auth.currentUser
+        Log.e(
+            TAG,
+            "getUserAccountOrderedByName: " + currentUser!!.uid,
+
+            )
         val listener = Firebase.firestore.collection(
             "account"
         ).whereEqualTo(
-            "userIdFk",
-            currentUser!!.firebaseUserId
+            "userIdFk", currentUser!!.uid
         ).addSnapshotListener { value, error ->
             error?.let {
                 close(it)
@@ -106,11 +105,11 @@ class AccountRepositoryImpl @Inject constructor(
     }
 
     override fun getUserAccountTotalBalance() = callbackFlow<Double> {
+        val currentUser = Firebase.auth.currentUser
         val listener = Firebase.firestore.collection(
             "account"
         ).whereEqualTo(
-            "userIdFk",
-            currentUser!!.firebaseUserId
+            "userIdFk", currentUser!!.uid
         ).addSnapshotListener { value, error ->
             error?.let {
                 Log.e(
@@ -127,6 +126,37 @@ class AccountRepositoryImpl @Inject constructor(
                     document.toObject<Account>().accountAmount
                 }
                 trySend(data)
+            }
+        }
+
+        awaitClose {
+            listener.remove()
+        }
+    }
+
+    override fun getUserAvailableCurrency() = callbackFlow<List<String>> {
+        val currentUser = Firebase.auth.currentUser
+        val listener = Firebase.firestore.collection(
+            "account"
+        ).whereEqualTo(
+            "userIdFk", currentUser!!.uid
+        ).addSnapshotListener { value, error ->
+            error?.let {
+                Log.e(
+                    "BABI",
+                    "getUserAccountTotalBalance2: " + it.message,
+                )
+            }
+            value?.let {
+                Log.e(
+                    "BABI",
+                    "getUserAccountTotalBalance2: " + it.documents,
+                )
+                val data = it.map { document ->
+                    document.toObject<Account>().accountCurrency
+                }.toMutableList()
+                data.add(0, "None")
+                trySend(data.toList())
             }
         }
 

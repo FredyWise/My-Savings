@@ -32,7 +32,7 @@ object Graph {
     const val Auth = "auth"
     const val HomeNav = "home_nav"
     const val MainNav = "main_nav"
-    const val OtherNav = "other_nav"
+    const val FirstNav = "first"
 }
 
 

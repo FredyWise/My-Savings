@@ -1,19 +1,24 @@
 package com.fredy.mysavings.ViewModel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fredy.mysavings.Data.Database.Entity.Account
+import com.fredy.mysavings.Data.Database.Entity.UserData
 import com.fredy.mysavings.Data.Database.Enum.RecordType
 import com.fredy.mysavings.Data.Database.Enum.SortType
 import com.fredy.mysavings.Repository.AccountRepository
 import com.fredy.mysavings.Repository.AuthRepository
 import com.fredy.mysavings.Repository.RecordRepository
+import com.fredy.mysavings.Util.TAG
 import com.fredy.mysavings.ViewModels.Event.AccountEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -23,8 +28,20 @@ import javax.inject.Inject
 class AccountViewModel @Inject constructor(
     private val accountRepository: AccountRepository,
     private val recordRepository: RecordRepository,
-    private val authRepository: AuthRepository,
+    private val authRepository: AuthRepository
 ): ViewModel() {
+    private val _currentUser = MutableStateFlow(
+        UserData()
+    )
+    val currentUser = _currentUser.asStateFlow()
+    init {
+        viewModelScope.launch {
+            authRepository.getCurrentUser()?.let { currentUser ->
+                _currentUser.update { currentUser }
+            }
+        }
+    }
+
     private val _sortType = MutableStateFlow(
         SortType.ASCENDING
     )
@@ -68,7 +85,7 @@ class AccountViewModel @Inject constructor(
         )
     }.stateIn(
         viewModelScope,
-        SharingStarted.WhileSubscribed(5000),
+        SharingStarted.WhileSubscribed(),
         BalanceBar()
     )
 
@@ -78,13 +95,39 @@ class AccountViewModel @Inject constructor(
         emptyList()
     )
 
+
     private val _state = MutableStateFlow(
-        AccountState()
+        AccountState(accountCurrency = currentUser.value.userCurrency)
     )
 
+    private val accounts = _state.onEach {
+        _state.update {
+            it.copy(
+                isSearching = true
+            )
+        }
+    }.combine(_accounts) { state, accounts ->
+        if (state.searchText.isBlank()) {
+            accounts
+        } else {
+            accounts.filter {
+                it.doesMatchSearchQuery(state.searchText)
+            }
+        }
+    }.onEach {
+        _state.update {
+            it.copy(
+                isSearching = false
+            )
+        }
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(),
+        _accounts.value
+    )
 
     val state = combine(
-        _state, _sortType, _accounts, balanceBar,
+        _state, _sortType, accounts, balanceBar,
     ) { state, sortType, accounts, balanceBar ->
         state.copy(
             accounts = accounts,
@@ -95,7 +138,7 @@ class AccountViewModel @Inject constructor(
         )
     }.stateIn(
         viewModelScope,
-        SharingStarted.WhileSubscribed(5000),
+        SharingStarted.WhileSubscribed(),
         AccountState()
     )
 
@@ -158,7 +201,7 @@ class AccountViewModel @Inject constructor(
                 }
                 _state.update {
                     AccountState(
-                        accountCurrency = authRepository.getSignedInUser()!!.userCurrency,
+                        accountCurrency = currentUser.value.userCurrency,
                     )
                 }
             }
@@ -204,9 +247,18 @@ class AccountViewModel @Inject constructor(
                 }
             }
 
+            is AccountEvent.SearchAccount -> {
+                _state.update {
+                    it.copy(
+                        searchText = event.name
+                    )
+                }
+            }
+
             is AccountEvent.SortAccount -> {
                 _sortType.value = event.sortType
             }
+
         }
     }
 }
@@ -223,5 +275,7 @@ data class AccountState(
     val accountIcon: Int = 0,
     val accountIconDescription: String = "",
     val isAddingAccount: Boolean = false,
+    val searchText: String = "",
+    val isSearching: Boolean = false,
     val sortType: SortType = SortType.ASCENDING
 )

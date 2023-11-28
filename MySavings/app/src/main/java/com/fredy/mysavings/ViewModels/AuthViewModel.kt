@@ -1,5 +1,6 @@
 package com.fredy.mysavings.ViewModels
 
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -8,6 +9,7 @@ import com.fredy.mysavings.Data.Database.Entity.UserData
 import com.fredy.mysavings.Repository.AuthRepository
 import com.fredy.mysavings.Repository.UserRepository
 import com.fredy.mysavings.Util.Resource
+import com.fredy.mysavings.Util.TAG
 import com.fredy.mysavings.ViewModels.Event.AuthEvent
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.firebase.auth.AuthResult
@@ -21,6 +23,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val repository: AuthRepository,
+    private val userData: UserData?,
     private val userRepository: UserRepository
 ): ViewModel() {
 
@@ -35,12 +38,10 @@ class AuthViewModel @Inject constructor(
     val googleState: State<GoogleSignInState> = _googleState
 
     init {
-        viewModelScope.launch {
-            _state.update {
-                AuthState(
-                    signedInUser = repository.getSignedInUser()
-                )
-            }
+        _state.update {
+            AuthState(
+                signedInUser = userData
+            )
         }
     }
 
@@ -132,8 +133,8 @@ class AuthViewModel @Inject constructor(
                                 val userData = user?.run {
                                     UserData(
                                         firebaseUserId = uid,
-                                        username = event.username,
-                                        email = email,
+                                        username = displayName ?: event.username,
+                                        email = email ?: event.email,
                                         profilePictureUrl = photoUrl.toString()
                                     )
                                 }
@@ -167,15 +168,6 @@ class AuthViewModel @Inject constructor(
                 }
             }
 
-            AuthEvent.getSignedInUser -> {
-                viewModelScope.launch {
-                    _state.update {
-                        AuthState(
-                            signedInUser = repository.getSignedInUser()
-                        )
-                    }
-                }
-            }
 
             AuthEvent.signOut -> {
                 viewModelScope.launch {

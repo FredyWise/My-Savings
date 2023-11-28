@@ -25,8 +25,11 @@ import com.fredy.mysavings.ViewModels.Event.RecordsEvent
 @Composable
 fun DisplayBar(
     modifier: Modifier = Modifier,
-    onEvent: (RecordsEvent) -> Unit,
-    selectedDate: String,
+    selectedData: String,
+    onPrevious: () -> Unit,
+    onNext: () -> Unit,
+    leadingIcon: @Composable () -> Unit = {},
+    trailingIcon: @Composable () -> Unit = {},
     tint: Color = MaterialTheme.colorScheme.onSurface
 ) {
     Row(
@@ -41,22 +44,12 @@ fun DisplayBar(
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically,
     ) {
+        leadingIcon()
         Icon(
             modifier = Modifier
                 .clip(MaterialTheme.shapes.extraLarge)
                 .clickable {
-
-                }
-                .padding(4.dp),
-            imageVector = Icons.Outlined.Info,
-            contentDescription = "",
-            tint = tint,
-        )
-        Icon(
-            modifier = Modifier
-                .clip(MaterialTheme.shapes.extraLarge)
-                .clickable {
-                    onEvent(RecordsEvent.ShowPreviousList)
+                    onPrevious()
                 }
                 .padding(4.dp),
             imageVector = Icons.Default.KeyboardArrowLeft,
@@ -64,31 +57,21 @@ fun DisplayBar(
             tint = tint,
         )
         Text(
-            text = selectedDate,
+            text = selectedData,
             color = tint,
         )
         Icon(
             modifier = Modifier
                 .clip(MaterialTheme.shapes.extraLarge)
                 .clickable {
-                    onEvent(RecordsEvent.ShowNextList)
+                    onNext()
                 }
                 .padding(4.dp),
             imageVector = Icons.Default.KeyboardArrowRight,
             contentDescription = "",
             tint = tint,
         )
-        Icon(
-            modifier = Modifier
-                .clip(MaterialTheme.shapes.extraLarge)
-                .clickable {
-                    onEvent(RecordsEvent.ShowFilterDialog)
-                }
-                .padding(4.dp),
-            imageVector = Icons.Default.FilterList,
-            contentDescription = "",
-            tint = tint,
-        )
+        trailingIcon()
     }
 
 }

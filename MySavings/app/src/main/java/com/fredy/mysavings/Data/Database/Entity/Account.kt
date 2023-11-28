@@ -10,5 +10,16 @@ data class Account(
     var accountCurrency: String = "",
     val accountIcon: Int = R.drawable.ic_wallet_foreground,
     val accountIconDescription: String = "",
-)
+){
+    fun doesMatchSearchQuery(query: String): Boolean {
+        val matchingCombinations = listOf(
+            "$accountName",
+            "${accountName.first()}",
+        )
+
+        return matchingCombinations.any {
+            it.contains(query, ignoreCase = true)
+        }
+    }
+}
 

@@ -6,13 +6,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fredy.mysavings.Data.APIs.CurrencyModels.Rates
+import com.fredy.mysavings.Data.Database.Entity.UserData
 import com.fredy.mysavings.Repository.AuthRepository
 import com.fredy.mysavings.Repository.CurrencyRepository
 import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.TAG
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.lang.Math.round
 import javax.inject.Inject
@@ -20,8 +23,9 @@ import javax.inject.Inject
 @HiltViewModel
 class CurrencyViewModel @Inject constructor(
     private val repository: CurrencyRepository,
-    private val authRepository: AuthRepository,
+    private val currentUserData: UserData?,
 ): ViewModel() {
+
     private val _resource = mutableStateOf(
         ResourceState()
     )
@@ -29,11 +33,12 @@ class CurrencyViewModel @Inject constructor(
 
     fun convert(
         amountStr: String,
-        toCurrency: String
+        toCurrencyTemp: String
     ) {
-        Log.e(TAG, "convert: "+amountStr+toCurrency )
+        Log.e(TAG, "convert: "+amountStr+toCurrencyTemp )
         val fromAmount = amountStr.toFloatOrNull()
-        val fromCurrency = authRepository.getSignedInUser()!!.userCurrency
+        val fromCurrency = currentUserData!!.userCurrency.ifBlank { "USD" }
+        val toCurrency = if (toCurrencyTemp.contains("None",ignoreCase = true)) fromCurrency else toCurrencyTemp
 
         if (fromAmount == null) {
             _resource.value = ResourceState(error = "Amount is Empty")
@@ -42,7 +47,7 @@ class CurrencyViewModel @Inject constructor(
 
         viewModelScope.launch {
             repository.getRates(
-                fromCurrency.ifBlank { "USD" }
+                fromCurrency
             ).collect { result ->
                 when (result) {
                     is Resource.Error -> _resource.value = ResourceState(

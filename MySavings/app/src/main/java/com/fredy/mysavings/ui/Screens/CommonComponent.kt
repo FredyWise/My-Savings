@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,6 +28,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -60,6 +62,46 @@ import com.fredy.mysavings.Util.BalanceColor
 import com.fredy.mysavings.Util.SavingsIcon
 import com.fredy.mysavings.Util.currencyCodes
 import com.fredy.mysavings.Util.formatBalanceAmount
+
+
+@Composable
+fun SearchBar(
+    modifier: Modifier = Modifier,
+    searchText: String,
+    onValueChange: (String) -> Unit,
+    placeholder: String = "Search",
+    isSearching: Boolean = false,
+    leadingIcon: @Composable (() -> Unit)? = null,
+    trailingIcon: @Composable (() -> Unit)? = null,
+    searchBody: @Composable () -> Unit,
+) {
+    Column(modifier) {
+        Spacer(modifier = Modifier.height(8.dp))
+        TextField(
+            value = searchText,
+            onValueChange = { onValueChange(it) },
+            modifier = Modifier.fillMaxWidth().clip(MaterialTheme.shapes.extraLarge),
+            placeholder = { Text(text = placeholder) },
+            colors = TextFieldDefaults.colors(
+                focusedIndicatorColor = Color.Unspecified,
+                unfocusedIndicatorColor = Color.Unspecified
+            ),
+            leadingIcon = leadingIcon,
+            trailingIcon = trailingIcon
+        )
+        if (isSearching) {
+            Box(modifier = Modifier.fillMaxSize()) {
+                CircularProgressIndicator(
+                    modifier = Modifier.align(
+                        Alignment.Center
+                    )
+                )
+            }
+        } else {
+            searchBody()
+        }
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -99,7 +141,7 @@ fun CurrencyDropdown(
                     data.contains(
                         it, ignoreCase = true
                     )
-                }
+                }.sorted()
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -136,7 +178,7 @@ fun CurrencyDropdown(
 }
 
 @Composable
-fun SimpleAddDialog(
+fun SimpleDialog(
     modifier: Modifier = Modifier,
     title: String,
     onDismissRequest: () -> Unit,
@@ -463,6 +505,7 @@ fun SimpleButton(
     imageColor: Color = Color.Unspecified,
     title: String,
     titleStyle: TextStyle = MaterialTheme.typography.titleLarge,
+    titleColor: Color = MaterialTheme.colorScheme.onBackground
 ) {
     Box(
         modifier = modifier.clickable {
@@ -485,7 +528,9 @@ fun SimpleButton(
                 )
             }
             Text(
-                text = title, style = titleStyle
+                text = title,
+                style = titleStyle,
+                color = titleColor
             )
         }
     }

@@ -31,7 +31,7 @@ fun Calculator(
     modifier: Modifier = Modifier,
     btnSpacing: Dp = 10.dp,
     onAction: (CalcEvent) -> Unit,
-    leftObject: @Composable () -> Unit = {},
+    leadingObject: @Composable () -> Unit = {},
     calculatorShape: Shape = MaterialTheme.shapes.small,
     textStyle: TextStyle = MaterialTheme.typography.displaySmall,
     textColor: Color = MaterialTheme.colorScheme.onSecondary,
@@ -67,9 +67,10 @@ fun Calculator(
                         calculatorShape
                     )
                     .fillMaxWidth()
-                    .padding(5.dp )
+                    .padding(5.dp ),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                leftObject()
+                leadingObject()
                 Text(
                     modifier = Modifier.weight(0.75f)
                         .padding(end = 20.dp, start = 8.dp),

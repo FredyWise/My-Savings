@@ -1,15 +1,19 @@
 package com.fredy.mysavings.ViewModel
 
 import android.util.Log
+import android.widget.Toast
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fredy.mysavings.Data.Database.Converter.TimestampConverter
 import com.fredy.mysavings.Data.Database.Entity.Account
 import com.fredy.mysavings.Data.Database.Entity.Category
 import com.fredy.mysavings.Data.Database.Entity.Record
+import com.fredy.mysavings.Data.Database.Entity.UserData
 import com.fredy.mysavings.Data.Database.Enum.RecordType
 import com.fredy.mysavings.Repository.AuthRepository
 import com.fredy.mysavings.ViewModels.Event.AddRecordEvent
@@ -19,8 +23,14 @@ import com.fredy.mysavings.Util.isExpense
 import com.fredy.mysavings.Util.isIncome
 import com.fredy.mysavings.Util.isTransfer
 import com.fredy.mysavings.Repository.RecordRepository
+import com.fredy.mysavings.Util.Resource
+import com.fredy.mysavings.Util.TAG
+import com.fredy.mysavings.ViewModels.ResourceState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalTime
@@ -31,10 +41,14 @@ import kotlin.math.absoluteValue
 @HiltViewModel
 class AddRecordViewModel @Inject constructor(
     private val recordRepository: RecordRepository,
-    private val authRepository: AuthRepository
 ): ViewModel() {
     var state by mutableStateOf(AddRecordState())
     var calcState by mutableStateOf(CalcState())
+
+    private val _resource = mutableStateOf(
+        ResourceState()
+    )
+    val resource: State<ResourceState> = _resource
 
     fun onEvent(event: AddRecordEvent) {
         when (event) {
@@ -63,13 +77,12 @@ class AddRecordViewModel @Inject constructor(
                             calcState = calcState.copy(number1 = it.record.recordAmount.absoluteValue.toString())
                         }
                     }
-                } else {
-                    state = state.copy(
-                        recordCurrency = authRepository.getSignedInUser()!!.userCurrency
-                    )
                 }
             }
             is AddRecordEvent.SaveRecord -> {
+                _resource.value = ResourceState(
+                    loading = true
+                )
                 performCalculation()
                 val recordId = state.recordId
                 val accountIdFromFk = state.accountIdFromFk
@@ -80,6 +93,7 @@ class AddRecordViewModel @Inject constructor(
                 )
                 var recordAmount = calcState.number1.toDouble().absoluteValue
                 val recordCurrency = state.recordCurrency
+                val accountCurrency = state.fromAccount.accountCurrency
                 val recordType = state.recordType
                 val recordNotes = state.recordNotes
                 var difference = state.recordAmount.absoluteValue
@@ -95,9 +109,36 @@ class AddRecordViewModel @Inject constructor(
                 } else {
                     accountIdToFk = accountIdFromFk
                 }
-                Log.e("BABI", "onEvent: "+state+"\n"+difference+"\n"+recordAmount+categoryIdToFk )
 
-                if (recordDateTime == null || recordAmount == 0.0 || recordCurrency.isBlank() || accountIdFromFk == null || accountIdToFk == null || categoryIdToFk == null || (recordType != state.toCategory.categoryType && !isTransfer(recordType)) || (state.fromAccount.accountAmount < difference && !isIncome(recordType))) {
+                if (recordDateTime == null || recordAmount == 0.0 || recordCurrency.isBlank() || accountIdFromFk == null || accountIdToFk == null || categoryIdToFk == null) {
+                    _resource.value = ResourceState(
+                        error = "You must fill all required information"
+                    )
+                    return
+                }
+                if (recordCurrency != accountCurrency){
+                    _resource.value = ResourceState(
+                        error = "This Account cant be used for this type of currency"
+                    )
+                    return
+                }
+                if ((state.fromAccount.accountAmount < difference && !isIncome(recordType))){
+                    _resource.value = ResourceState(
+                        error = "Account balance is not enough"
+                    )
+                    return
+                }
+                if ((recordType != state.toCategory.categoryType && !isTransfer(recordType))){
+                    _resource.value = ResourceState(
+                        error = "Record Type is not the same with category type"
+                    )
+                    return
+                }
+                if (isTransfer(recordType) && state.fromAccount.accountCurrency != state.toAccount.accountCurrency) {
+                    _resource.value = ResourceState(
+                        error = "Record Type is not the same with category type",
+                        success = "Are You Sure Want Transfer from ${state.fromAccount.accountCurrency} to ${state.toAccount.accountCurrency}?"
+                    )
                     return
                 }
 
@@ -122,21 +163,24 @@ class AddRecordViewModel @Inject constructor(
                     recordType = recordType,
                     recordNotes = recordNotes,
                 )
-                Log.e("BABI", "onEvent: "+record, )
 
                 viewModelScope.launch {
                     recordRepository.upsertRecordItem(
                         record
                     )
                 }
-                Log.e("BABI", "onEvent: "+record, )
-                state = AddRecordState()
 
+                _resource.value = ResourceState(
+                    loading = false
+                )
+
+                state = AddRecordState()
                 event.navigateUp()
             }
 
             is AddRecordEvent.AccountIdFromFk -> {
                 state = state.copy(
+                    recordCurrency = event.fromAccount.accountCurrency,
                     accountIdFromFk = event.fromAccount.accountId,
                     fromAccount = event.fromAccount
                 )
@@ -180,7 +224,7 @@ class AddRecordViewModel @Inject constructor(
 
             }
 
-            is AddRecordEvent.RecordCurrency -> {
+            is AddRecordEvent.RecordCurrency -> {//useless
                 state = state.copy(
                     recordCurrency = event.currency
                 )

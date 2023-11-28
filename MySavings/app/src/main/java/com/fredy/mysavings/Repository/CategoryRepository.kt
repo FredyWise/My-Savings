@@ -1,10 +1,9 @@
 package com.fredy.mysavings.Repository
 
-import com.fredy.mysavings.Data.GoogleAuth.GoogleAuthUiClient
 import com.fredy.mysavings.Data.Database.Entity.Category
 import com.fredy.mysavings.Data.Database.Enum.RecordType
 import com.google.firebase.Firebase
-import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.channels.awaitClose
@@ -12,7 +11,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
-import javax.inject.Inject
 
 interface CategoryRepository {
     suspend fun upsertCategory(category: Category)
@@ -22,15 +20,12 @@ interface CategoryRepository {
     fun getCategoriesUsingTypeOrderedByName(type: RecordType): Flow<List<Category>>
 }
 
-class CategoryRepositoryImpl @Inject constructor(
-    private val firebaseAuth: FirebaseAuth,
-    private val googleAuthUiClient: GoogleAuthUiClient,
-): CategoryRepository {
-    val currentUser = googleAuthUiClient.getSignedInUser(
-        firebaseAuth
-    )
+class CategoryRepositoryImpl(): CategoryRepository {
     override suspend fun upsertCategory(category: Category) {
-        val categoryCollection = Firebase.firestore.collection("category")
+        val currentUser = Firebase.auth.currentUser
+        val categoryCollection = Firebase.firestore.collection(
+            "category"
+        )
         if (category.categoryId.isEmpty()) {
             categoryCollection.add(
                 category
@@ -40,16 +35,16 @@ class CategoryRepositoryImpl @Inject constructor(
                 ).set(
                     category.copy(
                         categoryId = document.id,
-                        userIdFk = currentUser!!.firebaseUserId
+                        userIdFk = currentUser!!.uid
                     )
                 )
             }
-        }else{
+        } else {
             categoryCollection.document(
                 category.categoryId
             ).set(
                 category.copy(
-                    userIdFk = currentUser!!.firebaseUserId
+                    userIdFk = currentUser!!.uid
                 )
             )
         }
@@ -73,11 +68,11 @@ class CategoryRepositoryImpl @Inject constructor(
     }
 
     override fun getUserCategoriesOrderedByName() = callbackFlow<List<Category>> {
+        val currentUser = Firebase.auth.currentUser
         val listener = Firebase.firestore.collection(
             "category"
         ).whereEqualTo(
-            "userIdFk",
-            currentUser!!.firebaseUserId
+            "userIdFk", currentUser!!.uid
         ).addSnapshotListener { value, error ->
             error?.let {
                 close(it)
@@ -98,25 +93,24 @@ class CategoryRepositoryImpl @Inject constructor(
     override fun getCategoriesUsingTypeOrderedByName(
         type: RecordType
     ) = callbackFlow<List<Category>> {
+        val currentUser = Firebase.auth.currentUser
         val listener = Firebase.firestore.collection(
             "category"
         ).whereEqualTo(
-            "userIdFk",
-            currentUser!!.firebaseUserId
+            "userIdFk", currentUser!!.uid
         ).whereEqualTo(
-            "categoryType",
-            type.name
+            "categoryType", type.name
         ).addSnapshotListener { value, error ->
-                error?.let {
-                    close(it)
-                }
-                value?.let {
-                    val data = it.documents.map { document ->
-                        document.toObject<Category>()!!
-                    }
-                    trySend(data)
-                }
+            error?.let {
+                close(it)
             }
+            value?.let {
+                val data = it.documents.map { document ->
+                    document.toObject<Category>()!!
+                }
+                trySend(data)
+            }
+        }
 
         awaitClose {
             listener.remove()

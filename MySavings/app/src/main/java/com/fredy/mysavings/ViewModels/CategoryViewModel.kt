@@ -3,15 +3,20 @@ package com.fredy.mysavings.ViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fredy.mysavings.Data.Database.Entity.Category
+import com.fredy.mysavings.Data.Database.Entity.UserData
 import com.fredy.mysavings.Data.Database.Enum.RecordType
 import com.fredy.mysavings.Data.Database.Enum.SortType
 import com.fredy.mysavings.ViewModels.Event.CategoryEvent
 import com.fredy.mysavings.R
+import com.fredy.mysavings.Repository.AuthRepository
 import com.fredy.mysavings.Repository.CategoryRepository
+import com.fredy.mysavings.ViewModels.Event.AccountEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -20,7 +25,20 @@ import javax.inject.Inject
 @HiltViewModel
 class CategoryViewModel @Inject constructor(
     private val categoryRepository: CategoryRepository,
+//    private val authRepository: AuthRepository
 ): ViewModel() {
+//    private val _currentUser = MutableStateFlow(
+//        UserData()
+//    )
+//    val currentUser = _currentUser.asStateFlow()
+//    init {
+//        viewModelScope.launch {
+//            authRepository.getCurrentUser()?.let { currentUser ->
+//                _currentUser.update { currentUser }
+//            }
+//        }
+//    }
+
     private val _sortType = MutableStateFlow(
         SortType.ASCENDING
     )
@@ -35,8 +53,34 @@ class CategoryViewModel @Inject constructor(
         CategoryState()
     )
 
+    private val categories = _state.onEach {
+        _state.update {
+            it.copy(
+                isSearching = true
+            )
+        }
+    }.combine(_categories) { state, categories ->
+        if (state.searchText.isBlank()) {
+            categories
+        } else {
+            categories.filter {
+                it.doesMatchSearchQuery(state.searchText)
+            }
+        }
+    }.onEach {
+        _state.update {
+            it.copy(
+                isSearching = false
+            )
+        }
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(),
+        _categories.value
+    )
+
     val state = combine(
-        _state, _sortType, _categories,
+        _state, _sortType, categories,
     ) { state, sortType, categories ->
         state.copy(categories = categories.groupBy {
             it.categoryType
@@ -145,6 +189,13 @@ class CategoryViewModel @Inject constructor(
                 }
             }
 
+            is CategoryEvent.SearchCategory -> {
+                _state.update {
+                    it.copy(
+                        searchText = event.name
+                    )
+                }
+            }
 
             is CategoryEvent.SortCategory -> {
                 _sortType.value = event.sortType
@@ -161,6 +212,8 @@ data class CategoryState(
     val categoryIcon: Int = 0,
     val categoryIconDescription: String = "",
     val isAddingCategory: Boolean = false,
+    val searchText: String = "",
+    val isSearching: Boolean = false,
     val sortType: SortType = SortType.ASCENDING
 )
 

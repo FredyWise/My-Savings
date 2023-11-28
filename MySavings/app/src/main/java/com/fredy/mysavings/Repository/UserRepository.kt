@@ -1,9 +1,7 @@
 package com.fredy.mysavings.Repository
 
 import com.fredy.mysavings.Data.Database.Entity.UserData
-import com.fredy.mysavings.Data.GoogleAuth.GoogleAuthUiClient
 import com.google.firebase.Firebase
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.firestore
@@ -23,13 +21,7 @@ interface UserRepository {
     fun searchUsers(usernameEmail: String): Flow<List<UserData>>
 }
 
-class UserRepositoryImpl @Inject constructor(
-    private val firebaseAuth: FirebaseAuth,
-    private val googleAuthUiClient: GoogleAuthUiClient,
-): UserRepository {
-    val currentUser = googleAuthUiClient.getSignedInUser(
-        firebaseAuth
-    )
+class UserRepositoryImpl(): UserRepository {
 
     override suspend fun upsertUser(user: UserData) {
         Firebase.firestore.collection("user").document(
