@@ -16,10 +16,11 @@ import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.time.LocalDateTime
 import javax.inject.Inject
@@ -150,10 +151,10 @@ class RecordRepositoryImpl(): RecordRepository {
                 return@addSnapshotListener
             }
 
-            value?.let { result ->
-                val recordDocuments = result.documents
+            value?.let { it ->
+                val recordDocuments = it.documents
 
-                runBlocking {
+                launch {
                     val data = recordDocuments.map { document ->
                         Log.e(
                             TAG,
@@ -223,7 +224,7 @@ class RecordRepositoryImpl(): RecordRepository {
             }
             value?.let { result ->
                 val recordDocuments = result.documents
-                runBlocking {
+                launch {
                     val data = recordDocuments.map { document ->
                         Log.e(
                             TAG,
@@ -290,7 +291,7 @@ class RecordRepositoryImpl(): RecordRepository {
             }
             value?.let { result ->
                 val recordDocuments = result.documents
-                runBlocking {
+                launch {
                     val data = recordDocuments.map { document ->
                         Log.e(
                             TAG,
@@ -452,23 +453,23 @@ class RecordRepositoryImpl(): RecordRepository {
         }
     }
 
-    fun getDocuments(record: Record): DocumentResults {
-        val fromAccount = Firebase.firestore.collection(
-            "account"
-        ).document(record.accountIdFromFk).get()
+    suspend fun getDocuments(record: Record): DocumentResults = coroutineScope {
+        val fromAccountDeferred = async {
+            Firebase.firestore.collection("account").document(record.accountIdFromFk).get()
+        }
 
-        val toAccount = Firebase.firestore.collection(
-            "account"
-        ).document(record.accountIdToFk).get()
+        val toAccountDeferred = async {
+            Firebase.firestore.collection("account").document(record.accountIdToFk).get()
+        }
 
-        val toCategory = Firebase.firestore.collection(
-            "category"
-        ).document(record.categoryIdFk).get()
+        val toCategoryDeferred = async {
+            Firebase.firestore.collection("category").document(record.categoryIdFk).get()
+        }
 
-        return DocumentResults(
-            fromAccount = fromAccount,
-            toAccount = toAccount,
-            toCategory = toCategory,
+        DocumentResults(
+            fromAccount = fromAccountDeferred.await(),
+            toAccount = toAccountDeferred.await(),
+            toCategory = toCategoryDeferred.await()
         )
     }
 
