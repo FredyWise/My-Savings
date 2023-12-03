@@ -37,7 +37,18 @@ fun RecordsScreen(
             FilterDialog(
                 title = "DisplayOption",
                 selectedName = state.filterType.name,
-                onEvent = onEvent,
+                onDismissRequest = {
+                    onEvent(
+                        RecordsEvent.HideFilterDialog
+                    )
+                },
+                onEvent = {
+                    onEvent(
+                        RecordsEvent.FilterRecord(
+                            it
+                        )
+                    )
+                },
             )
         }
         state.trueRecord?.let {
@@ -110,7 +121,7 @@ fun RecordsScreen(
             )
         )
         RecordBody(
-            trueRecords = state.trueRecords,
+            trueRecords = state.trueRecordMaps,
             onEvent = onEvent
         )
     }

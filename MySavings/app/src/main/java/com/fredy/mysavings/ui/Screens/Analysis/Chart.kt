@@ -9,12 +9,14 @@ import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.Text
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -40,44 +42,76 @@ fun <T> StatementBody(
     amounts: (T) -> Float,
     amountsTotal: Float,
     circleLabel: String,
-    rows: @Composable (T) -> Unit
+    legend: (@Composable (T, Color) -> Unit)? = null,
+    content: @Composable (T, Color, Float) -> Unit
 ) {
-    Column(modifier = modifier.verticalScroll(
-        rememberScrollState()
-    )) {
-        Box(Modifier.padding(16.dp)) {
-            val accountsProportion = items.extractProportions { amounts(it) }
-            val circleColors = defaultColors.subList(0,items.size)
-            AnimatedCircle(
-                accountsProportion,
-                circleColors,
+    val itemsProportion = items.extractProportions {
+        amounts(
+            it
+        )
+    }
+    val circleColors = defaultColors.subList(
+        0,
+        items.size,
+    )
+    Column(modifier = modifier) {
+        Row {
+            Box(
                 Modifier
-                    .height(300.dp)
-                    .align(Alignment.Center)
-                    .fillMaxWidth()
-            )
-            Column(modifier = Modifier.align(
-                Alignment.Center)) {
-                Text(
-                    text = circleLabel,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    modifier = Modifier.align(
-                        Alignment.CenterHorizontally)
+                    .padding(10.dp)
+                    .weight(0.6f)
+            ) {
+                AnimatedCircle(
+                    itemsProportion,
+                    circleColors,
+                    Modifier
+                        .height(200.dp)
+                        .align(
+                            Alignment.Center
+                        )
+                        .fillMaxWidth()
                 )
-                Text(
-                    text = formatAmount(amountsTotal.toDouble()),
-                    style = MaterialTheme.typography.displayMedium,
-                    color = MaterialTheme.colorScheme.onBackground,
+                Column(
                     modifier = Modifier.align(
-                        Alignment.CenterHorizontally)
-                )
+                        Alignment.Center
+                    )
+                ) {
+                    Text(
+                        text = circleLabel,
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        modifier = Modifier.align(
+                            Alignment.CenterHorizontally
+                        )
+                    )
+                    Text(
+                        text = formatAmount(
+                            amountsTotal.toDouble()
+                        ),
+                        style = MaterialTheme.typography.displaySmall,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        modifier = Modifier.align(
+                            Alignment.CenterHorizontally
+                        )
+                    )
+                }
+            }
+            if (legend != null) {
+                LazyColumn(
+                    modifier = Modifier.weight(
+                        0.4f
+                    )
+                ) {
+                    itemsIndexed(items) { index, item ->
+                        legend(item, circleColors[index])
+                    }
+                }
             }
         }
         Spacer(Modifier.height(10.dp))
-        Column {
-            items.forEach { item ->
-                rows(item)
+        LazyColumn {
+            itemsIndexed(items) { index, item ->
+                content(item, circleColors[index], itemsProportion[index])
             }
         }
     }
@@ -93,12 +127,15 @@ fun AnimatedCircle(
     val currentState = remember {
         MutableTransitionState(
             AnimatedCircleProgress.START
-        )
-            .apply { targetState = AnimatedCircleProgress.END }
+        ).apply { targetState = AnimatedCircleProgress.END }
     }
-    val stroke = with(LocalDensity.current) { Stroke(5.dp.toPx()) }
-    val transition = updateTransition(currentState,
-        label = ""
+    val stroke = with(LocalDensity.current) {
+        Stroke(
+            5.dp.toPx()
+        )
+    }
+    val transition = updateTransition(
+        currentState, label = ""
     )
     val angleOffset by transition.animateFloat(
         transitionSpec = {
@@ -120,7 +157,9 @@ fun AnimatedCircle(
             tween(
                 delayMillis = 500,
                 durationMillis = 900,
-                easing = CubicBezierEasing(0f, 0.75f, 0.35f, 0.85f)
+                easing = CubicBezierEasing(
+                    0f, 0.75f, 0.35f, 0.85f
+                )
             )
         }, label = ""
     ) { progress ->
@@ -138,7 +177,9 @@ fun AnimatedCircle(
             halfSize.width - innerRadius,
             halfSize.height - innerRadius
         )
-        val size = Size(innerRadius * 2, innerRadius * 2)
+        val size = Size(
+            innerRadius * 2, innerRadius * 2
+        )
         var startAngle = shift - 90f
         proportions.forEachIndexed { index, proportion ->
             val sweep = proportion * angleOffset
@@ -155,5 +196,10 @@ fun AnimatedCircle(
         }
     }
 }
-private enum class AnimatedCircleProgress { START, END }
+
+private enum class AnimatedCircleProgress {
+    START,
+    END
+}
+
 private const val dividerLengthInDegrees = 1.8f

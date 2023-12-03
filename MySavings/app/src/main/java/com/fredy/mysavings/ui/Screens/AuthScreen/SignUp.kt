@@ -6,15 +6,22 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Icon
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.AddAPhoto
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
@@ -26,13 +33,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import coil.compose.AsyncImage
 import com.fredy.mysavings.R
 import com.fredy.mysavings.ViewModels.AuthState
 import com.fredy.mysavings.ViewModels.Event.AuthEvent
@@ -65,7 +75,6 @@ fun SignUp(
             ""
         )
     }
-    //in firebase db use .where after deciding the collection to add stupid query
 
 
     val launcher = rememberLauncherForActivityResult(
@@ -113,6 +122,34 @@ fun SignUp(
             color = onBackgroundColor.copy(0.7f),
         )
         Spacer(modifier = Modifier.height(16.dp))
+//        Box {
+//            if(currentUser.profilePictureUrl != null && currentUser.profilePictureUrl != "null") {
+//                AsyncImage(
+//                    model = currentUser.profilePictureUrl,
+//                    contentDescription = "Profile picture",
+//                    modifier = Modifier
+//                        .padding(horizontal = 8.dp)
+//                        .size(100.dp)
+//                        .clip(CircleShape),
+//                    contentScale = ContentScale.Crop
+//                )
+//            }else {
+//                Icon(
+//                    imageVector = Icons.Default.AccountCircle,
+//                    contentDescription = "Profile picture",
+//                    modifier = Modifier
+//                        .padding(horizontal = 8.dp)
+//                        .size(100.dp)
+//                        .clip(CircleShape),
+//                )
+//            }
+//            Icon(
+//                imageVector = Icons.Default.AddAPhoto,
+//                contentDescription = "add image button",
+//                modifier = Modifier.size(30.dp).clip(
+//                    CircleShape)
+//            )
+//        }
 
         CustomTextField(
             label = "Username",

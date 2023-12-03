@@ -11,6 +11,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.fredy.mysavings.ViewModel.AccountViewModel
+import com.fredy.mysavings.ViewModel.AnalysisViewModel
 import com.fredy.mysavings.ViewModel.CategoryViewModel
 import com.fredy.mysavings.ViewModel.RecordViewModel
 import com.fredy.mysavings.ui.Screens.Account.AccountsScreen
@@ -45,8 +46,12 @@ fun HomeNavGraph(
         composable(
             route = NavigationRoute.Analysis.route
         ) {
-
-            AnalysisScreen()
+            val viewModel: AnalysisViewModel = hiltViewModel()
+            val state by viewModel.state.collectAsState()
+            AnalysisScreen(
+                state = state,
+                onEvent = viewModel::onEvent,
+                )
         }
         composable(
             route = NavigationRoute.Categories.route

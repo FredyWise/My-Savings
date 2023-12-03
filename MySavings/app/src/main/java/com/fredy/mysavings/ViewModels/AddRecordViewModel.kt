@@ -1,21 +1,15 @@
 package com.fredy.mysavings.ViewModel
 
-import android.util.Log
-import android.widget.Toast
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.fredy.mysavings.Data.Database.Converter.TimestampConverter
 import com.fredy.mysavings.Data.Database.Entity.Account
 import com.fredy.mysavings.Data.Database.Entity.Category
 import com.fredy.mysavings.Data.Database.Entity.Record
-import com.fredy.mysavings.Data.Database.Entity.UserData
 import com.fredy.mysavings.Data.Database.Enum.RecordType
-import com.fredy.mysavings.Repository.AuthRepository
 import com.fredy.mysavings.ViewModels.Event.AddRecordEvent
 import com.fredy.mysavings.ViewModels.Event.CalcEvent
 import com.fredy.mysavings.ViewModels.Event.CalcOperation
@@ -23,14 +17,9 @@ import com.fredy.mysavings.Util.isExpense
 import com.fredy.mysavings.Util.isIncome
 import com.fredy.mysavings.Util.isTransfer
 import com.fredy.mysavings.Repository.RecordRepository
-import com.fredy.mysavings.Util.Resource
-import com.fredy.mysavings.Util.TAG
 import com.fredy.mysavings.ViewModels.ResourceState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalTime

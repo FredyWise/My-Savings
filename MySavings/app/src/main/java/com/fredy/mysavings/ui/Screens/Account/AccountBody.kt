@@ -57,7 +57,7 @@ fun AccountBody(
                 icon = account.accountIcon,
                 iconDescription = account.accountIconDescription,
                 iconModifier = Modifier
-                    .size(65.dp)
+                    .size(50.dp)
                     .clip(
                         shape = MaterialTheme.shapes.medium
                     ),

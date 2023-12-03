@@ -1,20 +1,22 @@
 package com.fredy.mysavings.Repository
 
 import android.util.Log
+import com.fredy.mysavings.Data.Database.Converter.TimestampConverter
 import com.fredy.mysavings.Data.Database.Entity.Account
 import com.fredy.mysavings.Data.Database.Entity.Category
 import com.fredy.mysavings.Data.Database.Entity.Record
-import com.fredy.mysavings.Data.Database.Entity.UserData
 import com.fredy.mysavings.Data.Database.Enum.RecordType
 import com.fredy.mysavings.Util.TAG
 import com.google.android.gms.tasks.Task
 import com.google.firebase.Firebase
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -23,7 +25,6 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.time.LocalDateTime
-import javax.inject.Inject
 
 
 interface RecordRepository {
@@ -31,13 +32,19 @@ interface RecordRepository {
     suspend fun deleteRecordItem(record: Record)
     fun getRecordById(recordId: String): Flow<TrueRecord>
     fun getUserRecordsFromSpecificTime(
-        startDate: LocalDateTime,
-        endDate: LocalDateTime
+        startDate: Timestamp,
+        endDate: Timestamp
     ): Flow<List<TrueRecord>>
 
     fun getUserCategoryRecordsOrderedByDateTime(
-        categoryId: String
+        categoryId: String,
     ): Flow<List<TrueRecord>>
+
+    fun getUserCategoriesWithAmountFromSpecificTime(
+        categoryType: RecordType,
+        startDate: Timestamp,
+        endDate: Timestamp,
+    ): Flow<List<CategoryWithAmount>>
 
     fun getUserAccountRecordsOrderedByDateTime(
         accountId: String
@@ -46,8 +53,8 @@ interface RecordRepository {
     fun getUserTotalAmountByType(recordType: RecordType): Flow<Double>
     fun getUserTotalAmountByTypeFromSpecificTime(
         recordType: RecordType,
-        startDate: LocalDateTime,
-        endDate: LocalDateTime
+        startDate: Timestamp,
+        endDate: Timestamp
     ): Flow<Double>
 
     fun getUserTotalRecordBalance(): Flow<Double>
@@ -120,8 +127,8 @@ class RecordRepositoryImpl(): RecordRepository {
     }
 
     override fun getUserRecordsFromSpecificTime(
-        startDate: LocalDateTime,
-        endDate: LocalDateTime
+        startDate: Timestamp,
+        endDate: Timestamp
     ) = callbackFlow<List<TrueRecord>> {
         val currentUser = Firebase.auth.currentUser
         Log.e(
@@ -132,14 +139,13 @@ class RecordRepositoryImpl(): RecordRepository {
         val listener = Firebase.firestore.collection(
             "record"
         ).whereGreaterThanOrEqualTo(
-            "recordDateTime", startDate
+            "recordTimestamp", startDate
         ).whereLessThanOrEqualTo(
-            "recordDateTime", endDate
+            "recordTimestamp", endDate
         ).whereEqualTo(
-            "userIdFk",
-            currentUser!!.uid
+            "userIdFk", currentUser!!.uid
         ).orderBy(
-            "recordDateTime",
+            "recordTimestamp",
             Query.Direction.DESCENDING
         ).addSnapshotListener { value, error ->
             error?.let {
@@ -168,9 +174,9 @@ class RecordRepositoryImpl(): RecordRepository {
                         val result = getDocuments(
                             record
                         )
-                        val fromAccount =  result.fromAccount.await().toObject<Account>()!!
-                        val toAccount =result.toAccount.await().toObject<Account>()!!
-                        val toCategory =  result.toCategory.await().toObject<Category>()!!
+                        val fromAccount = result.fromAccount.await().toObject<Account>()!!
+                        val toAccount = result.toAccount.await().toObject<Account>()!!
+                        val toCategory = result.toCategory.await().toObject<Category>()!!
 
                         TrueRecord(
                             record = record,
@@ -213,10 +219,9 @@ class RecordRepositoryImpl(): RecordRepository {
         ).whereEqualTo(
             "categoryIdFk", categoryId
         ).whereEqualTo(
-            "userIdFk",
-            currentUser!!.uid
+            "userIdFk", currentUser!!.uid
         ).orderBy(
-            "recordDateTime",
+            "recordTimestamp",
             Query.Direction.DESCENDING
         ).addSnapshotListener { value, error ->
             error?.let {
@@ -264,6 +269,96 @@ class RecordRepositoryImpl(): RecordRepository {
         }
     }
 
+    override fun getUserCategoriesWithAmountFromSpecificTime(
+        categoryType: RecordType,
+        startDate: Timestamp,
+        endDate: Timestamp
+    ) = callbackFlow<List<CategoryWithAmount>> {
+        val currentUser = Firebase.auth.currentUser
+        Log.e(
+            TAG,
+            "getUserCategoryRecordsFromSpecificTime: $categoryType\n$startDate\n:\n$endDate"
+        )
+
+        val listener = Firebase.firestore.collection(
+            "record"
+        ).whereGreaterThanOrEqualTo(
+            "recordTimestamp", startDate
+        ).whereLessThanOrEqualTo(
+            "recordTimestamp", endDate
+        ).whereEqualTo(
+            "recordType",
+            categoryType.name
+        ).whereEqualTo(
+            "userIdFk", currentUser!!.uid
+        ).orderBy(
+            "recordTimestamp",
+            Query.Direction.DESCENDING
+        ).addSnapshotListener { value, error ->
+            error?.let {
+                Log.e(
+                    TAG,
+                    "getUserRecordsFromSpecificTimeError: ${it.message}"
+                )
+                close(it)
+                return@addSnapshotListener
+            }
+
+            value?.let { result ->
+                val recordDocuments = result.documents
+                val categoriesWithAmount = mutableMapOf<String, CategoryWithAmount>()
+
+                recordDocuments.forEach { document ->
+                    val record = document.toObject<Record>()
+                    if (record != null) {
+                        val categoryId = record.categoryIdFk
+                        val currency = record.recordCurrency
+
+                        val existingCategory = categoriesWithAmount[categoryId]
+
+                        if (existingCategory != null && existingCategory.currency == currency) {
+                            categoriesWithAmount[categoryId] = existingCategory.copy(
+                                amount = existingCategory.amount + record.recordAmount
+                            )
+                        } else {
+                            val newCategory = CategoryWithAmount(
+                                amount = record.recordAmount,
+                                currency = currency
+                            )
+                            categoriesWithAmount[categoryId] = newCategory
+                        }
+                    }
+                }
+
+                launch {
+                    val deferredCategoryDetails = categoriesWithAmount.map { (categoryId, categoryWithAmount) ->
+                        async {
+                            val category = Firebase.firestore.collection(
+                                "category"
+                            ).document(categoryId).get().await().toObject<Category>()
+                            categoryWithAmount.copy(
+                                category = category ?: Category()
+                            )
+                        }
+                    }
+
+                    val data = deferredCategoryDetails.awaitAll()
+
+                    trySend(data)
+                }
+            }
+        }
+
+        Log.e(
+            TAG,
+            "getUserRecordsFromSpecificTime0.0: babi"
+        )
+
+        awaitClose {
+            listener.remove()
+        }
+    }
+
     override fun getUserAccountRecordsOrderedByDateTime(
         accountId: String,
     ) = callbackFlow<List<TrueRecord>> {
@@ -280,10 +375,9 @@ class RecordRepositoryImpl(): RecordRepository {
         ).whereIn(
             "accountfk", listOf(accountId)
         ).whereEqualTo(
-            "userIdFk",
-            currentUser!!.uid
+            "userIdFk", currentUser!!.uid
         ).orderBy(
-            "recordDateTime",
+            "recordTimestamp",
             Query.Direction.DESCENDING
         ).addSnapshotListener { value, error ->
             error?.let {
@@ -344,12 +438,11 @@ class RecordRepositoryImpl(): RecordRepository {
         ).whereEqualTo(
             "recordType", recordType
         ).whereEqualTo(
-            "userIdFk",
-            currentUser!!.uid
+            "userIdFk", currentUser!!.uid
         ).addSnapshotListener { value, error ->
             error?.let {
                 Log.e(
-                    "BABI",
+                    TAG,
                     "getUserAccountTotalBalance2: " + it.message,
                 )
             }
@@ -373,8 +466,8 @@ class RecordRepositoryImpl(): RecordRepository {
 
     override fun getUserTotalAmountByTypeFromSpecificTime(
         recordType: RecordType,
-        startDate: LocalDateTime,
-        endDate: LocalDateTime
+        startDate: Timestamp,
+        endDate: Timestamp
     ) = callbackFlow<Double> {
         val currentUser = Firebase.auth.currentUser
         Log.e(
@@ -385,16 +478,15 @@ class RecordRepositoryImpl(): RecordRepository {
         val listener = Firebase.firestore.collection(
             "record"
         ).whereGreaterThanOrEqualTo(
-            "recordDateTime", startDate
+            "recordTimestamp", startDate
         ).whereLessThanOrEqualTo(
-            "recordDateTime", endDate
+            "recordTimestamp", endDate
         ).whereEqualTo(
             "recordType", recordType
         ).whereEqualTo(
-            "userIdFk",
-            currentUser!!.uid
+            "userIdFk", currentUser!!.uid
         ).orderBy(
-            "recordDateTime",
+            "recordTimestamp",
             Query.Direction.DESCENDING
         ).addSnapshotListener { value, error ->
             error?.let {
@@ -426,8 +518,7 @@ class RecordRepositoryImpl(): RecordRepository {
         val listener = Firebase.firestore.collection(
             "record"
         ).whereEqualTo(
-            "userIdFk",
-            currentUser!!.uid
+            "userIdFk", currentUser!!.uid
         ).addSnapshotListener { value, error ->
             error?.let {
                 Log.e(
@@ -455,15 +546,21 @@ class RecordRepositoryImpl(): RecordRepository {
 
     suspend fun getDocuments(record: Record): DocumentResults = coroutineScope {
         val fromAccountDeferred = async {
-            Firebase.firestore.collection("account").document(record.accountIdFromFk).get()
+            Firebase.firestore.collection("account").document(
+                record.accountIdFromFk
+            ).get()
         }
 
         val toAccountDeferred = async {
-            Firebase.firestore.collection("account").document(record.accountIdToFk).get()
+            Firebase.firestore.collection("account").document(
+                record.accountIdToFk
+            ).get()
         }
 
         val toCategoryDeferred = async {
-            Firebase.firestore.collection("category").document(record.categoryIdFk).get()
+            Firebase.firestore.collection("category").document(
+                record.categoryIdFk
+            ).get()
         }
 
         DocumentResults(
@@ -486,4 +583,10 @@ data class TrueRecord(
     val fromAccount: Account = Account(),
     val toAccount: Account = Account(),
     val toCategory: Category = Category(),
+)
+
+data class CategoryWithAmount(
+    val category: Category = Category(),
+    val amount: Double = 0.0,
+    val currency: String = ""
 )

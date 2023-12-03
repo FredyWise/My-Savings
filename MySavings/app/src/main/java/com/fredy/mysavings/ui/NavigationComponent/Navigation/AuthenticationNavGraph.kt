@@ -18,6 +18,7 @@ import com.fredy.mysavings.ViewModels.Event.AuthEvent
 import com.fredy.mysavings.ViewModels.AuthViewModel
 
 fun NavGraphBuilder.authenticationNavGraph(
+    viewModel: AuthViewModel,
     navController: NavHostController
 ) {
     navigation(
@@ -32,7 +33,6 @@ fun NavGraphBuilder.authenticationNavGraph(
                 "authenticationNavGraph: ",
 
             )
-            val viewModel: AuthViewModel = hiltViewModel()
             val state by viewModel.state.collectAsState()
             val googleSignInState by viewModel.googleState
             val context = LocalContext.current
@@ -97,7 +97,6 @@ fun NavGraphBuilder.authenticationNavGraph(
         composable(
             route = NavigationRoute.SignUp.route
         ) {
-            val viewModel: AuthViewModel = hiltViewModel()
             val state by viewModel.state.collectAsState()
             val googleSignInState by viewModel.googleState
             val context = LocalContext.current

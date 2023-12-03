@@ -31,6 +31,7 @@ import com.fredy.mysavings.ui.NavigationComponent.MainScreen
 @Composable
 fun NavGraphRoot(
     navController: NavHostController,
+    authViewModel: AuthViewModel = hiltViewModel()
 ) {
     NavHost(
         modifier = Modifier.background(MaterialTheme.colorScheme.background),
@@ -42,13 +43,12 @@ fun NavGraphRoot(
             route = Graph.FirstNav
         ){
             Log.e(TAG, "NavGraphRoot: ", )
-            val viewModel: AuthViewModel = hiltViewModel()
-            val state by viewModel.state.collectAsState()
+            val state by authViewModel.state.collectAsState()
             val startDestination = if (state.signedInUser != null) Graph.HomeNav else Graph.Auth
             Log.e(TAG, "NavGraphRoot: ", )
             navController.navigate(startDestination)
         }
-        authenticationNavGraph(navController = navController)
+        authenticationNavGraph(authViewModel,navController = navController)
         navigation(
             route = Graph.MainNav,
             startDestination = Graph.HomeNav,

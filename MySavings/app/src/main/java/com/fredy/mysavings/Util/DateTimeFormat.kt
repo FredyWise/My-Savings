@@ -1,6 +1,7 @@
 package com.fredy.mysavings.Util
 
 import com.fredy.mysavings.Data.Database.Enum.FilterType
+import com.fredy.mysavings.ViewModel.FilterState
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -64,9 +65,9 @@ fun formatRangeOfDate(
             DateTimeFormatter.ofPattern("MMM, dd")
         ) + " - " + localDate.with(
             TemporalAdjusters.previousOrSame(
-                DayOfWeek.SUNDAY
+                DayOfWeek.MONDAY
             )
-        ).format(
+        ).plusDays(6).format(
             DateTimeFormatter.ofPattern("MMM, dd")
         )
 

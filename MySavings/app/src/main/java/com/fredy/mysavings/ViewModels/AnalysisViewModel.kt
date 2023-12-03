@@ -1,14 +1,16 @@
 package com.fredy.mysavings.ViewModel
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fredy.mysavings.Data.Database.Converter.TimestampConverter
+import com.fredy.mysavings.Data.Database.Entity.Category
 import com.fredy.mysavings.Data.Database.Enum.FilterType
 import com.fredy.mysavings.Data.Database.Enum.RecordType
 import com.fredy.mysavings.Data.Database.Enum.SortType
+import com.fredy.mysavings.Repository.CategoryWithAmount
 import com.fredy.mysavings.Repository.RecordRepository
-import com.fredy.mysavings.Repository.TrueRecord
-import com.fredy.mysavings.ViewModels.Event.RecordsEvent
+import com.fredy.mysavings.ViewModels.Event.AnalysisEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -27,71 +29,45 @@ import javax.inject.Inject
 
 
 @HiltViewModel
-class RecordViewModel @Inject constructor(
+class AnalysisViewModel @Inject constructor(
     private val recordRepository: RecordRepository,
 ): ViewModel() {
     private val _sortType = MutableStateFlow(
         SortType.DESCENDING
     )
 
+    private val _recordType = mutableStateOf(
+        RecordType.Expense
+    )
+
     private val _filterState = MutableStateFlow(
         FilterState()
     )
 
-    private val _records = _filterState.flatMapLatest { filterState ->
+    private val _categoriesWithAmount = _filterState.flatMapLatest { filterState ->
         when (filterState.filterType) {
-            FilterType.Daily -> recordRepository.getUserRecordsFromSpecificTime(
-                TimestampConverter.fromDateTime(
-                    filterState.start
-                ),
-                TimestampConverter.fromDateTime(
-                    filterState.end
-                )
+            FilterType.Daily -> recordRepository.getUserCategoriesWithAmountFromSpecificTime(
+                _recordType.value, TimestampConverter.fromDateTime(filterState.start), TimestampConverter.fromDateTime(filterState.end)
             )
 
-            FilterType.Weekly -> recordRepository.getUserRecordsFromSpecificTime(
-                TimestampConverter.fromDateTime(
-                    filterState.start
-                ),
-                TimestampConverter.fromDateTime(
-                    filterState.end
-                )
+            FilterType.Weekly -> recordRepository.getUserCategoriesWithAmountFromSpecificTime(
+                _recordType.value, TimestampConverter.fromDateTime(filterState.start), TimestampConverter.fromDateTime(filterState.end)
             )
 
-            FilterType.Monthly -> recordRepository.getUserRecordsFromSpecificTime(
-                TimestampConverter.fromDateTime(
-                    filterState.start
-                ),
-                TimestampConverter.fromDateTime(
-                    filterState.end
-                )
+            FilterType.Monthly -> recordRepository.getUserCategoriesWithAmountFromSpecificTime(
+                _recordType.value, TimestampConverter.fromDateTime(filterState.start), TimestampConverter.fromDateTime(filterState.end)
             )
 
-            FilterType.Per3Months -> recordRepository.getUserRecordsFromSpecificTime(
-                TimestampConverter.fromDateTime(
-                    filterState.start
-                ),
-                TimestampConverter.fromDateTime(
-                    filterState.end
-                )
+            FilterType.Per3Months -> recordRepository.getUserCategoriesWithAmountFromSpecificTime(
+                _recordType.value, TimestampConverter.fromDateTime(filterState.start), TimestampConverter.fromDateTime(filterState.end)
             )
 
-            FilterType.Per6Months -> recordRepository.getUserRecordsFromSpecificTime(
-                TimestampConverter.fromDateTime(
-                    filterState.start
-                ),
-                TimestampConverter.fromDateTime(
-                    filterState.end
-                )
+            FilterType.Per6Months -> recordRepository.getUserCategoriesWithAmountFromSpecificTime(
+                _recordType.value, TimestampConverter.fromDateTime(filterState.start), TimestampConverter.fromDateTime(filterState.end)
             )
 
-            FilterType.Yearly -> recordRepository.getUserRecordsFromSpecificTime(
-                TimestampConverter.fromDateTime(
-                    filterState.start
-                ),
-                TimestampConverter.fromDateTime(
-                    filterState.end
-                )
+            FilterType.Yearly -> recordRepository.getUserCategoriesWithAmountFromSpecificTime(
+                _recordType.value, TimestampConverter.fromDateTime(filterState.start), TimestampConverter.fromDateTime(filterState.end)
             )
         }
     }.stateIn(
@@ -144,28 +120,18 @@ class RecordViewModel @Inject constructor(
     )
 
     private val _state = MutableStateFlow(
-        RecordState()
+        AnalysisState()
     )
 
     val state = combine(
         _state,
         _sortType,
-        _records,
+        _filterState,
+        _categoriesWithAmount,
         balanceBar,
-    ) { state, sortType, records, balanceBar ->
+    ) { state, sortType, filterType, categoriesWithAmount, balanceBar ->
         state.copy(
-            trueRecordMaps = records.groupBy {
-                it.record.recordDateTime.toLocalDate()
-            }.toSortedMap(if (sortType == SortType.DESCENDING) {
-                compareByDescending { it }
-            } else {
-                compareBy { it }
-            }).map {
-                RecordMap(
-                    recordDate = it.key,
-                    records = it.value
-                )
-            },
+            categoriesWithAmount = categoriesWithAmount,
             totalExpense = balanceBar.expense,
             totalIncome = balanceBar.income,
             totalAll = balanceBar.balance,
@@ -174,29 +140,13 @@ class RecordViewModel @Inject constructor(
     }.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(5000),
-        RecordState()
+        AnalysisState()
     )
 
 
-    fun onEvent(event: RecordsEvent) {
+    fun onEvent(event: AnalysisEvent) {
         when (event) {
-            is RecordsEvent.ShowDialog -> {
-                _state.update {
-                    it.copy(
-                        trueRecord = event.trueRecord,
-                    )
-                }
-            }
-
-            is RecordsEvent.HideDialog -> {
-                _state.update {
-                    it.copy(
-                        trueRecord = null,
-                    )
-                }
-            }
-
-            is RecordsEvent.ShowFilterDialog -> {
+            is AnalysisEvent.ShowFilterDialog -> {
                 _state.update {
                     it.copy(
                         isChoosingFilter = true,
@@ -204,7 +154,7 @@ class RecordViewModel @Inject constructor(
                 }
             }
 
-            is RecordsEvent.HideFilterDialog -> {
+            is AnalysisEvent.HideFilterDialog -> {
                 _state.update {
                     it.copy(
                         isChoosingFilter = false,
@@ -212,7 +162,7 @@ class RecordViewModel @Inject constructor(
                 }
             }
 
-            is RecordsEvent.DeleteRecord -> {
+            is AnalysisEvent.DeleteRecord -> {
                 viewModelScope.launch {
                     recordRepository.deleteRecordItem(
                         event.record
@@ -220,7 +170,7 @@ class RecordViewModel @Inject constructor(
                 }
             }
 
-            is RecordsEvent.FilterRecord -> {
+            is AnalysisEvent.FilterRecord -> {
                 _state.update {
                     it.copy(
                         filterType = event.filterType
@@ -229,7 +179,7 @@ class RecordViewModel @Inject constructor(
                 updateFilterState(event.filterType)
             }
 
-            is RecordsEvent.ShowNextList -> {
+            is AnalysisEvent.ShowNextList -> {
                 when (state.value.filterType) {
                     FilterType.Daily -> _state.update {
                         it.copy(
@@ -282,7 +232,7 @@ class RecordViewModel @Inject constructor(
                 updateFilterState(state.value.filterType)
             }
 
-            is RecordsEvent.ShowPreviousList -> {
+            is AnalysisEvent.ShowPreviousList -> {
                 when (state.value.filterType) {
                     FilterType.Daily -> _state.update {
                         it.copy(
@@ -435,9 +385,9 @@ class RecordViewModel @Inject constructor(
     }
 }
 
-data class RecordState(
-    val trueRecordMaps: List<RecordMap> = listOf(),
-    val trueRecord: TrueRecord? = null,
+data class AnalysisState(
+    val categoriesWithAmount: List<CategoryWithAmount> = listOf(),
+    val category: Category? = null,
     val totalExpense: Double = 0.0,
     val totalIncome: Double = 0.0,
     val totalAll: Double = 0.0,
@@ -447,27 +397,4 @@ data class RecordState(
     val filterType: FilterType = FilterType.Monthly
 )
 
-data class RecordMap(
-    val recordDate: LocalDate,
-    val records: List<TrueRecord>
-)
 
-data class BalanceBar(
-    val expense: Double = 0.0,
-    val income: Double = 0.0,
-    val balance: Double = 0.0,
-)
-
-data class FilterState(
-    val filterType: FilterType = FilterType.Monthly,
-    val start: LocalDateTime = LocalDateTime.of(
-        LocalDate.now().with(
-            TemporalAdjusters.firstDayOfMonth()
-        ), LocalTime.MIN
-    ),
-    val end: LocalDateTime = LocalDateTime.of(
-        LocalDate.now().with(
-            TemporalAdjusters.lastDayOfMonth()
-        ), LocalTime.MIN
-    ),
-)

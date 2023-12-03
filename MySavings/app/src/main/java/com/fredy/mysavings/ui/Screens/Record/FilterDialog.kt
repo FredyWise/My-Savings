@@ -27,13 +27,14 @@ fun FilterDialog(
     modifier: Modifier = Modifier,
     title: String,
     selectedName: String,
-    onEvent: (RecordsEvent) -> Unit,
+    onDismissRequest: () -> Unit,
+    onEvent: (FilterType) -> Unit,
 ) {
     SimpleAlertDialog(
         modifier = modifier,
         title = title,
         onDismissRequest = {
-            onEvent(RecordsEvent.HideFilterDialog)
+            onDismissRequest()
         },
     ) {
         CustomStickyHeader(
@@ -48,17 +49,15 @@ fun FilterDialog(
                         start = 8.dp
                     )
                     .clickable {
-                        onEvent(
-                            RecordsEvent.FilterRecord(
-                                item
-                            )
-                        )
+                        onEvent(item)
                     },
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Start
             ) {
                 Text(
-                    modifier = Modifier.height(23.dp).padding(end = 8.dp),
+                    modifier = Modifier
+                        .height(23.dp)
+                        .padding(end = 8.dp),
                     text = item.name,
                     style = MaterialTheme.typography.titleMedium
                 )

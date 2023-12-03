@@ -12,14 +12,14 @@ data class Record(
     val accountIdToFk: String = "",
     val categoryIdFk: String = "",
     val userIdFk: String = "",
-    val _recordDateTime: Timestamp = Timestamp.now(),
+    val recordTimestamp: Timestamp = Timestamp.now(),
     val recordAmount: Double = 0.0,
     val recordCurrency: String = "",
     val recordType: RecordType = RecordType.Expense,
     val recordNotes: String = "",
 ){
     val recordDateTime: LocalDateTime
-        get() = TimestampConverter.toDateTime(_recordDateTime)
+        get() = TimestampConverter.toDateTime(recordTimestamp)
     constructor(
         recordId: String,
         accountIdFromFk: String,
