@@ -1,6 +1,9 @@
 package com.fredy.mysavings.ViewModels
 
+import android.graphics.Bitmap
+import android.net.Uri
 import android.util.Log
+import androidx.activity.ComponentActivity
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -12,12 +15,17 @@ import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.TAG
 import com.fredy.mysavings.ViewModels.Event.AuthEvent
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.tasks.Task
+import com.google.firebase.Firebase
 import com.google.firebase.auth.AuthResult
+import com.google.firebase.storage.storage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 
 @HiltViewModel
@@ -43,6 +51,7 @@ class AuthViewModel @Inject constructor(
                 signedInUser = userData
             )
         }
+        Log.e(TAG, "user: "+userData, )
     }
 
     fun onEvent(event: AuthEvent) {
@@ -131,11 +140,12 @@ class AuthViewModel @Inject constructor(
                             is Resource.Success -> {
                                 val user = result.data!!.user
                                 val userData = user?.run {
+                                    val profilePictureUrl = uploadProfilePicture(uid,event.photoUrl)
                                     UserData(
                                         firebaseUserId = uid,
                                         username = displayName ?: event.username,
                                         email = email ?: event.email,
-                                        profilePictureUrl = photoUrl.toString()
+                                        profilePictureUrl = profilePictureUrl
                                     )
                                 }
                                 userRepository.upsertUser(
@@ -176,6 +186,17 @@ class AuthViewModel @Inject constructor(
             }
         }
     }
+    private suspend fun uploadProfilePicture(uid: String, imageUri: Uri): String {
+        val storageRef = Firebase.storage.reference
+        val profilePictureRef = storageRef.child("profile_pictures/$uid.jpg")
+
+        return try {
+            val downloadUri = profilePictureRef.putFile(imageUri).await().storage.downloadUrl.await()
+            downloadUri.toString()
+        } catch (e: Exception) {
+            throw e
+        }
+    }
 }
 
 data class AuthState(
@@ -191,3 +212,4 @@ data class GoogleSignInState(
     val error: String = "",
     val signInClient: GoogleSignInClient? = null
 )
+

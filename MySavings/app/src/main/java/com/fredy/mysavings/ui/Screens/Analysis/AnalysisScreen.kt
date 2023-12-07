@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.R
 import com.fredy.mysavings.Util.BalanceColor
@@ -178,6 +179,7 @@ fun AnalysisScreen(
                         ),
                     endContent = {
                         Text(
+                            modifier = Modifier.width(70.dp),
                             text = "${
                                 formatAmount(
                                     (proportion * 100).toDouble()
@@ -186,6 +188,7 @@ fun AnalysisScreen(
                             style = MaterialTheme.typography.titleLarge.copy(
                                 fontWeight = FontWeight.SemiBold
                             ),
+                            textAlign = TextAlign.Center,
                             color = MaterialTheme.colorScheme.onSurface
                         )
                     }) {

@@ -1,4 +1,4 @@
-package com.fredy.mysavings.ui.Screens.AddRecord
+package com.fredy.mysavings.ui.Screens.AddSingle
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

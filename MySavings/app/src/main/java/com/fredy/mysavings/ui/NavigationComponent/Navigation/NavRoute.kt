@@ -3,6 +3,8 @@ package com.fredy.mysavings.ui.NavigationComponent.Navigation
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBalanceWallet
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.AddBox
+import androidx.compose.material.icons.filled.AddToPhotos
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.HowToReg
 import androidx.compose.material.icons.filled.Label
@@ -15,6 +17,8 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.UploadFile
 import androidx.compose.material.icons.outlined.AccountBalanceWallet
 import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.icons.outlined.AddBox
+import androidx.compose.material.icons.outlined.AddToPhotos
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.HowToReg
 import androidx.compose.material.icons.outlined.Label
@@ -154,8 +158,15 @@ sealed class NavigationRoute(
         route = "add",
         title = "Add",
         contentDescription = "Go to Add Screen",
-        icon = Icons.Default.Add,
-        iconNot = Icons.Outlined.Add
+        icon = Icons.Default.AddBox,
+        iconNot = Icons.Outlined.AddBox
+    )
+    object BulkAdd: NavigationRoute(
+        route = "addBulk",
+        title = "AddBulk",
+        contentDescription = "Go to Bulk Add Screen",
+        icon = Icons.Default.AddToPhotos,
+        iconNot = Icons.Outlined.AddToPhotos
     )
 }
 //Icons.Default.CenterFocusStrong

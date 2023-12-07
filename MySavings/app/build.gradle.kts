@@ -56,15 +56,19 @@ dependencies {
 
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
-    implementation("androidx.activity:activity-compose:1.8.0")
+    implementation("androidx.activity:activity-compose:1.8.1")
     implementation(platform("androidx.compose:compose-bom:2023.10.01"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
+    // Firebase
+    implementation("com.google.android.gms:play-services-vision:20.1.3")//add this to remove duplicate class error
     implementation("com.google.firebase:firebase-auth:22.3.0")
     implementation("com.google.firebase:firebase-firestore:24.9.1")
     implementation("com.google.firebase:firebase-storage:20.3.0")
+    implementation("com.google.firebase:firebase-ml-vision:24.1.0")
+
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
@@ -73,12 +77,18 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
+    // Premission
+    implementation("com.google.accompanist:accompanist-permissions:0.33.2-alpha")
+
+    // Image Cropper
+    implementation("com.github.CanHub:Android-Image-Cropper:4.0.0")
+
     // Fire Base
     implementation("com.google.firebase:firebase-auth-ktx:22.3.0")
     implementation("com.google.android.gms:play-services-auth:20.7.0")
 
     // Coil
-    implementation ("io.coil-kt:coil-compose:2.4.0")
+    implementation("io.coil-kt:coil-compose:2.4.0")
 
     //    More Icons
     implementation("com.google.android.material:material:1.10.0")

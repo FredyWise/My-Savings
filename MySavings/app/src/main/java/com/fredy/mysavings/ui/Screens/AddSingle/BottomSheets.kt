@@ -1,4 +1,4 @@
-package com.fredy.mysavings.ui.Screens.AddRecord
+package com.fredy.mysavings.ui.Screens.AddSingle
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -29,6 +29,7 @@ import com.fredy.mysavings.Data.Database.Entity.Account
 import com.fredy.mysavings.Data.Database.Entity.Category
 import com.fredy.mysavings.Data.Database.Enum.RecordType
 import com.fredy.mysavings.R
+import com.fredy.mysavings.Util.BalanceColor
 import com.fredy.mysavings.Util.formatBalanceAmount
 import com.fredy.mysavings.ViewModel.CategoryMap
 import com.fredy.mysavings.ui.Screens.SimpleButton
@@ -89,7 +90,9 @@ fun AccountBottomSheet(
                             style = MaterialTheme.typography.headlineSmall.copy(
                                 fontSize = 20.sp
                             ),
-                            color = textColor,
+                            color = BalanceColor(
+                                amount = account.accountAmount
+                            ),
                         )
                     },
                 ) {

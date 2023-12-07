@@ -67,10 +67,7 @@ fun CustomTextField(
         },
         singleLine = singleLine,
         modifier = modifier
-            .fillMaxWidth()
-            .padding(
-                bottom = 16.dp
-            ),
+            .fillMaxWidth(),
         shape = RoundedCornerShape(8.dp),
         visualTransformation = visualTransformation,
         keyboardOptions = KeyboardOptions(

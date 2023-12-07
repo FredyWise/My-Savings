@@ -7,6 +7,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
@@ -33,7 +34,7 @@ fun NavGraphBuilder.authenticationNavGraph(
                 "authenticationNavGraph: ",
 
             )
-            val state by viewModel.state.collectAsState()
+            val state by viewModel.state.collectAsStateWithLifecycle()
             val googleSignInState by viewModel.googleState
             val context = LocalContext.current
 
@@ -97,7 +98,7 @@ fun NavGraphBuilder.authenticationNavGraph(
         composable(
             route = NavigationRoute.SignUp.route
         ) {
-            val state by viewModel.state.collectAsState()
+            val state by viewModel.state.collectAsStateWithLifecycle()
             val googleSignInState by viewModel.googleState
             val context = LocalContext.current
             LaunchedEffect(

@@ -1,9 +1,15 @@
 package com.example.myapplication.ui.screens.authentication
 
 //import com.fredy.mysavings.ViewModels.AuthState
+import android.graphics.Bitmap
+import android.net.Uri
 import android.widget.Toast
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -43,6 +49,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
+import coil.compose.rememberImagePainter
 import com.fredy.mysavings.R
 import com.fredy.mysavings.ViewModels.AuthState
 import com.fredy.mysavings.ViewModels.Event.AuthEvent
@@ -54,7 +61,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.Firebase
 import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.firestore.firestore
+import com.google.firebase.storage.storage
+import java.io.ByteArrayOutputStream
+import javax.security.auth.callback.Callback
 
 @Composable
 fun SignUp(
@@ -75,6 +84,19 @@ fun SignUp(
             ""
         )
     }
+    var profilePictureUri by remember {
+        mutableStateOf<Uri>(
+            Uri.EMPTY
+        )
+    }
+    val imagePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia(),
+        onResult = { uri ->
+            uri?.let {
+                profilePictureUri = it
+            }
+        },
+    )
 
 
     val launcher = rememberLauncherForActivityResult(
@@ -122,35 +144,60 @@ fun SignUp(
             color = onBackgroundColor.copy(0.7f),
         )
         Spacer(modifier = Modifier.height(16.dp))
-//        Box {
-//            if(currentUser.profilePictureUrl != null && currentUser.profilePictureUrl != "null") {
-//                AsyncImage(
-//                    model = currentUser.profilePictureUrl,
-//                    contentDescription = "Profile picture",
-//                    modifier = Modifier
-//                        .padding(horizontal = 8.dp)
-//                        .size(100.dp)
-//                        .clip(CircleShape),
-//                    contentScale = ContentScale.Crop
-//                )
-//            }else {
-//                Icon(
-//                    imageVector = Icons.Default.AccountCircle,
-//                    contentDescription = "Profile picture",
-//                    modifier = Modifier
-//                        .padding(horizontal = 8.dp)
-//                        .size(100.dp)
-//                        .clip(CircleShape),
-//                )
-//            }
-//            Icon(
-//                imageVector = Icons.Default.AddAPhoto,
-//                contentDescription = "add image button",
-//                modifier = Modifier.size(30.dp).clip(
-//                    CircleShape)
-//            )
-//        }
+        Box(contentAlignment = Alignment.BottomEnd) {
+            if (profilePictureUri != Uri.EMPTY) {
+                Image(
+                    painter = rememberImagePainter(
+                        profilePictureUri
+                    ),
+                    contentDescription = "Profile picture",
+                    modifier = Modifier
+                        .padding(
+                            horizontal = 8.dp
+                        )
+                        .size(125.dp)
+                        .clip(
+                            CircleShape
+                        ),
+                    contentScale = ContentScale.Crop
+                )
+            } else {
+                Icon(
+                    imageVector = Icons.Default.AccountCircle,
+                    contentDescription = "Profile picture",
+                    tint = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier
+                        .padding(
+                            horizontal = 8.dp
+                        )
+                        .size(125.dp)
+                        .clip(
+                            CircleShape
+                        ),
+                )
+            }
+            Icon(imageVector = Icons.Default.AddAPhoto,
+                contentDescription = "add image button",
+                tint = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier
+                    .clip(
+                        CircleShape
+                    )
+                    .clickable {
+                        imagePickerLauncher.launch(
+                            PickVisualMediaRequest(
+                                ActivityResultContracts.PickVisualMedia.ImageOnly
+                            )
+                        )
+                    }
+                    .size(40.dp)
+                    .background(
+                        MaterialTheme.colorScheme.surface
+                    )
+                    .padding(7.dp))
+        }
 
+        Spacer(modifier = Modifier.height(16.dp))
         CustomTextField(
             label = "Username",
             value = username,
@@ -191,7 +238,8 @@ fun SignUp(
                         AuthEvent.registerUser(
                             username = username,
                             email = email,
-                            password = password
+                            password = password,
+                            photoUrl = profilePictureUri
                         )
                     )
                 } else if (password.length < 8) {
@@ -274,6 +322,5 @@ fun SignUp(
     }
 
 }
-
 
 

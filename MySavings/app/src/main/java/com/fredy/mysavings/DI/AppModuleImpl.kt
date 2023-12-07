@@ -108,13 +108,6 @@ object AppModuleImpl/*: AppModule*/ {
             CurrencyApi::class.java
         )
     }
-//    @Provides
-//    @Singleton
-//    fun currencyApi(): CurrencyApi {
-//        return Retrofit.Builder().baseUrl(BASE_URL).addConverterFactory(
-//            GsonConverterFactory.create()
-//        ).build().create(CurrencyApi::class.java)
-//    }
 
     @Provides
     @Singleton

@@ -28,7 +28,7 @@ import kotlin.math.absoluteValue
 
 
 @HiltViewModel
-class AddRecordViewModel @Inject constructor(
+class AddSingleRecordViewModel @Inject constructor(
     private val recordRepository: RecordRepository,
 ): ViewModel() {
     var state by mutableStateOf(AddRecordState())

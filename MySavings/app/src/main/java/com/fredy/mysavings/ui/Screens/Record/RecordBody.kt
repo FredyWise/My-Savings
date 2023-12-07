@@ -67,7 +67,6 @@ fun RecordBody(
                         .background(
                             backgroundColor
                         )
-                        .padding(bottom = 5.dp)
                         .clickable {
                             onEvent(
                                 RecordsEvent.ShowDialog(

@@ -119,6 +119,7 @@ fun SignIn(
             placeholder = "typeEmail...",
             keyboardType = KeyboardType.Email
         )
+        Spacer(modifier = Modifier.height(8.dp))
 
         CustomTextField(
             label = "Password",
@@ -128,6 +129,7 @@ fun SignIn(
             visualTransformation = PasswordVisualTransformation(),
             keyboardType = KeyboardType.Password
         )
+        Spacer(modifier = Modifier.height(16.dp))
 
         Button(
             onClick = {
@@ -141,9 +143,7 @@ fun SignIn(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(
-                    top = 20.dp,
-                    start = 30.dp,
-                    end = 30.dp
+                    horizontal = 30.dp
                 ),
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = primaryColor,
@@ -194,11 +194,10 @@ fun SignIn(
                 GoogleSignInOptions.DEFAULT_SIGN_IN
             ).requestEmail().requestIdToken(
                 context.getString(R.string.web_client_id)
-                ).build()
+            ).build()
 
             val googleSignInClient = GoogleSignIn.getClient(
-                context,
-                gso
+                context, gso
             )
             launcher.launch(googleSignInClient.signInIntent)
         }

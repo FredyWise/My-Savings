@@ -7,6 +7,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -35,7 +36,7 @@ fun HomeNavGraph(
             route = NavigationRoute.Records.route
         ) {
             val viewModel: RecordViewModel = hiltViewModel()
-            val state by viewModel.state.collectAsState()
+            val state by viewModel.state.collectAsStateWithLifecycle()
 
             RecordsScreen(
                 rootNavController = rootNavController,
@@ -47,7 +48,7 @@ fun HomeNavGraph(
             route = NavigationRoute.Analysis.route
         ) {
             val viewModel: AnalysisViewModel = hiltViewModel()
-            val state by viewModel.state.collectAsState()
+            val state by viewModel.state.collectAsStateWithLifecycle()
             AnalysisScreen(
                 state = state,
                 onEvent = viewModel::onEvent,
@@ -57,7 +58,7 @@ fun HomeNavGraph(
             route = NavigationRoute.Categories.route
         ) {
             val viewModel: CategoryViewModel = hiltViewModel()
-            val state by viewModel.state.collectAsState()
+            val state by viewModel.state.collectAsStateWithLifecycle()
 
             CategoriesScreen(
                 modifier = Modifier.padding(8.dp),
@@ -69,7 +70,7 @@ fun HomeNavGraph(
             route = NavigationRoute.Account.route
         ) {
             val viewModel: AccountViewModel = hiltViewModel()
-            val state by viewModel.state.collectAsState()
+            val state by viewModel.state.collectAsStateWithLifecycle()
 
             AccountsScreen(
                 modifier = Modifier.padding(

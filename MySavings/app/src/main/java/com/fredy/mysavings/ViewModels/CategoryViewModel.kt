@@ -25,19 +25,7 @@ import javax.inject.Inject
 @HiltViewModel
 class CategoryViewModel @Inject constructor(
     private val categoryRepository: CategoryRepository,
-//    private val authRepository: AuthRepository
 ): ViewModel() {
-//    private val _currentUser = MutableStateFlow(
-//        UserData()
-//    )
-//    val currentUser = _currentUser.asStateFlow()
-//    init {
-//        viewModelScope.launch {
-//            authRepository.getCurrentUser()?.let { currentUser ->
-//                _currentUser.update { currentUser }
-//            }
-//        }
-//    }
 
     private val _sortType = MutableStateFlow(
         SortType.ASCENDING
