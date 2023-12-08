@@ -66,14 +66,16 @@ fun AccountAddDialog(
                 Text(text = "0")
             },
         )
-        CurrencyDropdown(selectedText = state.accountCurrency,
+        CurrencyDropdown(
+            selectedText = state.accountCurrency,
             onClick = {
                 onEvent(
                     AccountEvent.AccountCurrency(
                         it
                     )
                 )
-            })
+            },
+        )
         TextField(
             value = state.accountName,
             onValueChange = {

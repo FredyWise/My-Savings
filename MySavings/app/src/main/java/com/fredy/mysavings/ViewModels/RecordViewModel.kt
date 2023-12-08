@@ -3,11 +3,14 @@ package com.fredy.mysavings.ViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fredy.mysavings.Data.Database.Converter.TimestampConverter
-import com.fredy.mysavings.Data.Database.Enum.FilterType
-import com.fredy.mysavings.Data.Database.Enum.RecordType
-import com.fredy.mysavings.Data.Database.Enum.SortType
+import com.fredy.mysavings.Data.Enum.FilterType
+import com.fredy.mysavings.Data.Enum.RecordType
+import com.fredy.mysavings.Data.Enum.SortType
 import com.fredy.mysavings.Repository.RecordRepository
 import com.fredy.mysavings.Repository.TrueRecord
+import com.fredy.mysavings.Util.minusFilterDate
+import com.fredy.mysavings.Util.plusFilterDate
+import com.fredy.mysavings.Util.updateFilterState
 import com.fredy.mysavings.ViewModels.Event.RecordsEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -226,213 +229,38 @@ class RecordViewModel @Inject constructor(
                         filterType = event.filterType
                     )
                 }
-                updateFilterState(event.filterType)
             }
 
             is RecordsEvent.ShowNextList -> {
-                when (state.value.filterType) {
-                    FilterType.Daily -> _state.update {
-                        it.copy(
-                            chosenDate = it.chosenDate.plusDays(
-                                1
-                            ),
-                        )
-                    }
-
-                    FilterType.Weekly -> _state.update {
-                        it.copy(
-                            chosenDate = it.chosenDate.plusWeeks(
-                                1
-                            ),
-                        )
-                    }
-
-                    FilterType.Monthly -> _state.update {
-                        it.copy(
-                            chosenDate = it.chosenDate.plusMonths(
-                                1
-                            ),
-                        )
-                    }
-
-                    FilterType.Per3Months -> _state.update {
-                        it.copy(
-                            chosenDate = it.chosenDate.plusMonths(
-                                3
-                            ),
-                        )
-                    }
-
-                    FilterType.Per6Months -> _state.update {
-                        it.copy(
-                            chosenDate = it.chosenDate.plusMonths(
-                                6
-                            ),
-                        )
-                    }
-
-                    FilterType.Yearly -> _state.update {
-                        it.copy(
-                            chosenDate = it.chosenDate.plusYears(
-                                1
-                            ),
-                        )
-                    }
+                _state.update {
+                    it.copy(
+                        selectedDate = plusFilterDate(state.value.filterType,it.selectedDate)
+                    )
                 }
-                updateFilterState(state.value.filterType)
             }
 
             is RecordsEvent.ShowPreviousList -> {
-                when (state.value.filterType) {
-                    FilterType.Daily -> _state.update {
-                        it.copy(
-                            chosenDate = it.chosenDate.minusDays(
-                                1
-                            ),
-                        )
-                    }
-
-                    FilterType.Weekly -> _state.update {
-                        it.copy(
-                            chosenDate = it.chosenDate.minusWeeks(
-                                1
-                            ),
-                        )
-                    }
-
-                    FilterType.Monthly -> _state.update {
-                        it.copy(
-                            chosenDate = it.chosenDate.minusMonths(
-                                1
-                            ),
-                        )
-                    }
-
-                    FilterType.Per3Months -> _state.update {
-                        it.copy(
-                            chosenDate = it.chosenDate.minusMonths(
-                                3
-                            ),
-                        )
-                    }
-
-                    FilterType.Per6Months -> _state.update {
-                        it.copy(
-                            chosenDate = it.chosenDate.minusMonths(
-                                6
-                            ),
-                        )
-                    }
-
-                    FilterType.Yearly -> _state.update {
-                        it.copy(
-                            chosenDate = it.chosenDate.minusYears(
-                                1
-                            ),
-                        )
-                    }
+                _state.update {
+                    it.copy(
+                        selectedDate = minusFilterDate(state.value.filterType,it.selectedDate)
+                    )
                 }
-                updateFilterState(state.value.filterType)
             }
 
-
+            is RecordsEvent.ChangeDate -> {
+                _state.update {
+                    it.copy(
+                        selectedDate = event.selectedDate
+                    )
+                }
+            }
         }
+        _filterState.value = updateFilterState(
+            state.value.filterType,
+            state.value.selectedDate
+        )
     }
 
-    private fun updateFilterState(event: FilterType) {
-        when (event) {
-            FilterType.Daily -> _filterState.value = FilterState(
-                FilterType.Daily,
-                LocalDateTime.of(
-                    state.value.chosenDate,
-                    LocalTime.MIN
-                ),
-                LocalDateTime.of(
-                    state.value.chosenDate,
-                    LocalTime.MAX
-                )
-            )
-
-
-            FilterType.Weekly -> _filterState.value = FilterState(
-                FilterType.Weekly,
-                LocalDateTime.of(
-                    state.value.chosenDate.with(
-                        TemporalAdjusters.previousOrSame(
-                            DayOfWeek.MONDAY
-                        )
-                    ), LocalTime.MIN
-                ),
-                LocalDateTime.of(
-                    state.value.chosenDate.with(
-                        TemporalAdjusters.previousOrSame(
-                            DayOfWeek.MONDAY
-                        )
-                    ).plusDays(6), LocalTime.MAX
-                )
-            )
-
-            FilterType.Monthly -> _filterState.value = FilterState(
-                FilterType.Monthly,
-                LocalDateTime.of(
-                    state.value.chosenDate.with(
-                        TemporalAdjusters.firstDayOfMonth()
-                    ), LocalTime.MIN
-                ),
-                LocalDateTime.of(
-                    state.value.chosenDate.with(
-                        TemporalAdjusters.lastDayOfMonth()
-                    ), LocalTime.MAX
-                )
-            )
-
-            FilterType.Per3Months -> _filterState.value = FilterState(
-                FilterType.Monthly,
-                LocalDateTime.of(
-                    state.value.chosenDate.with(
-                        TemporalAdjusters.firstDayOfMonth()
-                    ), LocalTime.MIN
-                ),
-                LocalDateTime.of(
-                    state.value.chosenDate.plusMonths(
-                        2
-                    ).with(
-                        TemporalAdjusters.lastDayOfMonth()
-                    ), LocalTime.MAX
-                )
-            )
-
-            FilterType.Per6Months -> _filterState.value = FilterState(
-                FilterType.Monthly,
-                LocalDateTime.of(
-                    state.value.chosenDate.with(
-                        TemporalAdjusters.firstDayOfMonth()
-                    ), LocalTime.MIN
-                ),
-                LocalDateTime.of(
-                    state.value.chosenDate.plusMonths(
-                        5
-                    ).with(
-                        TemporalAdjusters.lastDayOfMonth()
-                    ), LocalTime.MAX
-                )
-            )
-
-            FilterType.Yearly -> _filterState.value = FilterState(
-                FilterType.Yearly,
-                LocalDateTime.of(
-                    state.value.chosenDate.with(
-                        TemporalAdjusters.firstDayOfYear()
-                    ), LocalTime.MIN
-                ),
-                LocalDateTime.of(
-                    state.value.chosenDate.with(
-                        TemporalAdjusters.lastDayOfYear()
-                    ), LocalTime.MAX
-                )
-            )
-        }
-    }
 }
 
 data class RecordState(
@@ -442,7 +270,7 @@ data class RecordState(
     val totalIncome: Double = 0.0,
     val totalAll: Double = 0.0,
     val sortType: SortType = SortType.ASCENDING,
-    val chosenDate: LocalDate = LocalDate.now(),
+    val selectedDate: LocalDate = LocalDate.now(),
     val isChoosingFilter: Boolean = false,
     val filterType: FilterType = FilterType.Monthly
 )
@@ -459,6 +287,7 @@ data class BalanceBar(
 )
 
 data class FilterState(
+    val recordType: RecordType = RecordType.Expense,
     val filterType: FilterType = FilterType.Monthly,
     val start: LocalDateTime = LocalDateTime.of(
         LocalDate.now().with(

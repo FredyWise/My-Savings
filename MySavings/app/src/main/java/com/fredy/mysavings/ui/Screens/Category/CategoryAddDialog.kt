@@ -14,11 +14,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.fredy.mysavings.Data.Database.Enum.RecordType
-import com.fredy.mysavings.ViewModels.Event.CategoryEvent
+import com.fredy.mysavings.Data.Enum.RecordType
+import com.fredy.mysavings.Util.ActionWithName
 import com.fredy.mysavings.Util.categoryIcons
 import com.fredy.mysavings.ViewModel.CategoryState
-import com.fredy.mysavings.ui.Screens.ActionWithName
+import com.fredy.mysavings.ViewModels.Event.CategoryEvent
 import com.fredy.mysavings.ui.Screens.ChooseIcon
 import com.fredy.mysavings.ui.Screens.SimpleDialog
 import com.fredy.mysavings.ui.Screens.TypeRadioButton

@@ -18,6 +18,7 @@ import androidx.navigation.NavHostController
 import com.fredy.mysavings.Util.BalanceItem
 import com.fredy.mysavings.Util.formatRangeOfDate
 import com.fredy.mysavings.ViewModel.RecordState
+import com.fredy.mysavings.ViewModels.Event.AnalysisEvent
 import com.fredy.mysavings.ViewModels.Event.RecordsEvent
 import com.fredy.mysavings.ui.NavigationComponent.Navigation.NavigationRoute
 
@@ -63,8 +64,10 @@ fun RecordsScreen(
             )
         }
         DisplayBar(
-            selectedData = formatRangeOfDate(
-                state.chosenDate, state.filterType
+            selectedDate = state.selectedDate,
+            onDateChange = {onEvent(RecordsEvent.ChangeDate(it))},
+            selectedTitle = formatRangeOfDate(
+                state.selectedDate, state.filterType
             ),
             onPrevious = { onEvent(RecordsEvent.ShowPreviousList) },
             onNext = { onEvent(RecordsEvent.ShowNextList) },

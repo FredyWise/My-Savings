@@ -58,6 +58,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import com.fredy.mysavings.Util.ActionWithName
 import com.fredy.mysavings.Util.BalanceColor
 import com.fredy.mysavings.Util.SavingsIcon
 import com.fredy.mysavings.Util.currencyCodes
@@ -569,14 +570,6 @@ fun CustomDropDownMenu(
         }
     }
 }
-
-data class ActionWithName(
-    val name: String, val action: () -> Unit
-)
-
-data class ValueWithName<T>(
-    val name: String, val value: T
-)
 
 @Composable
 fun BalanceItem(

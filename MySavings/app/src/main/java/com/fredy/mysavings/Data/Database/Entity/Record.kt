@@ -1,7 +1,7 @@
 package com.fredy.mysavings.Data.Database.Entity
 
 import com.fredy.mysavings.Data.Database.Converter.TimestampConverter
-import com.fredy.mysavings.Data.Database.Enum.RecordType
+import com.fredy.mysavings.Data.Enum.RecordType
 import com.google.firebase.Timestamp
 import java.time.LocalDateTime
 

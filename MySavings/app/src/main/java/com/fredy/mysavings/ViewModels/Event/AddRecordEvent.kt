@@ -2,7 +2,7 @@ package com.fredy.mysavings.ViewModels.Event
 
 import com.fredy.mysavings.Data.Database.Entity.Account
 import com.fredy.mysavings.Data.Database.Entity.Category
-import com.fredy.mysavings.Data.Database.Enum.RecordType
+import com.fredy.mysavings.Data.Enum.RecordType
 import java.time.LocalDate
 import java.time.LocalTime
 

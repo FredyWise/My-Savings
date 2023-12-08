@@ -1,4 +1,4 @@
-package com.fredy.mysavings.Data.Database.Enum
+package com.fredy.mysavings.Data.Enum
 
 
 enum class RecordType{

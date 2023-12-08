@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.fredy.mysavings.Data.Database.Entity.Account
 import com.fredy.mysavings.Data.Database.Entity.Category
-import com.fredy.mysavings.Data.Database.Enum.RecordType
+import com.fredy.mysavings.Data.Enum.RecordType
 import com.fredy.mysavings.R
 import com.fredy.mysavings.Util.BalanceColor
 import com.fredy.mysavings.Util.formatBalanceAmount

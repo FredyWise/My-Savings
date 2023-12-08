@@ -9,7 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.fredy.mysavings.Data.Database.Entity.Account
 import com.fredy.mysavings.Data.Database.Entity.Category
 import com.fredy.mysavings.Data.Database.Entity.Record
-import com.fredy.mysavings.Data.Database.Enum.RecordType
+import com.fredy.mysavings.Data.Enum.RecordType
 import com.fredy.mysavings.ViewModels.Event.AddRecordEvent
 import com.fredy.mysavings.ViewModels.Event.CalcEvent
 import com.fredy.mysavings.ViewModels.Event.CalcOperation
@@ -17,7 +17,7 @@ import com.fredy.mysavings.Util.isExpense
 import com.fredy.mysavings.Util.isIncome
 import com.fredy.mysavings.Util.isTransfer
 import com.fredy.mysavings.Repository.RecordRepository
-import com.fredy.mysavings.ViewModels.ResourceState
+import com.fredy.mysavings.Util.ResourceState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch

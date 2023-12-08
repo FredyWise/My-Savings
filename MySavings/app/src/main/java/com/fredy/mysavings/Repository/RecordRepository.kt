@@ -5,7 +5,8 @@ import com.fredy.mysavings.Data.Database.Converter.TimestampConverter
 import com.fredy.mysavings.Data.Database.Entity.Account
 import com.fredy.mysavings.Data.Database.Entity.Category
 import com.fredy.mysavings.Data.Database.Entity.Record
-import com.fredy.mysavings.Data.Database.Enum.RecordType
+import com.fredy.mysavings.Data.Enum.RecordType
+import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.TAG
 import com.google.android.gms.tasks.Task
 import com.google.firebase.Firebase
@@ -18,13 +19,16 @@ import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.time.LocalDateTime
+import kotlin.math.log
 
 
 interface RecordRepository {
@@ -190,6 +194,7 @@ class RecordRepositoryImpl(): RecordRepository {
                         "getUserRecordsFromSpecificTime0.0: $data"
                     )
                     trySend(data)
+
                 }
             }
         }
@@ -277,7 +282,7 @@ class RecordRepositoryImpl(): RecordRepository {
         val currentUser = Firebase.auth.currentUser
         Log.e(
             TAG,
-            "getUserCategoryRecordsFromSpecificTime: $categoryType\n$startDate\n:\n$endDate"
+            "getUserCategoriesWithAmountFromSpecificTime: $categoryType\n$startDate\n:\n$endDate"
         )
 
         val listener = Firebase.firestore.collection(
@@ -288,7 +293,7 @@ class RecordRepositoryImpl(): RecordRepository {
             "recordTimestamp", endDate
         ).whereEqualTo(
             "recordType",
-            categoryType.name
+            categoryType
         ).whereEqualTo(
             "userIdFk", currentUser!!.uid
         ).orderBy(
@@ -298,15 +303,20 @@ class RecordRepositoryImpl(): RecordRepository {
             error?.let {
                 Log.e(
                     TAG,
-                    "getUserRecordsFromSpecificTimeError: ${it.message}"
+                    "getUserCategoriesWithAmountFromSpecificTimeError: ${it.message}"
                 )
                 close(it)
-                return@addSnapshotListener
             }
 
             value?.let { result ->
+                Log.e(
+                    TAG,
+                    "getUserCategoriesWithAmountFromSpecificTimeResult: "+result,
+
+                    )
                 val recordDocuments = result.documents
                 val categoriesWithAmount = mutableMapOf<String, CategoryWithAmount>()
+
 
                 recordDocuments.forEach { document ->
                     val record = document.toObject<Record>()
@@ -342,18 +352,20 @@ class RecordRepositoryImpl(): RecordRepository {
                         }
                     }
 
-                    val data = deferredCategoryDetails.awaitAll()
+                    val data = deferredCategoryDetails.awaitAll().sortedBy { it.amount }
+                    Log.e(
+                        TAG,
+                        "getUserCategoriesWithAmountFromSpecificTimeData: "+data,
 
+                    )
                     trySend(data)
                 }
             }
         }
-
         Log.e(
             TAG,
-            "getUserRecordsFromSpecificTime0.0: babi"
+            "getUserCategoriesWithAmountFromSpecificTime0.0: "+listener
         )
-
         awaitClose {
             listener.remove()
         }
@@ -416,6 +428,7 @@ class RecordRepositoryImpl(): RecordRepository {
                         "getUserRecordsFromSpecificTime0.0: $data"
                     )
                     trySend(data)
+
                 }
             }
         }
@@ -456,6 +469,7 @@ class RecordRepositoryImpl(): RecordRepository {
 
                     )
                 trySend(data)
+
             }
         }
 
@@ -500,6 +514,7 @@ class RecordRepositoryImpl(): RecordRepository {
                     document.toObject<Record>().recordAmount
                 }
                 trySend(data)
+
             }
         }
 
@@ -519,6 +534,8 @@ class RecordRepositoryImpl(): RecordRepository {
             "record"
         ).whereEqualTo(
             "userIdFk", currentUser!!.uid
+        ).whereNotEqualTo(
+            "recordType", RecordType.Transfer
         ).addSnapshotListener { value, error ->
             error?.let {
                 Log.e(
@@ -536,6 +553,7 @@ class RecordRepositoryImpl(): RecordRepository {
 
                     )
                 trySend(data)
+
             }
         }
 

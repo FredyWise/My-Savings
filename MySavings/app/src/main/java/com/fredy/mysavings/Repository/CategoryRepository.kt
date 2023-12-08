@@ -1,7 +1,7 @@
 package com.fredy.mysavings.Repository
 
 import com.fredy.mysavings.Data.Database.Entity.Category
-import com.fredy.mysavings.Data.Database.Enum.RecordType
+import com.fredy.mysavings.Data.Enum.RecordType
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore

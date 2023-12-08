@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fredy.mysavings.Data.Database.Entity.Account
 import com.fredy.mysavings.Data.Database.Entity.UserData
-import com.fredy.mysavings.Data.Database.Enum.RecordType
-import com.fredy.mysavings.Data.Database.Enum.SortType
+import com.fredy.mysavings.Data.Enum.RecordType
+import com.fredy.mysavings.Data.Enum.SortType
 import com.fredy.mysavings.Repository.AccountRepository
 import com.fredy.mysavings.Repository.AuthRepository
 import com.fredy.mysavings.Repository.RecordRepository

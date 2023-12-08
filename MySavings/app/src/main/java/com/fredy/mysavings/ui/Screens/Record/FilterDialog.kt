@@ -18,8 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.fredy.mysavings.Data.Database.Enum.FilterType
-import com.fredy.mysavings.ViewModels.Event.RecordsEvent
+import com.fredy.mysavings.Data.Enum.FilterType
 import com.fredy.mysavings.ui.Screens.CustomStickyHeader
 
 @Composable

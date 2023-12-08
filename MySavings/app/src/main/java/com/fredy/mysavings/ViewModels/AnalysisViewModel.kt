@@ -1,15 +1,26 @@
 package com.fredy.mysavings.ViewModel
 
+import android.util.Log
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fredy.mysavings.Data.Database.Converter.TimestampConverter
 import com.fredy.mysavings.Data.Database.Entity.Category
-import com.fredy.mysavings.Data.Database.Enum.FilterType
-import com.fredy.mysavings.Data.Database.Enum.RecordType
-import com.fredy.mysavings.Data.Database.Enum.SortType
+import com.fredy.mysavings.Data.Enum.AnalysisType
+import com.fredy.mysavings.Data.Enum.FilterType
+import com.fredy.mysavings.Data.Enum.GraphType
+import com.fredy.mysavings.Data.Enum.RecordType
+import com.fredy.mysavings.Data.Enum.SortType
 import com.fredy.mysavings.Repository.CategoryWithAmount
 import com.fredy.mysavings.Repository.RecordRepository
+import com.fredy.mysavings.Util.Resource
+import com.fredy.mysavings.Util.ResourceState
+import com.fredy.mysavings.Util.TAG
+import com.fredy.mysavings.Util.isExpense
+import com.fredy.mysavings.Util.minusFilterDate
+import com.fredy.mysavings.Util.plusFilterDate
+import com.fredy.mysavings.Util.updateFilterState
 import com.fredy.mysavings.ViewModels.Event.AnalysisEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,14 +28,13 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onEmpty
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.time.DayOfWeek
 import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
-import java.time.temporal.TemporalAdjusters
 import javax.inject.Inject
 
 
@@ -32,13 +42,10 @@ import javax.inject.Inject
 class AnalysisViewModel @Inject constructor(
     private val recordRepository: RecordRepository,
 ): ViewModel() {
-    private val _sortType = MutableStateFlow(
-        SortType.DESCENDING
+    private val _resource = mutableStateOf(
+        ResourceState()
     )
-
-    private val _recordType = mutableStateOf(
-        RecordType.Expense
-    )
+    val resource: State<ResourceState> = _resource
 
     private val _filterState = MutableStateFlow(
         FilterState()
@@ -47,27 +54,63 @@ class AnalysisViewModel @Inject constructor(
     private val _categoriesWithAmount = _filterState.flatMapLatest { filterState ->
         when (filterState.filterType) {
             FilterType.Daily -> recordRepository.getUserCategoriesWithAmountFromSpecificTime(
-                _recordType.value, TimestampConverter.fromDateTime(filterState.start), TimestampConverter.fromDateTime(filterState.end)
+                filterState.recordType,
+                TimestampConverter.fromDateTime(
+                    filterState.start
+                ),
+                TimestampConverter.fromDateTime(
+                    filterState.end
+                )
             )
 
             FilterType.Weekly -> recordRepository.getUserCategoriesWithAmountFromSpecificTime(
-                _recordType.value, TimestampConverter.fromDateTime(filterState.start), TimestampConverter.fromDateTime(filterState.end)
+                filterState.recordType,
+                TimestampConverter.fromDateTime(
+                    filterState.start
+                ),
+                TimestampConverter.fromDateTime(
+                    filterState.end
+                )
             )
 
             FilterType.Monthly -> recordRepository.getUserCategoriesWithAmountFromSpecificTime(
-                _recordType.value, TimestampConverter.fromDateTime(filterState.start), TimestampConverter.fromDateTime(filterState.end)
+                filterState.recordType,
+                TimestampConverter.fromDateTime(
+                    filterState.start
+                ),
+                TimestampConverter.fromDateTime(
+                    filterState.end
+                )
             )
 
             FilterType.Per3Months -> recordRepository.getUserCategoriesWithAmountFromSpecificTime(
-                _recordType.value, TimestampConverter.fromDateTime(filterState.start), TimestampConverter.fromDateTime(filterState.end)
+                filterState.recordType,
+                TimestampConverter.fromDateTime(
+                    filterState.start
+                ),
+                TimestampConverter.fromDateTime(
+                    filterState.end
+                )
             )
 
             FilterType.Per6Months -> recordRepository.getUserCategoriesWithAmountFromSpecificTime(
-                _recordType.value, TimestampConverter.fromDateTime(filterState.start), TimestampConverter.fromDateTime(filterState.end)
+                filterState.recordType,
+                TimestampConverter.fromDateTime(
+                    filterState.start
+                ),
+                TimestampConverter.fromDateTime(
+                    filterState.end
+                )
             )
 
             FilterType.Yearly -> recordRepository.getUserCategoriesWithAmountFromSpecificTime(
-                _recordType.value, TimestampConverter.fromDateTime(filterState.start), TimestampConverter.fromDateTime(filterState.end)
+                filterState.recordType,
+                TimestampConverter.fromDateTime(
+                    filterState.start
+                ),
+                TimestampConverter.fromDateTime(
+                    filterState.end
+                )
             )
         }
     }.stateIn(
@@ -75,6 +118,7 @@ class AnalysisViewModel @Inject constructor(
         SharingStarted.WhileSubscribed(),
         emptyList()
     )
+
 
     private val _totalRecordBalance: StateFlow<Double?> = recordRepository.getUserTotalRecordBalance().stateIn(
         viewModelScope,
@@ -125,17 +169,22 @@ class AnalysisViewModel @Inject constructor(
 
     val state = combine(
         _state,
-        _sortType,
-        _filterState,
         _categoriesWithAmount,
         balanceBar,
-    ) { state, sortType, filterType, categoriesWithAmount, balanceBar ->
+    ) { state, categoriesWithAmount, balanceBar ->
+        _resource.value = ResourceState(
+            loading = true
+        )
         state.copy(
             categoriesWithAmount = categoriesWithAmount,
             totalExpense = balanceBar.expense,
             totalIncome = balanceBar.income,
             totalAll = balanceBar.balance,
-            sortType = sortType,
+            graphAmount = if (isExpense(state.recordType)) balanceBar.expense else balanceBar.income,
+        )
+    }.onCompletion {
+        _resource.value = ResourceState(
+            loading = false
         )
     }.stateIn(
         viewModelScope,
@@ -176,213 +225,60 @@ class AnalysisViewModel @Inject constructor(
                         filterType = event.filterType
                     )
                 }
-                updateFilterState(event.filterType)
             }
 
             is AnalysisEvent.ShowNextList -> {
-                when (state.value.filterType) {
-                    FilterType.Daily -> _state.update {
-                        it.copy(
-                            chosenDate = it.chosenDate.plusDays(
-                                1
-                            ),
+                _state.update {
+                    it.copy(
+                        selectedDate = plusFilterDate(
+                            state.value.filterType,
+                            it.selectedDate
                         )
-                    }
-
-                    FilterType.Weekly -> _state.update {
-                        it.copy(
-                            chosenDate = it.chosenDate.plusWeeks(
-                                1
-                            ),
-                        )
-                    }
-
-                    FilterType.Monthly -> _state.update {
-                        it.copy(
-                            chosenDate = it.chosenDate.plusMonths(
-                                1
-                            ),
-                        )
-                    }
-
-                    FilterType.Per3Months -> _state.update {
-                        it.copy(
-                            chosenDate = it.chosenDate.plusMonths(
-                                3
-                            ),
-                        )
-                    }
-
-                    FilterType.Per6Months -> _state.update {
-                        it.copy(
-                            chosenDate = it.chosenDate.plusMonths(
-                                6
-                            ),
-                        )
-                    }
-
-                    FilterType.Yearly -> _state.update {
-                        it.copy(
-                            chosenDate = it.chosenDate.plusYears(
-                                1
-                            ),
-                        )
-                    }
+                    )
                 }
-                updateFilterState(state.value.filterType)
             }
 
             is AnalysisEvent.ShowPreviousList -> {
-                when (state.value.filterType) {
-                    FilterType.Daily -> _state.update {
-                        it.copy(
-                            chosenDate = it.chosenDate.minusDays(
-                                1
-                            ),
+                _state.update {
+                    it.copy(
+                        selectedDate = minusFilterDate(
+                            state.value.filterType,
+                            it.selectedDate
                         )
-                    }
-
-                    FilterType.Weekly -> _state.update {
-                        it.copy(
-                            chosenDate = it.chosenDate.minusWeeks(
-                                1
-                            ),
-                        )
-                    }
-
-                    FilterType.Monthly -> _state.update {
-                        it.copy(
-                            chosenDate = it.chosenDate.minusMonths(
-                                1
-                            ),
-                        )
-                    }
-
-                    FilterType.Per3Months -> _state.update {
-                        it.copy(
-                            chosenDate = it.chosenDate.minusMonths(
-                                3
-                            ),
-                        )
-                    }
-
-                    FilterType.Per6Months -> _state.update {
-                        it.copy(
-                            chosenDate = it.chosenDate.minusMonths(
-                                6
-                            ),
-                        )
-                    }
-
-                    FilterType.Yearly -> _state.update {
-                        it.copy(
-                            chosenDate = it.chosenDate.minusYears(
-                                1
-                            ),
-                        )
-                    }
+                    )
                 }
-                updateFilterState(state.value.filterType)
             }
 
+            is AnalysisEvent.ChangeDate -> {
+                _state.update {
+                    it.copy(
+                        selectedDate = event.selectedDate
+                    )
+                }
+            }
 
+            is AnalysisEvent.ToggleRecordType -> {
+                _state.update {
+                    it.copy(
+                        recordType = if (isExpense(
+                                it.recordType
+                            )) {
+                            RecordType.Income
+                        } else {
+                            RecordType.Expense
+                        }
+                    )
+                }
+            }
+        }
+        _filterState.update {
+            updateFilterState(
+                state.value.filterType,
+                state.value.selectedDate
+            ).copy(recordType = _state.value.recordType)
         }
     }
 
-    private fun updateFilterState(event: FilterType) {
-        when (event) {
-            FilterType.Daily -> _filterState.value = FilterState(
-                FilterType.Daily,
-                LocalDateTime.of(
-                    state.value.chosenDate,
-                    LocalTime.MIN
-                ),
-                LocalDateTime.of(
-                    state.value.chosenDate,
-                    LocalTime.MAX
-                )
-            )
-
-
-            FilterType.Weekly -> _filterState.value = FilterState(
-                FilterType.Weekly,
-                LocalDateTime.of(
-                    state.value.chosenDate.with(
-                        TemporalAdjusters.previousOrSame(
-                            DayOfWeek.MONDAY
-                        )
-                    ), LocalTime.MIN
-                ),
-                LocalDateTime.of(
-                    state.value.chosenDate.with(
-                        TemporalAdjusters.previousOrSame(
-                            DayOfWeek.MONDAY
-                        )
-                    ).plusDays(6), LocalTime.MAX
-                )
-            )
-
-            FilterType.Monthly -> _filterState.value = FilterState(
-                FilterType.Monthly,
-                LocalDateTime.of(
-                    state.value.chosenDate.with(
-                        TemporalAdjusters.firstDayOfMonth()
-                    ), LocalTime.MIN
-                ),
-                LocalDateTime.of(
-                    state.value.chosenDate.with(
-                        TemporalAdjusters.lastDayOfMonth()
-                    ), LocalTime.MAX
-                )
-            )
-
-            FilterType.Per3Months -> _filterState.value = FilterState(
-                FilterType.Monthly,
-                LocalDateTime.of(
-                    state.value.chosenDate.with(
-                        TemporalAdjusters.firstDayOfMonth()
-                    ), LocalTime.MIN
-                ),
-                LocalDateTime.of(
-                    state.value.chosenDate.plusMonths(
-                        2
-                    ).with(
-                        TemporalAdjusters.lastDayOfMonth()
-                    ), LocalTime.MAX
-                )
-            )
-
-            FilterType.Per6Months -> _filterState.value = FilterState(
-                FilterType.Monthly,
-                LocalDateTime.of(
-                    state.value.chosenDate.with(
-                        TemporalAdjusters.firstDayOfMonth()
-                    ), LocalTime.MIN
-                ),
-                LocalDateTime.of(
-                    state.value.chosenDate.plusMonths(
-                        5
-                    ).with(
-                        TemporalAdjusters.lastDayOfMonth()
-                    ), LocalTime.MAX
-                )
-            )
-
-            FilterType.Yearly -> _filterState.value = FilterState(
-                FilterType.Yearly,
-                LocalDateTime.of(
-                    state.value.chosenDate.with(
-                        TemporalAdjusters.firstDayOfYear()
-                    ), LocalTime.MIN
-                ),
-                LocalDateTime.of(
-                    state.value.chosenDate.with(
-                        TemporalAdjusters.lastDayOfYear()
-                    ), LocalTime.MAX
-                )
-            )
-        }
-    }
 }
 
 data class AnalysisState(
@@ -391,8 +287,11 @@ data class AnalysisState(
     val totalExpense: Double = 0.0,
     val totalIncome: Double = 0.0,
     val totalAll: Double = 0.0,
-    val sortType: SortType = SortType.ASCENDING,
-    val chosenDate: LocalDate = LocalDate.now(),
+    val graphAmount: Double = totalExpense,
+    val graphType: GraphType = GraphType.SlimDonut,
+    val analysisType: AnalysisType = AnalysisType.Overview,
+    val recordType: RecordType = RecordType.Expense,
+    val selectedDate: LocalDate = LocalDate.now(),
     val isChoosingFilter: Boolean = false,
     val filterType: FilterType = FilterType.Monthly
 )

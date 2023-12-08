@@ -3,7 +3,7 @@ package com.fredy.mysavings.Util
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import com.fredy.mysavings.Data.Database.Enum.RecordType
+import com.fredy.mysavings.Data.Enum.RecordType
 import java.text.DecimalFormat
 
 
@@ -46,7 +46,3 @@ private val amountDecimalFormat = DecimalFormat("#,##0.00")
 
 
 
-fun <E> List<E>.extractProportions(selector: (E) -> Float): List<Float> {
-    val total = this.sumOf { selector(it).toDouble() }
-    return this.map { (selector(it) / total).toFloat() }
-}

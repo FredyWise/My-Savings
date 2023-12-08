@@ -1,7 +1,6 @@
-package com.fredy.mysavings.Data.Database.Enum;
+package com.fredy.mysavings.Data.Enum
 
-
-public enum FilterType {
+enum class FilterType {
     Yearly,
     Per6Months,
     Per3Months,

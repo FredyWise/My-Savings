@@ -1,7 +1,7 @@
 package com.fredy.mysavings.ViewModels.Event
 
 import com.fredy.mysavings.Data.Database.Entity.Account
-import com.fredy.mysavings.Data.Database.Enum.SortType
+import com.fredy.mysavings.Data.Enum.SortType
 
 sealed interface AccountEvent{
     object SaveAccount: AccountEvent

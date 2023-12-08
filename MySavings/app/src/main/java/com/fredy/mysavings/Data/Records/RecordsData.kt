@@ -1,5 +1,5 @@
 package com.fredy.mysavings.Data.Records
-
+// just erase this if it is not usefull in csv file
 //import com.fredy.mysavings.Data.User.Account
 //import com.fredy.mysavings.Data.Balance
 //import com.fredy.mysavings.Data.User.Category

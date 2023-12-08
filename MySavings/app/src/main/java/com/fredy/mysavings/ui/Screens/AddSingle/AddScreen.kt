@@ -15,7 +15,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,8 +33,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.fredy.mysavings.Data.Database.Entity.Account
 import com.fredy.mysavings.Data.Database.Entity.Category
-import com.fredy.mysavings.Data.Database.Enum.RecordType
+import com.fredy.mysavings.Data.Enum.RecordType
 import com.fredy.mysavings.R
+import com.fredy.mysavings.Util.ActionWithName
 import com.fredy.mysavings.Util.isTransfer
 import com.fredy.mysavings.ViewModel.AccountViewModel
 import com.fredy.mysavings.ViewModel.AddSingleRecordViewModel
@@ -44,7 +44,6 @@ import com.fredy.mysavings.ViewModels.Event.AccountEvent
 import com.fredy.mysavings.ViewModels.Event.AddRecordEvent
 import com.fredy.mysavings.ViewModels.Event.CategoryEvent
 import com.fredy.mysavings.ui.Screens.Account.AccountAddDialog
-import com.fredy.mysavings.ui.Screens.ActionWithName
 import com.fredy.mysavings.ui.Screens.Category.CategoryAddDialog
 import com.fredy.mysavings.ui.Screens.SimpleButton
 import com.fredy.mysavings.ui.Screens.TypeRadioButton
