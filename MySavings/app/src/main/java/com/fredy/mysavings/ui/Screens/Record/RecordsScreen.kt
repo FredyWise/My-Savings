@@ -1,9 +1,14 @@
 package com.fredy.mysavings.ui.Screens.Record
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.background
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.MutableTransitionState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FilterList
@@ -11,16 +16,19 @@ import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.fredy.mysavings.Util.BalanceItem
+import com.fredy.mysavings.Util.ResourceState
 import com.fredy.mysavings.Util.formatRangeOfDate
 import com.fredy.mysavings.ViewModel.RecordState
 import com.fredy.mysavings.ViewModels.Event.AnalysisEvent
 import com.fredy.mysavings.ViewModels.Event.RecordsEvent
+import com.fredy.mysavings.ui.NavigationComponent.AdditionalAppBar
 import com.fredy.mysavings.ui.NavigationComponent.Navigation.NavigationRoute
+import com.fredy.mysavings.ui.Screens.LoadingAnimation
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -30,103 +38,115 @@ fun RecordsScreen(
     rootNavController: NavHostController,
     state: RecordState,
     onEvent: (RecordsEvent) -> Unit,
+    resource: ResourceState,
 ) {
-    Column(
+    val key = state.trueRecordMaps.hashCode()
+    val isVisible = remember(key) {
+        MutableTransitionState(
+            false
+        ).apply { targetState = true }
+    }
+    state.trueRecord?.let {
+        RecordDialog(
+            trueRecord = it,
+            onEvent = onEvent,
+            onEdit = {
+                rootNavController.navigate(
+                    NavigationRoute.Add.route + "?id=" + it.record.recordId
+                )
+            },
+        )
+    }
+    AdditionalAppBar(
         modifier = modifier,
-    ) {
-        if (state.isChoosingFilter) {
-            FilterDialog(
-                title = "DisplayOption",
-                selectedName = state.filterType.name,
-                onDismissRequest = {
-                    onEvent(
-                        RecordsEvent.HideFilterDialog
-                    )
-                },
-                onEvent = {
-                    onEvent(
-                        RecordsEvent.FilterRecord(
-                            it
-                        )
-                    )
-                },
+        selectedDate = state.selectedDate,
+        onDateChange = {
+            onEvent(
+                RecordsEvent.ChangeDate(it)
             )
-        }
-        state.trueRecord?.let {
-            RecordDialog(
-                trueRecord = it,
-                onEvent = onEvent,
-                onEdit = {
-                    rootNavController.navigate(
-                        NavigationRoute.Add.route + "?id=" + it.record.recordId
-                    )
-                },
+        },
+        selectedDateFormat = formatRangeOfDate(
+            state.selectedDate, state.filterType
+        ),
+        isChoosingFilter = state.isChoosingFilter,
+        selectedFilter = state.filterType.name,
+        onDismissFilterDialog = {
+            onEvent(RecordsEvent.HideFilterDialog)
+        },
+        onSelectFilter = {
+            onEvent(
+                RecordsEvent.FilterRecord(it)
             )
-        }
-        DisplayBar(
-            selectedDate = state.selectedDate,
-            onDateChange = {onEvent(RecordsEvent.ChangeDate(it))},
-            selectedTitle = formatRangeOfDate(
-                state.selectedDate, state.filterType
-            ),
-            onPrevious = { onEvent(RecordsEvent.ShowPreviousList) },
-            onNext = { onEvent(RecordsEvent.ShowNextList) },
-            leadingIcon = {
-                Icon(
-                    modifier = Modifier
-                        .clip(
-                            MaterialTheme.shapes.extraLarge
-                        )
-                        .clickable {
+        },
+        totalExpense = state.totalExpense,
+        totalIncome = state.totalIncome,
+        totalBalance = state.totalAll,
+        leadingIcon = {
+            Icon(
+                modifier = Modifier
+                    .clip(
+                        MaterialTheme.shapes.extraLarge
+                    )
+                    .clickable {
 
-                        }
-                        .padding(4.dp),
-                    imageVector = Icons.Outlined.Info,
-                    contentDescription = "",
-                    tint = MaterialTheme.colorScheme.onSurface,
-                )
-            },
-            trailingIcon = {
-                Icon(
-                    modifier = Modifier
-                        .clip(
-                            MaterialTheme.shapes.extraLarge
-                        )
-                        .clickable {
-                            onEvent(RecordsEvent.ShowFilterDialog)
-                        }
-                        .padding(4.dp),
-                    imageVector = Icons.Default.FilterList,
-                    contentDescription = "",
-                    tint = MaterialTheme.colorScheme.onSurface,
-                )
-            },
-        )
-        BalanceBar(
-            modifier = Modifier
-                .background(
-                    MaterialTheme.colorScheme.surface
-                )
-                .padding(vertical = 5.dp),
-            amountBars = listOf(
-                BalanceItem(
-                    name = "EXPENSE",
-                    amount = state.totalExpense
-                ),
-                BalanceItem(
-                    name = "INCOME",
-                    amount = state.totalIncome
-                ),
-                BalanceItem(
-                    name = "BALANCE",
-                    amount = state.totalAll
-                ),
+                    }
+                    .padding(4.dp),
+                imageVector = Icons.Outlined.Info,
+                contentDescription = "",
+                tint = MaterialTheme.colorScheme.onSurface,
             )
-        )
-        RecordBody(
-            trueRecords = state.trueRecordMaps,
-            onEvent = onEvent
-        )
+        },
+        trailingIcon = {
+            Icon(
+                modifier = Modifier
+                    .clip(
+                        MaterialTheme.shapes.extraLarge
+                    )
+                    .clickable {
+                        onEvent(RecordsEvent.ShowFilterDialog)
+                    }
+                    .padding(4.dp),
+                imageVector = Icons.Default.FilterList,
+                contentDescription = "",
+                tint = MaterialTheme.colorScheme.onSurface,
+            )
+        },
+        onPrevious = { onEvent(RecordsEvent.ShowPreviousList) },
+        onNext = { onEvent(RecordsEvent.ShowNextList) },
+    ) {
+        AnimatedVisibility(
+            modifier = modifier,
+            visibleState = isVisible,
+            enter = slideInVertically(
+                animationSpec = tween(
+                    durationMillis = 500
+                ),
+                initialOffsetY = { fullHeight -> fullHeight },
+            ) + fadeIn(),
+            exit = slideOutVertically(
+                animationSpec = tween(
+                    durationMillis = 500
+                ),
+                targetOffsetY = { fullHeight -> fullHeight },
+            ) + fadeOut()
+        ) {
+            if(state.trueRecordMaps.isEmpty()){
+                LoadingAnimation(
+                    isLoading = resource.isLoading,
+                    notLoadingMessage = "You haven't made any Record yet",
+                    onClick = {
+                        rootNavController.navigate(
+                            NavigationRoute.Add.route + "?id=-1"
+                        )
+                        isVisible.targetState = false
+                    }
+                )
+            }
+            RecordBody(
+                trueRecords = state.trueRecordMaps,
+                onEvent = onEvent
+            )
+        }
     }
 }
 

@@ -9,5 +9,5 @@ sealed class Resource<T>(val data: T? = null, val message: String? = null) {
 data class ResourceState(
     val success: String? = null,
     val error: String? = null,
-    val loading: Boolean = false,
+    val isLoading: Boolean = false,
 )

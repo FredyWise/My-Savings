@@ -44,7 +44,7 @@ fun NavGraphRoot(
             val state by authViewModel.state.collectAsStateWithLifecycle()
             val startDestination = if (state.signedInUser != null) Graph.HomeNav else Graph.Auth
             Log.e(TAG, "NavGraphRoot: ")
-            navController.navigate(
+            navController.navigateSingleTopTo(
                 startDestination
             )
         }
@@ -130,7 +130,9 @@ fun NavHostController.navigateSingleTopTo(route: String) = this.navigate(
         this@navigateSingleTopTo.graph.findStartDestination().id
     ) {
         saveState = true
+        inclusive = true
     }
     launchSingleTop = true
     restoreState = true
 }
+

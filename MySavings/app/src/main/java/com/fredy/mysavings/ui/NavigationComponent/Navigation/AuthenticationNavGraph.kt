@@ -2,6 +2,7 @@ package com.fredy.mysavings.ui.NavigationComponent.Navigation
 
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.animation.fadeIn
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -24,10 +25,10 @@ fun NavGraphBuilder.authenticationNavGraph(
 ) {
     navigation(
         route = Graph.Auth,
-        startDestination = NavigationRoute.SignIn.route
+        startDestination = NavigationRoute.SignIn.route,
     ) {
         composable(
-            route = NavigationRoute.SignIn.route
+            route = NavigationRoute.SignIn.route,
         ) {
             Log.e(
                 TAG,

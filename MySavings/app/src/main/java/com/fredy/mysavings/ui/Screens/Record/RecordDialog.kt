@@ -25,12 +25,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import com.fredy.mysavings.Util.BalanceColor
 import com.fredy.mysavings.Data.Enum.RecordType
 import com.fredy.mysavings.Repository.TrueRecord
-import com.fredy.mysavings.ViewModels.Event.RecordsEvent
+import com.fredy.mysavings.Util.BalanceColor
 import com.fredy.mysavings.Util.formatDateTime
 import com.fredy.mysavings.Util.isTransfer
+import com.fredy.mysavings.ViewModels.Event.RecordsEvent
 import com.fredy.mysavings.ui.Screens.BalanceItem
 import com.fredy.mysavings.ui.Screens.SimpleEntityItem
 
@@ -39,7 +39,8 @@ fun RecordDialog(
     trueRecord: TrueRecord,
     onEvent: (RecordsEvent) -> Unit,
     onEdit: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onSurface: Color = MaterialTheme.colorScheme.onSurface
 ) {
     Dialog(onDismissRequest = {
         onEvent(
@@ -134,7 +135,7 @@ fun RecordDialog(
                         BalanceItem(
                             title = trueRecord.toCategory.categoryType.name,
                             amount = trueRecord.record.recordAmount,
-                            amountColor = MaterialTheme.colorScheme.onSurface,
+                            amountColor = onSurface,
                             currency = trueRecord.record.recordCurrency,
                             titleStyle = MaterialTheme.typography.titleLarge,
                             amountStyle = MaterialTheme.typography.headlineMedium
@@ -144,7 +145,8 @@ fun RecordDialog(
                             text = formatDateTime(
                                 trueRecord.record.recordDateTime
                             ),
-                            textAlign = TextAlign.End
+                            textAlign = TextAlign.End,
+                            color = onSurface
                         )
                     }
                 }
@@ -166,7 +168,8 @@ fun RecordDialog(
                         Text(
                             text = if (isTransfer(
                                     trueRecord.record.recordType
-                                )) "From: " else "Account: "
+                                )) "From: " else "Account: ",
+                            color = onSurface
                         )
                         SimpleEntityItem(
                             modifier = Modifier
@@ -196,7 +199,10 @@ fun RecordDialog(
                             iconDescription = trueRecord.fromAccount.accountIconDescription,
                             contentWeight = 0.3f,
                         ) {
-                            Text(text = trueRecord.fromAccount.accountName)
+                            Text(
+                                text = trueRecord.fromAccount.accountName,
+                                color = onSurface
+                            )
                         }
                     }
                     Row(
@@ -205,7 +211,10 @@ fun RecordDialog(
                         ),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(text = if (trueRecord.record.recordType == RecordType.Transfer) "To: " else "Category: ")
+                        Text(
+                            text = if (trueRecord.record.recordType == RecordType.Transfer) "To: " else "Category: ",
+                            color = onSurface
+                        )
                         SimpleEntityItem(
                             modifier = Modifier
                                 .padding(
@@ -234,7 +243,10 @@ fun RecordDialog(
                             iconDescription = trueRecord.toCategory.categoryIconDescription,
                             contentWeight = 0.3f,
                         ) {
-                            Text(text = trueRecord.toCategory.categoryName)
+                            Text(
+                                text = trueRecord.toCategory.categoryName,
+                                color = onSurface
+                            )
                         }
                     }
                     Text(
@@ -245,7 +257,8 @@ fun RecordDialog(
                             ),
                         text = trueRecord.record.recordNotes,
                         style = MaterialTheme.typography.bodyLarge,
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
+                        color = onSurface
                     )
                 }
             }

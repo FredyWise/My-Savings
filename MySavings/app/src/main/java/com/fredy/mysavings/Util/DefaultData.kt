@@ -24,7 +24,6 @@ val defaultColors = listOf(
     toColor(Color.parseColor("#00c6ff")),
     toColor(Color.parseColor("#00fffb")),
     toColor(Color.parseColor("#00ff1f")),
-    toColor(Color.parseColor("#008e26")),
 )
 
 

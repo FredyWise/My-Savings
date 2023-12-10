@@ -32,14 +32,21 @@ import androidx.compose.material.icons.outlined.UploadFile
 import androidx.compose.ui.graphics.vector.ImageVector
 
 object Graph {
-    const val Root = "root"
-    const val Auth = "auth"
+    const val Root = "root_nav"
+    const val Auth = "auth_nav"
     const val HomeNav = "home_nav"
     const val MainNav = "main_nav"
-    const val FirstNav = "first"
+    const val FirstNav = "first_nav"
+    const val AdditionalAppBar = "additional_app_bar_nav"
+    const val AnalysisNav = "analysis_nav"
 }
 
-
+val analysisScreens = listOf(
+    NavigationRoute.AnalysisOverview,
+    NavigationRoute.AnalysisFlow,
+    NavigationRoute.AnalysisAccount,
+    NavigationRoute.AnalysisCategory,
+)
 
 val drawerScreens = listOf(
     NavigationRoute.Preferences,
@@ -149,6 +156,37 @@ sealed class NavigationRoute(
         route = "analysis",
         title = "Analysis",
         contentDescription = "Go to Analysis Screen",
+        icon = Icons.Default.PieChart,
+        iconNot = Icons.Outlined.PieChart
+    )
+    object AnalysisOverview: NavigationRoute(
+        route = "analysisOverview",
+        title = "AnalysisOverview",
+        contentDescription = "Go to AnalysisOverview Screen",
+        icon = Icons.Default.PieChart,
+        iconNot = Icons.Outlined.PieChart
+    )
+
+    object AnalysisFlow: NavigationRoute(
+        route = "analysisFlow",
+        title = "AnalysisFlow",
+        contentDescription = "Go to AnalysisFlow Screen",
+        icon = Icons.Default.PieChart,
+        iconNot = Icons.Outlined.PieChart
+    )
+
+    object AnalysisCategory: NavigationRoute(
+        route = "analysisCategory",
+        title = "AnalysisCategory",
+        contentDescription = "Go to AnalysisCategory Screen",
+        icon = Icons.Default.PieChart,
+        iconNot = Icons.Outlined.PieChart
+    )
+
+    object AnalysisAccount: NavigationRoute(
+        route = "analysisAccount",
+        title = "AnalysisAccount",
+        contentDescription = "Go to AnalysisAccount Screen",
         icon = Icons.Default.PieChart,
         iconNot = Icons.Outlined.PieChart
     )

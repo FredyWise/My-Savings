@@ -27,7 +27,7 @@ fun FilterDialog(
     title: String,
     selectedName: String,
     onDismissRequest: () -> Unit,
-    onEvent: (FilterType) -> Unit,
+    onSelectItem: (FilterType) -> Unit,
 ) {
     SimpleAlertDialog(
         modifier = modifier,
@@ -48,7 +48,7 @@ fun FilterDialog(
                         start = 8.dp
                     )
                     .clickable {
-                        onEvent(item)
+                        onSelectItem(item)
                     },
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Start

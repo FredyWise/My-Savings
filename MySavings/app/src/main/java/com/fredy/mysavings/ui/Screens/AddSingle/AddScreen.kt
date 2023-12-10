@@ -191,6 +191,13 @@ fun AddScreen(
         )
     }
     if (categoryState.isAddingCategory) {
+        if (state.recordType != categoryState.categoryType){
+            categoryViewModel.onEvent(
+                CategoryEvent.CategoryTypes(
+                    state.recordType
+                )
+            )
+        }
         CategoryAddDialog(
             state = categoryState,
             onEvent = categoryViewModel::onEvent

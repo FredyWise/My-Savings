@@ -70,7 +70,7 @@ class AddSingleRecordViewModel @Inject constructor(
             }
             is AddRecordEvent.SaveRecord -> {
                 _resource.value = ResourceState(
-                    loading = true
+                    isLoading = true
                 )
                 performCalculation()
                 val recordId = state.recordId
@@ -160,7 +160,7 @@ class AddSingleRecordViewModel @Inject constructor(
                 }
 
                 _resource.value = ResourceState(
-                    loading = false
+                    isLoading = false
                 )
 
                 state = AddRecordState()

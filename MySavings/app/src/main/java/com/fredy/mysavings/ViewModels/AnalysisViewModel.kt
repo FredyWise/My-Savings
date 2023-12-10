@@ -1,22 +1,19 @@
 package com.fredy.mysavings.ViewModel
 
-import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fredy.mysavings.Data.Database.Converter.TimestampConverter
 import com.fredy.mysavings.Data.Database.Entity.Category
+import com.fredy.mysavings.Data.Database.Entity.Record
 import com.fredy.mysavings.Data.Enum.AnalysisType
 import com.fredy.mysavings.Data.Enum.FilterType
 import com.fredy.mysavings.Data.Enum.GraphType
 import com.fredy.mysavings.Data.Enum.RecordType
-import com.fredy.mysavings.Data.Enum.SortType
 import com.fredy.mysavings.Repository.CategoryWithAmount
 import com.fredy.mysavings.Repository.RecordRepository
-import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.ResourceState
-import com.fredy.mysavings.Util.TAG
 import com.fredy.mysavings.Util.isExpense
 import com.fredy.mysavings.Util.minusFilterDate
 import com.fredy.mysavings.Util.plusFilterDate
@@ -29,8 +26,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.onCompletion
-import kotlinx.coroutines.flow.onEmpty
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -119,6 +114,74 @@ class AnalysisViewModel @Inject constructor(
         emptyList()
     )
 
+    private val _recordsWithinSpecificTime = _filterState.flatMapLatest { filterState ->
+        when (filterState.filterType) {
+            FilterType.Daily -> recordRepository.getUserRecordsFromSpecificTime(
+                filterState.recordType,
+                TimestampConverter.fromDateTime(
+                    filterState.start
+                ),
+                TimestampConverter.fromDateTime(
+                    filterState.end
+                )
+            )
+
+            FilterType.Weekly -> recordRepository.getUserRecordsFromSpecificTime(
+                filterState.recordType,
+                TimestampConverter.fromDateTime(
+                    filterState.start
+                ),
+                TimestampConverter.fromDateTime(
+                    filterState.end
+                )
+            )
+
+            FilterType.Monthly -> recordRepository.getUserRecordsFromSpecificTime(
+                filterState.recordType,
+                TimestampConverter.fromDateTime(
+                    filterState.start
+                ),
+                TimestampConverter.fromDateTime(
+                    filterState.end
+                )
+            )
+
+            FilterType.Per3Months -> recordRepository.getUserRecordsFromSpecificTime(
+                filterState.recordType,
+                TimestampConverter.fromDateTime(
+                    filterState.start
+                ),
+                TimestampConverter.fromDateTime(
+                    filterState.end
+                )
+            )
+
+            FilterType.Per6Months -> recordRepository.getUserRecordsFromSpecificTime(
+                filterState.recordType,
+                TimestampConverter.fromDateTime(
+                    filterState.start
+                ),
+                TimestampConverter.fromDateTime(
+                    filterState.end
+                )
+            )
+
+            FilterType.Yearly -> recordRepository.getUserRecordsFromSpecificTime(
+                filterState.recordType,
+                TimestampConverter.fromDateTime(
+                    filterState.start
+                ),
+                TimestampConverter.fromDateTime(
+                    filterState.end
+                )
+            )
+        }
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(),
+        emptyList()
+    )
+
 
     private val _totalRecordBalance: StateFlow<Double?> = recordRepository.getUserTotalRecordBalance().stateIn(
         viewModelScope,
@@ -169,14 +232,16 @@ class AnalysisViewModel @Inject constructor(
 
     val state = combine(
         _state,
-        _categoriesWithAmount,
         balanceBar,
-    ) { state, categoriesWithAmount, balanceBar ->
+        _categoriesWithAmount,
+        _recordsWithinSpecificTime,
+    ) { state, balanceBar, categoriesWithAmount, recordsWithinSpesificTime  ->
         _resource.value = ResourceState(
-            loading = true
+            isLoading = true
         )
         state.copy(
             categoriesWithAmount = categoriesWithAmount,
+            recordsWithinTime = recordsWithinSpesificTime,
             totalExpense = balanceBar.expense,
             totalIncome = balanceBar.income,
             totalAll = balanceBar.balance,
@@ -184,7 +249,7 @@ class AnalysisViewModel @Inject constructor(
         )
     }.onCompletion {
         _resource.value = ResourceState(
-            loading = false
+            isLoading = false
         )
     }.stateIn(
         viewModelScope,
@@ -283,6 +348,7 @@ class AnalysisViewModel @Inject constructor(
 
 data class AnalysisState(
     val categoriesWithAmount: List<CategoryWithAmount> = listOf(),
+    val recordsWithinTime: List<Record> = listOf(),
     val category: Category? = null,
     val totalExpense: Double = 0.0,
     val totalIncome: Double = 0.0,

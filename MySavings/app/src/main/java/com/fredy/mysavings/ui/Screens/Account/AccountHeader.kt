@@ -87,6 +87,7 @@ fun AccountHeader(
                 .weight(
                     1f
                 ),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             BalanceItem(
                 modifier = Modifier.weight(1f),

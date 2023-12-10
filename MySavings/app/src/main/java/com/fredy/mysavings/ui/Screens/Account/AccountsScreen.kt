@@ -6,6 +6,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -69,7 +72,7 @@ fun AccountsScreen(
                     )
                 )
             },
-            title = "ADD NEW ACCOUNT",
+            title = "Add New Account",
             titleStyle = MaterialTheme.typography.titleLarge.copy(
                 MaterialTheme.colorScheme.onBackground
             )
@@ -83,7 +86,13 @@ fun AccountsScreen(
                     )
                 )
             },
-            isSearching = state.isSearching
+            isSearching = state.isSearching,
+            trailingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Search,
+                    contentDescription = "Search"
+                )
+            }
         ) {
             AccountBody(
                 accounts = state.accounts,

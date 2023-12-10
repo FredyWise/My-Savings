@@ -1,5 +1,7 @@
 package com.fredy.mysavings.ViewModel
 
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fredy.mysavings.Data.Database.Converter.TimestampConverter
@@ -8,6 +10,7 @@ import com.fredy.mysavings.Data.Enum.RecordType
 import com.fredy.mysavings.Data.Enum.SortType
 import com.fredy.mysavings.Repository.RecordRepository
 import com.fredy.mysavings.Repository.TrueRecord
+import com.fredy.mysavings.Util.ResourceState
 import com.fredy.mysavings.Util.minusFilterDate
 import com.fredy.mysavings.Util.plusFilterDate
 import com.fredy.mysavings.Util.updateFilterState
@@ -18,10 +21,10 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -33,6 +36,11 @@ import javax.inject.Inject
 class RecordViewModel @Inject constructor(
     private val recordRepository: RecordRepository,
 ): ViewModel() {
+    private val _resource = mutableStateOf(
+        ResourceState()
+    )
+    val resource: State<ResourceState> = _resource
+
     private val _sortType = MutableStateFlow(
         SortType.DESCENDING
     )
@@ -43,7 +51,7 @@ class RecordViewModel @Inject constructor(
 
     private val _records = _filterState.flatMapLatest { filterState ->
         when (filterState.filterType) {
-            FilterType.Daily -> recordRepository.getUserRecordsFromSpecificTime(
+            FilterType.Daily -> recordRepository.getUserTrueRecordsFromSpecificTime(
                 TimestampConverter.fromDateTime(
                     filterState.start
                 ),
@@ -52,7 +60,7 @@ class RecordViewModel @Inject constructor(
                 )
             )
 
-            FilterType.Weekly -> recordRepository.getUserRecordsFromSpecificTime(
+            FilterType.Weekly -> recordRepository.getUserTrueRecordsFromSpecificTime(
                 TimestampConverter.fromDateTime(
                     filterState.start
                 ),
@@ -61,7 +69,7 @@ class RecordViewModel @Inject constructor(
                 )
             )
 
-            FilterType.Monthly -> recordRepository.getUserRecordsFromSpecificTime(
+            FilterType.Monthly -> recordRepository.getUserTrueRecordsFromSpecificTime(
                 TimestampConverter.fromDateTime(
                     filterState.start
                 ),
@@ -70,7 +78,7 @@ class RecordViewModel @Inject constructor(
                 )
             )
 
-            FilterType.Per3Months -> recordRepository.getUserRecordsFromSpecificTime(
+            FilterType.Per3Months -> recordRepository.getUserTrueRecordsFromSpecificTime(
                 TimestampConverter.fromDateTime(
                     filterState.start
                 ),
@@ -79,7 +87,7 @@ class RecordViewModel @Inject constructor(
                 )
             )
 
-            FilterType.Per6Months -> recordRepository.getUserRecordsFromSpecificTime(
+            FilterType.Per6Months -> recordRepository.getUserTrueRecordsFromSpecificTime(
                 TimestampConverter.fromDateTime(
                     filterState.start
                 ),
@@ -88,7 +96,7 @@ class RecordViewModel @Inject constructor(
                 )
             )
 
-            FilterType.Yearly -> recordRepository.getUserRecordsFromSpecificTime(
+            FilterType.Yearly -> recordRepository.getUserTrueRecordsFromSpecificTime(
                 TimestampConverter.fromDateTime(
                     filterState.start
                 ),
@@ -156,6 +164,7 @@ class RecordViewModel @Inject constructor(
         _records,
         balanceBar,
     ) { state, sortType, records, balanceBar ->
+        _resource.value = ResourceState(isLoading = true)
         state.copy(
             trueRecordMaps = records.groupBy {
                 it.record.recordDateTime.toLocalDate()
@@ -174,6 +183,8 @@ class RecordViewModel @Inject constructor(
             totalAll = balanceBar.balance,
             sortType = sortType,
         )
+    }.onCompletion {
+        _resource.value = ResourceState(isLoading = false)
     }.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(5000),
@@ -234,7 +245,10 @@ class RecordViewModel @Inject constructor(
             is RecordsEvent.ShowNextList -> {
                 _state.update {
                     it.copy(
-                        selectedDate = plusFilterDate(state.value.filterType,it.selectedDate)
+                        selectedDate = plusFilterDate(
+                            state.value.filterType,
+                            it.selectedDate
+                        )
                     )
                 }
             }
@@ -242,7 +256,10 @@ class RecordViewModel @Inject constructor(
             is RecordsEvent.ShowPreviousList -> {
                 _state.update {
                     it.copy(
-                        selectedDate = minusFilterDate(state.value.filterType,it.selectedDate)
+                        selectedDate = minusFilterDate(
+                            state.value.filterType,
+                            it.selectedDate
+                        )
                     )
                 }
             }

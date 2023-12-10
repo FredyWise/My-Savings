@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -64,6 +65,40 @@ import com.fredy.mysavings.Util.SavingsIcon
 import com.fredy.mysavings.Util.currencyCodes
 import com.fredy.mysavings.Util.formatBalanceAmount
 
+@Composable
+fun LoadingAnimation(
+    isLoading: Boolean,
+    notLoadingMessage: String,
+    onClick: () -> Unit
+) {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        if (isLoading) {
+            CircularProgressIndicator(
+                modifier = Modifier.size(
+                    40.dp
+                ),
+                strokeWidth = 4.dp,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+        } else {
+            Text(
+                text = notLoadingMessage,
+                modifier = Modifier
+                    .clickable {
+                        onClick()
+                    }
+                    .padding(
+                        20.dp
+                    ),
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onBackground,
+            )
+        }
+    }
+}
 
 @Composable
 fun SearchBar(
@@ -74,22 +109,30 @@ fun SearchBar(
     isSearching: Boolean = false,
     leadingIcon: @Composable (() -> Unit)? = null,
     trailingIcon: @Composable (() -> Unit)? = null,
+    trailingContent: @Composable () -> Unit = {},
     searchBody: @Composable () -> Unit,
 ) {
     Column(modifier) {
         Spacer(modifier = Modifier.height(8.dp))
-        TextField(
-            value = searchText,
-            onValueChange = { onValueChange(it) },
-            modifier = Modifier.fillMaxWidth().clip(MaterialTheme.shapes.extraLarge),
-            placeholder = { Text(text = placeholder) },
-            colors = TextFieldDefaults.colors(
-                focusedIndicatorColor = Color.Unspecified,
-                unfocusedIndicatorColor = Color.Unspecified
-            ),
-            leadingIcon = leadingIcon,
-            trailingIcon = trailingIcon
-        )
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            TextField(
+                value = searchText,
+                onValueChange = { onValueChange(it) },
+                modifier = Modifier
+                    .weight(1f)
+                    .clip(
+                        CircleShape
+                    ),
+                placeholder = { Text(text = placeholder) },
+                colors = TextFieldDefaults.colors(
+                    focusedIndicatorColor = Color.Unspecified,
+                    unfocusedIndicatorColor = Color.Unspecified
+                ),
+                leadingIcon = leadingIcon,
+                trailingIcon = trailingIcon,
+            )
+            trailingContent()
+        }
         if (isSearching) {
             Box(modifier = Modifier.fillMaxSize()) {
                 CircularProgressIndicator(
@@ -108,7 +151,7 @@ fun SearchBar(
 @Composable
 fun CurrencyDropdown(
     modifier: Modifier = Modifier,
-    textFieldColors: TextFieldColors = TextFieldDefaults.textFieldColors(),
+    textFieldColors: TextFieldColors = TextFieldDefaults.colors(),
     selectedText: String,
     onClick: (String) -> Unit
 ) {

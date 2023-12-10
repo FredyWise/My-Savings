@@ -7,18 +7,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fredy.mysavings.Data.APIs.CurrencyModels.Rates
 import com.fredy.mysavings.Data.Database.Entity.UserData
-import com.fredy.mysavings.Repository.AuthRepository
 import com.fredy.mysavings.Repository.CurrencyRepository
 import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.ResourceState
 import com.fredy.mysavings.Util.TAG
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import java.lang.Math.round
 import javax.inject.Inject
 
 @HiltViewModel
@@ -74,7 +68,7 @@ class CurrencyViewModel @Inject constructor(
                     }
 
                     is Resource.Loading -> _resource.value = ResourceState(
-                        loading = true
+                        isLoading = true
                     )
                 }
             }

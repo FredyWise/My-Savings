@@ -10,6 +10,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Text
@@ -26,7 +27,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
+import com.fredy.mysavings.Util.BalanceColor
 import com.fredy.mysavings.Util.formatAmount
+import com.fredy.mysavings.Util.formatCharAmount
 
 @Composable
 fun ChartSlimDonutWithTitle(
@@ -39,25 +42,29 @@ fun ChartSlimDonutWithTitle(
 ) {
     Box(
         modifier = modifier
-            .clip(CircleShape)
+            .clip(
+                CircleShape
+            )
             .clickable {
                 onClickLabel()
-            }, contentAlignment = Alignment.Center
+            },
+        contentAlignment = Alignment.Center,
     ) {
         Column(
+            modifier = Modifier,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
                 text = graphLabel,
                 style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onBackground,
+                color = BalanceColor(amount = amountsTotal),
             )
             Text(
-                text = formatAmount(
+                text = formatCharAmount(
                     amountsTotal
                 ),
-                style = MaterialTheme.typography.displaySmall,
-                color = MaterialTheme.colorScheme.onBackground,
+                style = MaterialTheme.typography.headlineMedium,
+                color = BalanceColor(amount = amountsTotal),
             )
         }
         ChartSlimDonut(

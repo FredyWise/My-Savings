@@ -87,18 +87,6 @@ fun MainScreen(
         modifier = modifier,
         backgroundColor = backgroundColor,
         scaffoldState = scaffoldState,
-        topBar = {
-            AppBar(
-                backgroundColor = contentColor,
-                contentColor = onContentColor,
-                onNavigationIconClick = {
-                    scope.launch {
-                        scaffoldState.drawerState.open()
-                    }
-                },
-                currentUser = currentUser
-            )
-        },
         drawerGesturesEnabled = scaffoldState.drawerState.isOpen,
         drawerBackgroundColor = contentColor,
         drawerContentColor = onContentColor,
@@ -255,21 +243,33 @@ fun MainScreen(
         },
 
         ) { innerPadding ->
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .pointerInput(
-                Unit
-            ) {
-                detectTransformGestures { _, panGesture, _, _ ->
-                    offsetX += panGesture.x
-                    offsetY += panGesture.y
-                    if (panGesture.y < -size.height / 30) {
-                        isFabVisible = false
-                    } else if (panGesture.y > size.height / 30) {
-                        isFabVisible = true
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .pointerInput(
+                    Unit
+                ) {
+                    detectTransformGestures { _, panGesture, _, _ ->
+                        offsetX += panGesture.x
+                        offsetY += panGesture.y
+                        if (panGesture.y < -size.height / 30) {
+                            isFabVisible = false
+                        } else if (panGesture.y > size.height / 30) {
+                            isFabVisible = true
+                        }
                     }
-                }
-            }) {
+                },
+        ) {
+            AppBar(
+                backgroundColor = contentColor,
+                contentColor = onContentColor,
+                onNavigationIconClick = {
+                    scope.launch {
+                        scaffoldState.drawerState.open()
+                    }
+                },
+                currentUser = currentUser
+            )
             HomeNavGraph(
                 rootNavController = rootNavController,
                 navController = navController,

@@ -22,6 +22,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.Util.BalanceColor
 import com.fredy.mysavings.Data.Enum.RecordType
@@ -87,7 +88,8 @@ fun RecordBody(
                         Text(
                             text = formatBalanceAmount(
                                 amount = item.record.recordAmount,
-                                currency = item.record.recordCurrency
+                                currency = item.record.recordCurrency,
+                                isShortenToChar = true,
                             ),
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold,
@@ -116,6 +118,8 @@ fun RecordBody(
                         modifier = Modifier.padding(
                             vertical = 3.dp
                         ),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
                     )
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -143,6 +147,7 @@ fun RecordBody(
                                     vertical = 3.dp
                                 ),
                                 maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
                             )
                         }
                         if (isTransfer(item.record.recordType)) {
@@ -174,6 +179,7 @@ fun RecordBody(
                                         vertical = 3.dp
                                     ),
                                     maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
                                 )
                             }
                         }

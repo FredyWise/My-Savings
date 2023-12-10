@@ -1,12 +1,11 @@
 package com.fredy.mysavings.Repository
 
 import android.util.Log
-import com.fredy.mysavings.Data.Database.Converter.TimestampConverter
+import co.yml.charts.common.extensions.isNotNull
 import com.fredy.mysavings.Data.Database.Entity.Account
 import com.fredy.mysavings.Data.Database.Entity.Category
 import com.fredy.mysavings.Data.Database.Entity.Record
 import com.fredy.mysavings.Data.Enum.RecordType
-import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.TAG
 import com.google.android.gms.tasks.Task
 import com.google.firebase.Firebase
@@ -19,16 +18,14 @@ import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import java.time.LocalDate
 import java.time.LocalDateTime
-import kotlin.math.log
 
 
 interface RecordRepository {
@@ -36,6 +33,11 @@ interface RecordRepository {
     suspend fun deleteRecordItem(record: Record)
     fun getRecordById(recordId: String): Flow<TrueRecord>
     fun getUserRecordsFromSpecificTime(
+        recordType: RecordType,
+        startDate: Timestamp,
+        endDate: Timestamp
+    ): Flow<List<Record>>
+    fun getUserTrueRecordsFromSpecificTime(
         startDate: Timestamp,
         endDate: Timestamp
     ): Flow<List<TrueRecord>>
@@ -121,23 +123,23 @@ class RecordRepositoryImpl(): RecordRepository {
             emit(
                 TrueRecord(
                     record = record,
-                    fromAccount = result.fromAccount.await().toObject<Account>()!!,
-                    toAccount = result.toAccount.await().toObject<Account>()!!,
-                    toCategory = result.toCategory.await().toObject<Category>()!!
+                    fromAccount = result.fromAccount.toObject<Account>()!!,
+                    toAccount = result.toAccount.toObject<Account>()!!,
+                    toCategory = result.toCategory.toObject<Category>()!!
                 )
             )
 
         }
     }
 
-    override fun getUserRecordsFromSpecificTime(
+    override fun getUserTrueRecordsFromSpecificTime(
         startDate: Timestamp,
         endDate: Timestamp
     ) = callbackFlow<List<TrueRecord>> {
         val currentUser = Firebase.auth.currentUser
         Log.e(
             TAG,
-            "getUserRecordsFromSpecificTime: $startDate\n:\n$endDate"
+            "getUserTrueRecordsFromSpecificTime: $startDate\n:\n$endDate"
         )
 
         val listener = Firebase.firestore.collection(
@@ -155,7 +157,7 @@ class RecordRepositoryImpl(): RecordRepository {
             error?.let {
                 Log.e(
                     TAG,
-                    "getUserRecordsFromSpecificTimeError: ${it.message}"
+                    "getUserTrueRecordsFromSpecificTimeError: ${it.message}"
                 )
                 close(it)
                 return@addSnapshotListener
@@ -163,24 +165,19 @@ class RecordRepositoryImpl(): RecordRepository {
 
             value?.let { it ->
                 val recordDocuments = it.documents
-
                 launch {
                     val data = recordDocuments.map { document ->
                         Log.e(
                             TAG,
-                            "getUserRecordsFromSpecificTime0.1: $document"
+                            "getUserTrueRecordsFromSpecificTimeDocument: $document"
                         )
                         val record = document.toObject<Record>()!!
-                        Log.e(
-                            TAG,
-                            "getUserRecordsFromSpecificTime0.2: $record"
-                        )
                         val result = getDocuments(
                             record
                         )
-                        val fromAccount = result.fromAccount.await().toObject<Account>()!!
-                        val toAccount = result.toAccount.await().toObject<Account>()!!
-                        val toCategory = result.toCategory.await().toObject<Category>()!!
+                        val fromAccount = result.fromAccount.toObject<Account>()!!
+                        val toAccount = result.toAccount.toObject<Account>()!!
+                        val toCategory = result.toCategory.toObject<Category>()!!
 
                         TrueRecord(
                             record = record,
@@ -191,7 +188,7 @@ class RecordRepositoryImpl(): RecordRepository {
                     }
                     Log.e(
                         TAG,
-                        "getUserRecordsFromSpecificTime0.0: $data"
+                        "getUserTrueRecordsFromSpecificTimeData: $data"
                     )
                     trySend(data)
 
@@ -201,7 +198,7 @@ class RecordRepositoryImpl(): RecordRepository {
 
         Log.e(
             TAG,
-            "getUserRecordsFromSpecificTime0.0: babi"
+            "getUserTrueRecordsFromSpecificTime0.0: babi"
         )
 
         awaitClose {
@@ -230,7 +227,12 @@ class RecordRepositoryImpl(): RecordRepository {
             Query.Direction.DESCENDING
         ).addSnapshotListener { value, error ->
             error?.let {
+                Log.e(
+                    TAG,
+                    "getUserCategoryRecordsOrderedByDateTimeError: ${it.message}"
+                )
                 close(it)
+                return@addSnapshotListener
             }
             value?.let { result ->
                 val recordDocuments = result.documents
@@ -238,20 +240,16 @@ class RecordRepositoryImpl(): RecordRepository {
                     val data = recordDocuments.map { document ->
                         Log.e(
                             TAG,
-                            "getUserRecordsFromSpecificTime0.1: $document"
+                            "getUserCategoryRecordsOrderedByDateTimeDocument: $document"
                         )
                         val record = document.toObject<Record>()!!
-                        Log.e(
-                            TAG,
-                            "getUserRecordsFromSpecificTime0.2: $record"
-                        )
                         val result = getDocuments(
                             record
                         )
 
-                        val fromAccount = result.fromAccount.await().toObject<Account>()!!
-                        val toAccount = result.toAccount.await().toObject<Account>()!!
-                        val toCategory = result.toCategory.await().toObject<Category>()!!
+                        val fromAccount = result.fromAccount.toObject<Account>()!!
+                        val toAccount = result.toAccount.toObject<Account>()!!
+                        val toCategory = result.toCategory.toObject<Category>()!!
 
                         TrueRecord(
                             record = record,
@@ -262,12 +260,89 @@ class RecordRepositoryImpl(): RecordRepository {
                     }
                     Log.e(
                         TAG,
-                        "getUserRecordsFromSpecificTime0.0: $data"
+                        "getUserCategoryRecordsOrderedByDateTimeData: $data"
                     )
                     trySend(data)
                 }
             }
         }
+
+        awaitClose {
+            listener.remove()
+        }
+    }
+
+    override fun getUserRecordsFromSpecificTime(
+        recordType: RecordType,
+        startDate: Timestamp,
+        endDate: Timestamp
+    ) = callbackFlow<List<Record>> {
+        val currentUser = Firebase.auth.currentUser
+        Log.e(
+            TAG,
+            "getUserRecordsFromSpecificTime: $startDate\n:\n$endDate"
+        )
+
+        val listener = Firebase.firestore.collection(
+            "record"
+        ).whereGreaterThanOrEqualTo(
+            "recordTimestamp", startDate
+        ).whereLessThanOrEqualTo(
+            "recordTimestamp", endDate
+        ).whereEqualTo(
+            "recordType",
+            recordType
+        ).whereEqualTo(
+            "userIdFk", currentUser!!.uid
+        ).orderBy(
+            "recordTimestamp",
+            Query.Direction.DESCENDING
+        ).addSnapshotListener { value, error ->
+            error?.let {
+                Log.e(
+                    TAG,
+                    "getUserRecordsFromSpecificTimeError: ${it.message}"
+                )
+                close(it)
+                return@addSnapshotListener
+            }
+
+            value?.let { it ->
+                val recordDocuments = it.documents
+                val records: MutableMap<String, Record> = mutableMapOf()
+
+                recordDocuments.forEach { document ->
+                    val record = document.toObject<Record>()
+                    if (record != null) {
+                        val date = record.recordDateTime.toLocalDate().toString()
+                        val currency = record.recordCurrency
+                        val existingRecord = records[date]
+
+                        if (existingRecord != null) {
+                            records[date] = existingRecord.copy(
+                                recordAmount = existingRecord.recordAmount + record.recordAmount
+                            )
+                        } else {
+                            records[date] = record.copy(recordType = recordType)
+                        }
+                    }
+
+                }
+
+                val data = records.values.toList()
+                Log.e(
+                    TAG,
+                    "getUserRecordsFromSpecificTimeData: "+data,
+
+                )
+                trySend(data)
+            }
+        }
+
+        Log.e(
+            TAG,
+            "getUserRecordsFromSpecificTime0.0: babi"
+        )
 
         awaitClose {
             listener.remove()
@@ -317,35 +392,35 @@ class RecordRepositoryImpl(): RecordRepository {
                 val recordDocuments = result.documents
                 val categoriesWithAmount = mutableMapOf<String, CategoryWithAmount>()
 
-
                 recordDocuments.forEach { document ->
                     val record = document.toObject<Record>()
                     if (record != null) {
-                        val categoryId = record.categoryIdFk
+                        val key = record.categoryIdFk+record.recordCurrency
                         val currency = record.recordCurrency
 
-                        val existingCategory = categoriesWithAmount[categoryId]
+                        val existingCategory = categoriesWithAmount[key]
 
                         if (existingCategory != null && existingCategory.currency == currency) {
-                            categoriesWithAmount[categoryId] = existingCategory.copy(
+                            categoriesWithAmount[key] = existingCategory.copy(
                                 amount = existingCategory.amount + record.recordAmount
                             )
                         } else {
                             val newCategory = CategoryWithAmount(
+                                categoryId = record.categoryIdFk,
                                 amount = record.recordAmount,
                                 currency = currency
                             )
-                            categoriesWithAmount[categoryId] = newCategory
+                            categoriesWithAmount[key] = newCategory
                         }
                     }
                 }
 
                 launch {
-                    val deferredCategoryDetails = categoriesWithAmount.map { (categoryId, categoryWithAmount) ->
+                    val deferredCategoryDetails = categoriesWithAmount.map { (_, categoryWithAmount) ->
                         async {
                             val category = Firebase.firestore.collection(
                                 "category"
-                            ).document(categoryId).get().await().toObject<Category>()
+                            ).document(categoryWithAmount.categoryId).get().await().toObject<Category>()
                             categoryWithAmount.copy(
                                 category = category ?: Category()
                             )
@@ -357,7 +432,7 @@ class RecordRepositoryImpl(): RecordRepository {
                         TAG,
                         "getUserCategoriesWithAmountFromSpecificTimeData: "+data,
 
-                    )
+                        )
                     trySend(data)
                 }
             }
@@ -401,20 +476,20 @@ class RecordRepositoryImpl(): RecordRepository {
                     val data = recordDocuments.map { document ->
                         Log.e(
                             TAG,
-                            "getUserRecordsFromSpecificTime0.1: $document"
+                            "getUserAccountRecordsOrderedByDateTime.1: $document"
                         )
                         val record = document.toObject<Record>()!!
                         Log.e(
                             TAG,
-                            "getUserRecordsFromSpecificTime0.2: $record"
+                            "getUserAccountRecordsOrderedByDateTime.2: $record"
                         )
                         val result = getDocuments(
                             record
                         )
 
-                        val fromAccount = result.fromAccount.await().toObject<Account>()!!
-                        val toAccount = result.toAccount.await().toObject<Account>()!!
-                        val toCategory = result.toCategory.await().toObject<Category>()!!
+                        val fromAccount = result.fromAccount.toObject<Account>()!!
+                        val toAccount = result.toAccount.toObject<Account>()!!
+                        val toCategory = result.toCategory.toObject<Category>()!!
 
                         TrueRecord(
                             record = record,
@@ -425,7 +500,7 @@ class RecordRepositoryImpl(): RecordRepository {
                     }
                     Log.e(
                         TAG,
-                        "getUserRecordsFromSpecificTime0.0: $data"
+                        "getUserAccountRecordsOrderedByDateTime.0: $data"
                     )
                     trySend(data)
 
@@ -562,23 +637,23 @@ class RecordRepositoryImpl(): RecordRepository {
         }
     }
 
-    suspend fun getDocuments(record: Record): DocumentResults = coroutineScope {
+    private suspend fun getDocuments(record: Record) = coroutineScope {
         val fromAccountDeferred = async {
             Firebase.firestore.collection("account").document(
                 record.accountIdFromFk
-            ).get()
+            ).get().await()
         }
 
         val toAccountDeferred = async {
             Firebase.firestore.collection("account").document(
                 record.accountIdToFk
-            ).get()
+            ).get().await()
         }
 
         val toCategoryDeferred = async {
             Firebase.firestore.collection("category").document(
                 record.categoryIdFk
-            ).get()
+            ).get().await()
         }
 
         DocumentResults(
@@ -591,9 +666,9 @@ class RecordRepositoryImpl(): RecordRepository {
 }
 
 data class DocumentResults(
-    val fromAccount: Task<DocumentSnapshot>,
-    val toAccount: Task<DocumentSnapshot>,
-    val toCategory: Task<DocumentSnapshot>,
+    val fromAccount: DocumentSnapshot,
+    val toAccount: DocumentSnapshot,
+    val toCategory: DocumentSnapshot,
 )
 
 data class TrueRecord(
@@ -605,6 +680,7 @@ data class TrueRecord(
 
 data class CategoryWithAmount(
     val category: Category = Category(),
+    val categoryId: String= "",
     val amount: Double = 0.0,
     val currency: String = ""
 )

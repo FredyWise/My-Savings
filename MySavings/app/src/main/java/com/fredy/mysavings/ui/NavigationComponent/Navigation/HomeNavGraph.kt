@@ -11,6 +11,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navigation
 import com.fredy.mysavings.ViewModel.AccountViewModel
 import com.fredy.mysavings.ViewModel.AnalysisViewModel
 import com.fredy.mysavings.ViewModel.CategoryViewModel
@@ -37,11 +38,13 @@ fun HomeNavGraph(
         ) {
             val viewModel: RecordViewModel = hiltViewModel()
             val state by viewModel.state.collectAsStateWithLifecycle()
+            val resource by viewModel.resource
 
             RecordsScreen(
                 rootNavController = rootNavController,
                 state = state,
-                onEvent = viewModel::onEvent
+                onEvent = viewModel::onEvent,
+                resource = resource,
             )
         }
         composable(
@@ -50,11 +53,13 @@ fun HomeNavGraph(
             val viewModel: AnalysisViewModel = hiltViewModel()
             val state by viewModel.state.collectAsStateWithLifecycle()
             val resource by viewModel.resource
+
             AnalysisScreen(
+                rootNavController = rootNavController,
                 state = state,
                 onEvent = viewModel::onEvent,
-                resource = resource
-                )
+                resource = resource,
+            )
         }
         composable(
             route = NavigationRoute.Categories.route
