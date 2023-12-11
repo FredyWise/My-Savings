@@ -15,6 +15,7 @@ data class Account(
         val matchingCombinations = listOf(
             "$accountName",
             "${accountName.first()}",
+            "$accountCurrency",
         )
 
         return matchingCombinations.any {

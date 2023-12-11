@@ -7,10 +7,10 @@ import androidx.lifecycle.viewModelScope
 import com.fredy.mysavings.Data.Database.Converter.TimestampConverter
 import com.fredy.mysavings.Data.Database.Entity.Category
 import com.fredy.mysavings.Data.Database.Entity.Record
-import com.fredy.mysavings.Data.Enum.AnalysisType
 import com.fredy.mysavings.Data.Enum.FilterType
 import com.fredy.mysavings.Data.Enum.GraphType
 import com.fredy.mysavings.Data.Enum.RecordType
+import com.fredy.mysavings.Repository.AccountRepository
 import com.fredy.mysavings.Repository.CategoryWithAmount
 import com.fredy.mysavings.Repository.RecordRepository
 import com.fredy.mysavings.Util.ResourceState
@@ -36,6 +36,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AnalysisViewModel @Inject constructor(
     private val recordRepository: RecordRepository,
+    private val accountRepository: AccountRepository,
 ): ViewModel() {
     private val _resource = mutableStateOf(
         ResourceState()
@@ -46,7 +47,22 @@ class AnalysisViewModel @Inject constructor(
         FilterState()
     )
 
-    private val _categoriesWithAmount = _filterState.flatMapLatest { filterState ->
+    private val _availableCurrency = accountRepository.getUserAvailableCurrency().stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(),
+        emptyList()
+    )
+
+    private val filterState = combine(
+        _filterState,
+        _availableCurrency,
+    ) { filterState, availableCurrency ->
+        filterState.copy(
+            currency = availableCurrency
+        )
+    }
+
+    private val _categoriesWithAmount = filterState.flatMapLatest { filterState ->
         when (filterState.filterType) {
             FilterType.Daily -> recordRepository.getUserCategoriesWithAmountFromSpecificTime(
                 filterState.recordType,
@@ -55,7 +71,8 @@ class AnalysisViewModel @Inject constructor(
                 ),
                 TimestampConverter.fromDateTime(
                     filterState.end
-                )
+                ),
+                filterState.currency,
             )
 
             FilterType.Weekly -> recordRepository.getUserCategoriesWithAmountFromSpecificTime(
@@ -65,7 +82,8 @@ class AnalysisViewModel @Inject constructor(
                 ),
                 TimestampConverter.fromDateTime(
                     filterState.end
-                )
+                ),
+                filterState.currency
             )
 
             FilterType.Monthly -> recordRepository.getUserCategoriesWithAmountFromSpecificTime(
@@ -75,7 +93,8 @@ class AnalysisViewModel @Inject constructor(
                 ),
                 TimestampConverter.fromDateTime(
                     filterState.end
-                )
+                ),
+                filterState.currency
             )
 
             FilterType.Per3Months -> recordRepository.getUserCategoriesWithAmountFromSpecificTime(
@@ -85,7 +104,8 @@ class AnalysisViewModel @Inject constructor(
                 ),
                 TimestampConverter.fromDateTime(
                     filterState.end
-                )
+                ),
+                filterState.currency
             )
 
             FilterType.Per6Months -> recordRepository.getUserCategoriesWithAmountFromSpecificTime(
@@ -95,7 +115,8 @@ class AnalysisViewModel @Inject constructor(
                 ),
                 TimestampConverter.fromDateTime(
                     filterState.end
-                )
+                ),
+                filterState.currency
             )
 
             FilterType.Yearly -> recordRepository.getUserCategoriesWithAmountFromSpecificTime(
@@ -105,13 +126,15 @@ class AnalysisViewModel @Inject constructor(
                 ),
                 TimestampConverter.fromDateTime(
                     filterState.end
-                )
+                ),
+                filterState.currency
             )
         }
     }.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(),
-        emptyList()
+//        emptyList()
+        listOf(CategoryWithAmount())
     )
 
     private val _recordsWithinSpecificTime = _filterState.flatMapLatest { filterState ->
@@ -235,10 +258,8 @@ class AnalysisViewModel @Inject constructor(
         balanceBar,
         _categoriesWithAmount,
         _recordsWithinSpecificTime,
-    ) { state, balanceBar, categoriesWithAmount, recordsWithinSpesificTime  ->
-        _resource.value = ResourceState(
-            isLoading = true
-        )
+    ) { state, balanceBar, categoriesWithAmount, recordsWithinSpesificTime ->
+        _resource.value = ResourceState(isLoading = true)
         state.copy(
             categoriesWithAmount = categoriesWithAmount,
             recordsWithinTime = recordsWithinSpesificTime,
@@ -355,7 +376,6 @@ data class AnalysisState(
     val totalAll: Double = 0.0,
     val graphAmount: Double = totalExpense,
     val graphType: GraphType = GraphType.SlimDonut,
-    val analysisType: AnalysisType = AnalysisType.Overview,
     val recordType: RecordType = RecordType.Expense,
     val selectedDate: LocalDate = LocalDate.now(),
     val isChoosingFilter: Boolean = false,

@@ -24,7 +24,6 @@ import androidx.navigation.NavHostController
 import com.fredy.mysavings.Util.ResourceState
 import com.fredy.mysavings.Util.formatRangeOfDate
 import com.fredy.mysavings.ViewModel.RecordState
-import com.fredy.mysavings.ViewModels.Event.AnalysisEvent
 import com.fredy.mysavings.ViewModels.Event.RecordsEvent
 import com.fredy.mysavings.ui.NavigationComponent.AdditionalAppBar
 import com.fredy.mysavings.ui.NavigationComponent.Navigation.NavigationRoute
@@ -130,22 +129,26 @@ fun RecordsScreen(
                 targetOffsetY = { fullHeight -> fullHeight },
             ) + fadeOut()
         ) {
-            if(state.trueRecordMaps.isEmpty()){
-                LoadingAnimation(
-                    isLoading = resource.isLoading,
-                    notLoadingMessage = "You haven't made any Record yet",
-                    onClick = {
-                        rootNavController.navigate(
-                            NavigationRoute.Add.route + "?id=-1"
-                        )
-                        isVisible.targetState = false
-                    }
-                )
+
+            state.trueRecordMaps.let { records ->
+                if (records.isNotEmpty() && records.first().records.first().record.recordCurrency.isNotEmpty()) {
+                    RecordBody(
+                        trueRecords = state.trueRecordMaps,
+                        onEvent = onEvent
+                    )
+                } else {
+                    LoadingAnimation(
+                        isLoading = resource.isLoading && records.isNotEmpty(),
+                        notLoadingMessage = "You haven't made any Record yet",
+                        onClick = {
+                            rootNavController.navigate(
+                                NavigationRoute.Add.route + "?id=-1"
+                            )
+                            isVisible.targetState = false
+                        },
+                    )
+                }
             }
-            RecordBody(
-                trueRecords = state.trueRecordMaps,
-                onEvent = onEvent
-            )
         }
     }
 }

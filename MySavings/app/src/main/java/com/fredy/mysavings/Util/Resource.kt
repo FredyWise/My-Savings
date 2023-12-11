@@ -1,5 +1,8 @@
 package com.fredy.mysavings.Util
 
+import kotlinx.coroutines.delay
+import java.util.Timer
+
 sealed class Resource<T>(val data: T? = null, val message: String? = null) {
     class Success<T>(data: T) : Resource<T>(data)
     class Error<T>(message: String, data: T? = null) : Resource<T>(data, message)
@@ -9,5 +12,13 @@ sealed class Resource<T>(val data: T? = null, val message: String? = null) {
 data class ResourceState(
     val success: String? = null,
     val error: String? = null,
-    val isLoading: Boolean = false,
-)
+    var isLoading: Boolean = false,
+){
+    suspend fun setLoadingWithTimeout(timeout: Long = 3000L) {
+        isLoading = true
+        if (isLoading) {
+            delay(timeout)
+            isLoading = false
+        }
+    }
+}

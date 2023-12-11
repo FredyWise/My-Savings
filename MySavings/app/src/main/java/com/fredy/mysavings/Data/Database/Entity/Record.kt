@@ -42,6 +42,19 @@ data class Record(
         recordType,
         recordNotes
     )
+
+
+    fun doesMatchSearchQuery(query: String): Boolean {
+        val matchingCombinations = listOf(
+            "$recordDateTime",
+            "$recordAmount",
+            "$recordCurrency",
+        )
+
+        return matchingCombinations.any {
+            it.contains(query, ignoreCase = true)
+        }
+    }
 }
 
 //data class RecordsData(

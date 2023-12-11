@@ -108,7 +108,7 @@ class RecordViewModel @Inject constructor(
     }.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(),
-        emptyList()
+        listOf(TrueRecord())
     )
 
     private val _totalRecordBalance: StateFlow<Double?> = recordRepository.getUserTotalRecordBalance().stateIn(
@@ -306,6 +306,7 @@ data class BalanceBar(
 data class FilterState(
     val recordType: RecordType = RecordType.Expense,
     val filterType: FilterType = FilterType.Monthly,
+    val currency: List<String> = emptyList(),
     val start: LocalDateTime = LocalDateTime.of(
         LocalDate.now().with(
             TemporalAdjusters.firstDayOfMonth()

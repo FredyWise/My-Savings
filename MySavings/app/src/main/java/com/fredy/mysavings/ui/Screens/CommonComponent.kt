@@ -87,6 +87,7 @@ fun LoadingAnimation(
             Text(
                 text = notLoadingMessage,
                 modifier = Modifier
+                    .clip(CircleShape)
                     .clickable {
                         onClick()
                     }

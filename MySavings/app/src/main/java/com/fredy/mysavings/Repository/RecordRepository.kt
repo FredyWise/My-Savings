@@ -7,6 +7,7 @@ import com.fredy.mysavings.Data.Database.Entity.Category
 import com.fredy.mysavings.Data.Database.Entity.Record
 import com.fredy.mysavings.Data.Enum.RecordType
 import com.fredy.mysavings.Util.TAG
+import com.fredy.mysavings.Util.currencyCodes
 import com.google.android.gms.tasks.Task
 import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
@@ -50,6 +51,7 @@ interface RecordRepository {
         categoryType: RecordType,
         startDate: Timestamp,
         endDate: Timestamp,
+        currency: List<String>,
     ): Flow<List<CategoryWithAmount>>
 
     fun getUserAccountRecordsOrderedByDateTime(
@@ -352,12 +354,13 @@ class RecordRepositoryImpl(): RecordRepository {
     override fun getUserCategoriesWithAmountFromSpecificTime(
         categoryType: RecordType,
         startDate: Timestamp,
-        endDate: Timestamp
+        endDate: Timestamp,
+        currency: List<String>,
     ) = callbackFlow<List<CategoryWithAmount>> {
         val currentUser = Firebase.auth.currentUser
         Log.e(
             TAG,
-            "getUserCategoriesWithAmountFromSpecificTime: $categoryType\n$startDate\n:\n$endDate"
+            "getUserCategoriesWithAmountFromSpecificTime: $currency\n$categoryType\n$startDate\n:\n$endDate"
         )
 
         val listener = Firebase.firestore.collection(
@@ -369,6 +372,9 @@ class RecordRepositoryImpl(): RecordRepository {
         ).whereEqualTo(
             "recordType",
             categoryType
+        ).whereIn(
+            "recordCurrency",
+            currency.ifEmpty { listOf("") }
         ).whereEqualTo(
             "userIdFk", currentUser!!.uid
         ).orderBy(
@@ -460,7 +466,7 @@ class RecordRepositoryImpl(): RecordRepository {
         ).whereEqualTo(
             "accountIdFk", accountId
         ).whereIn(
-            "accountfk", listOf(accountId)
+            "accountfk", listOf(accountId)//????????????????????????????????????????????????????? should be or
         ).whereEqualTo(
             "userIdFk", currentUser!!.uid
         ).orderBy(
