@@ -133,7 +133,6 @@ class AnalysisViewModel @Inject constructor(
     }.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(),
-//        emptyList()
         listOf(CategoryWithAmount())
     )
 
