@@ -18,8 +18,8 @@ import com.fredy.mysavings.Data.Database.Entity.Account
 import com.fredy.mysavings.R
 import com.fredy.mysavings.ViewModel.AccountState
 import com.fredy.mysavings.ViewModels.Event.AccountEvent
-import com.fredy.mysavings.ui.Screens.SearchBar
-import com.fredy.mysavings.ui.Screens.SimpleButton
+import com.fredy.mysavings.ui.Screens.ZCommonComponent.SearchBar
+import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleButton
 
 @Composable
 fun AccountsScreen(

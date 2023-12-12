@@ -2,7 +2,7 @@ package com.fredy.mysavings.Repository
 
 import android.util.Log
 import com.fredy.mysavings.Data.APIs.CurrencyModels.CurrencyApi
-import com.fredy.mysavings.Data.APIs.CurrencyModels.CurrencyResponse
+import com.fredy.mysavings.Data.APIs.CurrencyModels.Response.CurrencyResponse
 import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.TAG
 import kotlinx.coroutines.flow.Flow

@@ -78,7 +78,7 @@ fun formatRangeOfDate(
 }
 
 fun updateFilterState(
-    event: FilterType, selectedDate: LocalDate
+    event: FilterType, selectedDate: LocalDate, currentFilterState: FilterState
 ): FilterState {
     val startDate: LocalDateTime
     val endDate: LocalDateTime
@@ -151,7 +151,7 @@ fun updateFilterState(
         }
     }
 
-    return FilterState(
+    return currentFilterState.copy(
         filterType = event,
         start = startDate,
         end = endDate

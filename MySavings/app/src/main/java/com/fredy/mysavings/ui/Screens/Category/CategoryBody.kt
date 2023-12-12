@@ -19,8 +19,8 @@ import com.fredy.mysavings.Util.ActionWithName
 import com.fredy.mysavings.Util.isTransfer
 import com.fredy.mysavings.ViewModel.CategoryMap
 import com.fredy.mysavings.ViewModels.Event.CategoryEvent
-import com.fredy.mysavings.ui.Screens.AdvancedEntityItem
-import com.fredy.mysavings.ui.Screens.CustomStickyHeader
+import com.fredy.mysavings.ui.Screens.ZCommonComponent.AdvancedEntityItem
+import com.fredy.mysavings.ui.Screens.ZCommonComponent.CustomStickyHeader
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

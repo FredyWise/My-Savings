@@ -1,4 +1,4 @@
-package com.fredy.mysavings.Data.APIs.CurrencyModels
+package com.fredy.mysavings.Data.APIs.CurrencyModels.Response
 
 data class Rates(
     val AED: Number,

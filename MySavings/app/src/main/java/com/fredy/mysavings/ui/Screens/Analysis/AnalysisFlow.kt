@@ -8,17 +8,10 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material.Text
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import co.yml.charts.common.model.Point
@@ -27,7 +20,7 @@ import com.fredy.mysavings.Util.TAG
 import com.fredy.mysavings.Util.isExpense
 import com.fredy.mysavings.ViewModel.AnalysisState
 import com.fredy.mysavings.ViewModels.Event.AnalysisEvent
-import com.fredy.mysavings.ui.Screens.LoadingAnimation
+import com.fredy.mysavings.ui.Screens.ZCommonComponent.LoadingAnimation
 import kotlin.math.absoluteValue
 
 @Composable
@@ -60,22 +53,17 @@ fun AnalysisFlow(
         ) + fadeOut()
     ) {
         state.categoriesWithAmount.let { categories ->
-            if(categories.isNotEmpty() && categories.first().currency.isNotEmpty()) {
-                val items = if (isExpense(categories.first().category.categoryType)) categories else categories.reversed()
+            if (categories.isNotEmpty() && categories.first().currency.isNotEmpty()) {
+                val items = if (isExpense(
+                        categories.first().category.categoryType
+                    )) categories else categories.reversed()
                 Box(
                     modifier = Modifier.padding(
                         end = 20.dp
                     )
                 ) {
                     ChartLine(
-                        pointsData = convertToPoints(
-                            state.recordsWithinTime
-                        ) { item ->
-                            Log.e(
-                                TAG,
-                                "AnalysisFlow: " + item,
-
-                                )
+                        pointsData = state.recordsWithinTime.map { item ->
                             Point(
                                 x = item.recordDateTime.dayOfMonth.toFloat(),
                                 y = item.recordAmount.absoluteValue.toFloat(),
@@ -83,26 +71,17 @@ fun AnalysisFlow(
                         }.reversed(),
                     )
                 }
-            } else{
-                LoadingAnimation(
-                    isLoading = resource.isLoading && categories.isNotEmpty(),
+            } else {
+                LoadingAnimation(isLoading = resource.isLoading && categories.isNotEmpty(),
                     notLoadingMessage = "You haven't made any ${state.recordType.name} yet",
                     onClick = {
                         onEvent(
                             AnalysisEvent.ToggleRecordType
                         )
                         isVisible.targetState = false
-                    }
-                )
+                    })
             }
         }
     }
 }
 
-private fun <T> convertToPoints(
-    items: List<T>, convertFunction: (T) -> Point
-): List<Point> {
-    return items.map { item ->
-        convertFunction(item)
-    }
-}

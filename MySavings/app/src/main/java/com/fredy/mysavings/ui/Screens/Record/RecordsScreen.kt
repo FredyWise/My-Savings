@@ -1,6 +1,7 @@
 package com.fredy.mysavings.ui.Screens.Record
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.core.tween
@@ -22,12 +23,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.fredy.mysavings.Util.ResourceState
+import com.fredy.mysavings.Util.TAG
 import com.fredy.mysavings.Util.formatRangeOfDate
+import com.fredy.mysavings.ViewModel.FilterState
 import com.fredy.mysavings.ViewModel.RecordState
 import com.fredy.mysavings.ViewModels.Event.RecordsEvent
 import com.fredy.mysavings.ui.NavigationComponent.AdditionalAppBar
 import com.fredy.mysavings.ui.NavigationComponent.Navigation.NavigationRoute
-import com.fredy.mysavings.ui.Screens.LoadingAnimation
+import com.fredy.mysavings.ui.Screens.ZCommonComponent.LoadingAnimation
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -69,12 +72,18 @@ fun RecordsScreen(
         ),
         isChoosingFilter = state.isChoosingFilter,
         selectedFilter = state.filterType.name,
+        checkboxesFilter = state.availableCurrency,
         onDismissFilterDialog = {
             onEvent(RecordsEvent.HideFilterDialog)
         },
         onSelectFilter = {
             onEvent(
                 RecordsEvent.FilterRecord(it)
+            )
+        },
+        onSelectCheckboxFilter = {
+            onEvent(
+                RecordsEvent.SelectedCurrencies(it)
             )
         },
         totalExpense = state.totalExpense,

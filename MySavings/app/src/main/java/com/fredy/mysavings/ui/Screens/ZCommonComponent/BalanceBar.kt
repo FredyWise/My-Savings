@@ -1,4 +1,4 @@
-package com.fredy.mysavings.ui.Screens.Record
+package com.fredy.mysavings.ui.Screens.ZCommonComponent
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

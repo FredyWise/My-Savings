@@ -60,7 +60,7 @@ import com.fredy.mysavings.ui.Screens.AddSingle.AccountBottomSheet
 import com.fredy.mysavings.ui.Screens.AddSingle.CategoryBottomSheet
 import com.fredy.mysavings.ui.Screens.AddSingle.TextBox
 import com.fredy.mysavings.ui.Screens.Category.CategoryAddDialog
-import com.fredy.mysavings.ui.Screens.SimpleButton
+import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleButton
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState

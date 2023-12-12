@@ -5,7 +5,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.fredy.mysavings.Data.APIs.CurrencyModels.Rates
+import com.fredy.mysavings.Data.APIs.CurrencyModels.Response.Rates
 import com.fredy.mysavings.Data.Database.Entity.UserData
 import com.fredy.mysavings.Repository.CurrencyRepository
 import com.fredy.mysavings.Util.Resource

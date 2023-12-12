@@ -10,10 +10,11 @@ sealed interface RecordsEvent{
     object HideDialog: RecordsEvent
     object ShowFilterDialog: RecordsEvent
     object HideFilterDialog: RecordsEvent
-    object ShowNextList: RecordsEvent
-    object ShowPreviousList: RecordsEvent
+    data class SelectedCurrencies(val selectedCurrencies: List<String>): RecordsEvent
     data class ChangeDate(val selectedDate: LocalDate): RecordsEvent
     data class FilterRecord(val filterType: FilterType): RecordsEvent
+    object ShowNextList: RecordsEvent
+    object ShowPreviousList: RecordsEvent
     data class DeleteRecord(val record: Record): RecordsEvent
 
 }

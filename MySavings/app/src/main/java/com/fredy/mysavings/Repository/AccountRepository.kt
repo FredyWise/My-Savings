@@ -155,8 +155,7 @@ class AccountRepositoryImpl(): AccountRepository {
                 val data = it.map { document ->
                     document.toObject<Account>().accountCurrency
                 }.toMutableList()
-                data.add(0, "None")
-                trySend(data.toList())
+                trySend(data.toList().distinct())
             }
         }
 

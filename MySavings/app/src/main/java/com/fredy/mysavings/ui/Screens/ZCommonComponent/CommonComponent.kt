@@ -1,8 +1,7 @@
-package com.fredy.mysavings.ui.Screens
+package com.fredy.mysavings.ui.Screens.ZCommonComponent
 
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.indication
@@ -21,25 +20,22 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -55,15 +51,12 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.Util.ActionWithName
-import com.fredy.mysavings.Util.BalanceColor
 import com.fredy.mysavings.Util.SavingsIcon
-import com.fredy.mysavings.Util.currencyCodes
-import com.fredy.mysavings.Util.formatBalanceAmount
+
 
 @Composable
 fun LoadingAnimation(
@@ -87,7 +80,9 @@ fun LoadingAnimation(
             Text(
                 text = notLoadingMessage,
                 modifier = Modifier
-                    .clip(CircleShape)
+                    .clip(
+                        CircleShape
+                    )
                     .clickable {
                         onClick()
                     }
@@ -148,151 +143,8 @@ fun SearchBar(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun CurrencyDropdown(
-    modifier: Modifier = Modifier,
-    textFieldColors: TextFieldColors = TextFieldDefaults.colors(),
-    selectedText: String,
-    onClick: (String) -> Unit
-) {
-    var selectedText by remember {
-        mutableStateOf(
-            selectedText
-        )
-    }
-    var expanded by remember {
-        mutableStateOf(
-            false
-        )
-    }
-    var filteredData by remember {
-        mutableStateOf(currencyCodes)
-    }
 
-    val icon = if (expanded) Icons.Filled.KeyboardArrowUp
-    else Icons.Filled.KeyboardArrowDown
 
-    ExposedDropdownMenuBox(modifier = modifier,
-        expanded = expanded,
-        onExpandedChange = { expanded = !expanded }) {
-        TextField(
-            value = selectedText,
-            singleLine = true,
-            onValueChange = {
-                selectedText = it
-                expanded = true
-                filteredData = currencyCodes.filter { data ->
-                    data.contains(
-                        it, ignoreCase = true
-                    )
-                }.sorted()
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .menuAnchor(),
-            colors = textFieldColors,
-            trailingIcon = {
-                Icon(
-                    icon,
-                    "contentDescription",
-                )
-            },
-        )
-        ExposedDropdownMenu(
-            modifier = Modifier,
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-        ) {
-            filteredData.forEach { label ->
-                DropdownMenuItem(
-                    onClick = {
-                        expanded = false
-                        selectedText = label
-                        onClick(label)
-                    },
-                    text = {
-                        Text(
-                            text = label,
-                        )
-                    },
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun SimpleDialog(
-    modifier: Modifier = Modifier,
-    title: String,
-    onDismissRequest: () -> Unit,
-    onCancelClicked: () -> Unit,
-    onSaveClicked: () -> Unit,
-    content: @Composable () -> Unit,
-) {
-    AlertDialog(
-        modifier = modifier,
-        title = {
-            Text(
-                modifier = Modifier.fillMaxWidth(),
-                text = title,
-                textAlign = TextAlign.Center
-            )
-        },
-        text = {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(
-                    8.dp
-                ),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                content()
-            }
-        },
-        onDismissRequest = onDismissRequest,
-        dismissButton = {
-            Box(modifier = modifier
-                .clip(
-                    MaterialTheme.shapes.small
-                )
-                .border(
-                    width = 2.dp,
-                    color = MaterialTheme.colorScheme.secondary,
-                    shape = MaterialTheme.shapes.small
-                )
-                .clickable {
-                    onCancelClicked()
-                }) {
-                Text(
-                    modifier = Modifier.padding(8.dp),
-                    style = MaterialTheme.typography.titleMedium,
-                    text = "CANCEL"
-                )
-            }
-        },
-        confirmButton = {
-            Box(modifier = modifier
-                .clip(
-                    MaterialTheme.shapes.small
-                )
-                .border(
-                    width = 2.dp,
-                    color = MaterialTheme.colorScheme.secondary,
-                    shape = MaterialTheme.shapes.small
-                )
-                .clickable {
-                    onSaveClicked()
-                }) {
-                Text(
-                    modifier = Modifier.padding(8.dp),
-                    style = MaterialTheme.typography.titleMedium,
-                    text = "SAVE"
-                )
-            }
-        },
-    )
-}
 
 @Composable
 fun AdvancedEntityItem(
@@ -357,7 +209,7 @@ fun AdvancedEntityItem(
                 contentDescription = "",
                 tint = MaterialTheme.colorScheme.onSurface,
             )
-            CustomDropDownMenu(pressOffset = pressOffset,
+            SimpleDropDownMenu(pressOffset = pressOffset,
                 menuItems = menuItems,
                 isShowMenu = isShowMenu,
                 onClose = { isShowMenu = false })
@@ -365,44 +217,6 @@ fun AdvancedEntityItem(
     )
 }
 
-
-@Composable
-fun SimpleEntityItem(
-    modifier: Modifier = Modifier,
-    icon: Int,
-    iconModifier: Modifier = Modifier,
-    iconDescription: String,
-    contentWeight: Float = 1f,
-    endContent: @Composable () -> Unit = {},
-    content: @Composable () -> Unit,
-) {
-    Row(
-        modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Icon(
-            modifier = iconModifier,
-            painter = painterResource(
-                icon
-            ),
-            contentDescription = iconDescription,
-            tint = Color.Unspecified
-        )
-        Column(
-            modifier = Modifier
-                .weight(
-                    contentWeight
-                )
-                .padding(
-                    horizontal = 8.dp
-                ),
-            horizontalAlignment = Alignment.Start,
-        ) {
-            content()
-        }
-        endContent()
-    }
-}
 
 @Composable
 fun CustomStickyHeader(
@@ -503,14 +317,15 @@ fun ChooseIcon(
     selectedIcon: Int,
     icons: List<SavingsIcon>,
 ) {
-    LazyRow(//change to lazy horizontal grid
+    LazyHorizontalGrid(
         modifier = modifier
             .clip(
                 shape = MaterialTheme.shapes.medium
             )
             .background(
                 MaterialTheme.colorScheme.background
-            )
+            ),
+        rows = GridCells.Fixed(2)
     ) {
         items(icons) { icon ->
             Box(modifier = Modifier
@@ -542,109 +357,4 @@ fun ChooseIcon(
 }
 
 
-@Composable
-fun SimpleButton(
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit,
-    image: Int? = null,
-    imageColor: Color = Color.Unspecified,
-    title: String,
-    titleStyle: TextStyle = MaterialTheme.typography.titleLarge,
-    titleColor: Color = MaterialTheme.colorScheme.onBackground
-) {
-    Box(
-        modifier = modifier.clickable {
-            onClick()
-        }, contentAlignment = Alignment.Center
-    ) {
-        Row(
-            modifier = Modifier.padding(
-                8.dp
-            ),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            image?.let {
-                Icon(
-                    modifier = Modifier.size(35.dp),
-                    painter = painterResource(id = it),
-                    contentDescription = "",
-                    tint = imageColor,
-                )
-            }
-            Text(
-                text = title,
-                style = titleStyle,
-                color = titleColor
-            )
-        }
-    }
-}
 
-@Composable
-fun CustomDropDownMenu(
-    pressOffset: DpOffset,
-    menuItems: List<ActionWithName>,
-    isShowMenu: Boolean = false,
-    onClose: () -> Unit,
-) {
-    DropdownMenu(
-        expanded = isShowMenu,
-        onDismissRequest = {
-            onClose()
-        },
-        offset = pressOffset.copy(
-            y = pressOffset.y - 10.dp,
-            x = pressOffset.x + 400.dp
-        )
-    ) {
-        menuItems.forEach { item ->
-            DropdownMenuItem(modifier = Modifier
-                .fillMaxSize()
-                .padding(
-                    end = 8.dp
-                ), onClick = {
-                item.action()
-                onClose()
-            }, text = {
-                Text(
-                    text = item.name
-                )
-            })
-        }
-    }
-}
-
-@Composable
-fun BalanceItem(
-    modifier: Modifier = Modifier,
-    title: String,
-    titleColor: Color = MaterialTheme.colorScheme.onSurface,
-    amount: Double,
-    amountColor: Color = BalanceColor(
-        amount = amount,
-    ),
-    currency: String,
-    horizontalAlignment: Alignment.Horizontal = Alignment.CenterHorizontally,
-    titleStyle: TextStyle = MaterialTheme.typography.bodyLarge,
-    amountStyle: TextStyle = MaterialTheme.typography.bodyLarge,
-) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = horizontalAlignment,
-    ) {
-        Text(
-            text = title,
-            color = titleColor,
-            style = titleStyle
-        )
-        Text(
-            text = formatBalanceAmount(
-                amount = amount,
-                currency = currency
-            ),
-            color = amountColor,
-            style = amountStyle
-        )
-    }
-}

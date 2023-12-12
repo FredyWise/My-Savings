@@ -16,9 +16,9 @@ import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.Util.accountIcons
 import com.fredy.mysavings.ViewModel.AccountState
 import com.fredy.mysavings.ViewModels.Event.AccountEvent
-import com.fredy.mysavings.ui.Screens.ChooseIcon
-import com.fredy.mysavings.ui.Screens.CurrencyDropdown
-import com.fredy.mysavings.ui.Screens.SimpleDialog
+import com.fredy.mysavings.ui.Screens.ZCommonComponent.ChooseIcon
+import com.fredy.mysavings.ui.Screens.ZCommonComponent.CurrencyDropdown
+import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleDialog
 
 @Composable
 fun AccountAddDialog(

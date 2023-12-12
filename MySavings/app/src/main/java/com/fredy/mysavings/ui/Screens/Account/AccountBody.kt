@@ -20,8 +20,8 @@ import com.fredy.mysavings.Util.ActionWithName
 import com.fredy.mysavings.Util.BalanceColor
 import com.fredy.mysavings.Util.formatBalanceAmount
 import com.fredy.mysavings.ViewModels.Event.AccountEvent
-import com.fredy.mysavings.ui.Screens.AdvancedEntityItem
-import com.fredy.mysavings.ui.Screens.CustomStickyHeader
+import com.fredy.mysavings.ui.Screens.ZCommonComponent.AdvancedEntityItem
+import com.fredy.mysavings.ui.Screens.ZCommonComponent.CustomStickyHeader
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

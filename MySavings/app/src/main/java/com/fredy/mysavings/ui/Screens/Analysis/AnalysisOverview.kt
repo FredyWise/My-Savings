@@ -9,13 +9,11 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -25,7 +23,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Text
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -39,7 +36,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import co.yml.charts.common.extensions.isNotNull
 import com.fredy.mysavings.R
 import com.fredy.mysavings.Util.BalanceColor
 import com.fredy.mysavings.Util.ResourceState
@@ -50,8 +46,8 @@ import com.fredy.mysavings.Util.formatBalanceAmount
 import com.fredy.mysavings.Util.isExpense
 import com.fredy.mysavings.ViewModel.AnalysisState
 import com.fredy.mysavings.ViewModels.Event.AnalysisEvent
-import com.fredy.mysavings.ui.Screens.LoadingAnimation
-import com.fredy.mysavings.ui.Screens.SimpleEntityItem
+import com.fredy.mysavings.ui.Screens.ZCommonComponent.LoadingAnimation
+import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleEntityItem
 
 @Composable
 fun AnalysisOverview(
@@ -83,6 +79,7 @@ fun AnalysisOverview(
         ) + fadeOut()
     ) {
         state.categoriesWithAmount.let { categories ->
+            Log.e(TAG, "AnalysisOverview: "+categories, )
             if(categories.isNotEmpty() && categories.first().currency.isNotEmpty()) {
                 val items = if (isExpense(categories.first().category.categoryType)) categories else categories.reversed()
                 val colors = if (isExpense(items.first().category.categoryType)) defaultColors.subList(

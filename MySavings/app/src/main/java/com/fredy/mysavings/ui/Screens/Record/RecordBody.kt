@@ -31,8 +31,8 @@ import com.fredy.mysavings.Util.formatBalanceAmount
 import com.fredy.mysavings.Util.formatDay
 import com.fredy.mysavings.Util.isTransfer
 import com.fredy.mysavings.ViewModel.RecordMap
-import com.fredy.mysavings.ui.Screens.CustomStickyHeader
-import com.fredy.mysavings.ui.Screens.SimpleEntityItem
+import com.fredy.mysavings.ui.Screens.ZCommonComponent.CustomStickyHeader
+import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleEntityItem
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

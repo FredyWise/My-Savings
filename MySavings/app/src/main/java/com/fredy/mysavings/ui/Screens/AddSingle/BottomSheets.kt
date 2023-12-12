@@ -32,8 +32,8 @@ import com.fredy.mysavings.R
 import com.fredy.mysavings.Util.BalanceColor
 import com.fredy.mysavings.Util.formatBalanceAmount
 import com.fredy.mysavings.ViewModel.CategoryMap
-import com.fredy.mysavings.ui.Screens.SimpleButton
-import com.fredy.mysavings.ui.Screens.SimpleEntityItem
+import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleButton
+import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleEntityItem
 
 @Composable
 fun AccountBottomSheet(

@@ -8,6 +8,7 @@ import com.fredy.mysavings.Data.Database.Converter.TimestampConverter
 import com.fredy.mysavings.Data.Enum.FilterType
 import com.fredy.mysavings.Data.Enum.RecordType
 import com.fredy.mysavings.Data.Enum.SortType
+import com.fredy.mysavings.Repository.AccountRepository
 import com.fredy.mysavings.Repository.RecordRepository
 import com.fredy.mysavings.Repository.TrueRecord
 import com.fredy.mysavings.Util.ResourceState
@@ -35,6 +36,7 @@ import javax.inject.Inject
 @HiltViewModel
 class RecordViewModel @Inject constructor(
     private val recordRepository: RecordRepository,
+    private val accountRepository: AccountRepository,
 ): ViewModel() {
     private val _resource = mutableStateOf(
         ResourceState()
@@ -48,6 +50,13 @@ class RecordViewModel @Inject constructor(
     private val _filterState = MutableStateFlow(
         FilterState()
     )
+
+    private val _availableCurrency = accountRepository.getUserAvailableCurrency().stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(),
+        emptyList()
+    )
+
 
     private val _records = _filterState.flatMapLatest { filterState ->
         when (filterState.filterType) {
@@ -162,8 +171,9 @@ class RecordViewModel @Inject constructor(
         _state,
         _sortType,
         _records,
+        _availableCurrency,
         balanceBar,
-    ) { state, sortType, records, balanceBar ->
+    ) { state, sortType, records, availableCurrency, balanceBar ->
         _resource.value = ResourceState(isLoading = true)
         state.copy(
             trueRecordMaps = records.groupBy {
@@ -178,6 +188,7 @@ class RecordViewModel @Inject constructor(
                     records = it.value
                 )
             },
+            availableCurrency = availableCurrency,
             totalExpense = balanceBar.expense,
             totalIncome = balanceBar.income,
             totalAll = balanceBar.balance,
@@ -271,11 +282,22 @@ class RecordViewModel @Inject constructor(
                     )
                 }
             }
+
+            is RecordsEvent.SelectedCurrencies -> {
+                _filterState.update {
+                    it.copy(
+                        currencies = event.selectedCurrencies
+                    )
+                }
+            }
         }
-        _filterState.value = updateFilterState(
-            state.value.filterType,
-            state.value.selectedDate
-        )
+        _filterState.update {
+            updateFilterState(
+                state.value.filterType,
+                state.value.selectedDate,
+                it
+            )
+        }
     }
 
 }
@@ -283,6 +305,7 @@ class RecordViewModel @Inject constructor(
 data class RecordState(
     val trueRecordMaps: List<RecordMap> = listOf(),
     val trueRecord: TrueRecord? = null,
+    val availableCurrency: List<String> = listOf(),
     val totalExpense: Double = 0.0,
     val totalIncome: Double = 0.0,
     val totalAll: Double = 0.0,
@@ -306,7 +329,7 @@ data class BalanceBar(
 data class FilterState(
     val recordType: RecordType = RecordType.Expense,
     val filterType: FilterType = FilterType.Monthly,
-    val currency: List<String> = emptyList(),
+    val currencies: List<String> = emptyList(),
     val start: LocalDateTime = LocalDateTime.of(
         LocalDate.now().with(
             TemporalAdjusters.firstDayOfMonth()

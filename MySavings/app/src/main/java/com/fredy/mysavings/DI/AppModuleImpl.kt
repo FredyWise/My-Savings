@@ -2,6 +2,7 @@ package com.fredy.mysavings.DI
 
 import android.content.Context
 import android.util.Log
+import com.fredy.mysavings.Data.APIs.ApiCredentials
 import com.fredy.mysavings.Data.APIs.CurrencyModels.CurrencyApi
 import com.fredy.mysavings.Data.Database.Entity.UserData
 import com.fredy.mysavings.Repository.AccountRepository
@@ -16,8 +17,8 @@ import com.fredy.mysavings.Repository.RecordRepository
 import com.fredy.mysavings.Repository.RecordRepositoryImpl
 import com.fredy.mysavings.Repository.UserRepository
 import com.fredy.mysavings.Repository.UserRepositoryImpl
-import com.fredy.mysavings.Util.CURRENCY_CONVERTER_URL
 import com.fredy.mysavings.Util.TAG
+import com.fredy.mytest.APIs.TextCorrectionModule.TypeWiseApi
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.firebase.auth.FirebaseAuth
@@ -101,7 +102,7 @@ object AppModuleImpl/*: AppModule*/ {
         okHttpClient: OkHttpClient,
     ): CurrencyApi {
         return Retrofit.Builder().baseUrl(
-            CURRENCY_CONVERTER_URL
+            ApiCredentials.CurrencyModels.BASE_URL
         ).addConverterFactory(
             GsonConverterFactory.create()
         ).client(okHttpClient).build().create(
@@ -109,11 +110,32 @@ object AppModuleImpl/*: AppModule*/ {
         )
     }
 
+    @Singleton
+    @Provides
+    fun provideTextCorrectionApi(
+        okHttpClient: OkHttpClient,
+    ): TypeWiseApi {
+        return Retrofit.Builder().baseUrl(
+            ApiCredentials.TextCorrectionModule.BASE_URL
+        ).addConverterFactory(
+            GsonConverterFactory.create()
+        ).client(okHttpClient).build().create(
+            TypeWiseApi::class.java
+        )
+    }
+
+
     @Provides
     @Singleton
     fun currencyRepository(currencyApi: CurrencyApi): CurrencyRepository {
         return CurrencyRepositoryImpl(currencyApi)
     }
+
+//    @Provides
+//    @Singleton
+//    fun textCorrectionRepository(textCorrectionApi: TypeWiseApi): CurrencyRepository {
+//        return TextCorrectionRepositoryImpl(textCorrectionApi)
+//    }
 
 
     @Provides

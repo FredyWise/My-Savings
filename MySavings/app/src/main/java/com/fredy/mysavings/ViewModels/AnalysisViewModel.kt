@@ -1,5 +1,6 @@
 package com.fredy.mysavings.ViewModel
 
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -14,15 +15,18 @@ import com.fredy.mysavings.Repository.AccountRepository
 import com.fredy.mysavings.Repository.CategoryWithAmount
 import com.fredy.mysavings.Repository.RecordRepository
 import com.fredy.mysavings.Util.ResourceState
+import com.fredy.mysavings.Util.TAG
 import com.fredy.mysavings.Util.isExpense
 import com.fredy.mysavings.Util.minusFilterDate
 import com.fredy.mysavings.Util.plusFilterDate
 import com.fredy.mysavings.Util.updateFilterState
 import com.fredy.mysavings.ViewModels.Event.AnalysisEvent
+import com.fredy.mysavings.ViewModels.Event.RecordsEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.onCompletion
@@ -38,31 +42,32 @@ class AnalysisViewModel @Inject constructor(
     private val recordRepository: RecordRepository,
     private val accountRepository: AccountRepository,
 ): ViewModel() {
+    init {
+        viewModelScope.launch {
+            accountRepository.getUserAvailableCurrency().collectLatest { currency->
+                _filterState.update {
+                    it.copy(currencies = currency)
+                }
+            }
+        }
+    }
     private val _resource = mutableStateOf(
         ResourceState()
     )
+
     val resource: State<ResourceState> = _resource
 
     private val _filterState = MutableStateFlow(
         FilterState()
     )
-
     private val _availableCurrency = accountRepository.getUserAvailableCurrency().stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(),
         emptyList()
     )
 
-    private val filterState = combine(
-        _filterState,
-        _availableCurrency,
-    ) { filterState, availableCurrency ->
-        filterState.copy(
-            currency = availableCurrency
-        )
-    }
 
-    private val _categoriesWithAmount = filterState.flatMapLatest { filterState ->
+    private val _categoriesWithAmount = _filterState.flatMapLatest { filterState ->
         when (filterState.filterType) {
             FilterType.Daily -> recordRepository.getUserCategoriesWithAmountFromSpecificTime(
                 filterState.recordType,
@@ -72,7 +77,7 @@ class AnalysisViewModel @Inject constructor(
                 TimestampConverter.fromDateTime(
                     filterState.end
                 ),
-                filterState.currency,
+                filterState.currencies,
             )
 
             FilterType.Weekly -> recordRepository.getUserCategoriesWithAmountFromSpecificTime(
@@ -83,7 +88,7 @@ class AnalysisViewModel @Inject constructor(
                 TimestampConverter.fromDateTime(
                     filterState.end
                 ),
-                filterState.currency
+                filterState.currencies
             )
 
             FilterType.Monthly -> recordRepository.getUserCategoriesWithAmountFromSpecificTime(
@@ -94,7 +99,7 @@ class AnalysisViewModel @Inject constructor(
                 TimestampConverter.fromDateTime(
                     filterState.end
                 ),
-                filterState.currency
+                filterState.currencies
             )
 
             FilterType.Per3Months -> recordRepository.getUserCategoriesWithAmountFromSpecificTime(
@@ -105,7 +110,7 @@ class AnalysisViewModel @Inject constructor(
                 TimestampConverter.fromDateTime(
                     filterState.end
                 ),
-                filterState.currency
+                filterState.currencies
             )
 
             FilterType.Per6Months -> recordRepository.getUserCategoriesWithAmountFromSpecificTime(
@@ -116,7 +121,7 @@ class AnalysisViewModel @Inject constructor(
                 TimestampConverter.fromDateTime(
                     filterState.end
                 ),
-                filterState.currency
+                filterState.currencies
             )
 
             FilterType.Yearly -> recordRepository.getUserCategoriesWithAmountFromSpecificTime(
@@ -127,7 +132,7 @@ class AnalysisViewModel @Inject constructor(
                 TimestampConverter.fromDateTime(
                     filterState.end
                 ),
-                filterState.currency
+                filterState.currencies
             )
         }
     }.stateIn(
@@ -257,11 +262,13 @@ class AnalysisViewModel @Inject constructor(
         balanceBar,
         _categoriesWithAmount,
         _recordsWithinSpecificTime,
-    ) { state, balanceBar, categoriesWithAmount, recordsWithinSpesificTime ->
+        _availableCurrency,
+    ) { state, balanceBar, categoriesWithAmount, recordsWithinSpesificTime, availableCurrency ->
         _resource.value = ResourceState(isLoading = true)
         state.copy(
             categoriesWithAmount = categoriesWithAmount,
             recordsWithinTime = recordsWithinSpesificTime,
+            availableCurrency = availableCurrency,
             totalExpense = balanceBar.expense,
             totalIncome = balanceBar.income,
             totalAll = balanceBar.balance,
@@ -355,20 +362,30 @@ class AnalysisViewModel @Inject constructor(
                     )
                 }
             }
+
+            is AnalysisEvent.SelectedCurrencies -> {
+                _filterState.update {
+                    it.copy(
+                        currencies = event.selectedCurrencies
+                    )
+                }
+            }
         }
         _filterState.update {
             updateFilterState(
                 state.value.filterType,
-                state.value.selectedDate
-            ).copy(recordType = _state.value.recordType)
+                state.value.selectedDate,
+                it.copy(recordType = _state.value.recordType)
+            )
         }
     }
 
 }
 
 data class AnalysisState(
-    val categoriesWithAmount: List<CategoryWithAmount> = listOf(),
+    val categoriesWithAmount: List<CategoryWithAmount> = listOf(CategoryWithAmount()),
     val recordsWithinTime: List<Record> = listOf(),
+    val availableCurrency: List<String> = listOf(),
     val category: Category? = null,
     val totalExpense: Double = 0.0,
     val totalIncome: Double = 0.0,

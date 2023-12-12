@@ -19,9 +19,9 @@ import com.fredy.mysavings.Util.ActionWithName
 import com.fredy.mysavings.Util.categoryIcons
 import com.fredy.mysavings.ViewModel.CategoryState
 import com.fredy.mysavings.ViewModels.Event.CategoryEvent
-import com.fredy.mysavings.ui.Screens.ChooseIcon
-import com.fredy.mysavings.ui.Screens.SimpleDialog
-import com.fredy.mysavings.ui.Screens.TypeRadioButton
+import com.fredy.mysavings.ui.Screens.ZCommonComponent.ChooseIcon
+import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleDialog
+import com.fredy.mysavings.ui.Screens.ZCommonComponent.TypeRadioButton
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

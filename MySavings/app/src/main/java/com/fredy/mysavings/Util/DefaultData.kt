@@ -1,12 +1,11 @@
 package com.fredy.mysavings.Util
 
 import android.graphics.Color
+import co.yml.charts.common.model.Point
 import androidx.compose.ui.graphics.Color as toColor
 
 val TAG = "BABI"
 
-val CURRENCY_CONVERTER_URL = "https://api.apilayer.com/"
-val CURRENCY_API_KEY = "ENXX0mTPZmDfoYwXTFQff6UN8ruMJTOH"
 
 val defaultColors = listOf(
     toColor(Color.parseColor("#fff300")),
@@ -206,4 +205,16 @@ data class ActionWithName(
 data class ValueWithName<T>(
     val name: String, val value: T
 )
+
+data class ToggleableInfo(
+    val isChecked: Boolean, val text: String
+)
+
+fun <T,U> listConverter(
+    items: List<T>, convertFunction: (T) -> U
+): List<U> {
+    return items.map { item ->
+        convertFunction(item)
+    }
+}
 

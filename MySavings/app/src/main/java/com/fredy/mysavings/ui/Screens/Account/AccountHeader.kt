@@ -16,7 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.ViewModel.AccountState
-import com.fredy.mysavings.ui.Screens.BalanceItem
+import com.fredy.mysavings.ui.Screens.ZCommonComponent.BalanceItem
 
 @Composable
 fun AccountHeader(

@@ -2,18 +2,16 @@ package com.fredy.mysavings.ui.NavigationComponent
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.Data.Enum.FilterType
 import com.fredy.mysavings.Util.BalanceItem
-import com.fredy.mysavings.ui.Screens.Record.BalanceBar
-import com.fredy.mysavings.ui.Screens.Record.DisplayBar
-import com.fredy.mysavings.ui.Screens.Record.FilterDialog
+import com.fredy.mysavings.ui.Screens.ZCommonComponent.BalanceBar
+import com.fredy.mysavings.ui.Screens.ZCommonComponent.DisplayBar
+import com.fredy.mysavings.ui.Screens.ZCommonComponent.FilterDialog
 import java.time.LocalDate
 
 @Composable
@@ -26,6 +24,8 @@ fun AdditionalAppBar(
     selectedFilter: String,
     onDismissFilterDialog: () -> Unit,
     onSelectFilter: (FilterType) -> Unit,
+    checkboxesFilter: List<String> = emptyList(),
+    onSelectCheckboxFilter: (List<String>) -> Unit,
     totalExpense: Double,
     totalIncome: Double,
     totalBalance: Double,
@@ -37,11 +37,15 @@ fun AdditionalAppBar(
 ) {
     if (isChoosingFilter) {
         FilterDialog(
-            title = "DisplayOption",
+            title = "Display Option",
             selectedName = selectedFilter,
+            checkboxList = checkboxesFilter,
             onDismissRequest = onDismissFilterDialog,
             onSelectItem = { item->
                 onSelectFilter(item)
+            },
+            onSelectCheckbox = { item ->
+                onSelectCheckboxFilter(item)
             },
         )
     }

@@ -1,6 +1,7 @@
 package com.fredy.mysavings.ui.Screens.Analysis
 
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -32,9 +33,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.fredy.mysavings.Util.ResourceState
+import com.fredy.mysavings.Util.TAG
 import com.fredy.mysavings.Util.formatRangeOfDate
 import com.fredy.mysavings.ViewModel.AnalysisState
+import com.fredy.mysavings.ViewModel.FilterState
 import com.fredy.mysavings.ViewModels.Event.AnalysisEvent
+import com.fredy.mysavings.ViewModels.Event.RecordsEvent
 import com.fredy.mysavings.ui.NavigationComponent.AdditionalAppBar
 import com.fredy.mysavings.ui.NavigationComponent.Navigation.AnalysisNavGraph
 import com.fredy.mysavings.ui.NavigationComponent.Navigation.NavigationRoute
@@ -75,12 +79,18 @@ fun AnalysisScreen(
         ),
         isChoosingFilter = state.isChoosingFilter,
         selectedFilter = state.filterType.name,
+        checkboxesFilter = state.availableCurrency,
         onDismissFilterDialog = {
             onEvent(AnalysisEvent.HideFilterDialog)
         },
         onSelectFilter = {
             onEvent(
                 AnalysisEvent.FilterRecord(it)
+            )
+        },
+        onSelectCheckboxFilter = {
+            onEvent(
+                AnalysisEvent.SelectedCurrencies(it)
             )
         },
         totalExpense = state.totalExpense,

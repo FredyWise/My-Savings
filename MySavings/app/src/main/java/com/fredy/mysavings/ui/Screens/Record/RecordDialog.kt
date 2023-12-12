@@ -31,8 +31,8 @@ import com.fredy.mysavings.Util.BalanceColor
 import com.fredy.mysavings.Util.formatDateTime
 import com.fredy.mysavings.Util.isTransfer
 import com.fredy.mysavings.ViewModels.Event.RecordsEvent
-import com.fredy.mysavings.ui.Screens.BalanceItem
-import com.fredy.mysavings.ui.Screens.SimpleEntityItem
+import com.fredy.mysavings.ui.Screens.ZCommonComponent.BalanceItem
+import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleEntityItem
 
 @Composable
 fun RecordDialog(

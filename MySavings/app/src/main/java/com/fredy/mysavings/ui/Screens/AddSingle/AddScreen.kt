@@ -45,8 +45,8 @@ import com.fredy.mysavings.ViewModels.Event.AddRecordEvent
 import com.fredy.mysavings.ViewModels.Event.CategoryEvent
 import com.fredy.mysavings.ui.Screens.Account.AccountAddDialog
 import com.fredy.mysavings.ui.Screens.Category.CategoryAddDialog
-import com.fredy.mysavings.ui.Screens.SimpleButton
-import com.fredy.mysavings.ui.Screens.TypeRadioButton
+import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleButton
+import com.fredy.mysavings.ui.Screens.ZCommonComponent.TypeRadioButton
 import kotlinx.coroutines.launch
 
 @OptIn(
