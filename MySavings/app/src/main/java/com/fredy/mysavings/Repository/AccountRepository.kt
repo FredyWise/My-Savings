@@ -1,6 +1,7 @@
 package com.fredy.mysavings.Repository
 
 import android.util.Log
+import co.yml.charts.common.extensions.isNotNull
 import com.fredy.mysavings.Data.Database.Entity.Account
 import com.fredy.mysavings.Util.TAG
 import com.google.firebase.Firebase
@@ -81,7 +82,7 @@ class AccountRepositoryImpl(): AccountRepository {
         val listener = Firebase.firestore.collection(
             "account"
         ).whereEqualTo(
-            "userIdFk", currentUser!!.uid
+            "userIdFk", if (currentUser.isNotNull()) currentUser!!.uid else ""
         ).addSnapshotListener { value, error ->
             error?.let {
                 close(it)
@@ -109,7 +110,7 @@ class AccountRepositoryImpl(): AccountRepository {
         val listener = Firebase.firestore.collection(
             "account"
         ).whereEqualTo(
-            "userIdFk", currentUser!!.uid
+            "userIdFk", if (currentUser.isNotNull()) currentUser!!.uid else ""
         ).addSnapshotListener { value, error ->
             error?.let {
                 Log.e(
@@ -139,7 +140,7 @@ class AccountRepositoryImpl(): AccountRepository {
         val listener = Firebase.firestore.collection(
             "account"
         ).whereEqualTo(
-            "userIdFk", currentUser!!.uid
+            "userIdFk", if (currentUser.isNotNull()) currentUser!!.uid else ""
         ).addSnapshotListener { value, error ->
             error?.let {
                 Log.e(

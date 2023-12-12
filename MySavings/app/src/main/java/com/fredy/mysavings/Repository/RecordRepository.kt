@@ -151,7 +151,7 @@ class RecordRepositoryImpl(): RecordRepository {
         ).whereLessThanOrEqualTo(
             "recordTimestamp", endDate
         ).whereEqualTo(
-            "userIdFk", currentUser!!.uid
+            "userIdFk", if (currentUser.isNotNull()) currentUser!!.uid else ""
         ).orderBy(
             "recordTimestamp",
             Query.Direction.DESCENDING
@@ -223,7 +223,7 @@ class RecordRepositoryImpl(): RecordRepository {
         ).whereEqualTo(
             "categoryIdFk", categoryId
         ).whereEqualTo(
-            "userIdFk", currentUser!!.uid
+            "userIdFk", if (currentUser.isNotNull()) currentUser!!.uid else ""
         ).orderBy(
             "recordTimestamp",
             Query.Direction.DESCENDING
@@ -295,7 +295,7 @@ class RecordRepositoryImpl(): RecordRepository {
             "recordType",
             recordType
         ).whereEqualTo(
-            "userIdFk", currentUser!!.uid
+            "userIdFk", if (currentUser.isNotNull()) currentUser!!.uid else ""
         ).orderBy(
             "recordTimestamp",
             Query.Direction.DESCENDING
@@ -376,7 +376,7 @@ class RecordRepositoryImpl(): RecordRepository {
             "recordCurrency",
             currency.ifEmpty { listOf("") }
         ).whereEqualTo(
-            "userIdFk", currentUser!!.uid
+            "userIdFk", if (currentUser.isNotNull()) currentUser!!.uid else ""
         ).orderBy(
             "recordTimestamp",
             Query.Direction.DESCENDING
@@ -468,7 +468,7 @@ class RecordRepositoryImpl(): RecordRepository {
         ).whereIn(
             "accountfk", listOf(accountId)//????????????????????????????????????????????????????? should be or
         ).whereEqualTo(
-            "userIdFk", currentUser!!.uid
+            "userIdFk", if (currentUser.isNotNull()) currentUser!!.uid else ""
         ).orderBy(
             "recordTimestamp",
             Query.Direction.DESCENDING
@@ -532,7 +532,7 @@ class RecordRepositoryImpl(): RecordRepository {
         ).whereEqualTo(
             "recordType", recordType
         ).whereEqualTo(
-            "userIdFk", currentUser!!.uid
+            "userIdFk", if (currentUser.isNotNull()) currentUser!!.uid else ""
         ).addSnapshotListener { value, error ->
             error?.let {
                 Log.e(
@@ -579,7 +579,7 @@ class RecordRepositoryImpl(): RecordRepository {
         ).whereEqualTo(
             "recordType", recordType
         ).whereEqualTo(
-            "userIdFk", currentUser!!.uid
+            "userIdFk", if (currentUser.isNotNull()) currentUser!!.uid else ""
         ).orderBy(
             "recordTimestamp",
             Query.Direction.DESCENDING
@@ -614,7 +614,7 @@ class RecordRepositoryImpl(): RecordRepository {
         val listener = Firebase.firestore.collection(
             "record"
         ).whereEqualTo(
-            "userIdFk", currentUser!!.uid
+            "userIdFk", if (currentUser.isNotNull()) currentUser!!.uid else ""
         ).whereNotEqualTo(
             "recordType", RecordType.Transfer
         ).addSnapshotListener { value, error ->

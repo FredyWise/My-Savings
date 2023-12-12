@@ -73,22 +73,28 @@ class AuthViewModel @Inject constructor(
                                 userRepository.upsertUser(
                                     userData!!
                                 )
-                                _googleState.value = GoogleSignInState(
-                                    success = result.data
-                                )
+                                _state.update {
+                                    AuthState(
+                                        isSuccess = "Sign In Success"
+                                    )
+                                }
 
                             }
 
                             is Resource.Loading -> {
-                                _googleState.value = GoogleSignInState(
-                                    loading = true
-                                )
+                                _state.update {
+                                    AuthState(
+                                        isLoading = true
+                                    )
+                                }
                             }
 
                             is Resource.Error -> {
-                                _googleState.value = GoogleSignInState(
-                                    error = result.message!!
-                                )
+                                _state.update {
+                                    AuthState(
+                                        isError = result.message
+                                    )
+                                }
                             }
                         }
                     }
@@ -178,8 +184,18 @@ class AuthViewModel @Inject constructor(
                 }
             }
 
+            AuthEvent.getCurrentUser -> {
+                viewModelScope.launch {
+                    repository.getCurrentUser()?.let { currentUser ->
+                        _state.update { it.copy(signedInUser = currentUser) }
+                    }
+                }
+            }
 
             AuthEvent.signOut -> {
+                _state.update {
+                    AuthState()
+                }
                 viewModelScope.launch {
                     repository.signOut()
                 }

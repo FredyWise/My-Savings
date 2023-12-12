@@ -41,7 +41,7 @@ fun NavGraphBuilder.authenticationNavGraph(
 
             LaunchedEffect(
                 key1 = state.isError,
-                key2 = googleSignInState.error
+                key2 = state.isSuccess,
             ) {
                 if (state.isError?.isNotEmpty() == true) {
                     viewModel.onEvent(AuthEvent.signOut)
@@ -52,19 +52,6 @@ fun NavGraphBuilder.authenticationNavGraph(
                         Toast.LENGTH_LONG
                     ).show()
                 }
-                if (googleSignInState.error.isNotEmpty()) {
-                    viewModel.onEvent(AuthEvent.signOut)
-                    Toast.makeText(
-                        context,
-                        googleSignInState.error,
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            }
-            LaunchedEffect(
-                key1 = state.isSuccess,
-                key2 = googleSignInState.success
-            ) {
                 if (state.isSuccess?.isNotEmpty() == true) {
                     val success = state.isSuccess
                     Toast.makeText(
@@ -72,10 +59,21 @@ fun NavGraphBuilder.authenticationNavGraph(
                         "${success}",
                         Toast.LENGTH_SHORT
                     ).show()
-                    navController.popBackStack()
-                    navController.navigate(
+                    navController.navigateSingleTopTo(
                         Graph.HomeNav
                     )
+                }
+            }
+            LaunchedEffect(
+                key1 = googleSignInState.error,
+                key2 = googleSignInState.success
+            ) {
+                if (googleSignInState.error.isNotEmpty()) {
+                    Toast.makeText(
+                        context,
+                        googleSignInState.error,
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
                 if (googleSignInState.success != null) {
                     Toast.makeText(
@@ -83,8 +81,7 @@ fun NavGraphBuilder.authenticationNavGraph(
                         "Sign In Success",
                         Toast.LENGTH_SHORT
                     ).show()
-                    navController.popBackStack()
-                    navController.navigate(
+                    navController.navigateSingleTopTo(
                         Graph.HomeNav
                     )
                 }
@@ -102,11 +99,13 @@ fun NavGraphBuilder.authenticationNavGraph(
             val state by viewModel.state.collectAsStateWithLifecycle()
             val googleSignInState by viewModel.googleState
             val context = LocalContext.current
+
             LaunchedEffect(
                 key1 = state.isError,
-                key2 = googleSignInState.error
+                key2 = state.isSuccess,
             ) {
                 if (state.isError?.isNotEmpty() == true) {
+                    viewModel.onEvent(AuthEvent.signOut)
                     val error = state.isError
                     Toast.makeText(
                         context,
@@ -114,6 +113,22 @@ fun NavGraphBuilder.authenticationNavGraph(
                         Toast.LENGTH_LONG
                     ).show()
                 }
+                if (state.isSuccess?.isNotEmpty() == true) {
+                    val success = state.isSuccess
+                    Toast.makeText(
+                        context,
+                        "${success}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    navController.navigateSingleTopTo(
+                        Graph.HomeNav
+                    )
+                }
+            }
+            LaunchedEffect(
+                key1 = googleSignInState.error,
+                key2 = googleSignInState.success
+            ) {
                 if (googleSignInState.error.isNotEmpty()) {
                     Toast.makeText(
                         context,
@@ -121,31 +136,13 @@ fun NavGraphBuilder.authenticationNavGraph(
                         Toast.LENGTH_SHORT
                     ).show()
                 }
-            }
-            LaunchedEffect(
-                key1 = state.isSuccess,
-                key2 = googleSignInState.success
-            ) {
-                if (state.isSuccess?.isNotEmpty() == true) {
-                    val success = state.isSuccess
-                    Toast.makeText(
-                        context,
-                        "$success",
-                        Toast.LENGTH_LONG
-                    ).show()
-                    navController.popBackStack()
-                    navController.navigate(
-                        Graph.HomeNav
-                    )
-                }
                 if (googleSignInState.success != null) {
                     Toast.makeText(
                         context,
-                        "Sign Up Success",
+                        "Sign In Success",
                         Toast.LENGTH_SHORT
                     ).show()
-                    navController.popBackStack()
-                    navController.navigate(
+                    navController.navigateSingleTopTo(
                         Graph.HomeNav
                     )
                 }

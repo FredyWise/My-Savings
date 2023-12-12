@@ -51,6 +51,7 @@ class AnalysisViewModel @Inject constructor(
             }
         }
     }
+
     private val _resource = mutableStateOf(
         ResourceState()
     )

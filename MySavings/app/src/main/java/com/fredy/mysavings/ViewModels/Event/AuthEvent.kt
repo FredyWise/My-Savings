@@ -19,5 +19,6 @@ sealed interface AuthEvent {
     ): AuthEvent
 
     object signOut: AuthEvent
+    object getCurrentUser: AuthEvent
 
 }

@@ -19,6 +19,7 @@ import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.fredy.mysavings.Util.TAG
 import com.fredy.mysavings.ViewModels.AuthViewModel
+import com.fredy.mysavings.ViewModels.Event.AuthEvent
 import com.fredy.mysavings.ViewModels.MainScreenViewModel
 import com.fredy.mysavings.ui.NavigationComponent.MainScreen
 import com.fredy.mysavings.ui.Screens.AddBulk.BulkAddScreen
@@ -43,7 +44,6 @@ fun NavGraphRoot(
             Log.e(TAG, "NavGraphRoot: ")
             val state by authViewModel.state.collectAsStateWithLifecycle()
             val startDestination = if (state.signedInUser != null) Graph.HomeNav else Graph.Auth
-            Log.e(TAG, "NavGraphRoot: ")
             navController.navigateSingleTopTo(
                 startDestination
             )
@@ -59,14 +59,16 @@ fun NavGraphRoot(
             composable(
                 route = Graph.HomeNav
             ) {
-                val viewModel: MainScreenViewModel = hiltViewModel()
-                val currentUser by viewModel.currentUser.collectAsStateWithLifecycle()
+                authViewModel.onEvent(AuthEvent.getCurrentUser)
+                val state by authViewModel.state.collectAsStateWithLifecycle()
 
-                MainScreen(
-                    rootNavController = navController,
-                    signOut = viewModel::signOut,
-                    currentUser = currentUser
-                )
+                state.signedInUser?.let {
+                    MainScreen(
+                        rootNavController = navController,
+                        signOut = {authViewModel.onEvent(AuthEvent.signOut)},
+                        currentUser = it
+                    )
+                }
             }
             composable(
                 route = NavigationRoute.BulkAdd.route,

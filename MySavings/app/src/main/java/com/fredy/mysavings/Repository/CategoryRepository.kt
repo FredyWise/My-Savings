@@ -1,5 +1,6 @@
 package com.fredy.mysavings.Repository
 
+import co.yml.charts.common.extensions.isNotNull
 import com.fredy.mysavings.Data.Database.Entity.Category
 import com.fredy.mysavings.Data.Enum.RecordType
 import com.google.firebase.Firebase
@@ -72,7 +73,7 @@ class CategoryRepositoryImpl(): CategoryRepository {
         val listener = Firebase.firestore.collection(
             "category"
         ).whereEqualTo(
-            "userIdFk", currentUser!!.uid
+            "userIdFk", if (currentUser.isNotNull()) currentUser!!.uid else ""
         ).addSnapshotListener { value, error ->
             error?.let {
                 close(it)
@@ -97,7 +98,7 @@ class CategoryRepositoryImpl(): CategoryRepository {
         val listener = Firebase.firestore.collection(
             "category"
         ).whereEqualTo(
-            "userIdFk", currentUser!!.uid
+            "userIdFk", if (currentUser.isNotNull()) currentUser!!.uid else ""
         ).whereEqualTo(
             "categoryType", type.name
         ).addSnapshotListener { value, error ->
