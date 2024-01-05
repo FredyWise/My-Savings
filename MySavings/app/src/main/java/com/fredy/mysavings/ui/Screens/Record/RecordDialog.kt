@@ -86,6 +86,7 @@ fun RecordDialog(
                                 .padding(4.dp),
                             imageVector = Icons.Outlined.Close,
                             contentDescription = "",
+                            tint = onSurface,
                         )
                         Divider(
                             modifier = Modifier.weight(
@@ -111,6 +112,7 @@ fun RecordDialog(
                                 .padding(4.dp),
                             imageVector = Icons.Outlined.Delete,
                             contentDescription = "",
+                            tint = onSurface,
                         )
                         Icon(
                             modifier = Modifier
@@ -126,6 +128,7 @@ fun RecordDialog(
                                 .padding(4.dp),
                             imageVector = Icons.Outlined.Edit,
                             contentDescription = "",
+                            tint = onSurface,
                         )
                     }
                     Column(

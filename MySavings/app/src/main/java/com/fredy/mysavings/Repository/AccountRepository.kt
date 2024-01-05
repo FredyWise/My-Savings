@@ -74,7 +74,7 @@ class AccountRepositoryImpl(): AccountRepository {
 
     override fun getUserAccountOrderedByName() = callbackFlow<List<Account>> {
         val currentUser = Firebase.auth.currentUser
-        Log.e(
+        Log.i(
             TAG,
             "getUserAccountOrderedByName: " + currentUser!!.uid,
 
@@ -91,7 +91,7 @@ class AccountRepositoryImpl(): AccountRepository {
                 val data = it.documents.map { document ->
                     document.toObject<Account>()!!
                 }
-                Log.e(
+                Log.i(
                     TAG,
                     "getUserAccountOrderedByName: " + data,
 
@@ -114,13 +114,13 @@ class AccountRepositoryImpl(): AccountRepository {
         ).addSnapshotListener { value, error ->
             error?.let {
                 Log.e(
-                    "BABI",
+                    TAG,
                     "getUserAccountTotalBalance2: " + it.message,
                 )
             }
             value?.let {
-                Log.e(
-                    "BABI",
+                Log.i(
+                    TAG,
                     "getUserAccountTotalBalance2: " + it.documents,
                 )
                 val data = it.sumOf { document ->
@@ -143,14 +143,14 @@ class AccountRepositoryImpl(): AccountRepository {
             "userIdFk", if (currentUser.isNotNull()) currentUser!!.uid else ""
         ).addSnapshotListener { value, error ->
             error?.let {
-                Log.e(
-                    "BABI",
+                Log.i(
+                    TAG,
                     "getUserAccountTotalBalance2: " + it.message,
                 )
             }
             value?.let {
-                Log.e(
-                    "BABI",
+                Log.i(
+                    TAG,
                     "getUserAccountTotalBalance2: " + it.documents,
                 )
                 val data = it.map { document ->

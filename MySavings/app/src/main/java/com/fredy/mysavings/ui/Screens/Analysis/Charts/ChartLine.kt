@@ -1,4 +1,4 @@
-package com.fredy.mysavings.ui.Screens.Analysis
+package com.fredy.mysavings.ui.Screens.Analysis.Charts
 
 import android.util.Log
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -6,10 +6,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.unit.dp
 import co.yml.charts.axis.AxisData
 import co.yml.charts.common.model.PlotType

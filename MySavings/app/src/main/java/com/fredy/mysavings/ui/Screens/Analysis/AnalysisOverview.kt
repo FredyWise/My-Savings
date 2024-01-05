@@ -44,8 +44,9 @@ import com.fredy.mysavings.Util.defaultColors
 import com.fredy.mysavings.Util.formatAmount
 import com.fredy.mysavings.Util.formatBalanceAmount
 import com.fredy.mysavings.Util.isExpense
-import com.fredy.mysavings.ViewModel.AnalysisState
+import com.fredy.mysavings.ViewModels.AnalysisState
 import com.fredy.mysavings.ViewModels.Event.AnalysisEvent
+import com.fredy.mysavings.ui.Screens.Analysis.Charts.ChartSlimDonutWithTitle
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.LoadingAnimation
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleEntityItem
 

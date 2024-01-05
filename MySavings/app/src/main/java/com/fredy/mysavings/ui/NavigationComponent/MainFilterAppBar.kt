@@ -15,17 +15,18 @@ import com.fredy.mysavings.ui.Screens.ZCommonComponent.FilterDialog
 import java.time.LocalDate
 
 @Composable
-fun AdditionalAppBar(
+fun MainFilterAppBar(
     modifier: Modifier = Modifier,
     selectedDate: LocalDate,
     onDateChange: (LocalDate) -> Unit,
     selectedDateFormat: String,
     isChoosingFilter: Boolean = false,
     selectedFilter: String,
-    onDismissFilterDialog: () -> Unit,
     onSelectFilter: (FilterType) -> Unit,
     checkboxesFilter: List<String> = emptyList(),
+    selectedCheckbox: List<String> = emptyList(),
     onSelectCheckboxFilter: (List<String>) -> Unit,
+    onDismissFilterDialog: () -> Unit,
     totalExpense: Double,
     totalIncome: Double,
     totalBalance: Double,
@@ -40,6 +41,7 @@ fun AdditionalAppBar(
             title = "Display Option",
             selectedName = selectedFilter,
             checkboxList = checkboxesFilter,
+            selectedCheckbox = selectedCheckbox,
             onDismissRequest = onDismissFilterDialog,
             onSelectItem = { item->
                 onSelectFilter(item)
@@ -82,7 +84,6 @@ fun AdditionalAppBar(
                 ),
             )
         )
-
         content()
     }
 }

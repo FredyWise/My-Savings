@@ -21,13 +21,13 @@ class CurrencyRepositoryImpl @Inject constructor(
         return flow {
             emit(Resource.Loading())
             val response = api.getRates(base)
-            Log.e(
+            Log.i(
                 TAG,
                 "convert: test success"+response,
 
                 )
             val result = response.body()
-            Log.e(
+            Log.i(
                 TAG,
                 "convert: test success"+result,
 

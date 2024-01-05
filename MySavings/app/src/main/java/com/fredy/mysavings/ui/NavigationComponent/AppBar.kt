@@ -1,11 +1,9 @@
 package com.fredy.mysavings.ui.NavigationComponent
 
-import android.util.Log
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -21,14 +19,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.fredy.mysavings.Data.Database.Entity.UserData
 import com.fredy.mysavings.R
-import com.fredy.mysavings.Util.TAG
 
 @Composable
 fun AppBar(
@@ -36,6 +30,7 @@ fun AppBar(
     backgroundColor: Color = MaterialTheme.colorScheme.surface,
     contentColor: Color = MaterialTheme.colorScheme.onSurface,
     onNavigationIconClick: () -> Unit,
+    onProfilePictureClick: () -> Unit,
     currentUser: UserData,
 ) {
     TopAppBar(modifier = modifier,
@@ -53,28 +48,35 @@ fun AppBar(
             }
         },
         actions = {
-            if(currentUser.profilePictureUrl != null && currentUser.profilePictureUrl != "null") {
-                AsyncImage(
-                    model = currentUser.profilePictureUrl,
-                    contentDescription = "Profile picture",
-                    modifier = Modifier
-                        .padding(horizontal = 8.dp)
-                        .size(40.dp)
-                        .clip(CircleShape),
-                    contentScale = ContentScale.Crop
-                )
-            }else {
-                Icon(
-                    imageVector = Icons.Default.AccountCircle,
-                    contentDescription = "Profile picture",
-                    modifier = Modifier
-                        .padding(horizontal = 8.dp)
-                        .size(40.dp)
-                        .clip(CircleShape),
-                )
+            Box(
+                modifier = Modifier
+                    .padding(
+                        horizontal = 8.dp
+                    )
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .clickable {
+                        onProfilePictureClick()
+                    },
+            ) {
+                if (currentUser.profilePictureUrl != null && currentUser.profilePictureUrl != "null") {
+                    AsyncImage(
+                        model = currentUser.profilePictureUrl,
+                        contentDescription = "Profile picture",
+                        modifier = Modifier
+                            .size(40.dp),
+                        contentScale = ContentScale.Crop
+                    )
+                } else {
+                    Icon(
+                        imageVector = Icons.Default.AccountCircle,
+                        contentDescription = "Profile picture",
+                        modifier = Modifier
+                            .size(40.dp),
+                    )
+                }
             }
-        }
-    )
+        },)
 }
 
 

@@ -1,4 +1,4 @@
-package com.fredy.mysavings.ViewModel
+package com.fredy.mysavings.ViewModels
 
 import android.util.Log
 import androidx.lifecycle.ViewModel

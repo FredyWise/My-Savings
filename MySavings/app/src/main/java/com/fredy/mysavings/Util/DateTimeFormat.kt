@@ -1,7 +1,7 @@
 package com.fredy.mysavings.Util
 
 import com.fredy.mysavings.Data.Enum.FilterType
-import com.fredy.mysavings.ViewModel.FilterState
+import com.fredy.mysavings.ViewModels.FilterState
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime

@@ -6,7 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.fredy.mysavings.Util.ResourceState
-import com.fredy.mysavings.ViewModel.AnalysisState
+import com.fredy.mysavings.ViewModels.AnalysisState
 import com.fredy.mysavings.ViewModels.Event.AnalysisEvent
 import com.fredy.mysavings.ui.Screens.Analysis.AnalysisAccount
 import com.fredy.mysavings.ui.Screens.Analysis.AnalysisCategory

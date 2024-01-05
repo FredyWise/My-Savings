@@ -1,4 +1,4 @@
-package com.fredy.mysavings.ui.Screens.Analysis
+package com.fredy.mysavings.ui.Screens.Analysis.Charts
 
 import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
@@ -10,7 +10,6 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Text
@@ -28,7 +27,6 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.Util.BalanceColor
-import com.fredy.mysavings.Util.formatAmount
 import com.fredy.mysavings.Util.formatCharAmount
 
 @Composable

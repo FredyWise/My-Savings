@@ -21,7 +21,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.fredy.mysavings.ViewModel.CalcState
+import com.fredy.mysavings.ViewModels.CalcState
 import com.fredy.mysavings.ViewModels.Event.CalcEvent
 import com.fredy.mysavings.ViewModels.Event.CalcOperation
 

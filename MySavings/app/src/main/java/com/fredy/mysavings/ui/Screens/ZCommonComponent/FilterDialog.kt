@@ -26,6 +26,7 @@ fun FilterDialog(
     title: String,
     selectedName: String,
     checkboxList: List<String> = emptyList(),
+    selectedCheckbox: List<String> = emptyList(),
     onDismissRequest: () -> Unit,
     onSelectItem: (FilterType) -> Unit,
     onSelectCheckbox: (List<String>) -> Unit,
@@ -92,7 +93,7 @@ fun FilterDialog(
             }
         }
         if (checkboxList.isNotEmpty()) {
-            onSelectCheckbox(CheckBoxes(list = checkboxList))
+            onSelectCheckbox(CheckBoxes(list = checkboxList, selectedCheckbox = selectedCheckbox))
         }
     }
 }

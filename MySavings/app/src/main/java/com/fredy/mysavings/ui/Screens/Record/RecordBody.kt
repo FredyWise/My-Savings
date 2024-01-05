@@ -30,7 +30,7 @@ import com.fredy.mysavings.ViewModels.Event.RecordsEvent
 import com.fredy.mysavings.Util.formatBalanceAmount
 import com.fredy.mysavings.Util.formatDay
 import com.fredy.mysavings.Util.isTransfer
-import com.fredy.mysavings.ViewModel.RecordMap
+import com.fredy.mysavings.ViewModels.RecordMap
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.CustomStickyHeader
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleEntityItem
 

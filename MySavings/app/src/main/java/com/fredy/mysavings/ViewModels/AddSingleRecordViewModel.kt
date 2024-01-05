@@ -1,4 +1,4 @@
-package com.fredy.mysavings.ViewModel
+package com.fredy.mysavings.ViewModels
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue

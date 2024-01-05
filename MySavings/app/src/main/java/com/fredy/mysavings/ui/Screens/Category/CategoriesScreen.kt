@@ -14,7 +14,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.Data.Database.Entity.Category
 import com.fredy.mysavings.R
-import com.fredy.mysavings.ViewModel.CategoryState
+import com.fredy.mysavings.ViewModels.CategoryState
 import com.fredy.mysavings.ViewModels.Event.CategoryEvent
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SearchBar
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleButton

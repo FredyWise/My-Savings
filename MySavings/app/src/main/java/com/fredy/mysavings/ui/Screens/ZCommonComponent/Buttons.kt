@@ -40,21 +40,23 @@ import com.fredy.mysavings.Util.currencyCodes
 fun CheckBoxes(
     modifier: Modifier = Modifier,
     list: List<String>,
+    selectedCheckbox: List<String>,
     enableCheckAllBox: Boolean = true,
     textColor: Color = MaterialTheme.colorScheme.onSurface
 ): List<String> {
     val checkboxes = remember {
         list.map {
             ToggleableInfo(
-                isChecked = true, text = it
+                isChecked = selectedCheckbox.contains(it), text = it
             )
         }.toMutableStateList()
     }
 
     if (enableCheckAllBox) {
         var triState by remember {
-            mutableStateOf(ToggleableState.On)
+            mutableStateOf(ToggleableState.Off)
         }
+        triState = if (checkboxes.all { it.isChecked })ToggleableState.On else ToggleableState.Off
         val toggleTriState = {
             triState = when (triState) {
                 ToggleableState.Indeterminate -> ToggleableState.On

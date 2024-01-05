@@ -20,7 +20,6 @@ import androidx.navigation.navigation
 import com.fredy.mysavings.Util.TAG
 import com.fredy.mysavings.ViewModels.AuthViewModel
 import com.fredy.mysavings.ViewModels.Event.AuthEvent
-import com.fredy.mysavings.ViewModels.MainScreenViewModel
 import com.fredy.mysavings.ui.NavigationComponent.MainScreen
 import com.fredy.mysavings.ui.Screens.AddBulk.BulkAddScreen
 import com.fredy.mysavings.ui.Screens.AddSingle.AddScreen
@@ -65,7 +64,11 @@ fun NavGraphRoot(
                 state.signedInUser?.let {
                     MainScreen(
                         rootNavController = navController,
-                        signOut = {authViewModel.onEvent(AuthEvent.signOut)},
+                        signOut = {
+                            authViewModel.onEvent(
+                                AuthEvent.signOut
+                            )
+                        },
                         currentUser = it
                     )
                 }
@@ -87,7 +90,10 @@ fun NavGraphRoot(
             }
             composable(
                 route = "${NavigationRoute.Add.route}?id={id}",
-                arguments = listOf(navArgument("id") { type = NavType.StringType })
+                arguments = listOf(navArgument("id") {
+                    type = NavType.StringType
+                    defaultValue = "-1"
+                })
             ) {
                 Log.e(TAG, "NavGraphRoot: Add")
                 val id = it.arguments?.getString("id") ?: "-1"
@@ -119,6 +125,11 @@ fun NavGraphRoot(
                 route = NavigationRoute.Reset.route
             ) {
 //            ResetScreen()
+            }
+            composable(
+                route = NavigationRoute.Profile.route
+            ) {
+//            ProfileScreen()
             }
         }
 

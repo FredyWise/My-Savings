@@ -95,6 +95,14 @@ sealed class NavigationRoute(
     )
 
     //top bar
+    object Profile: NavigationRoute(
+        route = "profile",
+        title = "Profile",
+        contentDescription = "Go to profile screen",
+        icon = Icons.Default.Settings,
+        iconNot = Icons.Outlined.Settings
+    )
+
     object Preferences: NavigationRoute(
         route = "preferences",
         title = "Preferences",
@@ -160,38 +168,45 @@ sealed class NavigationRoute(
         iconNot = Icons.Outlined.PieChart
     )
     object AnalysisOverview: NavigationRoute(
-        route = "analysisOverview",
-        title = "AnalysisOverview",
-        contentDescription = "Go to AnalysisOverview Screen",
+        route = "analysis Overview",
+        title = "Analysis Overview",
+        contentDescription = "Go to Analysis Overview Screen",
         icon = Icons.Default.PieChart,
         iconNot = Icons.Outlined.PieChart
     )
 
     object AnalysisFlow: NavigationRoute(
-        route = "analysisFlow",
-        title = "AnalysisFlow",
-        contentDescription = "Go to AnalysisFlow Screen",
+        route = "analysis Flow",
+        title = "Analysis Flow",
+        contentDescription = "Go to Analysis Flow Screen",
         icon = Icons.Default.PieChart,
         iconNot = Icons.Outlined.PieChart
     )
 
     object AnalysisCategory: NavigationRoute(
-        route = "analysisCategory",
-        title = "AnalysisCategory",
-        contentDescription = "Go to AnalysisCategory Screen",
+        route = "analysis Category",
+        title = "Analysis Category",
+        contentDescription = "Go to Analysis Category Screen",
         icon = Icons.Default.PieChart,
         iconNot = Icons.Outlined.PieChart
     )
 
     object AnalysisAccount: NavigationRoute(
-        route = "analysisAccount",
-        title = "AnalysisAccount",
-        contentDescription = "Go to AnalysisAccount Screen",
+        route = "analysis Account",
+        title = "Analysis Account",
+        contentDescription = "Go to Analysis Account Screen",
         icon = Icons.Default.PieChart,
         iconNot = Icons.Outlined.PieChart
     )
 
     //other screen
+    object Detail: NavigationRoute(
+        route = "detail",
+        title = "Detail",
+        contentDescription = "Go to Detail Screen",
+        icon = Icons.Default.AddBox,
+        iconNot = Icons.Outlined.AddBox
+    )
     object Add: NavigationRoute(
         route = "add",
         title = "Add",

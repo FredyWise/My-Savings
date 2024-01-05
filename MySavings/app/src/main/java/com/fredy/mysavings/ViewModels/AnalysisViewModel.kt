@@ -1,11 +1,9 @@
-package com.fredy.mysavings.ViewModel
+package com.fredy.mysavings.ViewModels
 
-import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.fredy.mysavings.Data.Database.Converter.TimestampConverter
 import com.fredy.mysavings.Data.Database.Entity.Category
 import com.fredy.mysavings.Data.Database.Entity.Record
 import com.fredy.mysavings.Data.Enum.FilterType
@@ -15,13 +13,11 @@ import com.fredy.mysavings.Repository.AccountRepository
 import com.fredy.mysavings.Repository.CategoryWithAmount
 import com.fredy.mysavings.Repository.RecordRepository
 import com.fredy.mysavings.Util.ResourceState
-import com.fredy.mysavings.Util.TAG
 import com.fredy.mysavings.Util.isExpense
 import com.fredy.mysavings.Util.minusFilterDate
 import com.fredy.mysavings.Util.plusFilterDate
 import com.fredy.mysavings.Util.updateFilterState
 import com.fredy.mysavings.ViewModels.Event.AnalysisEvent
-import com.fredy.mysavings.ViewModels.Event.RecordsEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -44,7 +40,7 @@ class AnalysisViewModel @Inject constructor(
 ): ViewModel() {
     init {
         viewModelScope.launch {
-            accountRepository.getUserAvailableCurrency().collectLatest { currency->
+            accountRepository.getUserAvailableCurrency().collectLatest { currency ->
                 _filterState.update {
                     it.copy(currencies = currency)
                 }
@@ -61,6 +57,7 @@ class AnalysisViewModel @Inject constructor(
     private val _filterState = MutableStateFlow(
         FilterState()
     )
+
     private val _availableCurrency = accountRepository.getUserAvailableCurrency().stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(),
@@ -72,67 +69,43 @@ class AnalysisViewModel @Inject constructor(
         when (filterState.filterType) {
             FilterType.Daily -> recordRepository.getUserCategoriesWithAmountFromSpecificTime(
                 filterState.recordType,
-                TimestampConverter.fromDateTime(
-                    filterState.start
-                ),
-                TimestampConverter.fromDateTime(
-                    filterState.end
-                ),
+                filterState.start,
+                filterState.end,
                 filterState.currencies,
             )
 
             FilterType.Weekly -> recordRepository.getUserCategoriesWithAmountFromSpecificTime(
                 filterState.recordType,
-                TimestampConverter.fromDateTime(
-                    filterState.start
-                ),
-                TimestampConverter.fromDateTime(
-                    filterState.end
-                ),
+                filterState.start,
+                filterState.end,
                 filterState.currencies
             )
 
             FilterType.Monthly -> recordRepository.getUserCategoriesWithAmountFromSpecificTime(
                 filterState.recordType,
-                TimestampConverter.fromDateTime(
-                    filterState.start
-                ),
-                TimestampConverter.fromDateTime(
-                    filterState.end
-                ),
+                filterState.start,
+                filterState.end,
                 filterState.currencies
             )
 
             FilterType.Per3Months -> recordRepository.getUserCategoriesWithAmountFromSpecificTime(
                 filterState.recordType,
-                TimestampConverter.fromDateTime(
-                    filterState.start
-                ),
-                TimestampConverter.fromDateTime(
-                    filterState.end
-                ),
+                filterState.start,
+                filterState.end,
                 filterState.currencies
             )
 
             FilterType.Per6Months -> recordRepository.getUserCategoriesWithAmountFromSpecificTime(
                 filterState.recordType,
-                TimestampConverter.fromDateTime(
-                    filterState.start
-                ),
-                TimestampConverter.fromDateTime(
-                    filterState.end
-                ),
+                filterState.start,
+                filterState.end,
                 filterState.currencies
             )
 
             FilterType.Yearly -> recordRepository.getUserCategoriesWithAmountFromSpecificTime(
                 filterState.recordType,
-                TimestampConverter.fromDateTime(
-                    filterState.start
-                ),
-                TimestampConverter.fromDateTime(
-                    filterState.end
-                ),
+                filterState.start,
+                filterState.end,
                 filterState.currencies
             )
         }
@@ -146,62 +119,38 @@ class AnalysisViewModel @Inject constructor(
         when (filterState.filterType) {
             FilterType.Daily -> recordRepository.getUserRecordsFromSpecificTime(
                 filterState.recordType,
-                TimestampConverter.fromDateTime(
-                    filterState.start
-                ),
-                TimestampConverter.fromDateTime(
-                    filterState.end
-                )
+                filterState.start,
+                filterState.end
             )
 
             FilterType.Weekly -> recordRepository.getUserRecordsFromSpecificTime(
                 filterState.recordType,
-                TimestampConverter.fromDateTime(
-                    filterState.start
-                ),
-                TimestampConverter.fromDateTime(
-                    filterState.end
-                )
+                filterState.start,
+                filterState.end
             )
 
             FilterType.Monthly -> recordRepository.getUserRecordsFromSpecificTime(
                 filterState.recordType,
-                TimestampConverter.fromDateTime(
-                    filterState.start
-                ),
-                TimestampConverter.fromDateTime(
-                    filterState.end
-                )
+                filterState.start,
+                filterState.end
             )
 
             FilterType.Per3Months -> recordRepository.getUserRecordsFromSpecificTime(
                 filterState.recordType,
-                TimestampConverter.fromDateTime(
-                    filterState.start
-                ),
-                TimestampConverter.fromDateTime(
-                    filterState.end
-                )
+                filterState.start,
+                filterState.end
             )
 
             FilterType.Per6Months -> recordRepository.getUserRecordsFromSpecificTime(
                 filterState.recordType,
-                TimestampConverter.fromDateTime(
-                    filterState.start
-                ),
-                TimestampConverter.fromDateTime(
-                    filterState.end
-                )
+                filterState.start,
+                filterState.end
             )
 
             FilterType.Yearly -> recordRepository.getUserRecordsFromSpecificTime(
                 filterState.recordType,
-                TimestampConverter.fromDateTime(
-                    filterState.start
-                ),
-                TimestampConverter.fromDateTime(
-                    filterState.end
-                )
+                filterState.start,
+                filterState.end
             )
         }
     }.stateIn(
@@ -264,11 +213,11 @@ class AnalysisViewModel @Inject constructor(
         _categoriesWithAmount,
         _recordsWithinSpecificTime,
         _availableCurrency,
-    ) { state, balanceBar, categoriesWithAmount, recordsWithinSpesificTime, availableCurrency ->
+    ) { state, balanceBar, categoriesWithAmount, recordsWithinSpecificTime, availableCurrency ->
         _resource.value = ResourceState(isLoading = true)
         state.copy(
             categoriesWithAmount = categoriesWithAmount,
-            recordsWithinTime = recordsWithinSpesificTime,
+            recordsWithinTime = recordsWithinSpecificTime,
             availableCurrency = availableCurrency,
             totalExpense = balanceBar.expense,
             totalIncome = balanceBar.income,
@@ -370,6 +319,9 @@ class AnalysisViewModel @Inject constructor(
                         currencies = event.selectedCurrencies
                     )
                 }
+                _state.update {
+                    it.copy(selectedCheckbox = event.selectedCurrencies)
+                }
             }
         }
         _filterState.update {
@@ -384,9 +336,12 @@ class AnalysisViewModel @Inject constructor(
 }
 
 data class AnalysisState(
-    val categoriesWithAmount: List<CategoryWithAmount> = listOf(CategoryWithAmount()),
+    val categoriesWithAmount: List<CategoryWithAmount> = listOf(
+        CategoryWithAmount()
+    ),
     val recordsWithinTime: List<Record> = listOf(),
     val availableCurrency: List<String> = listOf(),
+    val selectedCheckbox: List<String> = listOf(),
     val category: Category? = null,
     val totalExpense: Double = 0.0,
     val totalIncome: Double = 0.0,

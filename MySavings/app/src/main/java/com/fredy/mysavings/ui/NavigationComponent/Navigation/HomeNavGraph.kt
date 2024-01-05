@@ -2,20 +2,20 @@ package com.fredy.mysavings.ui.NavigationComponent.Navigation
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.navigation
-import com.fredy.mysavings.ViewModel.AccountViewModel
-import com.fredy.mysavings.ViewModel.AnalysisViewModel
-import com.fredy.mysavings.ViewModel.CategoryViewModel
-import com.fredy.mysavings.ViewModel.RecordViewModel
+import androidx.navigation.navArgument
+import com.fredy.mysavings.ViewModels.AccountViewModel
+import com.fredy.mysavings.ViewModels.AnalysisViewModel
+import com.fredy.mysavings.ViewModels.CategoryViewModel
+import com.fredy.mysavings.ViewModels.RecordViewModel
 import com.fredy.mysavings.ui.Screens.Account.AccountsScreen
 import com.fredy.mysavings.ui.Screens.Analysis.AnalysisScreen
 import com.fredy.mysavings.ui.Screens.Category.CategoriesScreen
@@ -87,21 +87,20 @@ fun HomeNavGraph(
                 onEvent = viewModel::onEvent
             )
         }
-//        composable(
-//            route = BottomBarRoute.Profile.route,
-//            arguments = listOf(
-//                navArgument(DETAIL_ARGUMENT_KEY) {
-//                    type = NavType.IntType
-//                    defaultValue = 0
-//                },
-//                navArgument(DETAIL_ARGUMENT_KEY2) {
-//                    type = NavType.StringType
-//                    defaultValue = "-"
-//                }
-//            )
-//        ) {
-//            ProfileScreen(navController = navController)
-//        }
+        composable(
+            route = NavigationRoute.Detail.route,
+            arguments = listOf(
+                navArgument("id") {
+                    type = NavType.StringType
+                    defaultValue = "-1"
+                },
+                navArgument("title") { type = NavType.StringType },
+            )
+        ) {
+            val id = it.arguments?.getString("id") ?: "-1"
+            val title  = it.arguments?.getString("title")
+            DetailScreen()
+        }
     }
 }
 

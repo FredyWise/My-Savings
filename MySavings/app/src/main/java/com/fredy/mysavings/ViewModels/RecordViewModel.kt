@@ -1,4 +1,4 @@
-package com.fredy.mysavings.ViewModel
+package com.fredy.mysavings.ViewModels
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
@@ -61,57 +61,33 @@ class RecordViewModel @Inject constructor(
     private val _records = _filterState.flatMapLatest { filterState ->
         when (filterState.filterType) {
             FilterType.Daily -> recordRepository.getUserTrueRecordsFromSpecificTime(
-                TimestampConverter.fromDateTime(
-                    filterState.start
-                ),
-                TimestampConverter.fromDateTime(
-                    filterState.end
-                )
+                filterState.start,
+                filterState.end
             )
 
             FilterType.Weekly -> recordRepository.getUserTrueRecordsFromSpecificTime(
-                TimestampConverter.fromDateTime(
-                    filterState.start
-                ),
-                TimestampConverter.fromDateTime(
-                    filterState.end
-                )
+                filterState.start,
+                filterState.end
             )
 
             FilterType.Monthly -> recordRepository.getUserTrueRecordsFromSpecificTime(
-                TimestampConverter.fromDateTime(
-                    filterState.start
-                ),
-                TimestampConverter.fromDateTime(
-                    filterState.end
-                )
+                filterState.start,
+                filterState.end
             )
 
             FilterType.Per3Months -> recordRepository.getUserTrueRecordsFromSpecificTime(
-                TimestampConverter.fromDateTime(
-                    filterState.start
-                ),
-                TimestampConverter.fromDateTime(
-                    filterState.end
-                )
+                filterState.start,
+                filterState.end
             )
 
             FilterType.Per6Months -> recordRepository.getUserTrueRecordsFromSpecificTime(
-                TimestampConverter.fromDateTime(
-                    filterState.start
-                ),
-                TimestampConverter.fromDateTime(
-                    filterState.end
-                )
+                filterState.start,
+                filterState.end
             )
 
             FilterType.Yearly -> recordRepository.getUserTrueRecordsFromSpecificTime(
-                TimestampConverter.fromDateTime(
-                    filterState.start
-                ),
-                TimestampConverter.fromDateTime(
-                    filterState.end
-                )
+                filterState.start,
+                filterState.end
             )
         }
     }.stateIn(
@@ -289,6 +265,9 @@ class RecordViewModel @Inject constructor(
                         currencies = event.selectedCurrencies
                     )
                 }
+                _state.update {
+                    it.copy(selectedCheckbox = event.selectedCurrencies)
+                }
             }
         }
         _filterState.update {
@@ -306,6 +285,7 @@ data class RecordState(
     val trueRecordMaps: List<RecordMap> = listOf(),
     val trueRecord: TrueRecord? = null,
     val availableCurrency: List<String> = listOf(),
+    val selectedCheckbox: List<String> = listOf(),
     val totalExpense: Double = 0.0,
     val totalIncome: Double = 0.0,
     val totalAll: Double = 0.0,
@@ -338,6 +318,6 @@ data class FilterState(
     val end: LocalDateTime = LocalDateTime.of(
         LocalDate.now().with(
             TemporalAdjusters.lastDayOfMonth()
-        ), LocalTime.MIN
+        ), LocalTime.MAX
     ),
 )

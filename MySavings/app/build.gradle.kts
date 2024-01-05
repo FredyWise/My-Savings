@@ -102,6 +102,7 @@ dependencies {
 //    val room_version = "2.6.0"
 //    implementation("androidx.room:room-ktx:$room_version")
 //    kapt("androidx.room:room-compiler:$room_version")
+
     // Chart
     implementation("co.yml:ycharts:2.1.0")
 

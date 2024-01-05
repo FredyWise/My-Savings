@@ -1,4 +1,4 @@
-package com.fredy.mysavings.ViewModel
+package com.fredy.mysavings.ViewModels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -22,8 +22,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-@HiltViewModel
-class CategoryViewModel @Inject constructor(
+
+class CategoryViewModel(
     private val categoryRepository: CategoryRepository,
 ): ViewModel() {
 

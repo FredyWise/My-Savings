@@ -268,6 +268,11 @@ fun MainScreen(
                         scaffoldState.drawerState.open()
                     }
                 },
+                onProfilePictureClick = {
+                    rootNavController.navigateSingleTopTo(
+                        NavigationRoute.Profile.route
+                    )
+                },
                 currentUser = currentUser
             )
             HomeNavGraph(

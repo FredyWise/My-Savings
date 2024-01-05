@@ -37,9 +37,9 @@ import com.fredy.mysavings.Data.Enum.RecordType
 import com.fredy.mysavings.R
 import com.fredy.mysavings.Util.ActionWithName
 import com.fredy.mysavings.Util.isTransfer
-import com.fredy.mysavings.ViewModel.AccountViewModel
-import com.fredy.mysavings.ViewModel.AddSingleRecordViewModel
-import com.fredy.mysavings.ViewModel.CategoryViewModel
+import com.fredy.mysavings.ViewModels.AccountViewModel
+import com.fredy.mysavings.ViewModels.AddSingleRecordViewModel
+import com.fredy.mysavings.ViewModels.CategoryViewModel
 import com.fredy.mysavings.ViewModels.Event.AccountEvent
 import com.fredy.mysavings.ViewModels.Event.AddRecordEvent
 import com.fredy.mysavings.ViewModels.Event.CategoryEvent
