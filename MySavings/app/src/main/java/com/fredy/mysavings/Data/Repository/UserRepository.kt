@@ -1,4 +1,4 @@
-package com.fredy.mysavings.Repository
+package com.fredy.mysavings.Data.Repository
 
 import com.fredy.mysavings.Data.Database.Entity.UserData
 import com.google.firebase.Firebase

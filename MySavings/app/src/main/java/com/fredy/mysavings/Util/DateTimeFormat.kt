@@ -15,15 +15,27 @@ fun formatDate(date: LocalDate): String {
     ).format(date)
 }
 
+fun formatMonth(date: LocalDate): String {
+    return DateTimeFormatter.ofPattern(
+        "MMMM, YYYY "
+    ).format(date)
+}
+
 fun formatDay(date: LocalDate): String {
     return DateTimeFormatter.ofPattern(
         "MMM dd, EEEE "
     ).format(date)
 }
 
+fun formatDayTime(dateTime: LocalDateTime): String {
+    return DateTimeFormatter.ofPattern(
+        "MMM dd, hh:mm a"
+    ).format(dateTime)
+}
+
 fun formatTime(time: LocalTime): String {
     return DateTimeFormatter.ofPattern(
-        "hh:mm"
+        "hh:mm a"
     ).format(time)
 }
 

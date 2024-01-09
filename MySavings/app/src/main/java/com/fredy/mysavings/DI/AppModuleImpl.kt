@@ -5,18 +5,18 @@ import android.util.Log
 import com.fredy.mysavings.Data.APIs.ApiCredentials
 import com.fredy.mysavings.Data.APIs.CurrencyModels.CurrencyApi
 import com.fredy.mysavings.Data.Database.Entity.UserData
-import com.fredy.mysavings.Repository.AccountRepository
-import com.fredy.mysavings.Repository.AccountRepositoryImpl
-import com.fredy.mysavings.Repository.AuthRepository
-import com.fredy.mysavings.Repository.AuthRepositoryImpl
-import com.fredy.mysavings.Repository.CategoryRepository
-import com.fredy.mysavings.Repository.CategoryRepositoryImpl
-import com.fredy.mysavings.Repository.CurrencyRepository
-import com.fredy.mysavings.Repository.CurrencyRepositoryImpl
-import com.fredy.mysavings.Repository.RecordRepository
-import com.fredy.mysavings.Repository.RecordRepositoryImpl
-import com.fredy.mysavings.Repository.UserRepository
-import com.fredy.mysavings.Repository.UserRepositoryImpl
+import com.fredy.mysavings.Data.Repository.AccountRepository
+import com.fredy.mysavings.Data.Repository.AccountRepositoryImpl
+import com.fredy.mysavings.Data.Repository.AuthRepository
+import com.fredy.mysavings.Data.Repository.AuthRepositoryImpl
+import com.fredy.mysavings.Data.Repository.CategoryRepository
+import com.fredy.mysavings.Data.Repository.CategoryRepositoryImpl
+import com.fredy.mysavings.Data.Repository.CurrencyRepository
+import com.fredy.mysavings.Data.Repository.CurrencyRepositoryImpl
+import com.fredy.mysavings.Data.Repository.RecordRepository
+import com.fredy.mysavings.Data.Repository.RecordRepositoryImpl
+import com.fredy.mysavings.Data.Repository.UserRepository
+import com.fredy.mysavings.Data.Repository.UserRepositoryImpl
 import com.fredy.mysavings.Util.TAG
 import com.fredy.mytest.APIs.TextCorrectionModule.TypeWiseApi
 import com.google.android.gms.auth.api.identity.Identity
@@ -25,6 +25,7 @@ import com.google.firebase.auth.FirebaseAuth
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ActivityContext
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
@@ -53,11 +54,10 @@ object AppModuleImpl/*: AppModule*/ {
         UserData(
             firebaseUserId = uid,
             username = displayName,
-            email = email,
+            emailOrPhone = email,
             profilePictureUrl = photoUrl.toString()
         )
     }
-
 
     @Provides
     @Singleton

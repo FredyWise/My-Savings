@@ -1,18 +1,21 @@
 package com.fredy.mysavings.ViewModels
 
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fredy.mysavings.Data.Database.Entity.Account
 import com.fredy.mysavings.Data.Database.Entity.Category
 import com.fredy.mysavings.Data.Enum.SortType
-import com.fredy.mysavings.Repository.AccountRepository
-import com.fredy.mysavings.Repository.CategoryRepository
-import com.fredy.mysavings.Repository.RecordRepository
-import com.fredy.mysavings.Repository.TrueRecord
+import com.fredy.mysavings.Data.Repository.AccountRepository
+import com.fredy.mysavings.Data.Repository.CategoryRepository
+import com.fredy.mysavings.Data.Repository.RecordRepository
+import com.fredy.mysavings.Data.Repository.TrueRecord
 import com.fredy.mysavings.Util.ResourceState
+import com.fredy.mysavings.Util.TAG
 import com.fredy.mysavings.Util.minusFilterDate
 import com.fredy.mysavings.Util.plusFilterDate
 import com.fredy.mysavings.Util.updateFilterState
@@ -49,20 +52,33 @@ class DetailViewModel @Inject constructor(
         DetailData()
     )
 
+    private val _account = _data.flatMapLatest {
+
+        Log.i(TAG, "onEvent: account")
+        accountRepository.getAccount(it.id) }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(),
+        Account()
+    )
+    private val _category = _data.flatMapLatest {
+        Log.i(TAG, "onEvent: category")
+        categoryRepository.getCategory(it.id) }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(),
+        Category()
+    )
+
     private val _records = _data.flatMapLatest { data ->
         when (data.title) {
             DetailType.Account -> {
-//                data.update {
-//                    it.copy(
-//                        account = accountRepository.getAccount(data.id)
-//                    )
-//                }
+                Log.i(TAG, "onEvent: record account")
                 recordRepository.getUserAccountRecordsOrderedByDateTime(
                     data.id
                 )
             }
 
             DetailType.Category -> {
+                Log.i(TAG, "onEvent: record category")
                 recordRepository.getUserCategoryRecordsOrderedByDateTime(
                     data.id
                 )
@@ -83,9 +99,11 @@ class DetailViewModel @Inject constructor(
         _state,
         _sortType,
         _records,
-        _data,
-    ) { state, sortType, records, data ->
+        _account,
+        _category
+    ) { state, sortType, records, account, category ->
         _resource.value = ResourceState(isLoading = true)
+        Log.i(TAG, "combine: "+records+account+category)
         state.copy(
             trueRecordMaps = records.groupBy {
                 it.record.recordDateTime.toLocalDate()
@@ -99,7 +117,8 @@ class DetailViewModel @Inject constructor(
                     records = it.value
                 )
             },
-            data = data,
+            account = account,
+            category = category,
             sortType = sortType,
         )
     }.onCompletion {
@@ -145,14 +164,14 @@ data class DetailState(
     val trueRecordMaps: List<RecordMap> = listOf(),
     val showDialog: Boolean = false,
     val sortType: SortType = SortType.ASCENDING,
-    val data: DetailData = DetailData()
+    val data: DetailData = DetailData(),
+    val account: Account = Account(),
+    val category: Category = Category()
 )
 
 data class DetailData(
     val id: String = "-1",
-    val title: DetailType = DetailType.Account,
-    val account: Account = Account(),
-    val category: Category = Category()
+    val title: DetailType = DetailType.Category,
 )
 
 enum class DetailType {

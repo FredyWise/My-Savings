@@ -1,21 +1,17 @@
 package com.fredy.mysavings.ViewModels
 
-import android.graphics.Bitmap
 import android.net.Uri
 import android.util.Log
-import androidx.activity.ComponentActivity
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fredy.mysavings.Data.Database.Entity.UserData
-import com.fredy.mysavings.Repository.AuthRepository
-import com.fredy.mysavings.Repository.UserRepository
+import com.fredy.mysavings.Data.Enum.AuthMethod
+import com.fredy.mysavings.Data.Repository.AuthRepository
+import com.fredy.mysavings.Data.Repository.UserRepository
 import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.TAG
 import com.fredy.mysavings.ViewModels.Event.AuthEvent
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.google.android.gms.tasks.Task
 import com.google.firebase.Firebase
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.storage.storage
@@ -25,7 +21,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 
 @HiltViewModel
@@ -40,159 +35,132 @@ class AuthViewModel @Inject constructor(
     )
     val state = _state.asStateFlow()
 
-    val _googleState = mutableStateOf(
-        GoogleSignInState()
-    )
-    val googleState: State<GoogleSignInState> = _googleState
-
     init {
+        Log.e(TAG, "user: " + userData)
         _state.update {
             AuthState(
                 signedInUser = userData
             )
         }
-        Log.e(TAG, "user: "+userData, )
     }
 
     fun onEvent(event: AuthEvent) {
         when (event) {
-            is AuthEvent.googleAuth -> {
+            is AuthEvent.GoogleAuth -> {
                 viewModelScope.launch {
                     repository.googleSignIn(event.credential).collect { result ->
-                        when (result) {
-                            is Resource.Success -> {
-                                val user = result.data!!.user
-                                val userData = user?.run {
-                                    UserData(
-                                        firebaseUserId = uid,
-                                        username = displayName,
-                                        email = email,
-                                        profilePictureUrl = photoUrl.toString()
-                                    )
-                                }
-                                userRepository.upsertUser(
-                                    userData!!
+                        if (result is Resource.Success) {
+                            upsertUser(result)
+                        }
+                        _state.update {
+                            it.copy(
+                                authResource = result,
+                                authType = AuthMethod.Google
+                            )
+                        }
+                    }
+                }
+            }
+
+            is AuthEvent.SendOtp -> {
+                viewModelScope.launch {
+                    repository.sendOtp(
+                        event.context,
+                        event.phoneNumber
+                    ).collect { result ->
+                        if (result is Resource.Success) {
+                            event.onCodeSent()
+                            _state.update {
+                                it.copy(
+                                    sendOtpResource = result,
+                                    storedVerificationId = result.data!!,
+                                    authType = AuthMethod.None
                                 )
-                                _state.update {
-                                    AuthState(
-                                        isSuccess = "Sign In Success"
-                                    )
-                                }
-
                             }
-
-                            is Resource.Loading -> {
-                                _state.update {
-                                    AuthState(
-                                        isLoading = true
-                                    )
-                                }
-                            }
-
-                            is Resource.Error -> {
-                                _state.update {
-                                    AuthState(
-                                        isError = result.message
-                                    )
-                                }
+                        }else{
+                            _state.update {
+                                it.copy(
+                                    sendOtpResource = result,
+                                    authType = AuthMethod.SendOTP
+                                )
                             }
                         }
                     }
                 }
             }
 
-            is AuthEvent.loginUser -> {
+            is AuthEvent.VerifyPhoneNumber -> {
+                viewModelScope.launch {
+                    repository.verifyPhoneNumber(
+                        event.context,
+                        _state.value.storedVerificationId,
+                        event.code
+                    ).collect { result ->
+                        if (result is Resource.Success) {
+                            upsertUser(result)
+                        }
+                        _state.update {
+                            it.copy(
+                                authResource = result,
+                                authType = AuthMethod.PhoneOTP
+                            )
+                        }
+                    }
+                }
+            }
+
+            is AuthEvent.LoginUser -> {
                 viewModelScope.launch {
                     repository.loginUser(
                         event.email,
                         event.password
                     ).collect { result ->
-                        when (result) {
-                            is Resource.Success -> {
-                                _state.update {
-                                    AuthState(
-                                        isSuccess = "Sign In Success"
-                                    )
-                                }
-                            }
-
-                            is Resource.Loading -> {
-                                _state.update {
-                                    AuthState(
-                                        isLoading = true
-                                    )
-                                }
-                            }
-
-                            is Resource.Error -> {
-                                _state.update {
-                                    AuthState(
-                                        isError = result.message
-                                    )
-                                }
-                            }
+                        _state.update {
+                            it.copy(
+                                authResource = result,
+                                authType = AuthMethod.Email
+                            )
                         }
                     }
                 }
             }
 
-            is AuthEvent.registerUser -> {
+            is AuthEvent.RegisterUser -> {
                 viewModelScope.launch {
                     repository.registerUser(
                         event.email,
                         event.password
                     ).collect { result ->
-                        when (result) {
-                            is Resource.Success -> {
-                                val user = result.data!!.user
-                                val userData = user?.run {
-                                    val profilePictureUrl = uploadProfilePicture(uid,event.photoUrl)
-                                    UserData(
-                                        firebaseUserId = uid,
-                                        username = displayName ?: event.username,
-                                        email = email ?: event.email,
-                                        profilePictureUrl = profilePictureUrl
-                                    )
-                                }
-                                userRepository.upsertUser(
-                                    userData!!
-                                )
-                                _state.update {
-                                    AuthState(
-                                        isSuccess = "Sign Up Success"
-                                    )
-                                }
-                            }
-
-                            is Resource.Loading -> {
-                                _state.update {
-                                    AuthState(
-                                        isLoading = true
-                                    )
-                                }
-                            }
-
-                            is Resource.Error -> {
-                                _state.update {
-                                    AuthState(
-                                        isError = result.message
-                                    )
-                                }
-                            }
+                        if (result is Resource.Success) {
+                            upsertUser(
+                                result,
+                                event.photoUrl
+                            )
+                        }
+                        _state.update {
+                            it.copy(
+                                authResource = result,
+                                authType = AuthMethod.Email
+                            )
                         }
                     }
                 }
             }
 
-            AuthEvent.getCurrentUser -> {
+            AuthEvent.GetCurrentUser -> {
                 viewModelScope.launch {
                     repository.getCurrentUser()?.let { currentUser ->
-                        _state.update { it.copy(signedInUser = currentUser) }
+                        Log.d(TAG, "currentUser: "+currentUser)
+                        _state.update {
+                            it.copy(
+                                signedInUser = currentUser
+                            )
+                        }
                     }
                 }
             }
 
-            AuthEvent.signOut -> {
+            AuthEvent.SignOut -> {
                 _state.update {
                     AuthState()
                 }
@@ -202,12 +170,42 @@ class AuthViewModel @Inject constructor(
             }
         }
     }
-    private suspend fun uploadProfilePicture(uid: String, imageUri: Uri): String {
+
+    private suspend fun upsertUser(
+        result: Resource<AuthResult>,
+        photoUri: Uri? = null
+    ) {
+        val user = result.data!!.user
+        val userData = user?.run {
+            val profilePictureUrl = photoUri?.let {
+                uploadProfilePicture(
+                    uid, it
+                )
+            } ?: run {
+                photoUrl.toString()
+            }
+            UserData(
+                firebaseUserId = uid,
+                username = displayName,
+                emailOrPhone = email?:phoneNumber,
+                profilePictureUrl = profilePictureUrl
+            )
+        }
+        userRepository.upsertUser(
+            userData!!
+        )
+    }
+
+    private suspend fun uploadProfilePicture(
+        uid: String, imageUri: Uri
+    ): String {
         val storageRef = Firebase.storage.reference
         val profilePictureRef = storageRef.child("profile_pictures/$uid.jpg")
 
         return try {
-            val downloadUri = profilePictureRef.putFile(imageUri).await().storage.downloadUrl.await()
+            val downloadUri = profilePictureRef.putFile(
+                imageUri
+            ).await().storage.downloadUrl.await()
             downloadUri.toString()
         } catch (e: Exception) {
             throw e
@@ -216,16 +214,12 @@ class AuthViewModel @Inject constructor(
 }
 
 data class AuthState(
-    val isLoading: Boolean = false,
-    val isSuccess: String? = null,
-    val isError: String? = null,
-    val signedInUser: UserData? = null
+    val authResource: Resource<AuthResult> = Resource.Loading(),
+    val sendOtpResource: Resource<String> = Resource.Loading(),
+    val authType: AuthMethod = AuthMethod.None,
+    val signedInUser: UserData? = null,
+    var storedVerificationId: String = ""
 )
 
-data class GoogleSignInState(
-    val success: AuthResult? = null,
-    val loading: Boolean = false,
-    val error: String = "",
-    val signInClient: GoogleSignInClient? = null
-)
+
 

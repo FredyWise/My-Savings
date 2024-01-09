@@ -19,5 +19,6 @@ sealed interface AccountEvent{
     data class DeleteAccount(val account: Account): AccountEvent
     data class UpdateAccountBalance(val account: Account): AccountEvent
     data class SearchAccount(val name: String): AccountEvent
+    data class GetAccountDetail(val account: Account): AccountEvent
 
 }

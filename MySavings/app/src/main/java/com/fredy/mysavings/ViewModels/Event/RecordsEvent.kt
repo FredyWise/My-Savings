@@ -2,7 +2,7 @@ package com.fredy.mysavings.ViewModels.Event
 
 import com.fredy.mysavings.Data.Database.Entity.Record
 import com.fredy.mysavings.Data.Enum.FilterType
-import com.fredy.mysavings.Repository.TrueRecord
+import com.fredy.mysavings.Data.Repository.TrueRecord
 import java.time.LocalDate
 
 sealed interface RecordsEvent{

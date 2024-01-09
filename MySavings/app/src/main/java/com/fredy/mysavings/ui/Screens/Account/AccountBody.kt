@@ -3,6 +3,7 @@ package com.fredy.mysavings.ui.Screens.Account
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -15,11 +16,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.fredy.mysavings.Data.Database.Entity.Account
 import com.fredy.mysavings.Util.ActionWithName
 import com.fredy.mysavings.Util.BalanceColor
 import com.fredy.mysavings.Util.formatBalanceAmount
 import com.fredy.mysavings.ViewModels.Event.AccountEvent
+import com.fredy.mysavings.ui.NavigationComponent.Navigation.NavigationRoute
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.AdvancedEntityItem
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.CustomStickyHeader
 
@@ -29,6 +32,7 @@ fun AccountBody(
     modifier: Modifier = Modifier,
     accounts: List<Account>,
     onEvent: (AccountEvent) -> Unit,
+    onEntityClick: () -> Unit,
 ) {
     LazyColumn(modifier = modifier) {
         stickyHeader {
@@ -40,7 +44,7 @@ fun AccountBody(
                 textStyle = MaterialTheme.typography.titleLarge
             )
         }
-        items(accounts) { account ->
+        items(accounts,key = {it.accountId}) { account ->
             AdvancedEntityItem(
                 modifier = Modifier
                     .padding(
@@ -52,6 +56,10 @@ fun AccountBody(
                         color = MaterialTheme.colorScheme.secondary,
                         shape = MaterialTheme.shapes.medium
                     )
+                    .clickable {
+                        onEntityClick()
+                        onEvent(AccountEvent.GetAccountDetail(account))
+                    }
                     .background(
                         MaterialTheme.colorScheme.surface
                     ),

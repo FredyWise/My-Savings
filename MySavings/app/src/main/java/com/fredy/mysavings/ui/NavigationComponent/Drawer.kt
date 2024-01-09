@@ -9,8 +9,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Icon
 import androidx.compose.material.Text
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -51,16 +51,18 @@ fun DrawerBody(
     textColor: Color = MaterialTheme.colorScheme.onSurface,
     itemTextStyle: TextStyle = TextStyle(fontSize = 18.sp),
     onItemClick: (NavigationRoute) -> Unit,
-    additionalItem: @Composable () -> Unit = {  },
+    additionalItem: @Composable () -> Unit = { },
 ) {
     LazyColumn(modifier = modifier) {
-        items(items) { item ->
-            Row(modifier = Modifier
-                .fillMaxWidth()
-                .clickable {
-                    onItemClick(item)
-                }
-                .padding(16.dp)) {
+        items(items, key = { it.route }) { item ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        onItemClick(item)
+                    }
+                    .padding(16.dp),
+            ) {
                 Icon(
                     imageVector = item.icon,
                     contentDescription = item.contentDescription,
@@ -74,7 +76,7 @@ fun DrawerBody(
                 Text(
                     text = item.title,
                     style = itemTextStyle,
-                    color = textColor ,
+                    color = textColor,
                     modifier = Modifier.weight(1f)
                 )
             }

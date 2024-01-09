@@ -61,7 +61,7 @@ fun AccountBottomSheet(
                 horizontal = 8.dp
             )
         ) {
-            items(accounts) { account ->
+            items(accounts,key = {it.accountId}) { account ->
                 SimpleEntityItem(
                     modifier = Modifier
                         .clickable {

@@ -3,28 +3,28 @@ package com.fredy.mysavings.ViewModels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fredy.mysavings.Data.Database.Entity.Category
-import com.fredy.mysavings.Data.Database.Entity.UserData
 import com.fredy.mysavings.Data.Enum.RecordType
 import com.fredy.mysavings.Data.Enum.SortType
-import com.fredy.mysavings.ViewModels.Event.CategoryEvent
 import com.fredy.mysavings.R
-import com.fredy.mysavings.Repository.AuthRepository
-import com.fredy.mysavings.Repository.CategoryRepository
-import com.fredy.mysavings.ViewModels.Event.AccountEvent
+import com.fredy.mysavings.Data.Repository.CategoryRepository
+import com.fredy.mysavings.Data.Repository.RecordRepository
+import com.fredy.mysavings.Data.Repository.TrueRecord
+import com.fredy.mysavings.ViewModels.Event.CategoryEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-
-class CategoryViewModel(
+@HiltViewModel
+class CategoryViewModel @Inject constructor(
     private val categoryRepository: CategoryRepository,
+    private val recordRepository: RecordRepository
 ): ViewModel() {
 
     private val _sortType = MutableStateFlow(
@@ -39,6 +39,16 @@ class CategoryViewModel(
 
     private val _state = MutableStateFlow(
         CategoryState()
+    )
+
+    private val _records = _state.flatMapLatest {
+        recordRepository.getUserCategoryRecordsOrderedByDateTime(
+            it.category.categoryId
+        )
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(),
+        listOf(TrueRecord())
     )
 
     private val categories = _state.onEach {
@@ -68,16 +78,30 @@ class CategoryViewModel(
     )
 
     val state = combine(
-        _state, _sortType, categories,
-    ) { state, sortType, categories ->
-        state.copy(categories = categories.groupBy {
-            it.categoryType
-        }.toSortedMap().map {
-            CategoryMap(
-                categoryType = it.key,
-                categories = it.value
-            )
-        }, sortType = sortType
+        _state, _sortType, categories, _records
+    ) { state, sortType, categories, records ->
+        state.copy(
+            categories = categories.groupBy {
+                it.categoryType
+            }.toSortedMap().map {
+                CategoryMap(
+                    categoryType = it.key,
+                    categories = it.value
+                )
+            },
+            trueRecordMaps = records.groupBy {
+                it.record.recordDateTime.toLocalDate()
+            }.toSortedMap(if (sortType == SortType.DESCENDING) {
+                compareByDescending { it }
+            } else {
+                compareBy { it }
+            }).map {
+                RecordMap(
+                    recordDate = it.key,
+                    records = it.value
+                )
+            },
+            sortType = sortType,
         )
     }.stateIn(
         viewModelScope,
@@ -177,6 +201,14 @@ class CategoryViewModel(
                 }
             }
 
+            is CategoryEvent.GetCategoryDetail -> {
+                _state.update {
+                    it.copy(
+                        category = event.category
+                    )
+                }
+            }
+
             is CategoryEvent.SearchCategory -> {
                 _state.update {
                     it.copy(
@@ -188,12 +220,15 @@ class CategoryViewModel(
             is CategoryEvent.SortCategory -> {
                 _sortType.value = event.sortType
             }
+
         }
     }
 }
 
 data class CategoryState(
-    val categories: List<CategoryMap> = listOf(),
+    val categories: List<CategoryMap> = emptyList(),
+    val trueRecordMaps: List<RecordMap> = emptyList(),
+    val category: Category = Category(),
     val categoryId: String = "",
     val categoryName: String = "",
     val categoryType: RecordType = RecordType.Expense,

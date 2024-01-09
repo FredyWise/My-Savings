@@ -26,7 +26,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.fredy.mysavings.Data.Enum.RecordType
-import com.fredy.mysavings.Repository.TrueRecord
+import com.fredy.mysavings.Data.Repository.TrueRecord
 import com.fredy.mysavings.Util.BalanceColor
 import com.fredy.mysavings.Util.formatDateTime
 import com.fredy.mysavings.Util.isTransfer
@@ -40,7 +40,8 @@ fun RecordDialog(
     onEvent: (RecordsEvent) -> Unit,
     onEdit: () -> Unit,
     modifier: Modifier = Modifier,
-    onSurface: Color = MaterialTheme.colorScheme.onSurface
+    onSurface: Color = MaterialTheme.colorScheme.onSurface,
+    onPrimary: Color = MaterialTheme.colorScheme.onSecondary
 ) {
     Dialog(onDismissRequest = {
         onEvent(
@@ -86,7 +87,7 @@ fun RecordDialog(
                                 .padding(4.dp),
                             imageVector = Icons.Outlined.Close,
                             contentDescription = "",
-                            tint = onSurface,
+                            tint = onPrimary,
                         )
                         Divider(
                             modifier = Modifier.weight(
@@ -112,7 +113,7 @@ fun RecordDialog(
                                 .padding(4.dp),
                             imageVector = Icons.Outlined.Delete,
                             contentDescription = "",
-                            tint = onSurface,
+                            tint = onPrimary,
                         )
                         Icon(
                             modifier = Modifier
@@ -128,7 +129,7 @@ fun RecordDialog(
                                 .padding(4.dp),
                             imageVector = Icons.Outlined.Edit,
                             contentDescription = "",
-                            tint = onSurface,
+                            tint = onPrimary,
                         )
                     }
                     Column(
@@ -137,8 +138,9 @@ fun RecordDialog(
                     ) {
                         BalanceItem(
                             title = trueRecord.toCategory.categoryType.name,
+                            titleColor = onPrimary,
                             amount = trueRecord.record.recordAmount,
-                            amountColor = onSurface,
+                            amountColor = onPrimary,
                             currency = trueRecord.record.recordCurrency,
                             titleStyle = MaterialTheme.typography.titleLarge,
                             amountStyle = MaterialTheme.typography.headlineMedium
@@ -149,7 +151,7 @@ fun RecordDialog(
                                 trueRecord.record.recordDateTime
                             ),
                             textAlign = TextAlign.End,
-                            color = onSurface
+                            color = onPrimary
                         )
                     }
                 }

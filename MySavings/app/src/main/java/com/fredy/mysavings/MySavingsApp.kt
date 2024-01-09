@@ -7,12 +7,3 @@ import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
 class MySavingsApp: Application()
-//{
-//    companion object {
-//        lateinit var appModule: AppModule
-//    }
-//    override fun onCreate() {
-//        super.onCreate()
-//        appModule = AppModuleImpl(this)
-//    }
-//}

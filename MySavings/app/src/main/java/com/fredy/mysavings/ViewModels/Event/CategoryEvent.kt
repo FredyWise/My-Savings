@@ -17,5 +17,6 @@ sealed interface CategoryEvent {
     data class SortCategory(val sortType: SortType): CategoryEvent
     data class DeleteCategory(val category: Category): CategoryEvent
     data class SearchCategory(val name: String): CategoryEvent
+    data class GetCategoryDetail(val category: Category): CategoryEvent
 
 }

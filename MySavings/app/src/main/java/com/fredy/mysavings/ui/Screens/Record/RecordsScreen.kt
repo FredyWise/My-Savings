@@ -51,7 +51,7 @@ fun RecordsScreen(
             onEvent = onEvent,
             onEdit = {
                 rootNavController.navigate(
-                    NavigationRoute.Add.route + "?id=" + it.record.recordId
+                    NavigationRoute.Add.route + "/" + it.record.recordId
                 )
             },
         )
@@ -140,7 +140,7 @@ fun RecordsScreen(
             state.trueRecordMaps.let { records ->
                 if (records.isNotEmpty() && records.first().records.first().record.recordCurrency.isNotEmpty()) {
                     RecordBody(
-                        trueRecords = state.trueRecordMaps,
+                        trueRecordMaps = state.trueRecordMaps,
                         onEvent = onEvent
                     )
                 } else {

@@ -7,17 +7,20 @@ import com.fredy.mysavings.Data.Database.Entity.Account
 import com.fredy.mysavings.Data.Database.Entity.UserData
 import com.fredy.mysavings.Data.Enum.RecordType
 import com.fredy.mysavings.Data.Enum.SortType
-import com.fredy.mysavings.Repository.AccountRepository
-import com.fredy.mysavings.Repository.AuthRepository
-import com.fredy.mysavings.Repository.RecordRepository
+import com.fredy.mysavings.Data.Repository.AccountRepository
+import com.fredy.mysavings.Data.Repository.AuthRepository
+import com.fredy.mysavings.Data.Repository.RecordRepository
+import com.fredy.mysavings.Data.Repository.TrueRecord
 import com.fredy.mysavings.Util.TAG
 import com.fredy.mysavings.ViewModels.Event.AccountEvent
+import com.fredy.mysavings.ViewModels.Event.CategoryEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -95,9 +98,18 @@ class AccountViewModel @Inject constructor(
         emptyList()
     )
 
-
     private val _state = MutableStateFlow(
         AccountState(accountCurrency = currentUser.value.userCurrency)
+    )
+
+    private val _records = _state.flatMapLatest {
+        recordRepository.getUserAccountRecordsOrderedByDateTime(
+            it.account.accountId
+        )
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(),
+        listOf(TrueRecord())
     )
 
     private val accounts = _state.onEach {
@@ -127,10 +139,22 @@ class AccountViewModel @Inject constructor(
     )
 
     val state = combine(
-        _state, _sortType, accounts, balanceBar,
-    ) { state, sortType, accounts, balanceBar ->
+        _state, _sortType, accounts, balanceBar,_records
+    ) { state, sortType, accounts, balanceBar, records ->
         state.copy(
             accounts = accounts,
+            trueRecordMaps = records.groupBy {
+                it.record.recordDateTime.toLocalDate()
+            }.toSortedMap(if (sortType == SortType.DESCENDING) {
+                compareByDescending { it }
+            } else {
+                compareBy { it }
+            }).map {
+                RecordMap(
+                    recordDate = it.key,
+                    records = it.value
+                )
+            },
             totalExpense = balanceBar.expense,
             totalIncome = balanceBar.income + balanceBar.balance,
             totalAll = balanceBar.income + balanceBar.expense + balanceBar.balance,
@@ -247,6 +271,14 @@ class AccountViewModel @Inject constructor(
                 }
             }
 
+            is AccountEvent.GetAccountDetail -> {
+                _state.update {
+                    it.copy(
+                        account = event.account
+                    )
+                }
+            }
+
             is AccountEvent.SearchAccount -> {
                 _state.update {
                     it.copy(
@@ -265,6 +297,8 @@ class AccountViewModel @Inject constructor(
 
 data class AccountState(
     val accounts: List<Account> = emptyList(),
+    val trueRecordMaps: List<RecordMap> = emptyList(),
+    val account: Account = Account(),
     val totalExpense: Double = 0.0,
     val totalIncome: Double = 0.0,
     val totalAll: Double = 0.0,

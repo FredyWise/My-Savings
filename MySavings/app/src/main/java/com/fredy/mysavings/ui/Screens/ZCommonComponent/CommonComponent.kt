@@ -3,10 +3,8 @@ package com.fredy.mysavings.ui.Screens.ZCommonComponent
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.indication
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,19 +17,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -47,7 +41,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -144,8 +137,6 @@ fun SearchBar(
 }
 
 
-
-
 @Composable
 fun AdvancedEntityItem(
     modifier: Modifier = Modifier,
@@ -170,24 +161,24 @@ fun AdvancedEntityItem(
                 interactionSource,
                 LocalIndication.current
             )
-            .pointerInput(true) {
-                detectTapGestures(onLongPress = {
-                    isShowMenu = true
-                }, onPress = {
-                    val press = PressInteraction.Press(
-                        it
-                    )
-                    interactionSource.emit(
-                        press
-                    )
-                    tryAwaitRelease()
-                    interactionSource.emit(
-                        PressInteraction.Release(
-                            press
-                        )
-                    )
-                })
-            }
+//            .pointerInput(true) {
+//                detectTapGestures(onLongPress = {
+//                    isShowMenu = true
+//                }, onPress = {
+//                    val press = PressInteraction.Press(
+//                        it
+//                    )
+//                    interactionSource.emit(
+//                        press
+//                    )
+//                    tryAwaitRelease()
+//                    interactionSource.emit(
+//                        PressInteraction.Release(
+//                            press
+//                        )
+//                    )
+//                })
+//            }
             .padding(
                 8.dp
             ),
@@ -319,32 +310,34 @@ fun ChooseIcon(
 ) {
     LazyHorizontalGrid(
         modifier = modifier
+            .height(132.dp)
             .clip(
                 shape = MaterialTheme.shapes.medium
             )
             .background(
                 MaterialTheme.colorScheme.background
             ),
-        rows = GridCells.Fixed(2)
+        rows = GridCells.Fixed(2),
+
     ) {
         items(icons) { icon ->
-            Box(modifier = Modifier
-                .clickable {
-                    onClick(icon)
-                }
-                .clip(
-                    shape = MaterialTheme.shapes.medium
-                )
-                .background(
-                    color = if (selectedIcon == icon.image) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.background
-                )
-                .padding(8.dp)) {
+            Box(
+                modifier = Modifier
+                    .clip(
+                        shape = MaterialTheme.shapes.medium
+                    )
+                    .clickable {
+                        onClick(icon)
+                    }
+                    .background(
+                        color = if (selectedIcon == icon.image) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.background
+                    )
+                    .padding(8.dp),
+            ) {
                 Icon(
-                    modifier = iconModifier
-                        .width(
-                            50.dp
-                        )
-                        .height(50.dp),
+                    modifier = iconModifier.size(
+                        50.dp
+                    ),
                     painter = painterResource(
                         icon.image
                     ),

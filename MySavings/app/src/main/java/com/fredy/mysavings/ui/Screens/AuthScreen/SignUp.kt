@@ -1,10 +1,7 @@
-package com.example.myapplication.ui.screens.authentication
+package com.fredy.mysavings.ui.Screens.AuthScreen
 
-//import com.fredy.mysavings.ViewModels.AuthState
-import android.graphics.Bitmap
 import android.net.Uri
 import android.widget.Toast
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -22,14 +19,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.AddAPhoto
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -48,22 +45,16 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import coil.compose.AsyncImage
 import coil.compose.rememberImagePainter
+import com.fredy.mysavings.Data.Enum.AuthMethod
 import com.fredy.mysavings.R
+import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.ViewModels.AuthState
 import com.fredy.mysavings.ViewModels.Event.AuthEvent
-import com.fredy.mysavings.ViewModels.GoogleSignInState
-import com.fredy.mysavings.ui.Screens.AuthScreen.CustomTextField
-import com.fredy.mysavings.ui.Screens.AuthScreen.GoogleButton
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
-import com.google.firebase.Firebase
 import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.storage.storage
-import java.io.ByteArrayOutputStream
-import javax.security.auth.callback.Callback
 
 @Composable
 fun SignUp(
@@ -71,8 +62,7 @@ fun SignUp(
     primaryColor: Color = MaterialTheme.colorScheme.primary,
     onPrimaryColor: Color = MaterialTheme.colorScheme.onPrimary,
     onBackgroundColor: Color = MaterialTheme.colorScheme.onBackground,
-    state: AuthState?,
-    googleSignInState: GoogleSignInState,
+    state: AuthState,
     onEvent: (AuthEvent) -> Unit
 ) {
     val context = LocalContext.current
@@ -113,7 +103,7 @@ fun SignUp(
                 result.idToken, null
             )
             onEvent(
-                AuthEvent.googleAuth(
+                AuthEvent.GoogleAuth(
                     credentials
                 )
             )
@@ -235,7 +225,7 @@ fun SignUp(
             onClick = {
                 if (password == confirmPassword && password.length >= 8) {
                     onEvent(
-                        AuthEvent.registerUser(
+                        AuthEvent.RegisterUser(
                             username = username,
                             email = email,
                             password = password,
@@ -256,7 +246,12 @@ fun SignUp(
                     ).show()
                 }
             },
-            enabled = email.isNotEmpty() && username.isNotEmpty(),
+            enabled = email.isNotEmpty() && username.isNotEmpty() && password.isNotEmpty(),
+            colors = ButtonDefaults.buttonColors(
+                disabledContainerColor = primaryColor.copy(
+                    0.7f
+                )
+            ),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(
@@ -264,13 +259,9 @@ fun SignUp(
                     start = 30.dp,
                     end = 30.dp
                 ),
-            colors = ButtonDefaults.buttonColors(
-                backgroundColor = primaryColor,
-                contentColor = onPrimaryColor
-            ),
             shape = RoundedCornerShape(15.dp)
         ) {
-            if (state?.isLoading == true) {
+            if (state.authResource is Resource.Loading && state.authType == AuthMethod.Email) {
                 CircularProgressIndicator(color = onPrimaryColor)
             } else {
                 Text(
@@ -281,15 +272,6 @@ fun SignUp(
                 )
             }
         }
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = "Already have an account? Sign In Now ",
-            modifier = Modifier.clickable {
-                navController.navigateUp()
-            },
-            fontWeight = FontWeight.Bold,
-            color = onBackgroundColor,
-        )
         Spacer(modifier = Modifier.height(8.dp))
         Divider(
             modifier = Modifier.fillMaxWidth(),
@@ -306,7 +288,7 @@ fun SignUp(
         GoogleButton(
             text = "Sign Up With Google",
             loadingText = "Signing Up ...",
-            isLoading = googleSignInState.loading
+            isLoading = state.authResource is Resource.Loading && state.authType == AuthMethod.Google
         ) {
             val gso = GoogleSignInOptions.Builder(
                 GoogleSignInOptions.DEFAULT_SIGN_IN
@@ -319,6 +301,15 @@ fun SignUp(
             )
             launcher.launch(googleSignInClient.signInIntent)
         }
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            text = "Already have an account? Sign In Now ",
+            modifier = Modifier.clickable {
+                navController.navigateUp()
+            },
+            fontWeight = FontWeight.Bold,
+            color = onBackgroundColor,
+        )
     }
 
 }

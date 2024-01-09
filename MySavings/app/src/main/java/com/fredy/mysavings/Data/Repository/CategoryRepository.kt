@@ -1,6 +1,7 @@
-package com.fredy.mysavings.Repository
+package com.fredy.mysavings.Data.Repository
 
 import co.yml.charts.common.extensions.isNotNull
+import com.fredy.mysavings.Data.Database.Entity.Account
 import com.fredy.mysavings.Data.Database.Entity.Category
 import com.fredy.mysavings.Data.Enum.RecordType
 import com.google.firebase.Firebase
@@ -21,7 +22,7 @@ interface CategoryRepository {
     fun getCategoriesUsingTypeOrderedByName(type: RecordType): Flow<List<Category>>
 }
 
-class CategoryRepositoryImpl(): CategoryRepository {
+class CategoryRepositoryImpl: CategoryRepository {
     override suspend fun upsertCategory(category: Category) {
         val currentUser = Firebase.auth.currentUser
         val categoryCollection = Firebase.firestore.collection(
@@ -63,7 +64,7 @@ class CategoryRepositoryImpl(): CategoryRepository {
                 "category"
             ).document(
                 categoryId
-            ).get().await().toObject<Category>()!!
+            ).get().await().toObject<Category>()?: Category()
             emit(result)
         }
     }

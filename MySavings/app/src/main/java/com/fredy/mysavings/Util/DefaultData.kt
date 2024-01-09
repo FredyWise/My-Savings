@@ -5,7 +5,7 @@ import co.yml.charts.common.model.Point
 import androidx.compose.ui.graphics.Color as toColor
 
 val TAG = "BABI"
-
+val WebClientId = "895326687881-e2kh5jh12kjvpf9se1cehbeias0iuvmq.apps.googleusercontent.com"
 
 val defaultColors = listOf(
     toColor(Color.parseColor("#fff300")),

@@ -9,9 +9,9 @@ import com.fredy.mysavings.Data.Database.Entity.Record
 import com.fredy.mysavings.Data.Enum.FilterType
 import com.fredy.mysavings.Data.Enum.GraphType
 import com.fredy.mysavings.Data.Enum.RecordType
-import com.fredy.mysavings.Repository.AccountRepository
-import com.fredy.mysavings.Repository.CategoryWithAmount
-import com.fredy.mysavings.Repository.RecordRepository
+import com.fredy.mysavings.Data.Repository.AccountRepository
+import com.fredy.mysavings.Data.Repository.CategoryWithAmount
+import com.fredy.mysavings.Data.Repository.RecordRepository
 import com.fredy.mysavings.Util.ResourceState
 import com.fredy.mysavings.Util.isExpense
 import com.fredy.mysavings.Util.minusFilterDate

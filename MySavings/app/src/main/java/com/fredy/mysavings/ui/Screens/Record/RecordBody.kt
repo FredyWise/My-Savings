@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.Divider
@@ -40,23 +41,23 @@ fun RecordBody(
     modifier: Modifier = Modifier,
     onBackgroundColor: Color = MaterialTheme.colorScheme.onBackground,
     backgroundColor: Color = MaterialTheme.colorScheme.background,
-    trueRecords: List<RecordMap>,
+    trueRecordMaps: List<RecordMap>,
     onEvent: (RecordsEvent) -> Unit,
 ) {
     LazyColumn(modifier) {
-        trueRecords.forEach { trueRecord ->
+        trueRecordMaps.forEach { trueRecordMap ->
             stickyHeader {
                 CustomStickyHeader(
                     modifier = Modifier.background(
                         MaterialTheme.colorScheme.background
                     ),
                     title = formatDay(
-                        trueRecord.recordDate
+                        trueRecordMap.recordDate
                     ),
                     textStyle = MaterialTheme.typography.titleMedium
                 )
             }
-            items(trueRecord.records) { item ->
+            items(trueRecordMap.records,key = {it.record.recordId}) { item ->
                 Divider(
                     modifier = Modifier.height(0.3.dp),
                     color = onBackgroundColor.copy(
@@ -81,7 +82,7 @@ fun RecordBody(
                             40.dp
                         )
                         .clip(
-                            shape = MaterialTheme.shapes.extraLarge
+                            shape = CircleShape
                         ),
                     iconDescription = item.toCategory.categoryIconDescription,
                     endContent = {

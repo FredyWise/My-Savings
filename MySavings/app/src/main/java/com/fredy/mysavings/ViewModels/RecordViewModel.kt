@@ -8,9 +8,9 @@ import com.fredy.mysavings.Data.Database.Converter.TimestampConverter
 import com.fredy.mysavings.Data.Enum.FilterType
 import com.fredy.mysavings.Data.Enum.RecordType
 import com.fredy.mysavings.Data.Enum.SortType
-import com.fredy.mysavings.Repository.AccountRepository
-import com.fredy.mysavings.Repository.RecordRepository
-import com.fredy.mysavings.Repository.TrueRecord
+import com.fredy.mysavings.Data.Repository.AccountRepository
+import com.fredy.mysavings.Data.Repository.RecordRepository
+import com.fredy.mysavings.Data.Repository.TrueRecord
 import com.fredy.mysavings.Util.ResourceState
 import com.fredy.mysavings.Util.minusFilterDate
 import com.fredy.mysavings.Util.plusFilterDate

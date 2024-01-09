@@ -3,6 +3,7 @@ package com.fredy.mysavings.ui.Screens.Category
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -28,6 +29,7 @@ fun CategoryBody(
     modifier: Modifier = Modifier,
     categoryMaps: List<CategoryMap>,
     onEvent: (CategoryEvent) -> Unit,
+    onEntityClick: () -> Unit,
 ) {
     LazyColumn(modifier = modifier) {
         categoryMaps.forEach { categoryMap ->
@@ -41,7 +43,7 @@ fun CategoryBody(
                         textStyle = MaterialTheme.typography.titleLarge
                     )
                 }
-                items(categoryMap.categories) { category ->
+                items(categoryMap.categories,key = {it.categoryId}) { category ->
                     AdvancedEntityItem(
                         modifier = Modifier
                             .padding(
@@ -55,7 +57,15 @@ fun CategoryBody(
                             )
                             .background(
                                 MaterialTheme.colorScheme.surface
-                            ),
+                            )
+                            .clickable {
+                                onEntityClick()
+                                onEvent(
+                                    CategoryEvent.GetCategoryDetail(
+                                        category
+                                    )
+                                )
+                            },
                         icon = category.categoryIcon,
                         iconModifier = Modifier
                             .size(

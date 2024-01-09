@@ -1,4 +1,4 @@
-package com.fredy.mysavings.Repository
+package com.fredy.mysavings.Data.Repository
 
 import android.util.Log
 import com.fredy.mysavings.Data.APIs.CurrencyModels.CurrencyApi

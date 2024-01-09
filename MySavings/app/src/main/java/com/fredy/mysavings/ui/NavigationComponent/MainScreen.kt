@@ -5,6 +5,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTransformGestures
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -92,29 +93,32 @@ fun MainScreen(
         drawerContentColor = onContentColor,
         drawerContent = {
             DrawerHeader()
-            DrawerBody(items = drawerScreens,
+            DrawerBody(
+                items = drawerScreens,
                 onItemClick = { newScreen ->
                     rootNavController.navigateSingleTopTo(
                         newScreen.route
                     )
                 },
                 additionalItem = {
-                    Row(modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {
-                            signOut()
-                            Toast
-                                .makeText(
-                                    context,
-                                    "Signed out",
-                                    Toast.LENGTH_SHORT
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                signOut()
+                                Toast
+                                    .makeText(
+                                        context,
+                                        "Signed out",
+                                        Toast.LENGTH_SHORT
+                                    )
+                                    .show()
+                                rootNavController.navigateSingleTopTo(
+                                    Graph.Auth
                                 )
-                                .show()
-                            rootNavController.navigateSingleTopTo(
-                                Graph.Auth
-                            )
-                        }
-                        .padding(16.dp)) {
+                            }
+                            .padding(16.dp),
+                    ) {
                         Icon(
                             imageVector = Icons.Default.Logout,
                             contentDescription = "",
@@ -135,7 +139,8 @@ fun MainScreen(
                             )
                         )
                     }
-                })
+                },
+            )
         },
         bottomBar = {
             BottomBar(
@@ -170,7 +175,7 @@ fun MainScreen(
                                     )
                                     .clickable {
                                         rootNavController.navigate(
-                                            NavigationRoute.Add.route + "?id=-1"
+                                            NavigationRoute.Add.route + "/-1"
                                         )
                                     }
                                     .background(

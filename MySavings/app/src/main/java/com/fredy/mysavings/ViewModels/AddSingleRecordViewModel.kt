@@ -16,7 +16,7 @@ import com.fredy.mysavings.ViewModels.Event.CalcOperation
 import com.fredy.mysavings.Util.isExpense
 import com.fredy.mysavings.Util.isIncome
 import com.fredy.mysavings.Util.isTransfer
-import com.fredy.mysavings.Repository.RecordRepository
+import com.fredy.mysavings.Data.Repository.RecordRepository
 import com.fredy.mysavings.Util.ResourceState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest

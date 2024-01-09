@@ -6,9 +6,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
@@ -19,19 +27,41 @@ import com.fredy.mysavings.ViewModels.Event.CategoryEvent
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SearchBar
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleButton
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategoriesScreen(
     modifier: Modifier = Modifier,
     state: CategoryState,
     onEvent: (CategoryEvent) -> Unit,
 ) {
+    val sheetState = rememberModalBottomSheetState()
+    var isSheetOpen by rememberSaveable {
+        mutableStateOf(false)
+    }
+    if (isSheetOpen) {
+        ModalBottomSheet(
+            sheetState = sheetState,
+            containerColor = MaterialTheme.colorScheme.surface,
+            onDismissRequest = {
+                isSheetOpen = false
+            },
+            dragHandle = {},
+        ) {
+            CategoryDetailSheet(
+                state = state,
+                onBackIconClick = {
+                    isSheetOpen = false
+                },
+            )
+        }
+    }
+
     if (state.isAddingCategory) {
         CategoryAddDialog(
             state = state, onEvent = onEvent
         )
     }
     Column(modifier = modifier) {
-
         SimpleButton(
             modifier = Modifier
                 .fillMaxWidth()
@@ -56,8 +86,10 @@ fun CategoriesScreen(
                 )
             },
             title = "Add New Category ",
-            titleStyle = MaterialTheme.typography.titleLarge.copy(MaterialTheme.colorScheme.onBackground)
-                )
+            titleStyle = MaterialTheme.typography.titleLarge.copy(
+                MaterialTheme.colorScheme.onBackground
+            )
+        )
         SearchBar(
             searchText = state.searchText,
             onValueChange = {
@@ -77,7 +109,10 @@ fun CategoriesScreen(
         ) {
             CategoryBody(
                 categoryMaps = state.categories,
-                onEvent = onEvent
+                onEvent = onEvent,
+                onEntityClick = {
+                    isSheetOpen = true
+                },
             )
         }
     }

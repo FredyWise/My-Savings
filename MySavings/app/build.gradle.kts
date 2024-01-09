@@ -115,10 +115,8 @@ dependencies {
     var compose_version = "1.5.4"
     // Compose Material Design
     implementation("androidx.compose.material:material:$compose_version")
-
     // Compose UI
     implementation("androidx.compose.ui:ui:$compose_version")
-
     // Compose UI Tooling
     implementation("androidx.compose.ui:ui-tooling:$compose_version")
 
@@ -133,4 +131,5 @@ dependencies {
     kapt("com.google.dagger:hilt-android-compiler:2.45")
     kapt("androidx.hilt:hilt-compiler:1.1.0")
     implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
+
 }

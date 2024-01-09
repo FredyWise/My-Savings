@@ -1,4 +1,4 @@
-package com.fredy.mysavings.Repository
+package com.fredy.mysavings.Data.Repository
 
 import android.util.Log
 import co.yml.charts.common.extensions.isNotNull
@@ -67,7 +67,7 @@ class AccountRepositoryImpl(): AccountRepository {
                 "account"
             ).document(
                 accountId
-            ).get().await().toObject<Account>()!!
+            ).get().await().toObject<Account>()?: Account()
             emit(result)
         }
     }
@@ -82,7 +82,7 @@ class AccountRepositoryImpl(): AccountRepository {
         val listener = Firebase.firestore.collection(
             "account"
         ).whereEqualTo(
-            "userIdFk", if (currentUser.isNotNull()) currentUser!!.uid else ""
+            "userIdFk", if (currentUser.isNotNull()) currentUser.uid else ""
         ).addSnapshotListener { value, error ->
             error?.let {
                 close(it)
