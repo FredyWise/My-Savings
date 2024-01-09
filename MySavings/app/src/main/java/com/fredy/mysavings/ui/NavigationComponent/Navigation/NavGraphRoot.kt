@@ -46,7 +46,7 @@ fun NavGraphRoot(
         composable(
             route = Graph.FirstNav
         ) {
-            Log.e(TAG, "NavGraphRoot: ")
+            Log.d(TAG, "NavGraphRoot: ")
             val state by authViewModel.state.collectAsStateWithLifecycle()
             val startDestination = if (state.signedInUser != null) Graph.MainNav else Graph.Auth
             navController.navigateSingleTopTo(
@@ -83,7 +83,7 @@ fun NavGraphRoot(
             composable(
                 route = NavigationRoute.BulkAdd.route,
             ) {
-                Log.e(
+                Log.d(
                     TAG,
                     "NavGraphRoot: BulkAdd",
                 )
@@ -102,7 +102,7 @@ fun NavGraphRoot(
                     defaultValue = "-1"
                 })
             ) {
-                Log.e(TAG, "NavGraphRoot: Add")
+                Log.d(TAG, "NavGraphRoot: Add")
                 val id = it.arguments?.getString("id") ?: "-1"
                 AddScreen(
                     modifier = Modifier.padding(
