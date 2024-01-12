@@ -18,8 +18,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -109,7 +109,7 @@ fun SignIn(
                 )
             )
         } catch (it: ApiException) {
-            Log.e(TAG, "SignIn Error: "+it, )
+            Log.e(TAG, "SignIn Error: " + it)
             print(it)
         }
     }
@@ -126,6 +126,18 @@ fun SignIn(
         ) {
             OTPScreen(
                 isLoading = state.authResource is Resource.Loading && state.authType == AuthMethod.PhoneOTP,
+                phoneNumber = emailOrPhone,
+                onResendOtp = {
+                    onEvent(
+                        AuthEvent.SendOtp(
+                            context,
+                            emailOrPhone,
+                            onCodeSent = {
+                                isSheetOpen = true
+                            },
+                        )
+                    )
+                },
                 onOtpValueChange = { value -> otpValue = value },
                 onOtpSignInClick = {
                     onEvent(
@@ -203,9 +215,14 @@ fun SignIn(
                     )
                 }
             },
-            enabled = if (switchState) emailLogin(emailOrPhone,password) else isValidPhoneNumber(emailOrPhone),
+            enabled = if (switchState) emailLogin(
+                emailOrPhone,
+                password
+            ) else isValidPhoneNumber(emailOrPhone),
             colors = ButtonDefaults.buttonColors(
-                disabledContainerColor = primaryColor.copy(0.7f)
+                disabledContainerColor = primaryColor.copy(
+                    0.7f
+                )
             ),
             modifier = Modifier
                 .fillMaxWidth()
@@ -220,7 +237,7 @@ fun SignIn(
                 )
             } else {
                 Text(
-                    text = if (switchState) "Sign In" else "Get Otp",
+                    text = if (switchState) "Sign In" else "Get OTP",
                     style = MaterialTheme.typography.titleMedium,
                     color = onPrimaryColor,
                     modifier = Modifier.padding(10.dp)

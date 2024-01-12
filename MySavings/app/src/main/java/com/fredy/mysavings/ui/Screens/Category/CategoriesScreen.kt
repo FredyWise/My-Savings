@@ -1,7 +1,10 @@
 package com.fredy.mysavings.ui.Screens.Category
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -12,18 +15,20 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.Data.Database.Entity.Category
 import com.fredy.mysavings.R
+import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.ViewModels.CategoryState
 import com.fredy.mysavings.ViewModels.Event.CategoryEvent
+import com.fredy.mysavings.ui.Screens.ZCommonComponent.LoadingAnimation
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SearchBar
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleButton
 
@@ -47,12 +52,28 @@ fun CategoriesScreen(
             },
             dragHandle = {},
         ) {
-            CategoryDetailSheet(
-                state = state,
-                onBackIconClick = {
-                    isSheetOpen = false
-                },
-            )
+            state.recordMapsResource.let { resource ->
+                if (resource is Resource.Success && !resource.data.isNullOrEmpty()) {
+                    CategoryDetailSheet(
+                        recordMaps = resource.data,
+                        icon = state.category.categoryIcon,
+                        iconDescription = state.category.categoryIconDescription,
+                        itemName = state.category.categoryName,
+                        itemInfo = "Category Type: " + state.category.categoryType.name,
+                        onBackIconClick = {
+                            isSheetOpen = false
+                        },
+                    )
+                } else {
+                    LoadingAnimation(
+                        isLoading = resource is Resource.Loading,
+                        notLoadingMessage = "You haven't made any Record using this category yet",
+                        onClick = {
+                            isSheetOpen = false
+                        },
+                    )
+                }
+            }
         }
     }
 

@@ -74,7 +74,7 @@ fun LoadingAnimation(
                 text = notLoadingMessage,
                 modifier = Modifier
                     .clip(
-                        CircleShape
+                        MaterialTheme.shapes.medium
                     )
                     .clickable {
                         onClick()

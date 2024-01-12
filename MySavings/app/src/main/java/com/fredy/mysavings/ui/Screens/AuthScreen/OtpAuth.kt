@@ -1,5 +1,6 @@
 package com.fredy.mysavings.ui.Screens.AuthScreen
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -30,6 +31,8 @@ fun OTPScreen(
     primaryColor: Color = MaterialTheme.colorScheme.primary,
     onPrimaryColor: Color = MaterialTheme.colorScheme.onPrimary,
     isLoading: Boolean = false,
+    phoneNumber: String,
+    onResendOtp: () -> Unit,
     onOtpValueChange: (value: String) -> Unit,
     onOtpSignInClick: () -> Unit
 ) {
@@ -45,18 +48,26 @@ fun OTPScreen(
         Spacer(modifier = Modifier.height(75.dp))
 
         Text(
-            text = "Enter the OTP",
+            text = "OTP is send to "+phoneNumber,
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold
         )
 
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
-        Otp(onOtpChange = { value, finished ->
+        OtpTextField(onOtpChange = { value, finished ->
             onOtpValueChange(value)
             isFinished = finished
         })
 
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = "Didn't get code? Resend Otp",
+            modifier = Modifier.clickable {
+                onResendOtp()
+            },
+            fontWeight = FontWeight.Bold,
+        )
         Spacer(modifier = Modifier.height(75.dp))
 
         Button(
@@ -72,7 +83,7 @@ fun OTPScreen(
                     0.7f
                 )
             ),
-            shape = RoundedCornerShape(10.dp)
+            shape = RoundedCornerShape(15.dp)
         ) {
             if (isLoading) {
                 CircularProgressIndicator(

@@ -21,6 +21,7 @@ import com.fredy.mysavings.Util.formatBalanceAmount
 import com.fredy.mysavings.Util.formatDay
 import com.fredy.mysavings.Util.formatTime
 import com.fredy.mysavings.ViewModels.CategoryState
+import com.fredy.mysavings.ViewModels.RecordMap
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.CustomStickyHeader
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.DetailAppBar
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleEntityItem
@@ -31,26 +32,30 @@ fun CategoryDetailSheet(
     modifier: Modifier = Modifier,
     backgroundColor: Color = MaterialTheme.colorScheme.surface,
     onBackgroundColor: Color = MaterialTheme.colorScheme.onSurface,
-    state: CategoryState,
+    recordMaps: List<RecordMap>,
+    icon: Int,
+    iconDescription: String,
+    itemName: String,
+    itemInfo: String,
     onBackIconClick: () -> Unit,
 ) {
     DetailAppBar(
         title = "Category details",
-        icon = state.category.categoryIcon,
-        iconDescription = state.category.categoryIconDescription,
-        itemName = state.category.categoryName,
-        itemInfo = state.category.categoryType.name,
+        icon = icon,
+        iconDescription = iconDescription,
+        itemName = itemName,
+        itemInfo = itemInfo,
         onNavigationIconClick = onBackIconClick,
     ) {
         Row {
-            Text(text = "Total of: " + state.trueRecordMaps.sumOf { it.records.size } + " records")
+            Text(text = "Total of: " + recordMaps.sumOf { it.records.size } + " records")
         }
         LazyColumn(
             modifier = modifier.padding(
                 bottom = 16.dp, end = 8.dp
             )
         ) {
-            state.trueRecordMaps.forEach { trueRecordMap ->
+            recordMaps.forEach { trueRecordMap ->
                 stickyHeader {
                     CustomStickyHeader(
                         modifier = Modifier.background(

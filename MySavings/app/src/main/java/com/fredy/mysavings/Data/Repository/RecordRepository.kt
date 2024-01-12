@@ -7,7 +7,10 @@ import com.fredy.mysavings.Data.Database.Entity.Account
 import com.fredy.mysavings.Data.Database.Entity.Category
 import com.fredy.mysavings.Data.Database.Entity.Record
 import com.fredy.mysavings.Data.Enum.RecordType
+import com.fredy.mysavings.Data.Enum.SortType
+import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.TAG
+import com.fredy.mysavings.ViewModels.RecordMap
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.Filter
@@ -37,14 +40,16 @@ interface RecordRepository {
         endDate: LocalDateTime
     ): Flow<List<Record>>
 
-    fun getUserTrueRecordsFromSpecificTime(
+    fun getUserTrueRecordMapsFromSpecificTime(
         startDate: LocalDateTime,
-        endDate: LocalDateTime
-    ): Flow<List<TrueRecord>>
+        endDate: LocalDateTime,
+        sortType: SortType,
+    ): Flow<Resource<List<RecordMap>>>
 
     fun getUserCategoryRecordsOrderedByDateTime(
         categoryId: String,
-    ): Flow<List<TrueRecord>>
+        sortType: SortType,
+    ): Flow<Resource<List<RecordMap>>>
 
     fun getUserCategoriesWithAmountFromSpecificTime(
         categoryType: RecordType,
@@ -54,8 +59,9 @@ interface RecordRepository {
     ): Flow<List<CategoryWithAmount>>
 
     fun getUserAccountRecordsOrderedByDateTime(
-        accountId: String
-    ): Flow<List<TrueRecord>>
+        accountId: String,
+        sortType: SortType,
+    ): Flow<Resource<List<RecordMap>>>
 
     fun getUserTotalAmountByType(recordType: RecordType): Flow<Double>
     fun getUserTotalAmountByTypeFromSpecificTime(
@@ -127,14 +133,16 @@ class RecordRepositoryImpl(): RecordRepository {
         }
     }
 
-    override fun getUserTrueRecordsFromSpecificTime(
+    override fun getUserTrueRecordMapsFromSpecificTime(
         startDate: LocalDateTime,
-        endDate: LocalDateTime
-    ) = callbackFlow<List<TrueRecord>> {
+        endDate: LocalDateTime,
+        sortType: SortType
+    ) = callbackFlow<Resource<List<RecordMap>>> {
+        trySend(Resource.Loading())
         val currentUser = Firebase.auth.currentUser
         Log.i(
             TAG,
-            "getUserTrueRecordsFromSpecificTime: $startDate\n:\n$endDate"
+            "getUserTrueRecordMapsFromSpecificTime: $startDate\n:\n$endDate"
         )
 
         val trueRecordComponentResult = getTrueRecordsComponent()
@@ -146,7 +154,10 @@ class RecordRepositoryImpl(): RecordRepository {
                 startDate
             )
         ).whereLessThanOrEqualTo(
-            "recordTimestamp", TimestampConverter.fromDateTime(endDate)
+            "recordTimestamp",
+            TimestampConverter.fromDateTime(
+                endDate
+            )
         ).whereEqualTo(
             "userIdFk",
             if (currentUser.isNotNull()) currentUser!!.uid else ""
@@ -154,17 +165,18 @@ class RecordRepositoryImpl(): RecordRepository {
             "recordTimestamp",
             Query.Direction.DESCENDING
         ).addSnapshotListener { value, error ->
-            error?.let {
+            error?.let { e ->
                 Log.i(
                     TAG,
-                    "getUserTrueRecordsFromSpecificTimeError: ${it.message}"
+                    "getUserTrueRecordMapsFromSpecificTimeError: ${e.message}"
                 )
-                close(it)
-                return@addSnapshotListener
+                e.message?.let {
+                    trySend(Resource.Error(it))
+                }
             }
 
-            value?.let {
-                val records = it.toObjects<Record>()
+            value?.let { recordsQuery ->
+                val records = recordsQuery.toObjects<Record>()
                 val data = records.map { record ->
                     TrueRecord(
                         record = record,
@@ -172,18 +184,29 @@ class RecordRepositoryImpl(): RecordRepository {
                         toAccount = trueRecordComponentResult.toAccount.single { it.accountId == record.accountIdToFk },
                         toCategory = trueRecordComponentResult.toCategory.single { it.categoryId == record.categoryIdFk },
                     )
+                }.groupBy {
+                    it.record.recordDateTime.toLocalDate()
+                }.toSortedMap(if (sortType == SortType.DESCENDING) {
+                    compareByDescending { it }
+                } else {
+                    compareBy { it }
+                }).map {
+                    RecordMap(
+                        recordDate = it.key,
+                        records = it.value
+                    )
                 }
                 Log.i(
                     TAG,
-                    "getUserTrueRecordsFromSpecificTimeData: $data"
+                    "getUserTrueRecordMapsFromSpecificTimeData: $data"
                 )
-                trySend(data)
+                trySend(Resource.Success(data))
             }
         }
 
         Log.i(
             TAG,
-            "getUserTrueRecordsFromSpecificTime0.0: babi"
+            "getUserTrueRecordMapsFromSpecificTime0.0: babi"
         )
 
 
@@ -195,7 +218,9 @@ class RecordRepositoryImpl(): RecordRepository {
 
     override fun getUserCategoryRecordsOrderedByDateTime(
         categoryId: String,
-    ) = callbackFlow<List<TrueRecord>> {
+        sortType: SortType,
+    ) = callbackFlow<Resource<List<RecordMap>>> {
+        trySend(Resource.Loading())
         val currentUser = Firebase.auth.currentUser
         Log.i(
             TAG,
@@ -214,38 +239,126 @@ class RecordRepositoryImpl(): RecordRepository {
             "recordTimestamp",
             Query.Direction.DESCENDING
         ).addSnapshotListener { value, error ->
-            error?.let {
+            error?.let { e ->
                 Log.i(
                     TAG,
-                    "getUserCategoryRecordsOrderedByDateTimeError: ${it.message}"
+                    "getUserCategoryRecordsOrderedByDateTimeError: ${e.message}"
                 )
-                close(it)
-                return@addSnapshotListener
+                e.message?.let {
+                    trySend(Resource.Error(it))
+                }
+            }
+            value?.let { recordsQuery ->
+                val records = recordsQuery.toObjects<Record>()
+                val data = records.map { record ->
+                    Log.i(
+                        TAG,
+                        "getUserCategoryRecordsOrderedByDateTimeDocument: $record"
+                    )
+                    TrueRecord(
+                        record = record,
+                        fromAccount = trueRecordComponentResult.fromAccount.single { it.accountId == record.accountIdFromFk },
+                        toAccount = trueRecordComponentResult.toAccount.single { it.accountId == record.accountIdToFk },
+                        toCategory = trueRecordComponentResult.toCategory.single { it.categoryId == record.categoryIdFk },
+                    )
+                }.groupBy {
+                    it.record.recordDateTime.toLocalDate()
+                }.toSortedMap(if (sortType == SortType.DESCENDING) {
+                    compareByDescending { it }
+                } else {
+                    compareBy { it }
+                }).map {
+                    RecordMap(
+                        recordDate = it.key,
+                        records = it.value
+                    )
+                }
+                Log.i(
+                    TAG,
+                    "getUserCategoryRecordsOrderedByDateTimeData: $data"
+                )
+                trySend(Resource.Success(data))
+            }
+
+        }
+
+        awaitClose {
+            listener.remove()
+        }
+    }
+
+    override fun getUserAccountRecordsOrderedByDateTime(
+        accountId: String,
+        sortType: SortType,
+    ) = callbackFlow<Resource<List<RecordMap>>> {
+        val currentUser = Firebase.auth.currentUser
+        trySend(Resource.Loading())
+        Log.i(
+            TAG,
+            "getUserAccountRecordsOrderedByDateTime: " + accountId,
+
+            )
+        val trueRecordComponentResult = getTrueRecordsComponent()
+        val listener = Firebase.firestore.collection(
+            "record"
+        ).where(//wasent tested
+            Filter.or(
+                Filter.equalTo(
+                    "accountIdFromFk", accountId
+                ), Filter.equalTo(
+                    "accountIdToFk", accountId
+                )
+            )
+        ).whereEqualTo(
+            "userIdFk",
+            if (currentUser.isNotNull()) currentUser!!.uid else ""
+        ).orderBy(
+            "recordTimestamp",
+            Query.Direction.DESCENDING
+        ).addSnapshotListener { value, error ->
+            error?.let { e ->
+                Log.e(
+                    TAG,
+                    "getUserAccountRecordsOrderedByDateTimeError: "+e.message,
+
+                )
+                e.message?.let {
+                    trySend(Resource.Error(it))
+                }
             }
             value?.let {
                 val records = it.toObjects<Record>()
-                launch {
-                    val data = records.map { record ->
-                        Log.i(
-                            TAG,
-                            "getUserCategoryRecordsOrderedByDateTimeDocument: $record"
-                        )
-                        TrueRecord(
-                            record = record,
-                            fromAccount = trueRecordComponentResult.fromAccount.single { it.accountId == record.accountIdFromFk },
-                            toAccount = trueRecordComponentResult.toAccount.single { it.accountId == record.accountIdToFk },
-                            toCategory = trueRecordComponentResult.toCategory.single { it.categoryId == record.categoryIdFk },
-                        )
-                    }
+                val data = records.map { record ->
                     Log.i(
                         TAG,
-                        "getUserCategoryRecordsOrderedByDateTimeData: $data"
+                        "getUserAccountRecordsOrderedByDateTime.1: $record"
                     )
-                    trySend(data)
+                    TrueRecord(
+                        record = record,
+                        fromAccount = trueRecordComponentResult.fromAccount.single { it.accountId == record.accountIdFromFk },
+                        toAccount = trueRecordComponentResult.toAccount.single { it.accountId == record.accountIdToFk },
+                        toCategory = trueRecordComponentResult.toCategory.single { it.categoryId == record.categoryIdFk },
+                    )
+                }.groupBy {
+                    it.record.recordDateTime.toLocalDate()
+                }.toSortedMap(if (sortType == SortType.DESCENDING) {
+                    compareByDescending { it }
+                } else {
+                    compareBy { it }
+                }).map {
+                    RecordMap(
+                        recordDate = it.key,
+                        records = it.value
+                    )
                 }
+                Log.i(
+                    TAG,
+                    "getUserAccountRecordsOrderedByDateTime.0: $data"
+                )
+                trySend(Resource.Success(data))
+
             }
         }
-
         awaitClose {
             listener.remove()
         }
@@ -270,7 +383,10 @@ class RecordRepositoryImpl(): RecordRepository {
                 startDate
             )
         ).whereLessThanOrEqualTo(
-            "recordTimestamp", TimestampConverter.fromDateTime(endDate)
+            "recordTimestamp",
+            TimestampConverter.fromDateTime(
+                endDate
+            )
         ).whereEqualTo(
             "recordType", recordType
         ).whereEqualTo(
@@ -355,7 +471,10 @@ class RecordRepositoryImpl(): RecordRepository {
                 startDate
             )
         ).whereLessThanOrEqualTo(
-            "recordTimestamp", TimestampConverter.fromDateTime(endDate)
+            "recordTimestamp",
+            TimestampConverter.fromDateTime(
+                endDate
+            )
         ).whereEqualTo(
             "recordType", categoryType
         ).whereIn("recordCurrency",
@@ -435,68 +554,6 @@ class RecordRepositoryImpl(): RecordRepository {
         }
     }
 
-    override fun getUserAccountRecordsOrderedByDateTime(
-        accountId: String,
-    ) = callbackFlow<List<TrueRecord>> {
-        val currentUser = Firebase.auth.currentUser
-        Log.i(
-            TAG,
-            "getUserAccountRecordsOrderedByDateTime: " + accountId,
-
-            )
-        val trueRecordComponentResult = getTrueRecordsComponent()
-        val listener = Firebase.firestore.collection(
-            "record"
-        ).where(//wasent tested
-            Filter.or(
-                Filter.equalTo(
-                    "accountIdFromFk",
-                    accountId
-                ),
-                Filter.equalTo(
-                    "accountIdToFk",
-                    accountId
-                )
-            )
-        ).whereEqualTo(
-            "userIdFk",
-            if (currentUser.isNotNull()) currentUser!!.uid else ""
-        ).orderBy(
-            "recordTimestamp",
-            Query.Direction.DESCENDING
-        ).addSnapshotListener { value, error ->
-            error?.let {
-                close(it)
-            }
-            value?.let {
-                val records = it.toObjects<Record>()
-                launch {
-                    val data = records.map { record ->
-                        Log.i(
-                            TAG,
-                            "getUserAccountRecordsOrderedByDateTime.1: $record"
-                        )
-                        TrueRecord(
-                            record = record,
-                            fromAccount = trueRecordComponentResult.fromAccount.single { it.accountId == record.accountIdFromFk },
-                            toAccount = trueRecordComponentResult.toAccount.single { it.accountId == record.accountIdToFk },
-                            toCategory = trueRecordComponentResult.toCategory.single { it.categoryId == record.categoryIdFk },
-                        )
-                    }
-                    Log.i(
-                        TAG,
-                        "getUserAccountRecordsOrderedByDateTime.0: $data"
-                    )
-                    trySend(data)
-
-                }
-            }
-        }
-        awaitClose {
-            listener.remove()
-        }
-    }
-
     override fun getUserTotalAmountByType(
         recordType: RecordType
     ) = callbackFlow<Double> {
@@ -558,7 +615,10 @@ class RecordRepositoryImpl(): RecordRepository {
                 startDate
             )
         ).whereLessThanOrEqualTo(
-            "recordTimestamp", TimestampConverter.fromDateTime(endDate)
+            "recordTimestamp",
+            TimestampConverter.fromDateTime(
+                endDate
+            )
         ).whereEqualTo(
             "recordType", recordType
         ).whereEqualTo(

@@ -5,7 +5,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTransformGestures
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -197,20 +196,13 @@ fun MainScreen(
                                     8.dp
                                 )
                             )
-                            Box(
-                                modifier = Modifier
-                                    .clip(
-                                        CircleShape
+                            FloatingActionButton(
+                                onClick = {
+                                    rootNavController.navigate(
+                                        NavigationRoute.BulkAdd.route
                                     )
-                                    .clickable {
-                                        rootNavController.navigate(
-                                            NavigationRoute.BulkAdd.route
-                                        )
-                                    }
-                                    .background(
-                                        contentColor
-                                    )
-                                    .padding(8.dp),
+                                },
+                                backgroundColor = contentColor,
                             ) {
                                 Icon(
                                     NavigationRoute.BulkAdd.icon,

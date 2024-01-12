@@ -14,7 +14,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -22,12 +21,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import com.fredy.mysavings.Data.Database.Entity.Account
 import com.fredy.mysavings.R
+import com.fredy.mysavings.Util.Resource
+import com.fredy.mysavings.Util.formatBalanceAmount
 import com.fredy.mysavings.ViewModels.AccountState
 import com.fredy.mysavings.ViewModels.Event.AccountEvent
-import com.fredy.mysavings.ui.Screens.Category.CategoryDetailSheet
+import com.fredy.mysavings.ui.Screens.ZCommonComponent.LoadingAnimation
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SearchBar
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleButton
 
@@ -52,12 +52,32 @@ fun AccountsScreen(
             },
             dragHandle = {},
         ) {
-            AccountDetailSheet(
-                state = state,
-                onBackIconClick = {
-                    isSheetOpen = false
-                },
-            )
+            state.recordMapsResource.let { resource ->
+                if (resource is Resource.Success && !resource.data.isNullOrEmpty()) {
+                    AccountDetailSheet(
+                        recordMaps = resource.data,
+                        icon = state.account.accountIcon,
+                        iconDescription = state.account.accountIconDescription,
+                        itemName = state.account.accountName,
+                        itemInfo = formatBalanceAmount(
+                            state.account.accountAmount,
+                            state.accountCurrency,
+                            true
+                        ),
+                        onBackIconClick = {
+                            isSheetOpen = false
+                        },
+                    )
+                } else {
+                    LoadingAnimation(
+                        isLoading = resource is Resource.Loading,
+                        notLoadingMessage = "You haven't made any Record using this category yet",
+                        onClick = {
+                            isSheetOpen = false
+                        },
+                    )
+                }
+            }
         }
     }
     Column(modifier = modifier) {
@@ -110,8 +130,7 @@ fun AccountsScreen(
                 MaterialTheme.colorScheme.onBackground
             )
         )
-        SearchBar(
-            searchText = state.searchText,
+        SearchBar(searchText = state.searchText,
             onValueChange = {
                 onEvent(
                     AccountEvent.SearchAccount(
@@ -125,15 +144,12 @@ fun AccountsScreen(
                     imageVector = Icons.Default.Search,
                     contentDescription = "Search"
                 )
-            }
-        ) {
-            AccountBody(
-                accounts = state.accounts,
+            }) {
+            AccountBody(accounts = state.accounts,
                 onEvent = onEvent,
                 onEntityClick = {
                     isSheetOpen = true
-                }
-            )
+                })
         }
     }
 }

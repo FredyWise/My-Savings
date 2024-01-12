@@ -18,4 +18,7 @@ val categoryIcons = listOf(
     SavingsIcon(R.drawable.ic_visa, "Visa"),
 )
 
-//val transferIcon = SavingsIcon(R.drawable.ic_exchange, "Transfer")
+
+val transferIcon = SavingsIcon(R.drawable.ic_exchange, "Transfer")
+val categoryInitIcon = SavingsIcon(R.drawable.ic_category_foreground, "Category")
+val accountInitIcon = SavingsIcon(R.drawable.ic_wallet_foreground, "Account")

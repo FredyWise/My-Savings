@@ -110,7 +110,7 @@ data class OtpValue(
 )
 
 @Composable
-fun Otp(
+fun OtpTextField(
     modifier: Modifier = Modifier,
     errorColor: Color = Color(0xFFFF6161),
     successColor: Color = Color(0xFF29B96F),

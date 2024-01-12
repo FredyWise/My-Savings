@@ -5,10 +5,10 @@ import androidx.lifecycle.viewModelScope
 import com.fredy.mysavings.Data.Database.Entity.Category
 import com.fredy.mysavings.Data.Enum.RecordType
 import com.fredy.mysavings.Data.Enum.SortType
-import com.fredy.mysavings.R
 import com.fredy.mysavings.Data.Repository.CategoryRepository
 import com.fredy.mysavings.Data.Repository.RecordRepository
-import com.fredy.mysavings.Data.Repository.TrueRecord
+import com.fredy.mysavings.Util.Resource
+import com.fredy.mysavings.Util.transferIcon
 import com.fredy.mysavings.ViewModels.Event.CategoryEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -43,12 +43,13 @@ class CategoryViewModel @Inject constructor(
 
     private val _records = _state.flatMapLatest {
         recordRepository.getUserCategoryRecordsOrderedByDateTime(
-            it.category.categoryId
+            it.category.categoryId,
+            _sortType.value
         )
     }.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(),
-        listOf(TrueRecord())
+        Resource.Success(emptyList())
     )
 
     private val categories = _state.onEach {
@@ -89,18 +90,7 @@ class CategoryViewModel @Inject constructor(
                     categories = it.value
                 )
             },
-            trueRecordMaps = records.groupBy {
-                it.record.recordDateTime.toLocalDate()
-            }.toSortedMap(if (sortType == SortType.DESCENDING) {
-                compareByDescending { it }
-            } else {
-                compareBy { it }
-            }).map {
-                RecordMap(
-                    recordDate = it.key,
-                    records = it.value
-                )
-            },
+            recordMapsResource = records,
             sortType = sortType,
         )
     }.stateIn(
@@ -165,8 +155,8 @@ class CategoryViewModel @Inject constructor(
                             categoryId = "1",
                             categoryName = RecordType.Transfer.name,
                             categoryType = RecordType.Transfer,
-                            categoryIconDescription = RecordType.Transfer.name,
-                            categoryIcon = R.drawable.ic_exchange,
+                            categoryIcon = transferIcon.image,
+                            categoryIconDescription = transferIcon.description,
                         )
                     )
                     categoryRepository.upsertCategory(
@@ -227,7 +217,7 @@ class CategoryViewModel @Inject constructor(
 
 data class CategoryState(
     val categories: List<CategoryMap> = emptyList(),
-    val trueRecordMaps: List<RecordMap> = emptyList(),
+    val recordMapsResource: Resource<List<RecordMap>> = Resource.Loading(),
     val category: Category = Category(),
     val categoryId: String = "",
     val categoryName: String = "",

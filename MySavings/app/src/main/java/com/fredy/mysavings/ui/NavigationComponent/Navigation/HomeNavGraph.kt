@@ -1,6 +1,5 @@
 package com.fredy.mysavings.ui.NavigationComponent.Navigation
 
-import android.util.Log
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -9,19 +8,11 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
-import com.fredy.mysavings.Util.TAG
-import com.fredy.mysavings.Util.formatBalanceAmount
 import com.fredy.mysavings.ViewModels.AccountViewModel
 import com.fredy.mysavings.ViewModels.AnalysisViewModel
 import com.fredy.mysavings.ViewModels.CategoryViewModel
-import com.fredy.mysavings.ViewModels.DetailData
-import com.fredy.mysavings.ViewModels.DetailType
-import com.fredy.mysavings.ViewModels.DetailViewModel
-import com.fredy.mysavings.ViewModels.Event.DetailEvent
 import com.fredy.mysavings.ViewModels.RecordViewModel
 import com.fredy.mysavings.ui.Screens.Account.AccountsScreen
 import com.fredy.mysavings.ui.Screens.Analysis.AnalysisScreen
@@ -45,13 +36,11 @@ fun HomeNavGraph(
         ) {
             val viewModel: RecordViewModel = hiltViewModel()
             val state by viewModel.state.collectAsStateWithLifecycle()
-            val resource by viewModel.resource
 
             RecordsScreen(
                 rootNavController = rootNavController,
                 state = state,
                 onEvent = viewModel::onEvent,
-                resource = resource,
             )
         }
         composable(

@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.ResourceState
 import com.fredy.mysavings.Util.formatRangeOfDate
 import com.fredy.mysavings.ViewModels.RecordState
@@ -37,9 +38,8 @@ fun RecordsScreen(
     rootNavController: NavHostController,
     state: RecordState,
     onEvent: (RecordsEvent) -> Unit,
-    resource: ResourceState,
 ) {
-    val key = state.trueRecordMaps.hashCode()
+    val key = state.recordMapsResource.hashCode()
     val isVisible = remember(key) {
         MutableTransitionState(
             false
@@ -137,19 +137,19 @@ fun RecordsScreen(
             ) + fadeOut()
         ) {
 
-            state.trueRecordMaps.let { records ->
-                if (records.isNotEmpty() && records.first().records.first().record.recordCurrency.isNotEmpty()) {
+            state.recordMapsResource.let { resource ->
+                if (resource is Resource.Success && !resource.data.isNullOrEmpty()) {
                     RecordBody(
-                        trueRecordMaps = state.trueRecordMaps,
+                        trueRecordMaps = resource.data,
                         onEvent = onEvent
                     )
                 } else {
                     LoadingAnimation(
-                        isLoading = resource.isLoading && records.isNotEmpty(),
+                        isLoading = resource is Resource.Loading,
                         notLoadingMessage = "You haven't made any Record yet",
                         onClick = {
                             rootNavController.navigate(
-                                NavigationRoute.Add.route + "?id=-1"
+                                NavigationRoute.Add.route + "/-1"
                             )
                             isVisible.targetState = false
                         },

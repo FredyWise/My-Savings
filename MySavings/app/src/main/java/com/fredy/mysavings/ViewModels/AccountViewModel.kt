@@ -11,6 +11,7 @@ import com.fredy.mysavings.Data.Repository.AccountRepository
 import com.fredy.mysavings.Data.Repository.AuthRepository
 import com.fredy.mysavings.Data.Repository.RecordRepository
 import com.fredy.mysavings.Data.Repository.TrueRecord
+import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.TAG
 import com.fredy.mysavings.ViewModels.Event.AccountEvent
 import com.fredy.mysavings.ViewModels.Event.CategoryEvent
@@ -104,12 +105,12 @@ class AccountViewModel @Inject constructor(
 
     private val _records = _state.flatMapLatest {
         recordRepository.getUserAccountRecordsOrderedByDateTime(
-            it.account.accountId
+            it.account.accountId, _sortType.value
         )
     }.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(),
-        listOf(TrueRecord())
+        Resource.Success(emptyList())
     )
 
     private val accounts = _state.onEach {
@@ -143,18 +144,7 @@ class AccountViewModel @Inject constructor(
     ) { state, sortType, accounts, balanceBar, records ->
         state.copy(
             accounts = accounts,
-            trueRecordMaps = records.groupBy {
-                it.record.recordDateTime.toLocalDate()
-            }.toSortedMap(if (sortType == SortType.DESCENDING) {
-                compareByDescending { it }
-            } else {
-                compareBy { it }
-            }).map {
-                RecordMap(
-                    recordDate = it.key,
-                    records = it.value
-                )
-            },
+            recordMapsResource = records,
             totalExpense = balanceBar.expense,
             totalIncome = balanceBar.income + balanceBar.balance,
             totalAll = balanceBar.income + balanceBar.expense + balanceBar.balance,
@@ -297,7 +287,7 @@ class AccountViewModel @Inject constructor(
 
 data class AccountState(
     val accounts: List<Account> = emptyList(),
-    val trueRecordMaps: List<RecordMap> = emptyList(),
+    val recordMapsResource: Resource<List<RecordMap>> = Resource.Loading(),
     val account: Account = Account(),
     val totalExpense: Double = 0.0,
     val totalIncome: Double = 0.0,

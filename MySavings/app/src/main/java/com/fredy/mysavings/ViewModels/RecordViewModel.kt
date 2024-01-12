@@ -4,13 +4,13 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.fredy.mysavings.Data.Database.Converter.TimestampConverter
 import com.fredy.mysavings.Data.Enum.FilterType
 import com.fredy.mysavings.Data.Enum.RecordType
 import com.fredy.mysavings.Data.Enum.SortType
 import com.fredy.mysavings.Data.Repository.AccountRepository
 import com.fredy.mysavings.Data.Repository.RecordRepository
 import com.fredy.mysavings.Data.Repository.TrueRecord
+import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.ResourceState
 import com.fredy.mysavings.Util.minusFilterDate
 import com.fredy.mysavings.Util.plusFilterDate
@@ -41,11 +41,6 @@ class RecordViewModel @Inject constructor(
     private val _resource = mutableStateOf(
         ResourceState()
     )
-    val resource: State<ResourceState> = _resource
-
-    private val _sortType = MutableStateFlow(
-        SortType.DESCENDING
-    )
 
     private val _filterState = MutableStateFlow(
         FilterState()
@@ -60,40 +55,46 @@ class RecordViewModel @Inject constructor(
 
     private val _records = _filterState.flatMapLatest { filterState ->
         when (filterState.filterType) {
-            FilterType.Daily -> recordRepository.getUserTrueRecordsFromSpecificTime(
+            FilterType.Daily -> recordRepository.getUserTrueRecordMapsFromSpecificTime(
                 filterState.start,
-                filterState.end
+                filterState.end,
+                filterState.sortType
             )
 
-            FilterType.Weekly -> recordRepository.getUserTrueRecordsFromSpecificTime(
+            FilterType.Weekly -> recordRepository.getUserTrueRecordMapsFromSpecificTime(
                 filterState.start,
-                filterState.end
+                filterState.end,
+                filterState.sortType
             )
 
-            FilterType.Monthly -> recordRepository.getUserTrueRecordsFromSpecificTime(
+            FilterType.Monthly -> recordRepository.getUserTrueRecordMapsFromSpecificTime(
                 filterState.start,
-                filterState.end
+                filterState.end,
+                filterState.sortType
             )
 
-            FilterType.Per3Months -> recordRepository.getUserTrueRecordsFromSpecificTime(
+            FilterType.Per3Months -> recordRepository.getUserTrueRecordMapsFromSpecificTime(
                 filterState.start,
-                filterState.end
+                filterState.end,
+                filterState.sortType
             )
 
-            FilterType.Per6Months -> recordRepository.getUserTrueRecordsFromSpecificTime(
+            FilterType.Per6Months -> recordRepository.getUserTrueRecordMapsFromSpecificTime(
                 filterState.start,
-                filterState.end
+                filterState.end,
+                filterState.sortType
             )
 
-            FilterType.Yearly -> recordRepository.getUserTrueRecordsFromSpecificTime(
+            FilterType.Yearly -> recordRepository.getUserTrueRecordMapsFromSpecificTime(
                 filterState.start,
-                filterState.end
+                filterState.end,
+                filterState.sortType
             )
         }
     }.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(),
-        listOf(TrueRecord())
+        Resource.Success(emptyList())
     )
 
     private val _totalRecordBalance: StateFlow<Double?> = recordRepository.getUserTotalRecordBalance().stateIn(
@@ -145,30 +146,17 @@ class RecordViewModel @Inject constructor(
 
     val state = combine(
         _state,
-        _sortType,
         _records,
         _availableCurrency,
         balanceBar,
-    ) { state, sortType, records, availableCurrency, balanceBar ->
+    ) { state, records, availableCurrency, balanceBar ->
         _resource.value = ResourceState(isLoading = true)
         state.copy(
-            trueRecordMaps = records.groupBy {
-                it.record.recordDateTime.toLocalDate()
-            }.toSortedMap(if (sortType == SortType.DESCENDING) {
-                compareByDescending { it }
-            } else {
-                compareBy { it }
-            }).map {
-                RecordMap(
-                    recordDate = it.key,
-                    records = it.value
-                )
-            },
+            recordMapsResource = records,
             availableCurrency = availableCurrency,
             totalExpense = balanceBar.expense,
             totalIncome = balanceBar.income,
             totalAll = balanceBar.balance,
-            sortType = sortType,
         )
     }.onCompletion {
         _resource.value = ResourceState(isLoading = false)
@@ -282,7 +270,7 @@ class RecordViewModel @Inject constructor(
 }
 
 data class RecordState(
-    val trueRecordMaps: List<RecordMap> = listOf(),
+    val recordMapsResource: Resource<List<RecordMap>> = Resource.Loading(),
     val trueRecord: TrueRecord? = null,
     val availableCurrency: List<String> = listOf(),
     val selectedCheckbox: List<String> = listOf(),
@@ -309,6 +297,7 @@ data class BalanceBar(
 data class FilterState(
     val recordType: RecordType = RecordType.Expense,
     val filterType: FilterType = FilterType.Monthly,
+    val sortType: SortType = SortType.DESCENDING,
     val currencies: List<String> = emptyList(),
     val start: LocalDateTime = LocalDateTime.of(
         LocalDate.now().with(
