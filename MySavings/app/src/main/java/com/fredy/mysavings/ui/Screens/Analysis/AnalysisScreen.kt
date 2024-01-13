@@ -47,7 +47,6 @@ fun AnalysisScreen(
     modifier: Modifier = Modifier,
     rootNavController: NavHostController,
     state: AnalysisState,
-    resource: ResourceState,
     onEvent: (AnalysisEvent) -> Unit,
 ) {
     val navController = rememberNavController()
@@ -187,7 +186,6 @@ fun AnalysisScreen(
                 rootNavController = rootNavController,
                 navController = navController,
                 state = state,
-                resource = resource,
                 onEvent = onEvent,
             )
         }

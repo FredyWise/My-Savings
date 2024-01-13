@@ -39,7 +39,9 @@ fun AccountsScreen(
     onEvent: (AccountEvent) -> Unit,
 ) {
 
-    val sheetState = rememberModalBottomSheetState()
+    val sheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true
+    )
     var isSheetOpen by rememberSaveable {
         mutableStateOf(false)
     }
@@ -145,11 +147,13 @@ fun AccountsScreen(
                     contentDescription = "Search"
                 )
             }) {
-            AccountBody(accounts = state.accounts,
+            AccountBody(
+                accounts = state.accounts,
                 onEvent = onEvent,
                 onEntityClick = {
                     isSheetOpen = true
-                })
+                },
+            )
         }
     }
 }

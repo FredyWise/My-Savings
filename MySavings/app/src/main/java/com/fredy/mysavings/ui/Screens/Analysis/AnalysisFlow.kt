@@ -14,8 +14,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import co.yml.charts.common.model.Point
-import com.fredy.mysavings.Util.ResourceState
-import com.fredy.mysavings.Util.isExpense
+import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.ViewModels.AnalysisState
 import com.fredy.mysavings.ViewModels.Event.AnalysisEvent
 import com.fredy.mysavings.ui.Screens.Analysis.Charts.ChartLine
@@ -26,10 +25,9 @@ import kotlin.math.absoluteValue
 fun AnalysisFlow(
     modifier: Modifier = Modifier,
     state: AnalysisState,
-    resource: ResourceState,
     onEvent: (AnalysisEvent) -> Unit,
 ) {
-    val key = state.recordsWithinTime.hashCode()
+    val key = state.recordsWithinTimeResource.hashCode()
     val isVisible = remember(key) {
         MutableTransitionState(
             false
@@ -51,34 +49,34 @@ fun AnalysisFlow(
             targetOffsetY = { fullHeight -> fullHeight },
         ) + fadeOut()
     ) {
-        state.categoriesWithAmount.let { categories ->
-            if (categories.isNotEmpty() && categories.first().currency.isNotEmpty()) {
-                val items = if (isExpense(
-                        categories.first().category.categoryType
-                    )) categories else categories.reversed()
+        state.recordsWithinTimeResource.let { resource ->
+            if (resource is Resource.Success && !resource.data.isNullOrEmpty()) {
                 Box(
                     modifier = Modifier.padding(
                         end = 20.dp
                     )
                 ) {
                     ChartLine(
-                        pointsData = state.recordsWithinTime.map { item ->
+                        pointsData = resource.data.map { item ->
                             Point(
                                 x = item.recordDateTime.dayOfMonth.toFloat(),
                                 y = item.recordAmount.absoluteValue.toFloat(),
                             )
                         }.reversed(),
                     )
+
                 }
             } else {
-                LoadingAnimation(isLoading = resource.isLoading && categories.isNotEmpty(),
-                    notLoadingMessage = "You haven't made any ${state.recordType.name} yet",
+                LoadingAnimation(
+                    isLoading = resource is Resource.Loading,
+                    notLoadingMessage = "You haven't have any ${state.recordType.name} on this date",
                     onClick = {
                         onEvent(
                             AnalysisEvent.ToggleRecordType
                         )
                         isVisible.targetState = false
-                    })
+                    },
+                )
             }
         }
     }

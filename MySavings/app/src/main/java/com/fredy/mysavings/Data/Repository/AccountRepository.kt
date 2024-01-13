@@ -25,12 +25,12 @@ interface AccountRepository {
 
 
 class AccountRepositoryImpl(): AccountRepository {
+    private val accountCollection = Firebase.firestore.collection(
+        "account"
+    )
 
     override suspend fun upsertAccount(account: Account) {
         val currentUser = Firebase.auth.currentUser
-        val accountCollection = Firebase.firestore.collection(
-            "account"
-        )
         if (account.accountId.isEmpty()) {
             accountCollection.add(
                 account
@@ -56,16 +56,14 @@ class AccountRepositoryImpl(): AccountRepository {
     }
 
     override suspend fun deleteAccount(account: Account) {
-        Firebase.firestore.collection("account").document(
+        accountCollection.document(
             account.accountId
         ).delete()
     }
 
     override fun getAccount(accountId: String): Flow<Account> {
         return flow {
-            val result = Firebase.firestore.collection(
-                "account"
-            ).document(
+            val result = accountCollection.document(
                 accountId
             ).get().await().toObject<Account>()?: Account()
             emit(result)
@@ -79,9 +77,7 @@ class AccountRepositoryImpl(): AccountRepository {
             "getUserAccountOrderedByName: " + currentUser!!.uid,
 
             )
-        val listener = Firebase.firestore.collection(
-            "account"
-        ).whereEqualTo(
+        val listener = accountCollection.whereEqualTo(
             "userIdFk", if (currentUser.isNotNull()) currentUser.uid else ""
         ).addSnapshotListener { value, error ->
             error?.let {
@@ -107,9 +103,7 @@ class AccountRepositoryImpl(): AccountRepository {
 
     override fun getUserAccountTotalBalance() = callbackFlow<Double> {
         val currentUser = Firebase.auth.currentUser
-        val listener = Firebase.firestore.collection(
-            "account"
-        ).whereEqualTo(
+        val listener = accountCollection.whereEqualTo(
             "userIdFk", if (currentUser.isNotNull()) currentUser!!.uid else ""
         ).addSnapshotListener { value, error ->
             error?.let {
@@ -137,9 +131,7 @@ class AccountRepositoryImpl(): AccountRepository {
 
     override fun getUserAvailableCurrency() = callbackFlow<List<String>> {
         val currentUser = Firebase.auth.currentUser
-        val listener = Firebase.firestore.collection(
-            "account"
-        ).whereEqualTo(
+        val listener = accountCollection.whereEqualTo(
             "userIdFk", if (currentUser.isNotNull()) currentUser!!.uid else ""
         ).addSnapshotListener { value, error ->
             error?.let {

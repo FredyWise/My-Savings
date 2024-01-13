@@ -1,7 +1,6 @@
 package com.fredy.mysavings.Data.Repository
 
 import co.yml.charts.common.extensions.isNotNull
-import com.fredy.mysavings.Data.Database.Entity.Account
 import com.fredy.mysavings.Data.Database.Entity.Category
 import com.fredy.mysavings.Data.Enum.RecordType
 import com.google.firebase.Firebase
@@ -23,11 +22,12 @@ interface CategoryRepository {
 }
 
 class CategoryRepositoryImpl: CategoryRepository {
+    private val categoryCollection = Firebase.firestore.collection(
+        "category"
+    )
+
     override suspend fun upsertCategory(category: Category) {
         val currentUser = Firebase.auth.currentUser
-        val categoryCollection = Firebase.firestore.collection(
-            "category"
-        )
         if (category.categoryId.isEmpty()) {
             categoryCollection.add(
                 category
@@ -53,28 +53,25 @@ class CategoryRepositoryImpl: CategoryRepository {
     }
 
     override suspend fun deleteCategory(category: Category) {
-        Firebase.firestore.collection("category").document(
+        categoryCollection.document(
             category.categoryId
         ).delete()
     }
 
     override fun getCategory(categoryId: String): Flow<Category> {
         return flow {
-            val result = Firebase.firestore.collection(
-                "category"
-            ).document(
+            val result = categoryCollection.document(
                 categoryId
-            ).get().await().toObject<Category>()?: Category()
+            ).get().await().toObject<Category>() ?: Category()
             emit(result)
         }
     }
 
     override fun getUserCategoriesOrderedByName() = callbackFlow<List<Category>> {
         val currentUser = Firebase.auth.currentUser
-        val listener = Firebase.firestore.collection(
-            "category"
-        ).whereEqualTo(
-            "userIdFk", if (currentUser.isNotNull()) currentUser!!.uid else ""
+        val listener = categoryCollection.whereEqualTo(
+            "userIdFk",
+            if (currentUser.isNotNull()) currentUser!!.uid else ""
         ).addSnapshotListener { value, error ->
             error?.let {
                 close(it)
@@ -96,10 +93,9 @@ class CategoryRepositoryImpl: CategoryRepository {
         type: RecordType
     ) = callbackFlow<List<Category>> {
         val currentUser = Firebase.auth.currentUser
-        val listener = Firebase.firestore.collection(
-            "category"
-        ).whereEqualTo(
-            "userIdFk", if (currentUser.isNotNull()) currentUser!!.uid else ""
+        val listener = categoryCollection.whereEqualTo(
+            "userIdFk",
+            if (currentUser.isNotNull()) currentUser!!.uid else ""
         ).whereEqualTo(
             "categoryType", type.name
         ).addSnapshotListener { value, error ->

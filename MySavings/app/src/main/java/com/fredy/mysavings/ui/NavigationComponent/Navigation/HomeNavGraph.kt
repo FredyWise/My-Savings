@@ -48,13 +48,11 @@ fun HomeNavGraph(
         ) {
             val viewModel: AnalysisViewModel = hiltViewModel()
             val state by viewModel.state.collectAsStateWithLifecycle()
-            val resource by viewModel.resource
 
             AnalysisScreen(
                 rootNavController = rootNavController,
                 state = state,
                 onEvent = viewModel::onEvent,
-                resource = resource,
             )
         }
         composable(

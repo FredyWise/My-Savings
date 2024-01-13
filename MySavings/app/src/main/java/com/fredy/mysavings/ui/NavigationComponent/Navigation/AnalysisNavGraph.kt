@@ -19,7 +19,6 @@ fun AnalysisNavGraph(
     rootNavController: NavHostController,
     navController: NavHostController,
     state: AnalysisState,
-    resource: ResourceState,
     onEvent: (AnalysisEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -33,7 +32,6 @@ fun AnalysisNavGraph(
         ) {
             AnalysisOverview(
                 state = state,
-                resource = resource,
                 onEvent = onEvent
             )
         }
@@ -42,7 +40,6 @@ fun AnalysisNavGraph(
         ) {
             AnalysisFlow(
                 state = state,
-                resource = resource,
                 onEvent = onEvent
             )
         }
@@ -51,7 +48,6 @@ fun AnalysisNavGraph(
         ) {
             AnalysisAccount(
                 state = state,
-                resource = resource,
                 onEvent = onEvent
             )
         }
@@ -60,7 +56,6 @@ fun AnalysisNavGraph(
         ) {
             AnalysisCategory(
                 state = state,
-                resource = resource,
                 onEvent = onEvent
             )
         }

@@ -38,6 +38,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.R
 import com.fredy.mysavings.Util.BalanceColor
+import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.ResourceState
 import com.fredy.mysavings.Util.TAG
 import com.fredy.mysavings.Util.defaultColors
@@ -54,10 +55,9 @@ import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleEntityItem
 fun AnalysisOverview(
     modifier: Modifier = Modifier,
     state: AnalysisState,
-    resource: ResourceState,
     onEvent: (AnalysisEvent) -> Unit,
 ) {
-    val key = state.categoriesWithAmount.hashCode()
+    val key = state.categoriesWithAmountResource.hashCode()
     val isVisible = remember(key) {
         MutableTransitionState(
             false
@@ -79,10 +79,11 @@ fun AnalysisOverview(
             targetOffsetY = { fullHeight -> fullHeight },
         ) + fadeOut()
     ) {
-        state.categoriesWithAmount.let { categories ->
-            Log.e(TAG, "AnalysisOverview: "+categories, )
-            if(categories.isNotEmpty() && categories.first().currency.isNotEmpty()) {
-                val items = if (isExpense(categories.first().category.categoryType)) categories else categories.reversed()
+        state.categoriesWithAmountResource.let { resource ->
+            Log.e(TAG, "AnalysisOverview: "+resource, )
+            if (resource is Resource.Success && !resource.data.isNullOrEmpty()) {
+                // this to bellow should be able to be simplified
+                val items = if (isExpense(resource.data.first().category.categoryType)) resource.data else resource.data.reversed()
                 val colors = if (isExpense(items.first().category.categoryType)) defaultColors.subList(
                     0,
                     items.size,
@@ -94,7 +95,7 @@ fun AnalysisOverview(
                 val itemsProportion = items.extractProportions { proportion ->
                     proportion.amount.toFloat()
                 }
-                LazyColumn {
+                LazyColumn {// this can be a tipical body
                     item {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Box(
@@ -255,8 +256,8 @@ fun AnalysisOverview(
                 }
             }else{
                 LoadingAnimation(
-                    isLoading = resource.isLoading && categories.isNotEmpty(),
-                    notLoadingMessage = "You haven't made any ${state.recordType.name} yet",
+                    isLoading = resource is Resource.Loading,
+                    notLoadingMessage = "You haven't have any ${state.recordType.name} on this date",
                     onClick = {
                         isVisible.targetState = false
                         onEvent(

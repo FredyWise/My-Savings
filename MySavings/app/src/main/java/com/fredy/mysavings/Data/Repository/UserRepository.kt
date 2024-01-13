@@ -22,15 +22,15 @@ interface UserRepository {
 }
 
 class UserRepositoryImpl(): UserRepository {
-
+    private val userCollection = Firebase.firestore.collection("user")
     override suspend fun upsertUser(user: UserData) {
-        Firebase.firestore.collection("user").document(
+        userCollection.document(
             user.firebaseUserId
         ).set(user)
     }
 
     override suspend fun deleteUser(user: UserData) {
-        Firebase.firestore.collection("user").document(
+        userCollection.document(
             user.firebaseUserId
         ).delete()
     }
@@ -38,9 +38,7 @@ class UserRepositoryImpl(): UserRepository {
     override fun getUser(userId: String): Flow<UserData> {
         return flow {
             var data = UserData()
-            val result = Firebase.firestore.collection(
-                "user"
-            ).document(
+            val result = userCollection.document(
                 userId
             ).get().await()
             if (result.exists()) {
@@ -51,9 +49,7 @@ class UserRepositoryImpl(): UserRepository {
     }
 
     override fun getAllUsersOrderedByName() = callbackFlow<List<UserData>> {
-        val listener = Firebase.firestore.collection(
-            "user"
-        ).orderBy(
+        val listener = userCollection.orderBy(
             "username", Query.Direction.ASCENDING
         ).addSnapshotListener { value, error ->
             error?.let {
@@ -73,9 +69,7 @@ class UserRepositoryImpl(): UserRepository {
     }
 
     override fun searchUsers(usernameEmail: String) = callbackFlow<List<UserData>> {
-        val listener = Firebase.firestore.collection(
-            "user"
-        ).where(
+        val listener = userCollection.where(
             Filter.arrayContains(
                 "username", usernameEmail
             )

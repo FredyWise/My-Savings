@@ -38,7 +38,7 @@ interface RecordRepository {
         recordType: RecordType,
         startDate: LocalDateTime,
         endDate: LocalDateTime
-    ): Flow<List<Record>>
+    ): Flow<Resource<List<Record>>>
 
     fun getUserTrueRecordMapsFromSpecificTime(
         startDate: LocalDateTime,
@@ -56,7 +56,7 @@ interface RecordRepository {
         startDate: LocalDateTime,
         endDate: LocalDateTime,
         currency: List<String>,
-    ): Flow<List<CategoryWithAmount>>
+    ): Flow<Resource<List<CategoryWithAmount>>>
 
     fun getUserAccountRecordsOrderedByDateTime(
         accountId: String,
@@ -74,15 +74,16 @@ interface RecordRepository {
 }
 
 class RecordRepositoryImpl(): RecordRepository {
+    private val recordCollection = Firebase.firestore.collection(
+        "record"
+    )
 
     override suspend fun upsertRecordItem(
         record: Record
     ) {
         val currentUser = Firebase.auth.currentUser
         Log.i(TAG, "upsertRecordItem: " + record)
-        val recordCollection = Firebase.firestore.collection(
-            "record"
-        )
+
         if (record.recordId.isEmpty()) {
             recordCollection.add(
                 record
@@ -111,7 +112,7 @@ class RecordRepositoryImpl(): RecordRepository {
         record: Record
     ) {
         Log.i(TAG, "deleteRecordItem: " + record)
-        Firebase.firestore.collection("record").document(
+        recordCollection.document(
             record.recordId
         ).delete()
     }
@@ -119,9 +120,7 @@ class RecordRepositoryImpl(): RecordRepository {
     override fun getRecordById(recordId: String): Flow<TrueRecord> {
         Log.i(TAG, "getRecordById: " + recordId)
         return flow {
-            val record = Firebase.firestore.collection(
-                "record"
-            ).document(
+            val record = recordCollection.document(
                 recordId
             ).get().await().toObject<Record>()!!
             emit(
@@ -146,9 +145,7 @@ class RecordRepositoryImpl(): RecordRepository {
         )
 
         val trueRecordComponentResult = getTrueRecordsComponent()
-        val listener = Firebase.firestore.collection(
-            "record"
-        ).whereGreaterThanOrEqualTo(
+        val listener = recordCollection.whereGreaterThanOrEqualTo(
             "recordTimestamp",
             TimestampConverter.fromDateTime(
                 startDate
@@ -166,7 +163,7 @@ class RecordRepositoryImpl(): RecordRepository {
             Query.Direction.DESCENDING
         ).addSnapshotListener { value, error ->
             error?.let { e ->
-                Log.i(
+                Log.e(
                     TAG,
                     "getUserTrueRecordMapsFromSpecificTimeError: ${e.message}"
                 )
@@ -228,9 +225,7 @@ class RecordRepositoryImpl(): RecordRepository {
 
             )
         val trueRecordComponentResult = getTrueRecordsComponent()
-        val listener = Firebase.firestore.collection(
-            "record"
-        ).whereEqualTo(
+        val listener = recordCollection.whereEqualTo(
             "categoryIdFk", categoryId
         ).whereEqualTo(
             "userIdFk",
@@ -240,7 +235,7 @@ class RecordRepositoryImpl(): RecordRepository {
             Query.Direction.DESCENDING
         ).addSnapshotListener { value, error ->
             error?.let { e ->
-                Log.i(
+                Log.e(
                     TAG,
                     "getUserCategoryRecordsOrderedByDateTimeError: ${e.message}"
                 )
@@ -299,9 +294,7 @@ class RecordRepositoryImpl(): RecordRepository {
 
             )
         val trueRecordComponentResult = getTrueRecordsComponent()
-        val listener = Firebase.firestore.collection(
-            "record"
-        ).where(//wasent tested
+        val listener = recordCollection.where(//wasent tested
             Filter.or(
                 Filter.equalTo(
                     "accountIdFromFk", accountId
@@ -364,20 +357,19 @@ class RecordRepositoryImpl(): RecordRepository {
         }
     }
 
-    override fun getUserRecordsFromSpecificTime(
+    override fun getUserRecordsFromSpecificTime( // add currency to it
         recordType: RecordType,
         startDate: LocalDateTime,
         endDate: LocalDateTime
-    ) = callbackFlow<List<Record>> {
+    ) = callbackFlow<Resource<List<Record>>> {
+        trySend(Resource.Loading())
         val currentUser = Firebase.auth.currentUser
         Log.i(
             TAG,
             "getUserRecordsFromSpecificTime: $startDate\n:\n$endDate"
         )
 
-        val listener = Firebase.firestore.collection(
-            "record"
-        ).whereGreaterThanOrEqualTo(
+        val listener = recordCollection.whereGreaterThanOrEqualTo(
             "recordTimestamp",
             TimestampConverter.fromDateTime(
                 startDate
@@ -396,37 +388,33 @@ class RecordRepositoryImpl(): RecordRepository {
             "recordTimestamp",
             Query.Direction.DESCENDING
         ).addSnapshotListener { value, error ->
-            error?.let {
-                Log.i(
+            error?.let { e ->
+                Log.e(
                     TAG,
-                    "getUserRecordsFromSpecificTimeError: ${it.message}"
+                    "getUserRecordsFromSpecificTimeError: ${e.message}"
                 )
-                close(it)
-                return@addSnapshotListener
+                e.message?.let {
+                    trySend(Resource.Error(it))
+                }
             }
 
             value?.let {
                 val records = it.toObjects<Record>()
-                val recordsMap: MutableMap<String, Record> = mutableMapOf()
+                val recordsMap = mutableMapOf<String, Record>()
                 Log.i(
                     TAG,
                     "getUserRecordsFromSpecificTime: " + records
                 )
                 records.forEach { record ->
-                    if (record != null) {
-                        val date = record.recordDateTime.toLocalDate().toString()
-                        val currency = record.recordCurrency
-                        val existingRecord = recordsMap[date]
+                    val key = record.recordDateTime.toLocalDate().toString()+record.recordCurrency
+                    val existingRecord = recordsMap[key]
 
-                        if (existingRecord != null) {
-                            recordsMap[date] = existingRecord.copy(
-                                recordAmount = existingRecord.recordAmount + record.recordAmount
-                            )
-                        } else {
-                            recordsMap[date] = record.copy(
-                                recordType = recordType
-                            )
-                        }
+                    if (existingRecord != null) {
+                        recordsMap[key] = existingRecord.copy(
+                            recordAmount = existingRecord.recordAmount + record.recordAmount
+                        )
+                    } else {
+                        recordsMap[key] = record
                     }
 
                 }
@@ -437,7 +425,7 @@ class RecordRepositoryImpl(): RecordRepository {
                     "getUserRecordsFromSpecificTimeData: " + data,
 
                     )
-                trySend(data)
+                trySend(Resource.Success(data))
             }
         }
 
@@ -451,21 +439,20 @@ class RecordRepositoryImpl(): RecordRepository {
         }
     }
 
-    override fun getUserCategoriesWithAmountFromSpecificTime(
+    override fun getUserCategoriesWithAmountFromSpecificTime(// wrong logic, the currency should be only one
         categoryType: RecordType,
         startDate: LocalDateTime,
         endDate: LocalDateTime,
         currency: List<String>,
-    ) = callbackFlow<List<CategoryWithAmount>> {
+    ) = callbackFlow<Resource<List<CategoryWithAmount>>> {
+        trySend(Resource.Loading())
         val currentUser = Firebase.auth.currentUser
         Log.i(
             TAG,
             "getUserCategoriesWithAmountFromSpecificTime: $currency\n$categoryType\n$startDate\n:\n$endDate"
         )
 
-        val listener = Firebase.firestore.collection(
-            "record"
-        ).whereGreaterThanOrEqualTo(
+        val listener = recordCollection.whereGreaterThanOrEqualTo(
             "recordTimestamp",
             TimestampConverter.fromDateTime(
                 startDate
@@ -485,17 +472,19 @@ class RecordRepositoryImpl(): RecordRepository {
             "recordTimestamp",
             Query.Direction.DESCENDING
         ).addSnapshotListener { value, error ->
-            error?.let {
+            error?.let { e->
                 Log.i(
                     TAG,
-                    "getUserCategoriesWithAmountFromSpecificTimeError: ${it.message}"
+                    "getUserCategoriesWithAmountFromSpecificTimeError: ${e.message}"
                 )
-                close(it)
+                e.message?.let {
+                    trySend(Resource.Error(it))
+                }
             }
 
             value?.let {
                 val records = it.toObjects<Record>()
-                val categoriesWithAmount = mutableMapOf<String, CategoryWithAmount>()
+                val categoriyWithAmountMap = mutableMapOf<String, CategoryWithAmount>()
                 Log.i(
                     TAG,
                     "getUserCategoriesWithAmountFromSpecificTimeResult: " + records,
@@ -505,10 +494,10 @@ class RecordRepositoryImpl(): RecordRepository {
                     val key = record.categoryIdFk + record.recordCurrency
                     val currency = record.recordCurrency
 
-                    val existingCategory = categoriesWithAmount[key]
+                    val existingCategory = categoriyWithAmountMap[key]
 
-                    if (existingCategory != null && existingCategory.currency == currency) {
-                        categoriesWithAmount[key] = existingCategory.copy(
+                    if (existingCategory != null) {
+                        categoriyWithAmountMap[key] = existingCategory.copy(
                             amount = existingCategory.amount + record.recordAmount
                         )
                     } else {
@@ -517,13 +506,15 @@ class RecordRepositoryImpl(): RecordRepository {
                             amount = record.recordAmount,
                             currency = currency
                         )
-                        categoriesWithAmount[key] = newCategory
+                        categoriyWithAmountMap[key] = newCategory
                     }
                 }
 
+
+
                 launch {
-                    val deferredCategoryDetails = categoriesWithAmount.map { (_, categoryWithAmount) ->
-                        async {
+                    val deferredCategoryDetails = categoriyWithAmountMap.map { (_, categoryWithAmount) ->
+                        async {// do this outside instead, and search it inside so it is faster and require less query
                             val category = Firebase.firestore.collection(
                                 "category"
                             ).document(
@@ -541,7 +532,7 @@ class RecordRepositoryImpl(): RecordRepository {
                         "getUserCategoriesWithAmountFromSpecificTimeData: " + data,
 
                         )
-                    trySend(data)
+                    trySend(Resource.Success(data))
                 }
             }
         }
@@ -563,9 +554,7 @@ class RecordRepositoryImpl(): RecordRepository {
             "getUserTotalAmountByType: " + recordType,
 
             )
-        val listener = Firebase.firestore.collection(
-            "record"
-        ).whereEqualTo(
+        val listener = recordCollection.whereEqualTo(
             "recordType", recordType
         ).whereEqualTo(
             "userIdFk",
@@ -607,9 +596,7 @@ class RecordRepositoryImpl(): RecordRepository {
             "getUserTotalAmountByTypeFromSpecificTime: " + recordType,
 
             )
-        val listener = Firebase.firestore.collection(
-            "record"
-        ).whereGreaterThanOrEqualTo(
+        val listener = recordCollection.whereGreaterThanOrEqualTo(
             "recordTimestamp",
             TimestampConverter.fromDateTime(
                 startDate
@@ -658,9 +645,7 @@ class RecordRepositoryImpl(): RecordRepository {
             "getUserTotalRecordBalance: ",
 
             )
-        val listener = Firebase.firestore.collection(
-            "record"
-        ).whereEqualTo(
+        val listener = recordCollection.whereEqualTo(
             "userIdFk",
             if (currentUser.isNotNull()) currentUser!!.uid else ""
         ).whereNotEqualTo(
@@ -748,7 +733,6 @@ class RecordRepositoryImpl(): RecordRepository {
             toCategory = toCategoryDeferred.await()
         )
     }
-
 }
 
 data class TrueRecordComponentResult(

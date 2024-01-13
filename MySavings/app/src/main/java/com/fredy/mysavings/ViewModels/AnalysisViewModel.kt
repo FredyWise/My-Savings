@@ -12,6 +12,7 @@ import com.fredy.mysavings.Data.Enum.RecordType
 import com.fredy.mysavings.Data.Repository.AccountRepository
 import com.fredy.mysavings.Data.Repository.CategoryWithAmount
 import com.fredy.mysavings.Data.Repository.RecordRepository
+import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.ResourceState
 import com.fredy.mysavings.Util.isExpense
 import com.fredy.mysavings.Util.minusFilterDate
@@ -47,12 +48,6 @@ class AnalysisViewModel @Inject constructor(
             }
         }
     }
-
-    private val _resource = mutableStateOf(
-        ResourceState()
-    )
-
-    val resource: State<ResourceState> = _resource
 
     private val _filterState = MutableStateFlow(
         FilterState()
@@ -112,7 +107,7 @@ class AnalysisViewModel @Inject constructor(
     }.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(),
-        listOf(CategoryWithAmount())
+        Resource.Success(emptyList())
     )
 
     private val _recordsWithinSpecificTime = _filterState.flatMapLatest { filterState ->
@@ -156,7 +151,7 @@ class AnalysisViewModel @Inject constructor(
     }.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(),
-        emptyList()
+        Resource.Success(emptyList())
     )
 
 
@@ -214,19 +209,14 @@ class AnalysisViewModel @Inject constructor(
         _recordsWithinSpecificTime,
         _availableCurrency,
     ) { state, balanceBar, categoriesWithAmount, recordsWithinSpecificTime, availableCurrency ->
-        _resource.value = ResourceState(isLoading = true)
         state.copy(
-            categoriesWithAmount = categoriesWithAmount,
-            recordsWithinTime = recordsWithinSpecificTime,
+            categoriesWithAmountResource = categoriesWithAmount,
+            recordsWithinTimeResource = recordsWithinSpecificTime,
             availableCurrency = availableCurrency,
             totalExpense = balanceBar.expense,
             totalIncome = balanceBar.income,
             totalAll = balanceBar.balance,
             graphAmount = if (isExpense(state.recordType)) balanceBar.expense else balanceBar.income,
-        )
-    }.onCompletion {
-        _resource.value = ResourceState(
-            isLoading = false
         )
     }.stateIn(
         viewModelScope,
@@ -336,10 +326,8 @@ class AnalysisViewModel @Inject constructor(
 }
 
 data class AnalysisState(
-    val categoriesWithAmount: List<CategoryWithAmount> = listOf(
-        CategoryWithAmount()
-    ),
-    val recordsWithinTime: List<Record> = listOf(),
+    val categoriesWithAmountResource: Resource<List<CategoryWithAmount>> = Resource.Loading(),
+    val recordsWithinTimeResource: Resource<List<Record>> = Resource.Loading(),
     val availableCurrency: List<String> = listOf(),
     val selectedCheckbox: List<String> = listOf(),
     val category: Category? = null,

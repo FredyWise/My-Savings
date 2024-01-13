@@ -10,7 +10,6 @@ import com.fredy.mysavings.ViewModels.Event.AnalysisEvent
 fun AnalysisCategory(
     modifier: Modifier = Modifier,
     state: AnalysisState,
-    resource: ResourceState,
     onEvent: (AnalysisEvent) -> Unit,
 ) {
 

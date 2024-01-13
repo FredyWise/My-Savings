@@ -39,7 +39,7 @@ fun CategoriesScreen(
     state: CategoryState,
     onEvent: (CategoryEvent) -> Unit,
 ) {
-    val sheetState = rememberModalBottomSheetState()
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var isSheetOpen by rememberSaveable {
         mutableStateOf(false)
     }
