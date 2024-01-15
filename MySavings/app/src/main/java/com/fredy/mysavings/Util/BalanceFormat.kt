@@ -3,6 +3,7 @@ package com.fredy.mysavings.Util
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import co.yml.charts.common.extensions.isNotNull
 import com.fredy.mysavings.Data.Enum.RecordType
 import java.text.DecimalFormat
 import kotlin.math.absoluteValue
@@ -40,10 +41,11 @@ fun BalanceColor(
 
 fun formatBalanceAmount(
     amount: Double,
-    currency: String,
+    currency: String? = null,
     isShortenToChar: Boolean = false,
 ): String {
-    return if (isShortenToChar) formatCharAmount(amount) + " " + currency else formatAmount(amount) + " " + currency
+    val amountCurrency = if (currency.isNotNull()) " $currency" else ""
+    return if (isShortenToChar) formatCharAmount(amount) + amountCurrency else formatAmount(amount) + amountCurrency
 }
 
 fun formatAmount(amount: Double): String {

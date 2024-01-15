@@ -10,22 +10,29 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material3.DateRangePicker
+import androidx.compose.material3.DateRangePickerState
+import androidx.compose.material3.DisplayMode
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleButton
 import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.datetime.date.DatePickerDefaults
 import com.vanpra.composematerialdialogs.datetime.date.datepicker
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZoneId
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DisplayBar(
     modifier: Modifier = Modifier,
@@ -84,7 +91,11 @@ fun DisplayBar(
         trailingIcon()
     }
 
-    MaterialDialog(dialogState = dateDialogState,
+
+
+
+    MaterialDialog(
+        dialogState = dateDialogState,
         backgroundColor = MaterialTheme.colorScheme.surface,
         buttons = {
             positiveButton(
@@ -99,7 +110,8 @@ fun DisplayBar(
                     MaterialTheme.colorScheme.onSurface
                 ),
             )
-        }) {
+        },
+    ) {
         datepicker(
             initialDate = selectedDate,
             colors = DatePickerDefaults.colors(
@@ -113,6 +125,17 @@ fun DisplayBar(
             ),
             onDateChange = { onDateChange(it) },
         )
+//        val dateRangePickerState = remember {
+//            DateRangePickerState(
+//                initialSelectedStartDateMillis = selectedDate.atStartOfDay().toMillis(),
+//                initialDisplayedMonthMillis = null,
+//                initialSelectedEndDateMillis = selectedDate.atStartOfDay().toMillis(),
+//                initialDisplayMode = DisplayMode.Picker,
+//                yearRange = (2000..2024)
+//            )
+//        }
+//
+//        DateRangePicker(state = dateRangePickerState)
     }
 }
-
+fun LocalDateTime.toMillis() = this.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()

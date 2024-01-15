@@ -16,10 +16,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import com.fredy.mysavings.ViewModels.Event.AddRecordEvent
 import com.fredy.mysavings.Util.formatDate
 import com.fredy.mysavings.Util.formatTime
 import com.fredy.mysavings.ViewModels.AddRecordState
+import com.fredy.mysavings.ViewModels.Event.AddRecordEvent
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleButton
 import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.datetime.date.DatePickerDefaults
@@ -75,7 +75,8 @@ fun DateAndTimePicker(
             )
         )
     }
-    MaterialDialog(dialogState = dateDialogState,
+    MaterialDialog(
+        dialogState = dateDialogState,
         backgroundColor = MaterialTheme.colorScheme.surface,
         buttons = {
             positiveButton(
@@ -96,7 +97,8 @@ fun DateAndTimePicker(
                     MaterialTheme.colorScheme.onSurface
                 ),
             )
-        }) {
+        },
+    ) {
         datepicker(
             initialDate = state.recordDate,
             colors = DatePickerDefaults.colors(
@@ -115,7 +117,8 @@ fun DateAndTimePicker(
             },
         )
     }
-    MaterialDialog(dialogState = timeDialogState,
+    MaterialDialog(
+        dialogState = timeDialogState,
         backgroundColor = MaterialTheme.colorScheme.surface,
         buttons = {
             positiveButton(
@@ -136,15 +139,22 @@ fun DateAndTimePicker(
                     MaterialTheme.colorScheme.onSurface
                 ),
             )
-        }) {
+        },
+    ) {
         timepicker(
             initialTime = state.recordTime,
             colors = TimePickerDefaults.colors(
                 activeBackgroundColor = MaterialTheme.colorScheme.primary,
-                inactiveBackgroundColor = MaterialTheme.colorScheme.secondary.copy(0.6f),
+                inactiveBackgroundColor = MaterialTheme.colorScheme.secondary.copy(
+                    0.6f
+                ),
                 activeTextColor = MaterialTheme.colorScheme.onPrimary,
-                inactiveTextColor = MaterialTheme.colorScheme.onSurface.copy(0.9f),
-                inactivePeriodBackground = MaterialTheme.colorScheme.secondary.copy(0.6f),
+                inactiveTextColor = MaterialTheme.colorScheme.onSurface.copy(
+                    0.9f
+                ),
+                inactivePeriodBackground = MaterialTheme.colorScheme.secondary.copy(
+                    0.6f
+                ),
                 selectorColor = MaterialTheme.colorScheme.primary,
                 selectorTextColor = MaterialTheme.colorScheme.onPrimary,
                 headerTextColor = MaterialTheme.colorScheme.onBackground,

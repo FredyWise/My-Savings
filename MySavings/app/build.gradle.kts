@@ -62,6 +62,8 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
+    // Additional UI
+    implementation ("androidx.compose.foundation:foundation:1.5.4")
     // Firebase
     implementation("com.google.android.gms:play-services-vision:20.1.3")//add this to remove duplicate class error
     implementation("com.google.firebase:firebase-auth:22.3.0")

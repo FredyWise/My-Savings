@@ -21,14 +21,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.fredy.mysavings.Util.Resource
-import com.fredy.mysavings.Util.ResourceState
 import com.fredy.mysavings.Util.formatRangeOfDate
-import com.fredy.mysavings.ViewModels.RecordState
 import com.fredy.mysavings.ViewModels.Event.RecordsEvent
+import com.fredy.mysavings.ViewModels.RecordState
 import com.fredy.mysavings.ui.NavigationComponent.MainFilterAppBar
 import com.fredy.mysavings.ui.NavigationComponent.Navigation.NavigationRoute
-import com.fredy.mysavings.ui.Screens.ZCommonComponent.LoadingAnimation
+import com.fredy.mysavings.ui.Screens.ZCommonComponent.ResourceHandler
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -136,23 +134,22 @@ fun RecordsScreen(
                 targetOffsetY = { fullHeight -> fullHeight },
             ) + fadeOut()
         ) {
-
             state.recordMapsResource.let { resource ->
-                if (resource is Resource.Success && !resource.data.isNullOrEmpty()) {
+                ResourceHandler(
+                    resource = resource,
+                    nullOrEmptyMessage = "You haven't made any Record yet",
+                    isNullOrEmpty = { it.isNullOrEmpty() },
+                    errorMessage = resource.message ?: "",
+                    onMessageClick = {
+                        rootNavController.navigate(
+                            NavigationRoute.Add.route + "/-1"
+                        )
+                        isVisible.targetState = false
+                    },
+                ) { data ->
                     RecordBody(
-                        trueRecordMaps = resource.data,
+                        trueRecordMaps = data,
                         onEvent = onEvent
-                    )
-                } else {
-                    LoadingAnimation(
-                        isLoading = resource is Resource.Loading,
-                        notLoadingMessage = "You haven't made any Record yet",
-                        onClick = {
-                            rootNavController.navigate(
-                                NavigationRoute.Add.route + "/-1"
-                            )
-                            isVisible.targetState = false
-                        },
                     )
                 }
             }

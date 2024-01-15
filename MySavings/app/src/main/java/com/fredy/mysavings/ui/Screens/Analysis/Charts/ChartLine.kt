@@ -25,18 +25,20 @@ import co.yml.charts.ui.linechart.model.SelectionHighlightPopUp
 import co.yml.charts.ui.linechart.model.ShadowUnderLine
 import com.fredy.mysavings.Util.TAG
 import com.fredy.mysavings.Util.formatCharAmount
+import java.time.LocalDate
 import kotlin.math.nextUp
 
 @Composable
 fun ChartLine(
     pointsData: List<Point>,
+//    selectedDate: LocalDate = LocalDate.now(),
     contentColor: Color = MaterialTheme.colorScheme.primary,
     gridColor: Color = MaterialTheme.colorScheme.secondary,
     infoColor: Color = MaterialTheme.colorScheme.onSecondary,
     backgroundColor: Color = MaterialTheme.colorScheme.background,
 ) {
     val points = pointsData.toMutableList()
-    val firstPoint = Point(points[0].x-1,points[0].y)
+    val firstPoint = Point(0f,0f)
     val lastPoint = Point(points[points.size-1].x+1,points[points.size-1].y)
     points.add(0,firstPoint)
     points.add(points.size,lastPoint)

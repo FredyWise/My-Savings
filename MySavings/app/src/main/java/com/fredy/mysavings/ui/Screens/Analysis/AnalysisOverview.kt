@@ -38,8 +38,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.R
 import com.fredy.mysavings.Util.BalanceColor
-import com.fredy.mysavings.Util.Resource
-import com.fredy.mysavings.Util.ResourceState
 import com.fredy.mysavings.Util.TAG
 import com.fredy.mysavings.Util.defaultColors
 import com.fredy.mysavings.Util.formatAmount
@@ -48,7 +46,7 @@ import com.fredy.mysavings.Util.isExpense
 import com.fredy.mysavings.ViewModels.AnalysisState
 import com.fredy.mysavings.ViewModels.Event.AnalysisEvent
 import com.fredy.mysavings.ui.Screens.Analysis.Charts.ChartSlimDonutWithTitle
-import com.fredy.mysavings.ui.Screens.ZCommonComponent.LoadingAnimation
+import com.fredy.mysavings.ui.Screens.ZCommonComponent.ResourceHandler
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleEntityItem
 
 @Composable
@@ -80,10 +78,21 @@ fun AnalysisOverview(
         ) + fadeOut()
     ) {
         state.categoriesWithAmountResource.let { resource ->
-            Log.e(TAG, "AnalysisOverview: "+resource, )
-            if (resource is Resource.Success && !resource.data.isNullOrEmpty()) {
-                // this to bellow should be able to be simplified
-                val items = if (isExpense(resource.data.first().category.categoryType)) resource.data else resource.data.reversed()
+            Log.e(
+                TAG,
+                "AnalysisOverview: " + resource,
+            )
+            ResourceHandler(resource = resource,
+                nullOrEmptyMessage = "You haven't have any ${state.recordType.name} on this date",
+                isNullOrEmpty = { it.isNullOrEmpty() },
+                errorMessage = resource.message ?: "",
+                onMessageClick = {
+                    isVisible.targetState = false
+                    onEvent(
+                        AnalysisEvent.ToggleRecordType
+                    )
+                }) { data ->                // this to bellow should be able to be simplified
+                val items = if (isExpense(data.first().category.categoryType)) data else data.reversed()
                 val colors = if (isExpense(items.first().category.categoryType)) defaultColors.subList(
                     0,
                     items.size,
@@ -254,17 +263,6 @@ fun AnalysisOverview(
                         }
                     }
                 }
-            }else{
-                LoadingAnimation(
-                    isLoading = resource is Resource.Loading,
-                    notLoadingMessage = "You haven't have any ${state.recordType.name} on this date",
-                    onClick = {
-                        isVisible.targetState = false
-                        onEvent(
-                            AnalysisEvent.ToggleRecordType
-                        )
-                    }
-                )
             }
         }
     }

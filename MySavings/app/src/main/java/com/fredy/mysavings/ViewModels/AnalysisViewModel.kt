@@ -115,37 +115,43 @@ class AnalysisViewModel @Inject constructor(
             FilterType.Daily -> recordRepository.getUserRecordsFromSpecificTime(
                 filterState.recordType,
                 filterState.start,
-                filterState.end
+                filterState.end,
+                filterState.currencies,
             )
 
             FilterType.Weekly -> recordRepository.getUserRecordsFromSpecificTime(
                 filterState.recordType,
                 filterState.start,
-                filterState.end
+                filterState.end,
+                filterState.currencies,
             )
 
             FilterType.Monthly -> recordRepository.getUserRecordsFromSpecificTime(
                 filterState.recordType,
                 filterState.start,
-                filterState.end
+                filterState.end,
+                filterState.currencies,
             )
 
             FilterType.Per3Months -> recordRepository.getUserRecordsFromSpecificTime(
                 filterState.recordType,
                 filterState.start,
-                filterState.end
+                filterState.end,
+                filterState.currencies,
             )
 
             FilterType.Per6Months -> recordRepository.getUserRecordsFromSpecificTime(
                 filterState.recordType,
                 filterState.start,
-                filterState.end
+                filterState.end,
+                filterState.currencies,
             )
 
             FilterType.Yearly -> recordRepository.getUserRecordsFromSpecificTime(
                 filterState.recordType,
                 filterState.start,
-                filterState.end
+                filterState.end,
+                filterState.currencies,
             )
         }
     }.stateIn(
@@ -328,8 +334,8 @@ class AnalysisViewModel @Inject constructor(
 data class AnalysisState(
     val categoriesWithAmountResource: Resource<List<CategoryWithAmount>> = Resource.Loading(),
     val recordsWithinTimeResource: Resource<List<Record>> = Resource.Loading(),
-    val availableCurrency: List<String> = listOf(),
-    val selectedCheckbox: List<String> = listOf(),
+    val availableCurrency: List<String> = emptyList(),
+    val selectedCheckbox: List<String> = emptyList(),
     val category: Category? = null,
     val totalExpense: Double = 0.0,
     val totalIncome: Double = 0.0,

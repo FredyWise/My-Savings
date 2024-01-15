@@ -1,5 +1,6 @@
 package com.fredy.mysavings.ViewModels
 
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -12,6 +13,7 @@ import com.fredy.mysavings.Data.Repository.RecordRepository
 import com.fredy.mysavings.Data.Repository.TrueRecord
 import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.ResourceState
+import com.fredy.mysavings.Util.TAG
 import com.fredy.mysavings.Util.minusFilterDate
 import com.fredy.mysavings.Util.plusFilterDate
 import com.fredy.mysavings.Util.updateFilterState
@@ -38,10 +40,6 @@ class RecordViewModel @Inject constructor(
     private val recordRepository: RecordRepository,
     private val accountRepository: AccountRepository,
 ): ViewModel() {
-    private val _resource = mutableStateOf(
-        ResourceState()
-    )
-
     private val _filterState = MutableStateFlow(
         FilterState()
     )
@@ -58,37 +56,43 @@ class RecordViewModel @Inject constructor(
             FilterType.Daily -> recordRepository.getUserTrueRecordMapsFromSpecificTime(
                 filterState.start,
                 filterState.end,
-                filterState.sortType
+                filterState.sortType,
+                filterState.currencies
             )
 
             FilterType.Weekly -> recordRepository.getUserTrueRecordMapsFromSpecificTime(
                 filterState.start,
                 filterState.end,
-                filterState.sortType
+                filterState.sortType,
+                filterState.currencies
             )
 
             FilterType.Monthly -> recordRepository.getUserTrueRecordMapsFromSpecificTime(
                 filterState.start,
                 filterState.end,
-                filterState.sortType
+                filterState.sortType,
+                filterState.currencies
             )
 
             FilterType.Per3Months -> recordRepository.getUserTrueRecordMapsFromSpecificTime(
                 filterState.start,
                 filterState.end,
-                filterState.sortType
+                filterState.sortType,
+                filterState.currencies
             )
 
             FilterType.Per6Months -> recordRepository.getUserTrueRecordMapsFromSpecificTime(
                 filterState.start,
                 filterState.end,
-                filterState.sortType
+                filterState.sortType,
+                filterState.currencies
             )
 
             FilterType.Yearly -> recordRepository.getUserTrueRecordMapsFromSpecificTime(
                 filterState.start,
                 filterState.end,
-                filterState.sortType
+                filterState.sortType,
+                filterState.currencies
             )
         }
     }.stateIn(
@@ -150,7 +154,6 @@ class RecordViewModel @Inject constructor(
         _availableCurrency,
         balanceBar,
     ) { state, records, availableCurrency, balanceBar ->
-        _resource.value = ResourceState(isLoading = true)
         state.copy(
             recordMapsResource = records,
             availableCurrency = availableCurrency,
@@ -158,8 +161,6 @@ class RecordViewModel @Inject constructor(
             totalIncome = balanceBar.income,
             totalAll = balanceBar.balance,
         )
-    }.onCompletion {
-        _resource.value = ResourceState(isLoading = false)
     }.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(5000),
@@ -248,6 +249,7 @@ class RecordViewModel @Inject constructor(
             }
 
             is RecordsEvent.SelectedCurrencies -> {
+                Log.i(TAG, "onEvent: ${state.value.availableCurrency}")
                 _filterState.update {
                     it.copy(
                         currencies = event.selectedCurrencies

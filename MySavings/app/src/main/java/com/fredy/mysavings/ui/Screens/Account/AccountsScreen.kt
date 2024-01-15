@@ -27,7 +27,7 @@ import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.formatBalanceAmount
 import com.fredy.mysavings.ViewModels.AccountState
 import com.fredy.mysavings.ViewModels.Event.AccountEvent
-import com.fredy.mysavings.ui.Screens.ZCommonComponent.LoadingAnimation
+import com.fredy.mysavings.ui.Screens.ZCommonComponent.ResourceHandler
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SearchBar
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleButton
 
@@ -55,9 +55,17 @@ fun AccountsScreen(
             dragHandle = {},
         ) {
             state.recordMapsResource.let { resource ->
-                if (resource is Resource.Success && !resource.data.isNullOrEmpty()) {
+                ResourceHandler(
+                    resource = resource,
+                    nullOrEmptyMessage = "You haven't made any Record using this category yet",
+                    errorMessage = resource.message?:"",
+                    isNullOrEmpty = {it.isNullOrEmpty()},
+                    onMessageClick = {
+                        isSheetOpen = false
+                    },
+                ){ data ->
                     AccountDetailSheet(
-                        recordMaps = resource.data,
+                        recordMaps = data,
                         icon = state.account.accountIcon,
                         iconDescription = state.account.accountIconDescription,
                         itemName = state.account.accountName,
@@ -67,14 +75,6 @@ fun AccountsScreen(
                             true
                         ),
                         onBackIconClick = {
-                            isSheetOpen = false
-                        },
-                    )
-                } else {
-                    LoadingAnimation(
-                        isLoading = resource is Resource.Loading,
-                        notLoadingMessage = "You haven't made any Record using this category yet",
-                        onClick = {
                             isSheetOpen = false
                         },
                     )

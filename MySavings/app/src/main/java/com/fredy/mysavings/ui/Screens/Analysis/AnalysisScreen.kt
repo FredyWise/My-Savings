@@ -128,9 +128,7 @@ fun AnalysisScreen(
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             ExposedDropdownMenuBox(
                 modifier = Modifier
-                    .fillMaxWidth()
                     .padding(
-                        horizontal = 50.dp,
                         vertical = 8.dp
                     ),
                 expanded = expanded,

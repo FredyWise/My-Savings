@@ -1,5 +1,6 @@
 package com.fredy.mysavings.ui.Screens.ZCommonComponent
 
+import android.widget.Toast
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -41,6 +42,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -48,45 +50,73 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.Util.ActionWithName
+import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.SavingsIcon
 
 
 @Composable
-fun LoadingAnimation(
-    isLoading: Boolean,
-    notLoadingMessage: String,
-    onClick: () -> Unit
+fun <T> ResourceHandler(
+    resource: Resource<T>,
+    isNullOrEmpty: (T?) -> Boolean,
+    errorMessage: String = "",
+    nullOrEmptyMessage: String = "",
+    onMessageClick: () -> Unit,
+    content: @Composable (T) -> Unit,
 ) {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        if (isLoading) {
-            CircularProgressIndicator(
-                modifier = Modifier.size(
-                    40.dp
-                ),
-                strokeWidth = 4.dp,
-                color = MaterialTheme.colorScheme.onBackground
-            )
-        } else {
-            Text(
-                text = notLoadingMessage,
-                modifier = Modifier
-                    .clip(
-                        MaterialTheme.shapes.medium
-                    )
-                    .clickable {
-                        onClick()
-                    }
-                    .padding(
-                        20.dp
+    val context = LocalContext.current
+    when (resource) {
+        is Resource.Error -> {
+            Toast.makeText(
+                context,
+                errorMessage,
+                Toast.LENGTH_LONG
+            ).show()
+        }
+
+        is Resource.Loading -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(
+                        40.dp
                     ),
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onBackground,
-            )
+                    strokeWidth = 4.dp,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+            }
+        }
+
+        is Resource.Success -> {
+            resource.data.let{
+                if (isNullOrEmpty(it)) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = nullOrEmptyMessage,
+                            modifier = Modifier.clip(
+                                    MaterialTheme.shapes.medium
+                                ).clickable {
+                                    onMessageClick()
+                                }.padding(
+                                    20.dp
+                                ),
+                            style = MaterialTheme.typography.titleLarge,
+                            color = MaterialTheme.colorScheme.onBackground,
+                        )
+                    }
+                } else {
+                    it?.let {
+                        content(it)
+                    }
+                }
+            }
         }
     }
+
 }
 
 @Composable
@@ -319,7 +349,7 @@ fun ChooseIcon(
             ),
         rows = GridCells.Fixed(2),
 
-    ) {
+        ) {
         items(icons) { icon ->
             Box(
                 modifier = Modifier
