@@ -10,6 +10,9 @@ import com.fredy.mysavings.Data.Enum.RecordType
 import com.fredy.mysavings.Data.Enum.SortType
 import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.TAG
+import com.fredy.mysavings.Util.isExpense
+import com.fredy.mysavings.Util.isIncome
+import com.fredy.mysavings.Util.isTransfer
 import com.fredy.mysavings.ViewModels.RecordMap
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseUser
@@ -52,6 +55,11 @@ interface RecordRepository {
         sortType: SortType,
     ): Flow<Resource<List<RecordMap>>>
 
+    fun getUserAccountRecordsOrderedByDateTime(
+        accountId: String,
+        sortType: SortType,
+    ): Flow<Resource<List<RecordMap>>>
+
     fun getUserCategoriesWithAmountFromSpecificTime(
         categoryType: RecordType,
         startDate: LocalDateTime,
@@ -59,10 +67,10 @@ interface RecordRepository {
         currency: List<String>,
     ): Flow<Resource<List<CategoryWithAmount>>>
 
-    fun getUserAccountRecordsOrderedByDateTime(
-        accountId: String,
-        sortType: SortType,
-    ): Flow<Resource<List<RecordMap>>>
+    fun getUserAccountsWithAmountFromSpecificTime(
+        startDate: LocalDateTime,
+        endDate: LocalDateTime,
+    ): Flow<Resource<List<AccountWithAmountType>>>
 
     fun getUserTotalAmountByType(recordType: RecordType): Flow<Double>
     fun getUserTotalAmountByTypeFromSpecificTime(
@@ -359,7 +367,7 @@ class RecordRepositoryImpl(): RecordRepository {
         }
     }
 
-    override fun getUserRecordsFromSpecificTime( // add currency to it
+    override fun getUserRecordsFromSpecificTime(
         recordType: RecordType,
         startDate: LocalDateTime,
         endDate: LocalDateTime,
@@ -421,7 +429,7 @@ class RecordRepositoryImpl(): RecordRepository {
                     }
                 }
 
-                val data = recordsMap.values.toList().sortedBy { it.recordTimestamp }
+                val data = recordsMap.values.toList()
                 Log.i(
                     TAG,
                     "getUserRecordsFromSpecificTimeData: $data",
@@ -504,9 +512,8 @@ class RecordRepositoryImpl(): RecordRepository {
                         )
                     } else {
                         val newCategory = CategoryWithAmount(
-                            categoryId = record.categoryIdFk,
-                            amount = record.recordAmount,
                             category = userCategories.first { it.categoryId == record.categoryIdFk },
+                            amount = record.recordAmount,
                             currency = record.recordCurrency
                         )
                         categoryWithAmountMap[key] = newCategory
@@ -526,6 +533,104 @@ class RecordRepositoryImpl(): RecordRepository {
         Log.i(
             TAG,
             "getUserCategoriesWithAmountFromSpecificTime0.0: $listener"
+        )
+        awaitClose {
+            listener.remove()
+        }
+    }
+
+    override fun getUserAccountsWithAmountFromSpecificTime(
+        startDate: LocalDateTime,
+        endDate: LocalDateTime,
+    ) = callbackFlow<Resource<List<AccountWithAmountType>>> {
+        trySend(Resource.Loading())
+        val currentUser = Firebase.auth.currentUser
+        Log.i(
+            TAG,
+            "getUserAccountsWithAmountFromSpecificTime: \n$startDate\n:\n$endDate"
+        )
+        val userAccounts = getUserAccount(
+            currentUser
+        )
+        val listener = recordCollection.whereGreaterThanOrEqualTo(
+            "recordTimestamp",
+            TimestampConverter.fromDateTime(
+                startDate
+            )
+        ).whereLessThanOrEqualTo(
+            "recordTimestamp",
+            TimestampConverter.fromDateTime(
+                endDate
+            )
+        ).whereEqualTo(
+            "userIdFk",
+            if (currentUser.isNotNull()) currentUser!!.uid else ""
+        ).orderBy(
+            "recordTimestamp",
+            Query.Direction.DESCENDING
+        ).addSnapshotListener { value, error ->
+            error?.let { e ->
+                Log.i(
+                    TAG,
+                    "getUserAccountsWithAmountFromSpecificTimeError: ${e.message}"
+                )
+                e.message?.let {
+                    trySend(Resource.Error(it))
+                }
+            }
+
+            value?.let { query ->
+                val records = query.toObjects<Record>()
+                val accountWithAmountMap = mutableMapOf<String, AccountWithAmountType>()
+                Log.i(
+                    TAG,
+                    "getUserAccountsWithAmountFromSpecificTimeResult: $records",
+
+                    )
+                userAccounts.forEach { account ->
+                    val key = account.accountId
+                    val newAccount = AccountWithAmountType(
+                        account = account,
+                        incomeAmount = 0.0,
+                        expenseAmount = 0.0,
+                    )
+                    accountWithAmountMap[key] = newAccount
+                }
+                records.forEach { record ->
+                    val key = record.accountIdFromFk
+                    val existingAccount = accountWithAmountMap[key]
+                    if (!isTransfer(record.recordType)) {
+                        val incomeAmount = if (isIncome(record.recordType)) record.recordAmount else 0.0
+                        val expenseAmount = if (isExpense(record.recordType)) record.recordAmount else 0.0
+                        if (existingAccount != null) {
+                            accountWithAmountMap[key] = existingAccount.copy(
+                                incomeAmount = existingAccount.incomeAmount + incomeAmount,
+                                expenseAmount = existingAccount.expenseAmount + expenseAmount,
+                            )
+                        } else {
+                            val newAccount = AccountWithAmountType(
+                                account = userAccounts.first { it.accountId == record.accountIdFromFk },
+                                incomeAmount = incomeAmount,
+                                expenseAmount = expenseAmount,
+                            )
+                            accountWithAmountMap[key] = newAccount
+                        }
+                    }
+                }
+
+                val data = accountWithAmountMap.values.toList().sortedBy { it.account.accountName }
+                Log.i(
+                    TAG,
+                    "getUserAccountsWithAmountFromSpecificTimeData: $data",
+
+                    )
+                trySend(Resource.Success(data))
+
+            }
+        }
+        Log.i(
+            TAG,
+            "getUserAccountsWithAmountFromSpecificTime0.0: $listener"
         )
         awaitClose {
             listener.remove()
@@ -747,7 +852,12 @@ data class TrueRecord(
 
 data class CategoryWithAmount(
     val category: Category = Category(),
-    val categoryId: String = "",
     val amount: Double = 0.0,
     val currency: String = ""
+)
+
+data class AccountWithAmountType(
+    val account: Account = Account(),
+    val expenseAmount: Double = 0.0,
+    val incomeAmount: Double = 0.0
 )

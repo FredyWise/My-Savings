@@ -25,33 +25,34 @@ import co.yml.charts.ui.linechart.model.SelectionHighlightPopUp
 import co.yml.charts.ui.linechart.model.ShadowUnderLine
 import com.fredy.mysavings.Util.TAG
 import com.fredy.mysavings.Util.formatCharAmount
-import java.time.LocalDate
 import kotlin.math.nextUp
 
 @Composable
 fun ChartLine(
-    pointsData: List<Point>,
-//    selectedDate: LocalDate = LocalDate.now(),
+    modifier: Modifier = Modifier,
     contentColor: Color = MaterialTheme.colorScheme.primary,
     gridColor: Color = MaterialTheme.colorScheme.secondary,
     infoColor: Color = MaterialTheme.colorScheme.onSecondary,
     backgroundColor: Color = MaterialTheme.colorScheme.background,
+    pointsData: List<Point>,
+    currency: String,
 ) {
-    val points = pointsData.toMutableList()
-    val firstPoint = Point(0f,0f)
-    val lastPoint = Point(points[points.size-1].x+1,points[points.size-1].y)
-    points.add(0,firstPoint)
-    points.add(points.size,lastPoint)
-    Log.e(TAG, "ChartLine: " + points+" length:"+points.size)
+    val points = pointsData.sortedBy { it.x }.toMutableList()
+    points.add(0, Point(0f, 0f))
+
+    Log.e(
+        TAG,
+        "ChartLine: " + points + " length:" + points.size
+    )
     val steps = 5
 
     val xAxisData = AxisData.Builder().axisStepSize(
-        55.dp
+        75.dp
     ).backgroundColor(backgroundColor).axisLabelColor(
         contentColor
     ).axisLineColor(contentColor).topPadding(
         105.dp
-    ).steps(32).labelData { i -> (i).toString() }.labelAndAxisLinePadding(
+    ).steps(31).labelData { i -> (i).toString() }.labelAndAxisLinePadding(
         15.dp
     ).build()
 
@@ -60,12 +61,12 @@ fun ChartLine(
     ).backgroundColor(backgroundColor).axisLabelColor(
         contentColor
     ).axisLineColor(contentColor).labelData { i ->
-        Log.e(TAG, "ChartLine: i="+i, )
+        Log.e(TAG, "ChartLine: i=" + i)
 //        val yMin = points.minOf { it.y }
         val yMax = points.maxOf { it.y }.nextUp()
 //        val yScale = (yMax - yMin) / steps
-         val yScale = yMax / steps
-        formatCharAmount((i * yScale).toDouble())
+        val yScale = yMax / steps
+        formatCharAmount((i * yScale).toDouble())+ " $currency"
 //        formatCharAmount(((i * yScale) + yMin).toDouble())
     }.build()
 
@@ -98,8 +99,12 @@ fun ChartLine(
                         backgroundColor = gridColor,
                         labelColor = infoColor,
                         popUpLabel = { x, y ->
-                            val xLabel = "x : ${x.toInt()} "
-                            val yLabel = "y : ${formatCharAmount(y.toDouble())}"
+                            val xLabel = "date : ${x.toInt()} "
+                            val yLabel = "amount : ${
+                                formatCharAmount(
+                                    y.toDouble()
+                                )
+                            }"
                             "$xLabel $yLabel"
                         },
                     )
@@ -116,14 +121,15 @@ fun ChartLine(
         paddingRight = 0.dp,
         paddingTop = 35.dp,
         bottomPadding = 0.dp,
-        containerPaddingEnd = 0.dp
+        containerPaddingEnd = 55.dp
     )
 
     LineChart(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .height(
                 200.dp
-            ), lineChartData = data
+            ),
+        lineChartData = data,
     )
 }

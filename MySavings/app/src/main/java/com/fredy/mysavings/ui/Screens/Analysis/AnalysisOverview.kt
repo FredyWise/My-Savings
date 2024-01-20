@@ -82,8 +82,9 @@ fun AnalysisOverview(
                 TAG,
                 "AnalysisOverview: " + resource,
             )
-            ResourceHandler(resource = resource,
-                nullOrEmptyMessage = "You haven't have any ${state.recordType.name} on this date",
+            ResourceHandler(
+                resource = resource,
+                nullOrEmptyMessage = "There is no ${state.recordType.name} on this date yet",
                 isNullOrEmpty = { it.isNullOrEmpty() },
                 errorMessage = resource.message ?: "",
                 onMessageClick = {
@@ -91,7 +92,8 @@ fun AnalysisOverview(
                     onEvent(
                         AnalysisEvent.ToggleRecordType
                     )
-                }) { data ->                // this to bellow should be able to be simplified
+                },
+            ) { data ->                // this to bellow should be able to be simplified
                 val items = if (isExpense(data.first().category.categoryType)) data else data.reversed()
                 val colors = if (isExpense(items.first().category.categoryType)) defaultColors.subList(
                     0,
@@ -104,7 +106,7 @@ fun AnalysisOverview(
                 val itemsProportion = items.extractProportions { proportion ->
                     proportion.amount.toFloat()
                 }
-                LazyColumn {// this can be a tipical body
+                LazyColumn {
                     item {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Box(

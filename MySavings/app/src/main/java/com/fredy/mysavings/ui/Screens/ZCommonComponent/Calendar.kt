@@ -28,6 +28,7 @@ import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -39,16 +40,22 @@ import kotlin.math.ceil
 fun Calendar(
     modifier: Modifier = Modifier,
     borderColor: Color = MaterialTheme.colorScheme.onSecondary,
-    textColor: Color = MaterialTheme.colorScheme.primary,
-    calenderRows: Int = 7,
+    dayTextColor: Color = MaterialTheme.colorScheme.primary,
+    dateTextColor: Color = MaterialTheme.colorScheme.secondary,
     calenderColumn: Int = 7,
-    calendarInput: Map<Int,String>,
+    calendarInput: Map<Int, String>,
+    calendarExpenseInputColor: Color,
+    calendarIncomeInputColor: Color,
     date: LocalDate = LocalDate.now(),
     onDayClick: (Int) -> Unit = {},
-    strokeWidth: Float = 5f,
+    strokeWidth: Float = 3f,
     title: @Composable () -> Unit = {}
 ) {
-
+    val calenderRows = if (LocalDate.of(
+            date.year,
+            date.month,
+            1
+        ).dayOfWeek.value % 7 < 5) 6 else 7
     var canvasSize by remember {
         mutableStateOf(Size.Zero)
     }
@@ -153,7 +160,7 @@ fun Calendar(
                 )
             )
 
-            for (i in 1 .. calenderRows) {
+            for (i in 1 .. calenderRows - 1) {
                 drawLine(
                     color = borderColor,
                     start = Offset(
@@ -165,7 +172,7 @@ fun Calendar(
                     strokeWidth = strokeWidth
                 )
             }
-            for (i in 1 .. calenderColumn) {
+            for (i in 1 .. calenderColumn - 1) {
                 drawLine(
                     color = borderColor,
                     start = Offset(
@@ -178,56 +185,83 @@ fun Calendar(
                 )
             }
 
-            val textHeight = 17.dp.toPx()
-            val daysOfWeek = listOf("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")
+            val textHeight = 14.dp.toPx()
+            val daysOfWeek = listOf(
+                "Sun",
+                "Mon",
+                "Tue",
+                "Wed",
+                "Thu",
+                "Fri",
+                "Sat"
+            )
 
-            for (i in 0 until 7) {
-                val textPositionX = xSteps * (i % calenderColumn) + strokeWidth
+            // Inside the Canvas block
+            for (i in 0 until calenderColumn) {
+                val textPositionX = xSteps * (i % calenderColumn)
+                val textCenterX = textPositionX + (xSteps / 2)
+                val textPositionY = textHeight
+                val textCenterY = textPositionY + (ySteps / 3.5)
+
                 drawContext.canvas.nativeCanvas.apply {
-                    drawText(
-                        daysOfWeek[i],
-                        textPositionX,
-                        textHeight,
+                    drawText(daysOfWeek[i],
+                        textCenterX,
+                        textCenterY.toFloat(),
                         Paint().apply {
                             textSize = textHeight
-                            color = textColor.toArgb()
+                            color = dayTextColor.toArgb()
                             typeface = Typeface.DEFAULT_BOLD
-                        }
-                    )
+                            textAlign = Paint.Align.CENTER
+                        })
                 }
             }
 
+            for (i in 1 .. YearMonth.from(date).lengthOfMonth()) {
+                val dayOfWeek = LocalDate.of(
+                    date.year,
+                    date.month,
+                    i
+                ).dayOfWeek.value % 7
+                val additionalStep = LocalDate.of(
+                    date.year,
+                    date.month,
+                    1
+                ).dayOfWeek.value % 7 - dayOfWeek
 
-            for (i in 1.. YearMonth.from(date).lengthOfMonth()) {
-                val dayOfWeek = LocalDate.of(date.year, date.month, i).dayOfWeek.value % 7
-                val additionalStep = LocalDate.of(date.year, date.month, 1).dayOfWeek.value % 7 - dayOfWeek
-                val textPositionX = xSteps * dayOfWeek + strokeWidth
-                val textPositionY =
-                    ceil((i+ additionalStep + daysOfWeek.indexOf("Sun")) / calenderColumn.toDouble()) * (ySteps) + textHeight + strokeWidth / 2
+                val textPositionX = xSteps * dayOfWeek
+                val textPositionY = ceil(
+                    (i + additionalStep + daysOfWeek.indexOf(
+                        "Sun"
+                    )) / calenderColumn.toDouble()
+                ) * (ySteps) + textHeight + strokeWidth / 2
+
+                val textCenterX = textPositionX + (xSteps / 2)
+
 
                 drawContext.canvas.nativeCanvas.apply {
-                    drawText(
-                        i.toString(),
-                        textPositionX,
-                        textPositionY.toFloat(),
-                        Paint().apply {
-                            textSize = textHeight
-                            color = textColor.toArgb()
-                            isFakeBoldText = true
-                        }
-                    )
-                    drawText(
-                        calendarInput[i].orEmpty(),
-                        textPositionX,
-                        textPositionY.toFloat() + textHeight,
-                        Paint().apply {
-                            textSize = textHeight - 3.dp.toPx()
-                            color = textColor.toArgb()
-                            isFakeBoldText = true
-                        }
-                    )
+                    calendarInput[i]?.let {
+                        drawText(i.toString(),
+                            textCenterX,
+                            textPositionY.toFloat(),
+                            Paint().apply {
+                                textSize = textHeight
+                                color = dateTextColor.toArgb()
+                                isFakeBoldText = true
+                                textAlign = Paint.Align.CENTER
+                            })
+                        drawText(it,
+                            textCenterX,
+                            textPositionY.toFloat() + textHeight,
+                            Paint().apply {
+                                textSize = textHeight - 3.dp.toPx()
+                                color = (if (it.toDouble() < 0.0) calendarExpenseInputColor else calendarIncomeInputColor).toArgb()
+                                isFakeBoldText = true
+                                textAlign = Paint.Align.CENTER
+                            })
+                    }
                 }
             }
+
         }
     }
 

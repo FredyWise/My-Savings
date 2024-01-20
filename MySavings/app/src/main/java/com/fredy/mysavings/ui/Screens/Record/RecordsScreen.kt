@@ -137,7 +137,7 @@ fun RecordsScreen(
             state.recordMapsResource.let { resource ->
                 ResourceHandler(
                     resource = resource,
-                    nullOrEmptyMessage = "You haven't made any Record yet",
+                    nullOrEmptyMessage = "There is no record on this date yet",
                     isNullOrEmpty = { it.isNullOrEmpty() },
                     errorMessage = resource.message ?: "",
                     onMessageClick = {

@@ -45,7 +45,6 @@ val analysisScreens = listOf(
     NavigationRoute.AnalysisOverview,
     NavigationRoute.AnalysisFlow,
     NavigationRoute.AnalysisAccount,
-    NavigationRoute.AnalysisCategory,
 )
 
 val drawerScreens = listOf(
@@ -153,22 +152,22 @@ sealed class NavigationRoute(
     )
 
     object Account: NavigationRoute(
-        route = "account",
-        title = "Account",
-        contentDescription = "Go to Account Screen",
+        route = "wallet",
+        title = "Wallet",
+        contentDescription = "Go to Wallet Screen",
         icon = Icons.Default.AccountBalanceWallet,
         iconNot = Icons.Outlined.AccountBalanceWallet
     )
 
     object Analysis: NavigationRoute(
-        route = "analysis",
-        title = "Analysis",
-        contentDescription = "Go to Analysis Screen",
+        route = "analytics",
+        title = "Analytics",
+        contentDescription = "Go to Analytics Screen",
         icon = Icons.Default.PieChart,
         iconNot = Icons.Outlined.PieChart
     )
     object AnalysisOverview: NavigationRoute(
-        route = "analysis Overview",
+        route = "analytics Overview",
         title = "Analysis Overview",
         contentDescription = "Go to Analysis Overview Screen",
         icon = Icons.Default.PieChart,
@@ -176,23 +175,15 @@ sealed class NavigationRoute(
     )
 
     object AnalysisFlow: NavigationRoute(
-        route = "analysis Flow",
+        route = "analytics Flow",
         title = "Analysis Flow",
         contentDescription = "Go to Analysis Flow Screen",
         icon = Icons.Default.PieChart,
         iconNot = Icons.Outlined.PieChart
     )
 
-    object AnalysisCategory: NavigationRoute(
-        route = "analysis Category",
-        title = "Analysis Category",
-        contentDescription = "Go to Analysis Category Screen",
-        icon = Icons.Default.PieChart,
-        iconNot = Icons.Outlined.PieChart
-    )
-
     object AnalysisAccount: NavigationRoute(
-        route = "analysis Account",
+        route = "analytics Account",
         title = "Analysis Account",
         contentDescription = "Go to Analysis Account Screen",
         icon = Icons.Default.PieChart,

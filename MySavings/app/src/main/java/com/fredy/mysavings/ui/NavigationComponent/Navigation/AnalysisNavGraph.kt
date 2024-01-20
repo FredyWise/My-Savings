@@ -5,11 +5,9 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.fredy.mysavings.Util.ResourceState
 import com.fredy.mysavings.ViewModels.AnalysisState
 import com.fredy.mysavings.ViewModels.Event.AnalysisEvent
 import com.fredy.mysavings.ui.Screens.Analysis.AnalysisAccount
-import com.fredy.mysavings.ui.Screens.Analysis.AnalysisCategory
 import com.fredy.mysavings.ui.Screens.Analysis.AnalysisFlow
 import com.fredy.mysavings.ui.Screens.Analysis.AnalysisOverview
 
@@ -31,32 +29,21 @@ fun AnalysisNavGraph(
             route = NavigationRoute.AnalysisOverview.route
         ) {
             AnalysisOverview(
-                state = state,
-                onEvent = onEvent
+                state = state, onEvent = onEvent
             )
         }
         composable(
             route = NavigationRoute.AnalysisFlow.route
         ) {
             AnalysisFlow(
-                state = state,
-                onEvent = onEvent
+                state = state, onEvent = onEvent
             )
         }
         composable(
             route = NavigationRoute.AnalysisAccount.route
         ) {
             AnalysisAccount(
-                state = state,
-                onEvent = onEvent
-            )
-        }
-        composable(
-            route = NavigationRoute.AnalysisCategory.route
-        ) {
-            AnalysisCategory(
-                state = state,
-                onEvent = onEvent
+                state = state, onEvent = onEvent
             )
         }
     }

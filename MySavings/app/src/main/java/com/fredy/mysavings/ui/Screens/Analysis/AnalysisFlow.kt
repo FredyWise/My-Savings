@@ -21,11 +21,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import co.yml.charts.common.model.Point
+import com.fredy.mysavings.Util.BalanceColor
 import com.fredy.mysavings.Util.formatBalanceAmount
 import com.fredy.mysavings.Util.formatMonth
+import com.fredy.mysavings.Util.formatRangeOfDate
 import com.fredy.mysavings.Util.isExpense
 import com.fredy.mysavings.ViewModels.AnalysisState
 import com.fredy.mysavings.ViewModels.Event.AnalysisEvent
@@ -66,7 +67,7 @@ fun AnalysisFlow(
         state.recordsWithinTimeResource.let { resource ->
             ResourceHandler(
                 resource = resource,
-                nullOrEmptyMessage = "You haven't have any ${state.recordType.name} yet",
+                nullOrEmptyMessage = "There is no ${state.recordType.name} on this date yet",
                 errorMessage = resource.message ?: "",
                 isNullOrEmpty = { it.isNullOrEmpty() },
                 onMessageClick = {
@@ -89,28 +90,15 @@ fun AnalysisFlow(
                             ),
                         contentAlignment = Alignment.Center
                     ) {
-                        if (items.size > 1) {
-                            ChartLine(
-                                pointsData = items.map { item ->
-                                    Point(
-                                        x = item.recordDateTime.dayOfMonth.toFloat(),
-                                        y = item.recordAmount.absoluteValue.toFloat(),
-                                    )
-                                }.reversed(),
-                            )
-                        } else {
-                            Text(
-                                text = "chart not possible if content is less than 2",
-                                modifier = Modifier.fillMaxWidth().clickable {
-                                    onEvent(
-                                        AnalysisEvent.ToggleRecordType
-                                    )
-                                },
-                                color = onBackgroundColor,
-                                fontWeight = FontWeight.Bold,
-                                textAlign = TextAlign.Center
-                            )
-                        }
+                        ChartLine(
+                            pointsData = items.map { item ->
+                                Point(
+                                    x = item.recordDateTime.dayOfMonth.toFloat(),
+                                    y = item.recordAmount.absoluteValue.toFloat(),
+                                )
+                            }.reversed(),
+                            currency = items.first().recordCurrency,
+                        )
                     }
                     Calendar(
                         calendarInput = items.associate {
@@ -122,8 +110,8 @@ fun AnalysisFlow(
                         date = state.selectedDate,
                         title = {
                             Text(
-                                text = state.recordType.name+": "+formatMonth(
-                                    state.selectedDate
+                                text = state.recordType.name + ": " + formatRangeOfDate(
+                                    state.selectedDate, state.filterType
                                 ),
                                 modifier = Modifier.clickable {
                                     onEvent(
@@ -142,8 +130,9 @@ fun AnalysisFlow(
                             .fillMaxWidth()
                             .aspectRatio(
                                 1.3f
-                            )
-
+                            ),
+                        calendarExpenseInputColor = MaterialTheme.colorScheme.primary,
+                        calendarIncomeInputColor = MaterialTheme.colorScheme.tertiary
                     )
                 }
             }

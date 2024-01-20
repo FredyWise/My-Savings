@@ -1,7 +1,5 @@
 package com.fredy.mysavings.ViewModels
 
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fredy.mysavings.Data.Database.Entity.Category
@@ -10,10 +8,10 @@ import com.fredy.mysavings.Data.Enum.FilterType
 import com.fredy.mysavings.Data.Enum.GraphType
 import com.fredy.mysavings.Data.Enum.RecordType
 import com.fredy.mysavings.Data.Repository.AccountRepository
+import com.fredy.mysavings.Data.Repository.AccountWithAmountType
 import com.fredy.mysavings.Data.Repository.CategoryWithAmount
 import com.fredy.mysavings.Data.Repository.RecordRepository
 import com.fredy.mysavings.Util.Resource
-import com.fredy.mysavings.Util.ResourceState
 import com.fredy.mysavings.Util.isExpense
 import com.fredy.mysavings.Util.minusFilterDate
 import com.fredy.mysavings.Util.plusFilterDate
@@ -26,7 +24,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -102,6 +99,44 @@ class AnalysisViewModel @Inject constructor(
                 filterState.start,
                 filterState.end,
                 filterState.currencies
+            )
+        }
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(),
+        Resource.Success(emptyList())
+    )
+
+    private val _accountsWithAmount = _filterState.flatMapLatest { filterState ->
+        when (filterState.filterType) {
+            FilterType.Daily -> recordRepository.getUserAccountsWithAmountFromSpecificTime(
+                filterState.start,
+                filterState.end,
+            )
+
+            FilterType.Weekly -> recordRepository.getUserAccountsWithAmountFromSpecificTime(
+                filterState.start,
+                filterState.end,
+            )
+
+            FilterType.Monthly -> recordRepository.getUserAccountsWithAmountFromSpecificTime(
+                filterState.start,
+                filterState.end,
+            )
+
+            FilterType.Per3Months -> recordRepository.getUserAccountsWithAmountFromSpecificTime(
+                filterState.start,
+                filterState.end,
+            )
+
+            FilterType.Per6Months -> recordRepository.getUserAccountsWithAmountFromSpecificTime(
+                filterState.start,
+                filterState.end,
+            )
+
+            FilterType.Yearly -> recordRepository.getUserAccountsWithAmountFromSpecificTime(
+                filterState.start,
+                filterState.end,
             )
         }
     }.stateIn(
@@ -204,6 +239,27 @@ class AnalysisViewModel @Inject constructor(
         BalanceBar()
     )
 
+    private val _analysisData = MutableStateFlow(
+        AnalysisData()
+    )
+
+    private val analysisData = combine(
+        _analysisData,
+        _categoriesWithAmount,
+        _recordsWithinSpecificTime,
+        _accountsWithAmount,
+    ) { analysisData, categoriesWithAmount, recordsWithinSpecificTime, accountsWithAmount ->
+        analysisData.copy(
+            categoriesWithAmountResource = categoriesWithAmount,
+            accountsWithAmountResource = accountsWithAmount,
+            recordsWithinTimeResource = recordsWithinSpecificTime,
+        )
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5000),
+        AnalysisData()
+    )
+
     private val _state = MutableStateFlow(
         AnalysisState()
     )
@@ -211,13 +267,13 @@ class AnalysisViewModel @Inject constructor(
     val state = combine(
         _state,
         balanceBar,
-        _categoriesWithAmount,
-        _recordsWithinSpecificTime,
+        analysisData,
         _availableCurrency,
-    ) { state, balanceBar, categoriesWithAmount, recordsWithinSpecificTime, availableCurrency ->
+    ) { state, balanceBar, analysisData, availableCurrency ->
         state.copy(
-            categoriesWithAmountResource = categoriesWithAmount,
-            recordsWithinTimeResource = recordsWithinSpecificTime,
+            categoriesWithAmountResource = analysisData.categoriesWithAmountResource,
+            recordsWithinTimeResource = analysisData.recordsWithinTimeResource,
+            accountsWithAmountResource = analysisData.accountsWithAmountResource,
             availableCurrency = availableCurrency,
             totalExpense = balanceBar.expense,
             totalIncome = balanceBar.income,
@@ -333,6 +389,7 @@ class AnalysisViewModel @Inject constructor(
 
 data class AnalysisState(
     val categoriesWithAmountResource: Resource<List<CategoryWithAmount>> = Resource.Loading(),
+    val accountsWithAmountResource: Resource<List<AccountWithAmountType>> = Resource.Loading(),
     val recordsWithinTimeResource: Resource<List<Record>> = Resource.Loading(),
     val availableCurrency: List<String> = emptyList(),
     val selectedCheckbox: List<String> = emptyList(),
@@ -348,4 +405,9 @@ data class AnalysisState(
     val filterType: FilterType = FilterType.Monthly
 )
 
+data class AnalysisData(
+    val categoriesWithAmountResource: Resource<List<CategoryWithAmount>> = Resource.Loading(),
+    val accountsWithAmountResource: Resource<List<AccountWithAmountType>> = Resource.Loading(),
+    val recordsWithinTimeResource: Resource<List<Record>> = Resource.Loading(),
+)
 
