@@ -116,17 +116,17 @@ fun NavGraphRoot(
             composable(
                 route = NavigationRoute.Preferences.route
             ) {
-            PreferencesScreen(title = "Preferences")
+            PreferencesScreen(title = NavigationRoute.Preferences.title, rootNavController = navController)
             }
             composable(
                 route = NavigationRoute.Export.route
             ) {
-            ExportScreen(title = "Export")
+            ExportScreen(title = NavigationRoute.Export.title, rootNavController = navController)
             }
             composable(
                 route = NavigationRoute.Restore.route
             ) {
-            BackupScreen(title = "Import")
+            BackupScreen(title = NavigationRoute.Restore.title, rootNavController = navController)
             }
             composable(
                 route = NavigationRoute.Reset.route
@@ -136,7 +136,7 @@ fun NavGraphRoot(
             composable(
                 route = NavigationRoute.Profile.route
             ) {
-            ProfileScreen(title = "Profile")
+            ProfileScreen(title = NavigationRoute.Profile.title, rootNavController = navController)
             }
         }
 

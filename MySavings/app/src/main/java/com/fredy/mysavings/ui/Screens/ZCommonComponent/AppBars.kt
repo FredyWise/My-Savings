@@ -44,7 +44,9 @@ fun DetailAppBar(
                 backgroundColor
             )
             .padding(top = 24.dp)
-            .padding(horizontal = 8.dp)
+            .padding(
+                horizontal = 8.dp
+            )
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(modifier = Modifier
@@ -113,6 +115,7 @@ fun DetailAppBar(
 @Composable
 fun DefaultAppBar(
     modifier: Modifier = Modifier,
+    iconColor: Color = MaterialTheme.colorScheme.onSurface,
     title: String,
     onNavigationIconClick: () -> Unit,
     actionButton: @Composable () -> Unit = {},
@@ -128,12 +131,21 @@ fun DefaultAppBar(
             },
             actions = { actionButton() },
             navigationIcon = {
-                Box(modifier = Modifier.clickable {
-                    onNavigationIconClick()
-                }) {
+                Box(
+                    modifier = Modifier
+                        .padding(
+                            horizontal = 4.dp
+                        )
+                        .clip(CircleShape)
+                        .clickable {
+                            onNavigationIconClick()
+                        }
+                        .padding(4.dp),
+                ) {
                     Icon(
                         imageVector = Icons.Default.ArrowBack,
-                        contentDescription = "Close"
+                        contentDescription = "Close",
+                        tint = iconColor
                     )
                 }
             },

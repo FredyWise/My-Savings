@@ -34,6 +34,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import com.fredy.mysavings.ui.Screens.AuthScreen.CustomTextField
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.DefaultAppBar
@@ -41,6 +42,7 @@ import com.fredy.mysavings.ui.Screens.ZCommonComponent.DefaultAppBar
 @Composable
 fun ProfileScreen(
     modifier: Modifier = Modifier,
+    rootNavController: NavController,
     primaryColor: Color = MaterialTheme.colorScheme.primary,
     onPrimaryColor: Color = MaterialTheme.colorScheme.onPrimary,
     onBackgroundColor: Color = MaterialTheme.colorScheme.onBackground,
@@ -49,7 +51,7 @@ fun ProfileScreen(
     DefaultAppBar(
         modifier = modifier,
         title = title,
-        onNavigationIconClick = {},
+        onNavigationIconClick = { rootNavController.navigateUp() },
     ) {
         val context = LocalContext.current
         var username by remember {

@@ -26,7 +26,7 @@ class CurrencyViewModel @Inject constructor(
     )
     val resource: State<ResourceState> = _resource
 
-    fun convert(
+    fun convertTo(
         amountStr: String,
         toCurrencyTemp: String
     ) {
@@ -73,7 +73,54 @@ class CurrencyViewModel @Inject constructor(
                 }
             }
         }
+    }
+    fun convertFrom(
+        amountStr: String,
+        fromCurrencyTemp: String
+    ) {
+        Log.e(TAG, "convert: "+amountStr+fromCurrencyTemp )
+        val fromAmount = amountStr.toFloatOrNull()
+        val toCurrency = currentUserData!!.userCurrency.ifBlank { "USD" }
+        val fromCurrency = if (fromCurrencyTemp.contains("None",ignoreCase = true)) toCurrency else fromCurrencyTemp
 
+        if (fromAmount == null) {
+            _resource.value = ResourceState(error = "Amount is Empty")
+            return
+        }
+
+        viewModelScope.launch {
+            repository.getRates(
+                fromCurrency
+            ).collect { result ->
+                when (result) {
+                    is Resource.Error -> _resource.value = ResourceState(
+                        error = result.message!!
+                    )
+
+                    is Resource.Success -> {
+                        val rates = result.data!!.rates
+                        val rate = getRateForCurrency(
+                            toCurrency, rates
+                        )?.toDouble()
+
+                        if (rate == null) {
+                            _resource.value = ResourceState(
+                                "Unexpected error"
+                            )
+                        } else {
+                            val convertedCurrency = fromAmount * rate
+                            _resource.value = ResourceState(
+                                success = "$fromAmount $fromCurrency = $convertedCurrency $toCurrency"
+                            )
+                        }
+                    }
+
+                    is Resource.Loading -> _resource.value = ResourceState(
+                        isLoading = true
+                    )
+                }
+            }
+        }
     }
     private fun getRateForCurrency(
         currency: String, rates: Rates
