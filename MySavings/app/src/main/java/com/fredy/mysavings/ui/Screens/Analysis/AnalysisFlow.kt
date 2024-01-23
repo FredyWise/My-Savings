@@ -102,10 +102,7 @@ fun AnalysisFlow(
                     }
                     Calendar(
                         calendarInput = items.associate {
-                            it.recordDateTime.dayOfMonth to formatBalanceAmount(
-                                it.recordAmount,
-                                isShortenToChar = true
-                            )
+                            it.recordDateTime.dayOfMonth to it.recordAmount.toString()
                         }.toMutableMap(),
                         date = state.selectedDate,
                         title = {

@@ -37,18 +37,20 @@ fun AccountHeader(
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            BalanceItem(
-                modifier = Modifier.weight(1f),
-                title = "Expense So Far",
-                amount = state.totalExpense,
-                currency = "",
-                titleStyle = MaterialTheme.typography.titleLarge.copy(
-                    fontWeight = FontWeight.SemiBold
-                ),
-                amountStyle = MaterialTheme.typography.titleLarge.copy(
-                    fontWeight = FontWeight.SemiBold
-                ),
-            )
+            state.balanceBar.expense.let {
+                BalanceItem(
+                    modifier = Modifier.weight(1f),
+                    title = it.name,
+                    amount = it.amount,
+                    currency = it.currency,
+                    titleStyle = MaterialTheme.typography.titleLarge.copy(
+                        fontWeight = FontWeight.SemiBold
+                    ),
+                    amountStyle = MaterialTheme.typography.titleLarge.copy(
+                        fontWeight = FontWeight.SemiBold
+                    ),
+                )
+            }
             Divider(
                 modifier = Modifier
                     .fillMaxHeight()
@@ -57,18 +59,20 @@ fun AccountHeader(
                     ),
                 color = MaterialTheme.colorScheme.secondary
             )
-            BalanceItem(
-                modifier = Modifier.weight(1f),
-                title = "Income So Far",
-                amount = state.totalIncome,
-                currency = "",
-                titleStyle = MaterialTheme.typography.titleLarge.copy(
-                    fontWeight = FontWeight.SemiBold
-                ),
-                amountStyle = MaterialTheme.typography.titleLarge.copy(
-                    fontWeight = FontWeight.SemiBold
-                ),
-            )
+            state.balanceBar.income.let {
+                BalanceItem(
+                    modifier = Modifier.weight(1f),
+                    title = it.name,
+                    amount = it.amount,
+                    currency = it.currency,
+                    titleStyle = MaterialTheme.typography.titleLarge.copy(
+                        fontWeight = FontWeight.SemiBold
+                    ),
+                    amountStyle = MaterialTheme.typography.titleLarge.copy(
+                        fontWeight = FontWeight.SemiBold
+                    ),
+                )
+            }
         }
         Divider(
             modifier = Modifier
@@ -89,18 +93,20 @@ fun AccountHeader(
                 ),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            BalanceItem(
-                modifier = Modifier.weight(1f),
-                title = "Total Balance",
-                amount = state.totalAll,
-                currency = "",
-                titleStyle = MaterialTheme.typography.titleLarge.copy(
-                    fontWeight = FontWeight.SemiBold
-                ),
-                amountStyle = MaterialTheme.typography.titleLarge.copy(
-                    fontWeight = FontWeight.SemiBold
-                ),
-            )
+            state.balanceBar.balance.let {
+                BalanceItem(
+                    modifier = Modifier.weight(1f),
+                    title = it.name,
+                    amount = it.amount,
+                    currency = it.currency,
+                    titleStyle = MaterialTheme.typography.titleLarge.copy(
+                        fontWeight = FontWeight.SemiBold
+                    ),
+                    amountStyle = MaterialTheme.typography.titleLarge.copy(
+                        fontWeight = FontWeight.SemiBold
+                    ),
+                )
+            }
         }
     }
 }

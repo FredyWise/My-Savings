@@ -1,10 +1,10 @@
 package com.fredy.mysavings.Data.Repository
 
 import com.fredy.mysavings.Data.Database.Entity.UserData
-import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.Filter
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
-import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -17,12 +17,19 @@ interface UserRepository {
     suspend fun upsertUser(user: UserData)
     suspend fun deleteUser(user: UserData)
     fun getUser(userId: String): Flow<UserData>
+    suspend fun getCurrentUser(): Flow<UserData?>
     fun getAllUsersOrderedByName(): Flow<List<UserData>>
     fun searchUsers(usernameEmail: String): Flow<List<UserData>>
 }
 
-class UserRepositoryImpl(): UserRepository {
-    private val userCollection = Firebase.firestore.collection("user")
+class UserRepositoryImpl @Inject constructor(
+    private val firestore: FirebaseFirestore,
+    private val firebaseAuth: FirebaseAuth
+): UserRepository {
+    private val userCollection = firestore.collection(
+        "user"
+    )
+
     override suspend fun upsertUser(user: UserData) {
         userCollection.document(
             user.firebaseUserId
@@ -45,6 +52,16 @@ class UserRepositoryImpl(): UserRepository {
                 data = result.toObject<UserData>()!!
             }
             emit(data)
+        }
+    }
+
+    override suspend fun getCurrentUser(): Flow<UserData?> = flow {
+        val currentUser = firebaseAuth.currentUser
+        if (currentUser != null) {
+            val userDocument = userCollection.document(currentUser.uid).get().await()
+            emit(userDocument.toObject<UserData>())
+        } else {
+            emit(null)
         }
     }
 

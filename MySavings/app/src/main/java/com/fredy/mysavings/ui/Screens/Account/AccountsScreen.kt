@@ -38,7 +38,6 @@ fun AccountsScreen(
     state: AccountState,
     onEvent: (AccountEvent) -> Unit,
 ) {
-
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
     )
@@ -57,7 +56,7 @@ fun AccountsScreen(
             state.recordMapsResource.let { resource ->
                 ResourceHandler(
                     resource = resource,
-                    nullOrEmptyMessage = "You haven't made any Record using this category yet",
+                    nullOrEmptyMessage = "You haven't made any Record using this account yet",
                     errorMessage = resource.message?:"",
                     isNullOrEmpty = {it.isNullOrEmpty()},
                     onMessageClick = {

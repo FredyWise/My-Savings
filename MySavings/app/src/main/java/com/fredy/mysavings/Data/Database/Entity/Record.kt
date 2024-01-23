@@ -1,12 +1,15 @@
 package com.fredy.mysavings.Data.Database.Entity
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.fredy.mysavings.Data.Database.Converter.TimestampConverter
 import com.fredy.mysavings.Data.Enum.RecordType
 import com.google.firebase.Timestamp
 import java.time.LocalDateTime
 
-
+@Entity
 data class Record(
+    @PrimaryKey
     var recordId: String = "",
     val accountIdFromFk: String = "",
     val accountIdToFk: String = "",

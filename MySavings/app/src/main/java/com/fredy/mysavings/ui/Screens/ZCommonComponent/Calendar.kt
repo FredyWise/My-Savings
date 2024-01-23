@@ -28,8 +28,8 @@ import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.fredy.mysavings.Util.formatCharAmount
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.YearMonth
@@ -42,7 +42,7 @@ fun Calendar(
     borderColor: Color = MaterialTheme.colorScheme.onSecondary,
     dayTextColor: Color = MaterialTheme.colorScheme.primary,
     dateTextColor: Color = MaterialTheme.colorScheme.secondary,
-    calenderColumn: Int = 7,
+    calendarColumn: Int = 7,
     calendarInput: Map<Int, String>,
     calendarExpenseInputColor: Color,
     calendarIncomeInputColor: Color,
@@ -51,7 +51,7 @@ fun Calendar(
     strokeWidth: Float = 3f,
     title: @Composable () -> Unit = {}
 ) {
-    val calenderRows = if (LocalDate.of(
+    val calendarRows = if (LocalDate.of(
             date.year,
             date.month,
             1
@@ -82,9 +82,9 @@ fun Calendar(
                 true
             ) {
                 detectTapGestures(onTap = { offset ->
-                    val column = (offset.x / canvasSize.width * calenderColumn).toInt() + 1
-                    val row = (offset.y / canvasSize.height * calenderRows).toInt() + 1
-                    val day = column + (row - 1) * calenderColumn
+                    val column = (offset.x / canvasSize.width * calendarColumn).toInt() + 1
+                    val row = (offset.y / canvasSize.height * calendarRows).toInt() + 1
+                    val day = column + (row - 1) * calendarColumn
                     if (day <= calendarInput.size) {
                         onDayClick(day)
                         clickAnimationOffset = offset
@@ -108,11 +108,11 @@ fun Calendar(
             canvasSize = Size(
                 canvasWidth, canvasHeight
             )
-            val ySteps = canvasHeight / calenderRows
-            val xSteps = canvasWidth / calenderColumn
+            val ySteps = canvasHeight / calendarRows
+            val xSteps = canvasWidth / calendarColumn
 
-            val column = (clickAnimationOffset.x / canvasSize.width * calenderColumn).toInt() + 1
-            val row = (clickAnimationOffset.y / canvasSize.height * calenderRows).toInt() + 1
+            val column = (clickAnimationOffset.x / canvasSize.width * calendarColumn).toInt() + 1
+            val row = (clickAnimationOffset.y / canvasSize.height * calendarRows).toInt() + 1
 
             val path = Path().apply {
                 moveTo(
@@ -160,7 +160,7 @@ fun Calendar(
                 )
             )
 
-            for (i in 1 .. calenderRows - 1) {
+            for (i in 1 .. calendarRows - 1) {
                 drawLine(
                     color = borderColor,
                     start = Offset(
@@ -172,7 +172,7 @@ fun Calendar(
                     strokeWidth = strokeWidth
                 )
             }
-            for (i in 1 .. calenderColumn - 1) {
+            for (i in 1 .. calendarColumn - 1) {
                 drawLine(
                     color = borderColor,
                     start = Offset(
@@ -197,8 +197,8 @@ fun Calendar(
             )
 
             // Inside the Canvas block
-            for (i in 0 until calenderColumn) {
-                val textPositionX = xSteps * (i % calenderColumn)
+            for (i in 0 until calendarColumn) {
+                val textPositionX = xSteps * (i % calendarColumn)
                 val textCenterX = textPositionX + (xSteps / 2)
                 val textPositionY = textHeight
                 val textCenterY = textPositionY + (ySteps / 3.5)
@@ -232,7 +232,7 @@ fun Calendar(
                 val textPositionY = ceil(
                     (i + additionalStep + daysOfWeek.indexOf(
                         "Sun"
-                    )) / calenderColumn.toDouble()
+                    )) / calendarColumn.toDouble()
                 ) * (ySteps) + textHeight + strokeWidth / 2
 
                 val textCenterX = textPositionX + (xSteps / 2)
@@ -249,7 +249,8 @@ fun Calendar(
                                 isFakeBoldText = true
                                 textAlign = Paint.Align.CENTER
                             })
-                        drawText(it,
+                        drawText(
+                            formatCharAmount(it.toDouble()),
                             textCenterX,
                             textPositionY.toFloat() + textHeight,
                             Paint().apply {

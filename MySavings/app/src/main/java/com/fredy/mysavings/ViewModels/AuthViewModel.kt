@@ -1,7 +1,6 @@
 package com.fredy.mysavings.ViewModels
 
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fredy.mysavings.Data.Database.Entity.UserData
@@ -9,15 +8,14 @@ import com.fredy.mysavings.Data.Enum.AuthMethod
 import com.fredy.mysavings.Data.Repository.AuthRepository
 import com.fredy.mysavings.Data.Repository.UserRepository
 import com.fredy.mysavings.Util.Resource
-import com.fredy.mysavings.Util.TAG
 import com.fredy.mysavings.ViewModels.Event.AuthEvent
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.firebase.Firebase
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.storage.storage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -26,8 +24,8 @@ import javax.inject.Inject
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val repository: AuthRepository,
-    private val userData: UserData?,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val currentUserData: UserData?,
 ): ViewModel() {
 
     private val _state = MutableStateFlow(
@@ -36,11 +34,12 @@ class AuthViewModel @Inject constructor(
     val state = _state.asStateFlow()
 
     init {
-        Log.e(TAG, "user: " + userData)
-        _state.update {
-            AuthState(
-                signedInUser = userData
-            )
+        viewModelScope.launch {
+            _state.update {
+                AuthState(
+                    signedInUser = currentUserData
+                )
+            }
         }
     }
 
@@ -77,7 +76,7 @@ class AuthViewModel @Inject constructor(
                                     authType = AuthMethod.None
                                 )
                             }
-                        }else{
+                        } else {
                             _state.update {
                                 it.copy(
                                     sendOtpResource = result,
@@ -149,8 +148,7 @@ class AuthViewModel @Inject constructor(
 
             AuthEvent.GetCurrentUser -> {
                 viewModelScope.launch {
-                    repository.getCurrentUser()?.let { currentUser ->
-                        Log.d(TAG, "currentUser: "+currentUser)
+                    userRepository.getCurrentUser().collectLatest { currentUser ->
                         _state.update {
                             it.copy(
                                 signedInUser = currentUser
@@ -187,7 +185,7 @@ class AuthViewModel @Inject constructor(
             UserData(
                 firebaseUserId = uid,
                 username = displayName,
-                emailOrPhone = email?:phoneNumber,
+                emailOrPhone = email ?: phoneNumber,
                 profilePictureUrl = profilePictureUrl
             )
         }

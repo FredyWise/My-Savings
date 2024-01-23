@@ -126,7 +126,7 @@ class AddSingleRecordViewModel @Inject constructor(
                 if (isTransfer(recordType) && state.fromAccount.accountCurrency != state.toAccount.accountCurrency) {
                     _resource.value = ResourceState(
                         error = "Record Type is not the same with category type",
-                        success = "Are You Sure Want Transfer from ${state.fromAccount.accountCurrency} to ${state.toAccount.accountCurrency}?"
+                        success = "Are you sure want to Transfer from ${state.fromAccount.accountCurrency} to ${state.toAccount.accountCurrency}?"
                     )
                     return
                 }

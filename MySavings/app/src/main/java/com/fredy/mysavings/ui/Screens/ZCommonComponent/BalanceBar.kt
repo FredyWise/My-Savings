@@ -45,8 +45,8 @@ fun BalanceBar(
 @Composable
 fun BalanceItem(
     modifier: Modifier = Modifier,
-    title: String,
     titleColor: Color = MaterialTheme.colorScheme.onSurface,
+    title: String,
     amount: Double,
     amountColor: Color = BalanceColor(
         amount = amount,

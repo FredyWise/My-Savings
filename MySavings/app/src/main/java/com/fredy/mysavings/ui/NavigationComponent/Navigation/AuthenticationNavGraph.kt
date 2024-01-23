@@ -1,7 +1,9 @@
 package com.fredy.mysavings.ui.NavigationComponent.Navigation
 
-import android.util.Log
 import android.widget.Toast
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
@@ -11,9 +13,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.fredy.mysavings.Util.Resource
-import com.fredy.mysavings.Util.TAG
-import com.fredy.mysavings.ViewModels.Event.AuthEvent
 import com.fredy.mysavings.ViewModels.AuthViewModel
+import com.fredy.mysavings.ViewModels.Event.AuthEvent
 import com.fredy.mysavings.ui.Screens.AuthScreen.SignIn
 import com.fredy.mysavings.ui.Screens.AuthScreen.SignUp
 
@@ -27,6 +28,15 @@ fun NavGraphBuilder.authenticationNavGraph(
     ) {
         composable(
             route = NavigationRoute.SignIn.route,
+            enterTransition = {
+                fadeIn(animationSpec = tween(1000))
+            },
+            exitTransition = {
+                fadeOut(animationSpec = tween(1000))
+            },
+            popEnterTransition = {
+                fadeIn(animationSpec = tween(1000))
+            },
         ) {
             val state by viewModel.state.collectAsStateWithLifecycle()
             val context = LocalContext.current
@@ -34,9 +44,11 @@ fun NavGraphBuilder.authenticationNavGraph(
             LaunchedEffect(
                 key1 = state.authResource,
             ) {
-                when(state.authResource){
+                when (state.authResource) {
                     is Resource.Error -> {
-                        viewModel.onEvent(AuthEvent.SignOut)
+                        viewModel.onEvent(
+                            AuthEvent.SignOut
+                        )
                         val error = state.authResource.message
                         Toast.makeText(
                             context,
@@ -44,8 +56,11 @@ fun NavGraphBuilder.authenticationNavGraph(
                             Toast.LENGTH_LONG
                         ).show()
                     }
+
                     is Resource.Success -> {
-                        viewModel.onEvent(AuthEvent.GetCurrentUser)
+                        viewModel.onEvent(
+                            AuthEvent.GetCurrentUser
+                        )
                         Toast.makeText(
                             context,
                             "SignIn Success",
@@ -55,7 +70,8 @@ fun NavGraphBuilder.authenticationNavGraph(
                             Graph.MainNav
                         )
                     }
-                    else ->{
+
+                    else -> {
 
                     }
                 }
@@ -67,7 +83,13 @@ fun NavGraphBuilder.authenticationNavGraph(
             )
         }
         composable(
-            route = NavigationRoute.SignUp.route
+            route = NavigationRoute.SignUp.route,
+            enterTransition = {
+                fadeIn(animationSpec = tween(1000))
+            },
+            exitTransition = {
+                fadeOut(animationSpec = tween(1000))
+            },
         ) {
             val state by viewModel.state.collectAsStateWithLifecycle()
             val context = LocalContext.current
@@ -75,9 +97,11 @@ fun NavGraphBuilder.authenticationNavGraph(
             LaunchedEffect(
                 key1 = state.authResource,
             ) {
-                when(state.authResource){
+                when (state.authResource) {
                     is Resource.Error -> {
-                        viewModel.onEvent(AuthEvent.SignOut)
+                        viewModel.onEvent(
+                            AuthEvent.SignOut
+                        )
                         val error = state.authResource.message
                         Toast.makeText(
                             context,
@@ -85,8 +109,11 @@ fun NavGraphBuilder.authenticationNavGraph(
                             Toast.LENGTH_LONG
                         ).show()
                     }
+
                     is Resource.Success -> {
-                        viewModel.onEvent(AuthEvent.GetCurrentUser)
+                        viewModel.onEvent(
+                            AuthEvent.GetCurrentUser
+                        )
                         Toast.makeText(
                             context,
                             "SignIn Success",
@@ -96,7 +123,8 @@ fun NavGraphBuilder.authenticationNavGraph(
                             Graph.MainNav
                         )
                     }
-                    else ->{
+
+                    else -> {
 
                     }
                 }

@@ -8,8 +8,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.outlined.Info
@@ -18,8 +16,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.fredy.mysavings.Util.formatRangeOfDate
 import com.fredy.mysavings.ViewModels.Event.RecordsEvent
@@ -82,19 +78,9 @@ fun RecordsScreen(
                 RecordsEvent.SelectedCurrencies(it)
             )
         },
-        totalExpense = state.totalExpense,
-        totalIncome = state.totalIncome,
-        totalBalance = state.totalAll,
+        balanceBar = state.balanceBar,
         leadingIcon = {
             Icon(
-                modifier = Modifier
-                    .clip(
-                        MaterialTheme.shapes.extraLarge
-                    )
-                    .clickable {
-
-                    }
-                    .padding(4.dp),
                 imageVector = Icons.Outlined.Info,
                 contentDescription = "",
                 tint = MaterialTheme.colorScheme.onSurface,
@@ -102,14 +88,6 @@ fun RecordsScreen(
         },
         trailingIcon = {
             Icon(
-                modifier = Modifier
-                    .clip(
-                        MaterialTheme.shapes.extraLarge
-                    )
-                    .clickable {
-                        onEvent(RecordsEvent.ShowFilterDialog)
-                    }
-                    .padding(4.dp),
                 imageVector = Icons.Default.FilterList,
                 contentDescription = "",
                 tint = MaterialTheme.colorScheme.onSurface,
@@ -117,6 +95,8 @@ fun RecordsScreen(
         },
         onPrevious = { onEvent(RecordsEvent.ShowPreviousList) },
         onNext = { onEvent(RecordsEvent.ShowNextList) },
+        onLeadingIconClick = {},
+        onTrailingIconClick = { onEvent(RecordsEvent.ShowFilterDialog)}
     ) {
         AnimatedVisibility(
             modifier = modifier,
@@ -144,7 +124,7 @@ fun RecordsScreen(
                         rootNavController.navigate(
                             NavigationRoute.Add.route + "/-1"
                         )
-                        isVisible.targetState = false
+//                        isVisible.targetState = false
                     },
                 ) { data ->
                     RecordBody(

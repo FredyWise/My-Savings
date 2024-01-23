@@ -4,7 +4,9 @@ import co.yml.charts.common.extensions.isNotNull
 import com.fredy.mysavings.Data.Database.Entity.Category
 import com.fredy.mysavings.Data.Enum.RecordType
 import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.channels.awaitClose
@@ -12,6 +14,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
+import javax.inject.Inject
 
 interface CategoryRepository {
     suspend fun upsertCategory(category: Category)
@@ -21,26 +24,24 @@ interface CategoryRepository {
     fun getCategoriesUsingTypeOrderedByName(type: RecordType): Flow<List<Category>>
 }
 
-class CategoryRepositoryImpl: CategoryRepository {
-    private val categoryCollection = Firebase.firestore.collection(
+class CategoryRepositoryImpl @Inject constructor(
+    private val firestore: FirebaseFirestore,
+    private val firebaseAuth: FirebaseAuth
+): CategoryRepository {
+    private val categoryCollection = firestore.collection(
         "category"
     )
 
     override suspend fun upsertCategory(category: Category) {
-        val currentUser = Firebase.auth.currentUser
+        val currentUser = firebaseAuth.currentUser
         if (category.categoryId.isEmpty()) {
-            categoryCollection.add(
-                category
-            ).addOnSuccessListener { document ->
-                categoryCollection.document(
-                    document.id
-                ).set(
-                    category.copy(
-                        categoryId = document.id,
-                        userIdFk = currentUser!!.uid
-                    )
+            val newCategoryRef = categoryCollection.document()
+            newCategoryRef.set(
+                category.copy(
+                    categoryId = newCategoryRef.id,
+                    userIdFk = currentUser!!.uid
                 )
-            }
+            )
         } else {
             categoryCollection.document(
                 category.categoryId
@@ -68,7 +69,7 @@ class CategoryRepositoryImpl: CategoryRepository {
     }
 
     override fun getUserCategoriesOrderedByName() = callbackFlow<List<Category>> {
-        val currentUser = Firebase.auth.currentUser
+        val currentUser = firebaseAuth.currentUser
         val listener = categoryCollection.whereEqualTo(
             "userIdFk",
             if (currentUser.isNotNull()) currentUser!!.uid else ""
@@ -92,7 +93,7 @@ class CategoryRepositoryImpl: CategoryRepository {
     override fun getCategoriesUsingTypeOrderedByName(
         type: RecordType
     ) = callbackFlow<List<Category>> {
-        val currentUser = Firebase.auth.currentUser
+        val currentUser = firebaseAuth.currentUser
         val listener = categoryCollection.whereEqualTo(
             "userIdFk",
             if (currentUser.isNotNull()) currentUser!!.uid else ""

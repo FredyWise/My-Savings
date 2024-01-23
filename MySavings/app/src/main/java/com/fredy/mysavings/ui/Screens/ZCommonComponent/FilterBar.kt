@@ -3,6 +3,7 @@ package com.fredy.mysavings.ui.Screens.ZCommonComponent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -10,14 +11,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.KeyboardArrowRight
-import androidx.compose.material3.DateRangePicker
-import androidx.compose.material3.DateRangePickerState
-import androidx.compose.material3.DisplayMode
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,6 +38,8 @@ fun DisplayBar(
     selectedTitle: String,
     onPrevious: () -> Unit,
     onNext: () -> Unit,
+    onLeadingIconClick: () -> Unit,
+    onTrailingIconClick: () -> Unit,
     leadingIcon: @Composable () -> Unit = {},
     trailingIcon: @Composable () -> Unit = {},
     tint: Color = MaterialTheme.colorScheme.onSurface
@@ -58,7 +57,16 @@ fun DisplayBar(
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        leadingIcon()
+        Box(
+            modifier = Modifier
+                .clip(CircleShape)
+                .clickable {
+                    onLeadingIconClick()
+                }
+                .padding(8.dp),
+        ) {
+            leadingIcon()
+        }
         Icon(
             modifier = Modifier
                 .clip(CircleShape)
@@ -88,7 +96,16 @@ fun DisplayBar(
             contentDescription = "",
             tint = tint,
         )
-        trailingIcon()
+        Box(
+            modifier = Modifier
+                .clip(CircleShape)
+                .clickable {
+                    onTrailingIconClick()
+                }
+                .padding(8.dp),
+        ) {
+            trailingIcon()
+        }
     }
 
 
@@ -138,4 +155,5 @@ fun DisplayBar(
 //        DateRangePicker(state = dateRangePickerState)
     }
 }
+
 fun LocalDateTime.toMillis() = this.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()

@@ -1,6 +1,11 @@
 package com.fredy.mysavings.ui.NavigationComponent.Navigation
 
 import android.util.Log
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -44,8 +49,15 @@ fun NavGraphRoot(
         route = Graph.Root
     ) {
         composable(
-            route = Graph.FirstNav
+            route = Graph.FirstNav,
+            enterTransition = {
+                fadeIn(animationSpec = tween(3000))
+            },
+            exitTransition = {
+                fadeOut(animationSpec = tween(3000))
+            },
         ) {
+            Box(modifier = Modifier.fillMaxSize())
             Log.d(TAG, "NavGraphRoot: ")
             val state by authViewModel.state.collectAsStateWithLifecycle()
             val startDestination = if (state.signedInUser != null) Graph.MainNav else Graph.Auth

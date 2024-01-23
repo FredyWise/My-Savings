@@ -15,10 +15,13 @@ import com.fredy.mysavings.Util.isIncome
 import com.fredy.mysavings.Util.isTransfer
 import com.fredy.mysavings.ViewModels.RecordMap
 import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.Filter
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.Source
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
 import com.google.firebase.firestore.toObjects
@@ -30,6 +33,7 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import java.time.LocalDateTime
+import javax.inject.Inject
 
 
 interface RecordRepository {
@@ -82,30 +86,29 @@ interface RecordRepository {
     fun getUserTotalRecordBalance(): Flow<Double>
 }
 
-class RecordRepositoryImpl(): RecordRepository {
-    private val recordCollection = Firebase.firestore.collection(
+class RecordRepositoryImpl @Inject constructor(
+    currencyRepository: CurrencyRepository,
+    private val firestore: FirebaseFirestore,
+    private val firebaseAuth: FirebaseAuth
+): RecordRepository {
+    private val recordCollection = firestore.collection(
         "record"
     )
 
     override suspend fun upsertRecordItem(
         record: Record
     ) {
-        val currentUser = Firebase.auth.currentUser
+        val currentUser = firebaseAuth.currentUser
         Log.i(TAG, "upsertRecordItem: $record")
 
         if (record.recordId.isEmpty()) {
-            recordCollection.add(
-                record
-            ).addOnSuccessListener { document ->
-                recordCollection.document(
-                    document.id
-                ).set(
-                    record.copy(
-                        recordId = document.id,
-                        userIdFk = currentUser!!.uid
-                    )
+            val newRecordRef = recordCollection.document()
+            newRecordRef.set(
+                record.copy(
+                    recordId = newRecordRef.id,
+                    userIdFk = currentUser!!.uid
                 )
-            }
+            )
         } else {
             recordCollection.document(
                 record.recordId
@@ -148,7 +151,7 @@ class RecordRepositoryImpl(): RecordRepository {
         currency: List<String>,
     ) = callbackFlow<Resource<List<RecordMap>>> {
         trySend(Resource.Loading())
-        val currentUser = Firebase.auth.currentUser
+        val currentUser = firebaseAuth.currentUser
         Log.i(
             TAG,
             "getUserTrueRecordMapsFromSpecificTime: $startDate\n:\n$endDate,\ncurrency: $currency"
@@ -228,7 +231,7 @@ class RecordRepositoryImpl(): RecordRepository {
         sortType: SortType,
     ) = callbackFlow<Resource<List<RecordMap>>> {
         trySend(Resource.Loading())
-        val currentUser = Firebase.auth.currentUser
+        val currentUser = firebaseAuth.currentUser
         Log.i(
             TAG,
             "getUserCategoryRecordsOrderedByDateTime: $categoryId",
@@ -296,7 +299,7 @@ class RecordRepositoryImpl(): RecordRepository {
         accountId: String,
         sortType: SortType,
     ) = callbackFlow<Resource<List<RecordMap>>> {
-        val currentUser = Firebase.auth.currentUser
+        val currentUser = firebaseAuth.currentUser
         trySend(Resource.Loading())
         Log.i(
             TAG,
@@ -374,7 +377,7 @@ class RecordRepositoryImpl(): RecordRepository {
         currency: List<String>,
     ) = callbackFlow<Resource<List<Record>>> {
         trySend(Resource.Loading())
-        val currentUser = Firebase.auth.currentUser
+        val currentUser = firebaseAuth.currentUser
         Log.i(
             TAG,
             "getUserRecordsFromSpecificTime: $startDate\n:\n$endDate"
@@ -456,7 +459,7 @@ class RecordRepositoryImpl(): RecordRepository {
         currency: List<String>,
     ) = callbackFlow<Resource<List<CategoryWithAmount>>> {
         trySend(Resource.Loading())
-        val currentUser = Firebase.auth.currentUser
+        val currentUser = firebaseAuth.currentUser
         Log.i(
             TAG,
             "getUserCategoriesWithAmountFromSpecificTime: $currency\n$categoryType\n$startDate\n:\n$endDate"
@@ -544,7 +547,7 @@ class RecordRepositoryImpl(): RecordRepository {
         endDate: LocalDateTime,
     ) = callbackFlow<Resource<List<AccountWithAmountType>>> {
         trySend(Resource.Loading())
-        val currentUser = Firebase.auth.currentUser
+        val currentUser = firebaseAuth.currentUser
         Log.i(
             TAG,
             "getUserAccountsWithAmountFromSpecificTime: \n$startDate\n:\n$endDate"
@@ -640,7 +643,7 @@ class RecordRepositoryImpl(): RecordRepository {
     override fun getUserTotalAmountByType(
         recordType: RecordType
     ) = callbackFlow<Double> {
-        val currentUser = Firebase.auth.currentUser
+        val currentUser = firebaseAuth.currentUser
         Log.i(
             TAG,
             "getUserTotalAmountByType: $recordType",
@@ -682,7 +685,7 @@ class RecordRepositoryImpl(): RecordRepository {
         startDate: LocalDateTime,
         endDate: LocalDateTime
     ) = callbackFlow<Double> {
-        val currentUser = Firebase.auth.currentUser
+        val currentUser = firebaseAuth.currentUser
         Log.i(
             TAG,
             "getUserTotalAmountByTypeFromSpecificTime: $recordType",
@@ -731,7 +734,7 @@ class RecordRepositoryImpl(): RecordRepository {
     }
 
     override fun getUserTotalRecordBalance() = callbackFlow<Double> {
-        val currentUser = Firebase.auth.currentUser
+        val currentUser = firebaseAuth.currentUser
         Log.i(
             TAG,
             "getUserTotalRecordBalance: ",
@@ -796,7 +799,7 @@ class RecordRepositoryImpl(): RecordRepository {
     }
 
     private suspend fun getTrueRecordsComponent() = coroutineScope {
-        val currentUser = Firebase.auth.currentUser
+        val currentUser = firebaseAuth.currentUser
 
         val fromAccountDeferred = async {
             getUserAccount(currentUser)

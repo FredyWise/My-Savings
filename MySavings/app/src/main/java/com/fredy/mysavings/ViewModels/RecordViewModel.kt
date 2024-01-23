@@ -5,12 +5,15 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.fredy.mysavings.Data.Database.Entity.UserData
 import com.fredy.mysavings.Data.Enum.FilterType
 import com.fredy.mysavings.Data.Enum.RecordType
 import com.fredy.mysavings.Data.Enum.SortType
 import com.fredy.mysavings.Data.Repository.AccountRepository
+import com.fredy.mysavings.Data.Repository.CurrencyRepository
 import com.fredy.mysavings.Data.Repository.RecordRepository
 import com.fredy.mysavings.Data.Repository.TrueRecord
+import com.fredy.mysavings.Util.BalanceItem
 import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.ResourceState
 import com.fredy.mysavings.Util.TAG
@@ -23,6 +26,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.stateIn
@@ -39,6 +43,7 @@ import javax.inject.Inject
 class RecordViewModel @Inject constructor(
     private val recordRepository: RecordRepository,
     private val accountRepository: AccountRepository,
+    private val currentUserData: UserData?,
 ): ViewModel() {
     private val _filterState = MutableStateFlow(
         FilterState()
@@ -133,10 +138,11 @@ class RecordViewModel @Inject constructor(
         _totalIncome,
         _totalRecordBalance
     ) { balanceBar, totalExpense, totalIncome, totalRecordBalance ->
+        val currency = currentUserData!!.userCurrency.ifBlank { "USD" }
         balanceBar.copy(
-            expense = totalExpense ?: 0.0,
-            income = totalIncome ?: 0.0,
-            balance = totalRecordBalance ?: 0.0,
+            expense = BalanceItem("EXPENSE", totalExpense ?: 0.0, currency),
+            income = BalanceItem("INCOME", totalIncome ?: 0.0, currency),
+            balance = BalanceItem("BALANCE", totalRecordBalance ?: 0.0, currency),
         )
     }.stateIn(
         viewModelScope,
@@ -157,9 +163,7 @@ class RecordViewModel @Inject constructor(
         state.copy(
             recordMapsResource = records,
             availableCurrency = availableCurrency,
-            totalExpense = balanceBar.expense,
-            totalIncome = balanceBar.income,
-            totalAll = balanceBar.balance,
+            balanceBar = balanceBar
         )
     }.stateIn(
         viewModelScope,
@@ -276,9 +280,7 @@ data class RecordState(
     val trueRecord: TrueRecord? = null,
     val availableCurrency: List<String> = listOf(),
     val selectedCheckbox: List<String> = listOf(),
-    val totalExpense: Double = 0.0,
-    val totalIncome: Double = 0.0,
-    val totalAll: Double = 0.0,
+    val balanceBar: BalanceBar = BalanceBar(),
     val sortType: SortType = SortType.ASCENDING,
     val selectedDate: LocalDate = LocalDate.now(),
     val isChoosingFilter: Boolean = false,
@@ -291,9 +293,9 @@ data class RecordMap(
 )
 
 data class BalanceBar(
-    val expense: Double = 0.0,
-    val income: Double = 0.0,
-    val balance: Double = 0.0,
+    val expense: BalanceItem = BalanceItem(),
+    val income: BalanceItem = BalanceItem(),
+    val balance: BalanceItem = BalanceItem(),
 )
 
 data class FilterState(

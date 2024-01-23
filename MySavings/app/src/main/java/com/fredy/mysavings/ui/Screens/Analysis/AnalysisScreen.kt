@@ -1,9 +1,7 @@
 package com.fredy.mysavings.ui.Screens.Analysis
 
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FilterList
@@ -31,7 +29,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.fredy.mysavings.Util.ResourceState
 import com.fredy.mysavings.Util.formatRangeOfDate
 import com.fredy.mysavings.ViewModels.AnalysisState
 import com.fredy.mysavings.ViewModels.Event.AnalysisEvent
@@ -86,22 +83,14 @@ fun AnalysisScreen(
         },
         onSelectCheckboxFilter = {
             onEvent(
-                AnalysisEvent.SelectedCurrencies(it)
+                AnalysisEvent.SelectedCurrencies(
+                    it
+                )
             )
         },
-        totalExpense = state.totalExpense,
-        totalIncome = state.totalIncome,
-        totalBalance = state.totalAll,
+        balanceBar = state.balanceBar,
         leadingIcon = {
             Icon(
-                modifier = Modifier
-                    .clip(
-                        MaterialTheme.shapes.extraLarge
-                    )
-                    .clickable {
-
-                    }
-                    .padding(4.dp),
                 imageVector = Icons.Outlined.Info,
                 contentDescription = "",
                 tint = MaterialTheme.colorScheme.onSurface,
@@ -109,14 +98,6 @@ fun AnalysisScreen(
         },
         trailingIcon = {
             Icon(
-                modifier = Modifier
-                    .clip(
-                        MaterialTheme.shapes.extraLarge
-                    )
-                    .clickable {
-                        onEvent(AnalysisEvent.ShowFilterDialog)
-                    }
-                    .padding(4.dp),
                 imageVector = Icons.Default.FilterList,
                 contentDescription = "",
                 tint = MaterialTheme.colorScheme.onSurface,
@@ -124,13 +105,16 @@ fun AnalysisScreen(
         },
         onPrevious = { onEvent(AnalysisEvent.ShowPreviousList) },
         onNext = { onEvent(AnalysisEvent.ShowNextList) },
+        onLeadingIconClick = {},
+        onTrailingIconClick = {
+            onEvent(AnalysisEvent.ShowFilterDialog)
+        },
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             ExposedDropdownMenuBox(
-                modifier = Modifier
-                    .padding(
-                        vertical = 8.dp
-                    ),
+                modifier = Modifier.padding(
+                    vertical = 8.dp
+                ),
                 expanded = expanded,
                 onExpandedChange = { expanded = !expanded },
             ) {

@@ -67,6 +67,8 @@ fun SimpleAlertDialog(
 fun SimpleDialog(
     modifier: Modifier = Modifier,
     title: String,
+    cancelName:String = "Cancel",
+    saveName:String = "Save",
     onDismissRequest: () -> Unit,
     onCancelClicked: () -> Unit,
     onSaveClicked: () -> Unit,
@@ -108,7 +110,7 @@ fun SimpleDialog(
                 Text(
                     modifier = Modifier.padding(8.dp),
                     style = MaterialTheme.typography.titleMedium,
-                    text = "CANCEL"
+                    text = cancelName
                 )
             }
         },
@@ -128,7 +130,7 @@ fun SimpleDialog(
                 Text(
                     modifier = Modifier.padding(8.dp),
                     style = MaterialTheme.typography.titleMedium,
-                    text = "SAVE"
+                    text = saveName
                 )
             }
         },

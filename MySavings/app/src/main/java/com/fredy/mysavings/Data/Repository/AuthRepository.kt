@@ -16,6 +16,7 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthOptions
 import com.google.firebase.auth.PhoneAuthProvider
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.channels.awaitClose
@@ -58,6 +59,7 @@ interface AuthRepository {
 
 class AuthRepositoryImpl @Inject constructor(
     private val oneTapClient: SignInClient,
+    private val firestore: FirebaseFirestore,
     private val firebaseAuth: FirebaseAuth
 ): AuthRepository {
     override fun loginUser(
@@ -196,11 +198,9 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getCurrentUser() = Firebase.firestore.collection(
+    override suspend fun getCurrentUser() = firestore.collection(
         "user"
     ).document(
         firebaseAuth.currentUser?.uid ?: "-1"
     ).get().await().toObject<UserData>()
-
-
 }

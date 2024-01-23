@@ -1,6 +1,5 @@
 package com.fredy.mysavings.ViewModels
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fredy.mysavings.Data.Database.Entity.Account
@@ -8,18 +7,16 @@ import com.fredy.mysavings.Data.Database.Entity.UserData
 import com.fredy.mysavings.Data.Enum.RecordType
 import com.fredy.mysavings.Data.Enum.SortType
 import com.fredy.mysavings.Data.Repository.AccountRepository
-import com.fredy.mysavings.Data.Repository.AuthRepository
 import com.fredy.mysavings.Data.Repository.RecordRepository
-import com.fredy.mysavings.Data.Repository.TrueRecord
+import com.fredy.mysavings.Data.Repository.UserRepository
+import com.fredy.mysavings.Util.BalanceItem
 import com.fredy.mysavings.Util.Resource
-import com.fredy.mysavings.Util.TAG
 import com.fredy.mysavings.ViewModels.Event.AccountEvent
-import com.fredy.mysavings.ViewModels.Event.CategoryEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.onEach
@@ -32,16 +29,19 @@ import javax.inject.Inject
 class AccountViewModel @Inject constructor(
     private val accountRepository: AccountRepository,
     private val recordRepository: RecordRepository,
-    private val authRepository: AuthRepository
+    private val userRepository: UserRepository,
 ): ViewModel() {
-    private val _currentUser = MutableStateFlow(
-        UserData()
-    )
-    val currentUser = _currentUser.asStateFlow()
     init {
         viewModelScope.launch {
-            authRepository.getCurrentUser()?.let { currentUser ->
-                _currentUser.update { currentUser }
+            userRepository.getCurrentUser().collectLatest { currentUser ->
+                currentUser?.let {
+                    _state.update {
+                        AccountState(
+                            currentUser = currentUser,
+                            accountCurrency = currentUser.userCurrency
+                        )
+                    }
+                }
             }
         }
     }
@@ -82,10 +82,22 @@ class AccountViewModel @Inject constructor(
         _totalIncome,
         _totalAccountBalance
     ) { balanceBar, totalExpense, totalIncome, totalAccountBalance ->
+        val currency = _state.value.currentUser.userCurrency.ifBlank { "USD" }
+        val expense = (totalExpense ?: 0.0)
+        val income = ((totalIncome ?: 0.0) + (totalAccountBalance ?: 0.0))
+        val total = expense + income
         balanceBar.copy(
-            expense = totalExpense ?: 0.0,
-            income = totalIncome ?: 0.0,
-            balance = totalAccountBalance ?: 0.0,
+            expense = BalanceItem(
+                "Expense So Far",
+                expense,
+                currency
+            ),
+            income = BalanceItem(
+                "Income So Far", income, currency
+            ),
+            balance = BalanceItem(
+                "Total Balance", total, currency
+            ),
         )
     }.stateIn(
         viewModelScope,
@@ -100,7 +112,7 @@ class AccountViewModel @Inject constructor(
     )
 
     private val _state = MutableStateFlow(
-        AccountState(accountCurrency = currentUser.value.userCurrency)
+        AccountState()
     )
 
     private val _records = _state.flatMapLatest {
@@ -140,14 +152,16 @@ class AccountViewModel @Inject constructor(
     )
 
     val state = combine(
-        _state, _sortType, accounts, balanceBar,_records
+        _state,
+        _sortType,
+        accounts,
+        balanceBar,
+        _records
     ) { state, sortType, accounts, balanceBar, records ->
         state.copy(
             accounts = accounts,
             recordMapsResource = records,
-            totalExpense = balanceBar.expense,
-            totalIncome = balanceBar.income + balanceBar.balance,
-            totalAll = balanceBar.income + balanceBar.expense + balanceBar.balance,
+            balanceBar = balanceBar,
             sortType = sortType
         )
     }.stateIn(
@@ -215,7 +229,8 @@ class AccountViewModel @Inject constructor(
                 }
                 _state.update {
                     AccountState(
-                        accountCurrency = currentUser.value.userCurrency,
+                        currentUser = it.currentUser,
+                        accountCurrency = it.currentUser.userCurrency,
                     )
                 }
             }
@@ -286,12 +301,11 @@ class AccountViewModel @Inject constructor(
 }
 
 data class AccountState(
+    val currentUser: UserData = UserData(),
     val accounts: List<Account> = emptyList(),
     val recordMapsResource: Resource<List<RecordMap>> = Resource.Loading(),
     val account: Account = Account(),
-    val totalExpense: Double = 0.0,
-    val totalIncome: Double = 0.0,
-    val totalAll: Double = 0.0,
+    val balanceBar: BalanceBar = BalanceBar(),
     val accountId: String = "",
     val accountName: String = "",
     val accountAmount: String = "",

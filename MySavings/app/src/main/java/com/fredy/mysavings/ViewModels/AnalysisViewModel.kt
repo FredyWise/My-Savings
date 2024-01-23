@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fredy.mysavings.Data.Database.Entity.Category
 import com.fredy.mysavings.Data.Database.Entity.Record
+import com.fredy.mysavings.Data.Database.Entity.UserData
 import com.fredy.mysavings.Data.Enum.FilterType
 import com.fredy.mysavings.Data.Enum.GraphType
 import com.fredy.mysavings.Data.Enum.RecordType
@@ -11,6 +12,7 @@ import com.fredy.mysavings.Data.Repository.AccountRepository
 import com.fredy.mysavings.Data.Repository.AccountWithAmountType
 import com.fredy.mysavings.Data.Repository.CategoryWithAmount
 import com.fredy.mysavings.Data.Repository.RecordRepository
+import com.fredy.mysavings.Util.BalanceItem
 import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.isExpense
 import com.fredy.mysavings.Util.minusFilterDate
@@ -35,6 +37,7 @@ import javax.inject.Inject
 class AnalysisViewModel @Inject constructor(
     private val recordRepository: RecordRepository,
     private val accountRepository: AccountRepository,
+    private val currentUserData: UserData?,
 ): ViewModel() {
     init {
         viewModelScope.launch {
@@ -228,10 +231,11 @@ class AnalysisViewModel @Inject constructor(
         _totalIncome,
         _totalRecordBalance
     ) { balanceBar, totalExpense, totalIncome, totalRecordBalance ->
+        val currency = currentUserData!!.userCurrency.ifBlank { "USD" }
         balanceBar.copy(
-            expense = totalExpense ?: 0.0,
-            income = totalIncome ?: 0.0,
-            balance = totalRecordBalance ?: 0.0,
+            expense = BalanceItem("EXPENSE", totalExpense ?: 0.0, currency),
+            income = BalanceItem("INCOME", totalIncome ?: 0.0, currency),
+            balance = BalanceItem("BALANCE", totalRecordBalance ?: 0.0, currency),
         )
     }.stateIn(
         viewModelScope,
@@ -275,10 +279,7 @@ class AnalysisViewModel @Inject constructor(
             recordsWithinTimeResource = analysisData.recordsWithinTimeResource,
             accountsWithAmountResource = analysisData.accountsWithAmountResource,
             availableCurrency = availableCurrency,
-            totalExpense = balanceBar.expense,
-            totalIncome = balanceBar.income,
-            totalAll = balanceBar.balance,
-            graphAmount = if (isExpense(state.recordType)) balanceBar.expense else balanceBar.income,
+            balanceBar = balanceBar,
         )
     }.stateIn(
         viewModelScope,
@@ -394,10 +395,7 @@ data class AnalysisState(
     val availableCurrency: List<String> = emptyList(),
     val selectedCheckbox: List<String> = emptyList(),
     val category: Category? = null,
-    val totalExpense: Double = 0.0,
-    val totalIncome: Double = 0.0,
-    val totalAll: Double = 0.0,
-    val graphAmount: Double = totalExpense,
+    val balanceBar: BalanceBar = BalanceBar(),
     val graphType: GraphType = GraphType.SlimDonut,
     val recordType: RecordType = RecordType.Expense,
     val selectedDate: LocalDate = LocalDate.now(),

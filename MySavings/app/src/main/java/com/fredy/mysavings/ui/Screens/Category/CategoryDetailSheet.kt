@@ -3,6 +3,7 @@ package com.fredy.mysavings.ui.Screens.Category
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -20,7 +21,6 @@ import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.Util.formatBalanceAmount
 import com.fredy.mysavings.Util.formatDay
 import com.fredy.mysavings.Util.formatTime
-import com.fredy.mysavings.ViewModels.CategoryState
 import com.fredy.mysavings.ViewModels.RecordMap
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.CustomStickyHeader
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.DetailAppBar
@@ -51,9 +51,11 @@ fun CategoryDetailSheet(
             Text(text = "Total of: " + recordMaps.sumOf { it.records.size } + " records")
         }
         LazyColumn(
-            modifier = modifier.padding(
-                bottom = 16.dp, end = 8.dp
-            )
+            modifier = modifier
+                .fillMaxHeight()
+                .padding(
+                    bottom = 16.dp, end = 8.dp
+                ),
         ) {
             recordMaps.forEach { trueRecordMap ->
                 stickyHeader {
@@ -67,7 +69,9 @@ fun CategoryDetailSheet(
                         textStyle = MaterialTheme.typography.titleMedium
                     )
                 }
-                items(trueRecordMap.records,key = {it.record.recordId}) { item ->
+                items(
+                    trueRecordMap.records,
+                    key = { it.record.recordId }) { item ->
 
                     Divider(
                         modifier = Modifier.height(

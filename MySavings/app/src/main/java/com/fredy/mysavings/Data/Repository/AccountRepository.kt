@@ -5,14 +5,16 @@ import co.yml.charts.common.extensions.isNotNull
 import com.fredy.mysavings.Data.Database.Entity.Account
 import com.fredy.mysavings.Util.TAG
 import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
-import com.google.firebase.firestore.firestore
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
+import javax.inject.Inject
 
 interface AccountRepository {
     suspend fun upsertAccount(account: Account)
@@ -24,61 +26,52 @@ interface AccountRepository {
 }
 
 
-class AccountRepositoryImpl(): AccountRepository {
-    private val accountCollection = Firebase.firestore.collection(
+class AccountRepositoryImpl @Inject constructor(
+    private val firestore: FirebaseFirestore,
+    private val firebaseAuth: FirebaseAuth
+): AccountRepository {
+    private val accountCollection = firestore.collection(
         "account"
     )
-
     override suspend fun upsertAccount(account: Account) {
-        val currentUser = Firebase.auth.currentUser
-        if (account.accountId.isEmpty()) {
-            accountCollection.add(
-                account
-            ).addOnSuccessListener { document ->
-                accountCollection.document(
-                    document.id
-                ).set(
-                    account.copy(
-                        accountId = document.id,
-                        userIdFk = currentUser!!.uid
-                    )
-                )
-            }
+        val currentUser = firebaseAuth.currentUser!!
+        val documentReference = if (account.accountId.isEmpty()) {
+            accountCollection.document()
         } else {
-            accountCollection.document(
-                account.accountId
-            ).set(
-                account.copy(
-                    userIdFk = currentUser!!.uid
-                )
-            )
+            accountCollection.document(account.accountId)
         }
+        documentReference.set(
+            account.copy(
+                accountId = documentReference.id,
+                userIdFk = currentUser.uid
+            )
+        )
     }
 
     override suspend fun deleteAccount(account: Account) {
-        accountCollection.document(
-            account.accountId
-        ).delete()
+        accountCollection.document(account.accountId).delete()
     }
+
 
     override fun getAccount(accountId: String): Flow<Account> {
         return flow {
             val result = accountCollection.document(
                 accountId
-            ).get().await().toObject<Account>()?: Account()
+            ).get().await().toObject<Account>() ?: Account()
             emit(result)
         }
     }
 
     override fun getUserAccountOrderedByName() = callbackFlow<List<Account>> {
-        val currentUser = Firebase.auth.currentUser
+        val currentUser = firebaseAuth.currentUser
         Log.i(
             TAG,
             "getUserAccountOrderedByName: " + currentUser!!.uid,
 
             )
         val listener = accountCollection.whereEqualTo(
-            "userIdFk", if (currentUser.isNotNull()) currentUser.uid else ""
+            "userIdFk",
+            if (currentUser.isNotNull()) currentUser.uid else ""
         ).addSnapshotListener { value, error ->
             error?.let {
                 close(it)
@@ -102,9 +95,10 @@ class AccountRepositoryImpl(): AccountRepository {
     }
 
     override fun getUserAccountTotalBalance() = callbackFlow<Double> {
-        val currentUser = Firebase.auth.currentUser
+        val currentUser = firebaseAuth.currentUser
         val listener = accountCollection.whereEqualTo(
-            "userIdFk", if (currentUser.isNotNull()) currentUser!!.uid else ""
+            "userIdFk",
+            if (currentUser.isNotNull()) currentUser!!.uid else ""
         ).addSnapshotListener { value, error ->
             error?.let {
                 Log.e(
@@ -130,9 +124,10 @@ class AccountRepositoryImpl(): AccountRepository {
     }
 
     override fun getUserAvailableCurrency() = callbackFlow<List<String>> {
-        val currentUser = Firebase.auth.currentUser
+        val currentUser = firebaseAuth.currentUser
         val listener = accountCollection.whereEqualTo(
-            "userIdFk", if (currentUser.isNotNull()) currentUser!!.uid else ""
+            "userIdFk",
+            if (currentUser.isNotNull()) currentUser!!.uid else ""
         ).addSnapshotListener { value, error ->
             error?.let {
                 Log.i(

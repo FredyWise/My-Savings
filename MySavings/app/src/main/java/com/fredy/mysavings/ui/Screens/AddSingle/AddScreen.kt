@@ -31,6 +31,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import co.yml.charts.common.extensions.isNotNull
 import com.fredy.mysavings.Data.Database.Entity.Account
 import com.fredy.mysavings.Data.Database.Entity.Category
 import com.fredy.mysavings.Data.Enum.RecordType
@@ -46,6 +47,7 @@ import com.fredy.mysavings.ViewModels.Event.CategoryEvent
 import com.fredy.mysavings.ui.Screens.Account.AccountAddDialog
 import com.fredy.mysavings.ui.Screens.Category.CategoryAddDialog
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleButton
+import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleDialog
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.TypeRadioButton
 import kotlinx.coroutines.launch
 
@@ -74,13 +76,18 @@ fun AddScreen(
             true
         )
     }
+    var isShowWarning by remember {
+        mutableStateOf(
+            false
+        )
+    }
     viewModel.onEvent(
         AddRecordEvent.SetId(id)
     )
     LaunchedEffect(
         key1 = resource.error,
     ) {
-        if (resource.error?.isNotEmpty() == true) {
+        if (!resource.error.isNullOrEmpty()) {
             val error = resource.error
             Toast.makeText(
                 context,
@@ -88,13 +95,18 @@ fun AddScreen(
                 Toast.LENGTH_LONG
             ).show()
         }
-        if (resource.success?.isNotEmpty() == true) {
-//            SimpleDialog(
-//                title = ,
-//                onDismissRequest = { /*TODO*/ },
-//                onCancelClicked = { /*TODO*/ },
-//                onSaveClicked = { /*TODO*/ }) {
-//            }
+        if (!resource.success.isNullOrEmpty()) {
+            isShowWarning = true
+        }
+    }
+    if (isShowWarning){
+        SimpleDialog(
+            title = resource.success!!,
+            cancelName = "No",
+            saveName = "Yes",
+            onDismissRequest = { isShowWarning = false },
+            onCancelClicked = { isShowWarning = false },
+            onSaveClicked = { /*TODO*/ }) {
         }
     }
 
@@ -239,6 +251,11 @@ fun AddScreen(
                                     )
                                 )
                             }
+                            Toast.makeText(
+                                context,
+                                "Add Success",
+                                Toast.LENGTH_SHORT
+                            ).show()
                             navigateUp()
                         },
                     )

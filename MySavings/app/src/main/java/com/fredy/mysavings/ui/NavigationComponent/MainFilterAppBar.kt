@@ -8,8 +8,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.Data.Enum.FilterType
-import com.fredy.mysavings.Util.BalanceItem
+import com.fredy.mysavings.ViewModels.BalanceBar
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.BalanceBar
+import com.fredy.mysavings.ui.Screens.ZCommonComponent.BalanceItem
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.DisplayBar
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.FilterDialog
 import java.time.LocalDate
@@ -27,11 +28,11 @@ fun MainFilterAppBar(
     selectedCheckbox: List<String> = emptyList(),
     onSelectCheckboxFilter: (List<String>) -> Unit,
     onDismissFilterDialog: () -> Unit,
-    totalExpense: Double,
-    totalIncome: Double,
-    totalBalance: Double,
+    balanceBar: BalanceBar,
     onPrevious: () -> Unit,
     onNext: () -> Unit,
+    onLeadingIconClick: () -> Unit,
+    onTrailingIconClick: () -> Unit,
     leadingIcon: @Composable () -> Unit = {},
     trailingIcon: @Composable () -> Unit = {},
     content: @Composable () -> Unit,
@@ -43,7 +44,7 @@ fun MainFilterAppBar(
             checkboxList = checkboxesFilter,
             selectedCheckbox = selectedCheckbox,
             onDismissRequest = onDismissFilterDialog,
-            onSelectItem = { item->
+            onSelectItem = { item ->
                 onSelectFilter(item)
             },
             onSelectCheckbox = { item ->
@@ -51,7 +52,7 @@ fun MainFilterAppBar(
             },
         )
     }
-    Column (modifier = modifier){
+    Column(modifier = modifier) {
         DisplayBar(
             selectedDate = selectedDate,
             onDateChange = {
@@ -60,6 +61,8 @@ fun MainFilterAppBar(
             selectedTitle = selectedDateFormat,
             onPrevious = onPrevious,
             onNext = onNext,
+            onLeadingIconClick = onLeadingIconClick,
+            onTrailingIconClick = onTrailingIconClick,
             leadingIcon = leadingIcon,
             trailingIcon = trailingIcon,
         )
@@ -70,18 +73,9 @@ fun MainFilterAppBar(
                 )
                 .padding(vertical = 5.dp),
             amountBars = listOf(
-                BalanceItem(
-                    name = "EXPENSE",
-                    amount = totalExpense
-                ),
-                BalanceItem(
-                    name = "INCOME",
-                    amount = totalIncome
-                ),
-                BalanceItem(
-                    name = "BALANCE",
-                    amount = totalBalance
-                ),
+                balanceBar.expense,
+                balanceBar.income,
+                balanceBar.balance,
             )
         )
         content()

@@ -1,10 +1,14 @@
 package com.fredy.mysavings.Data.Database.Entity
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.fredy.mysavings.Data.Enum.RecordType
 import com.fredy.mysavings.R
 import com.fredy.mysavings.Util.categoryInitIcon
 
+@Entity
 data class Category(
+    @PrimaryKey
     var categoryId: String = "",
     val userIdFk: String = "",
     val categoryName: String = "Category",
