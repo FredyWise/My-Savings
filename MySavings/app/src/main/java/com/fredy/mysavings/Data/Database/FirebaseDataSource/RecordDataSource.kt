@@ -7,13 +7,7 @@ import com.fredy.mysavings.Data.Database.Model.Category
 import com.fredy.mysavings.Data.Database.Model.Record
 import com.fredy.mysavings.Data.Database.Model.TrueRecord
 import com.fredy.mysavings.Data.Enum.RecordType
-import com.fredy.mysavings.Data.Repository.AccountWithAmountType
-import com.fredy.mysavings.Data.Repository.CategoryWithAmount
-import com.fredy.mysavings.Data.Repository.TrueRecordComponentResult
 import com.fredy.mysavings.Util.TAG
-import com.fredy.mysavings.Util.isExpense
-import com.fredy.mysavings.Util.isIncome
-import com.fredy.mysavings.Util.isTransfer
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
@@ -56,34 +50,26 @@ interface RecordDataSource {
         endDate: LocalDateTime,
         currency: List<String>,
     ): List<Record>
-//    suspend fun getUserCategoriesWithAmountFromSpecificTime(
-//        userId: String,
-//        categoryType: RecordType,
-//        startDate: LocalDateTime,
-//        endDate: LocalDateTime,
-//        currency: List<String>,
-//    ): List<CategoryWithAmount>
-//
-//    suspend fun getUserAccountsWithAmountFromSpecificTime(
-//        userId: String,
-//        startDate: LocalDateTime,
-//        endDate: LocalDateTime,
-//    ): List<AccountWithAmountType>
 
-    suspend fun getUserTotalAmountByType(
+    suspend fun getUserRecords(
+        userId: String
+    ): List<Record>
+    suspend fun getUserRecordsFromSpecificTime(
+        userId: String,
+        startDate: LocalDateTime,
+        endDate: LocalDateTime,
+    ): List<Record>
+
+    suspend fun getUserRecordsByType(
         userId: String, recordType: RecordType
-    ): Double
+    ): List<Record>
 
-    suspend fun getUserTotalAmountByTypeFromSpecificTime(
+    suspend fun getUserRecordsByTypeFromSpecificTime(
         userId: String,
         recordType: RecordType,
         startDate: LocalDateTime,
         endDate: LocalDateTime
-    ): Double
-
-    suspend fun getUserTotalRecordBalance(
-        userId: String
-    ): Double
+    ): List<Record>
 }
 
 class RecordDataSourceImpl @Inject constructor(
@@ -116,7 +102,9 @@ class RecordDataSourceImpl @Inject constructor(
             val recordSnapshot = recordCollection.document(
                 recordId
             ).get().await()
-            val record = recordSnapshot.toObject<Record>()?: throw Exception("Record Not Found")
+            val record = recordSnapshot.toObject<Record>() ?: throw Exception(
+                "Record Not Found"
+            )
             getTrueRecord(
                 record
             )
@@ -293,22 +281,6 @@ class RecordDataSourceImpl @Inject constructor(
                     it.recordCurrency
                 ) || currency.isEmpty()
             }
-
-//            val recordsMap = mutableMapOf<String, Record>()
-//            records.forEach { record ->
-//                val key = record.recordDateTime.toLocalDate().toString() + record.recordCurrency
-//                val existingRecord = recordsMap[key]
-//
-//                if (existingRecord != null) {
-//                    recordsMap[key] = existingRecord.copy(
-//                        recordAmount = existingRecord.recordAmount + record.recordAmount
-//                    )
-//                } else {
-//                    recordsMap[key] = record
-//                }
-//            }
-//            recordsMap.values.toList()
-            //do this on the repo instead
         } catch (e: Exception) {
             Log.e(
                 TAG,
@@ -416,22 +388,67 @@ class RecordDataSourceImpl @Inject constructor(
 //            null
 //        }
 //    }
+override suspend fun getUserRecords(
+    userId: String
+): List<Record> {
+    return try {
+        val querySnapshot = recordCollection.whereEqualTo(
+            "userIdFk", userId
+        ).get().await()
 
-    override suspend fun getUserTotalAmountByType(
+        querySnapshot.toObjects()
+    } catch (e: Exception) {
+        Log.e(
+            TAG,
+            "getUserTotalAmountByTypeError: ${e.message}"
+        )
+        throw e
+    }
+}
+    override suspend fun getUserRecordsFromSpecificTime(
+        userId: String,
+        startDate: LocalDateTime,
+        endDate: LocalDateTime,
+    ): List<Record> {
+        return try {
+            val querySnapshot = recordCollection.whereGreaterThanOrEqualTo(
+                "recordTimestamp",
+                TimestampConverter.fromDateTime(
+                    startDate
+                )
+            ).whereLessThanOrEqualTo(
+                "recordTimestamp",
+                TimestampConverter.fromDateTime(
+                    endDate
+                )
+            ).whereEqualTo(
+                "userIdFk", userId
+            ).orderBy(
+                "recordTimestamp",
+                Query.Direction.DESCENDING
+            ).get().await()
+
+            querySnapshot.toObjects<Record>()
+        } catch (e: Exception) {
+            Log.e(
+                TAG,
+                "getUserRecordsFromSpecificTimeError: ${e.message}"
+            )
+            throw e
+        }
+    }
+    override suspend fun getUserRecordsByType(
         userId: String, recordType: RecordType
-    ): Double {
+    ): List<Record> {
         return try {
             val querySnapshot = recordCollection.whereEqualTo(
-                    "recordType",
-                    recordType
-                ).whereEqualTo(
-                    "userIdFk",
-                    userId
-                ).get().await()
+                "recordType", recordType
+            ).whereEqualTo(
+                "userIdFk", userId
+            ).get().await()
 
-            querySnapshot.sumOf { document ->
-                document.toObject<Record>().recordAmount
-            }
+            querySnapshot.toObjects()
+
         } catch (e: Exception) {
             Log.e(
                 TAG,
@@ -441,67 +458,37 @@ class RecordDataSourceImpl @Inject constructor(
         }
     }
 
-    override suspend fun getUserTotalAmountByTypeFromSpecificTime(
+    override suspend fun getUserRecordsByTypeFromSpecificTime(
         userId: String,
         recordType: RecordType,
         startDate: LocalDateTime,
         endDate: LocalDateTime
-    ): Double {
+    ): List<Record> {
         return try {
             val querySnapshot = recordCollection.whereGreaterThanOrEqualTo(
-                    "recordTimestamp",
-                    TimestampConverter.fromDateTime(
-                        startDate
-                    )
-                ).whereLessThanOrEqualTo(
-                    "recordTimestamp",
-                    TimestampConverter.fromDateTime(
-                        endDate
-                    )
-                ).whereEqualTo(
-                    "recordType",
-                    recordType
-                ).whereEqualTo(
-                    "userIdFk",
-                    userId
-                ).orderBy(
-                    "recordTimestamp",
-                    Query.Direction.DESCENDING
-                ).get().await()
+                "recordTimestamp",
+                TimestampConverter.fromDateTime(
+                    startDate
+                )
+            ).whereLessThanOrEqualTo(
+                "recordTimestamp",
+                TimestampConverter.fromDateTime(
+                    endDate
+                )
+            ).whereEqualTo(
+                "recordType", recordType
+            ).whereEqualTo(
+                "userIdFk", userId
+            ).orderBy(
+                "recordTimestamp",
+                Query.Direction.DESCENDING
+            ).get().await()
 
-            val data = querySnapshot.toObjects<Record>().sumOf { record ->
-                record.recordAmount
-            }
-            data
+            querySnapshot.toObjects<Record>()
         } catch (e: Exception) {
             Log.e(
                 TAG,
                 "getUserTotalAmountByTypeFromSpecificTimeError: ${e.message}"
-            )
-            throw e
-        }
-    }
-
-    override suspend fun getUserTotalRecordBalance(
-        userId: String
-    ): Double {
-        return try {
-            val querySnapshot = recordCollection.whereEqualTo(
-                    "userIdFk",
-                    userId
-                ).whereNotEqualTo(
-                    "recordType",
-                    RecordType.Transfer
-                ).get().await()
-
-            val data = querySnapshot.toObjects<Record>().sumOf { record ->
-                record.recordAmount
-            }
-            data
-        } catch (e: Exception) {
-            Log.e(
-                TAG,
-                "getUserTotalRecordBalanceError: ${e.message}"
             )
             throw e
         }
@@ -540,15 +527,15 @@ class RecordDataSourceImpl @Inject constructor(
     ) = coroutineScope {
 
         val fromAccountDeferred = async {
-            getUserAccount(userId)
+            getUserAccounts(userId)
         }
 
         val toAccountDeferred = async {
-            getUserAccount(userId)
+            getUserAccounts(userId)
         }
 
         val toCategoryDeferred = async {
-            getUserCategory(userId)
+            getUserCategories(userId)
         }
 
         TrueRecordComponentResult(
@@ -558,7 +545,7 @@ class RecordDataSourceImpl @Inject constructor(
         )
     }
 
-    private suspend fun getUserAccount(
+    private suspend fun getUserAccounts(
         userId: String
     ) = Firebase.firestore.collection(
         "account"
@@ -566,11 +553,17 @@ class RecordDataSourceImpl @Inject constructor(
         "userIdFk", userId
     ).get().await().toObjects<Account>()
 
-    private suspend fun getUserCategory(
+    private suspend fun getUserCategories(
         userId: String
     ) = Firebase.firestore.collection(
         "category"
     ).whereEqualTo(
         "userIdFk", userId
     ).get().await().toObjects<Category>()
+
+    data class TrueRecordComponentResult(
+        val fromAccount: List<Account>,
+        val toAccount: List<Account>,
+        val toCategory: List<Category>,
+    )
 }

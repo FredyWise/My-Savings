@@ -5,6 +5,7 @@ import android.content.Context
 import androidx.room.Room
 import com.fredy.mysavings.Data.Database.Model.UserData
 import com.fredy.mysavings.Data.Database.SavingsDatabase
+import com.fredy.mysavings.MySavingsApp
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.firebase.auth.FirebaseAuth

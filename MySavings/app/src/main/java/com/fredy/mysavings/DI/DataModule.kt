@@ -7,7 +7,10 @@ import com.fredy.mysavings.Data.Database.Dao.CategoryDao
 import com.fredy.mysavings.Data.Database.Dao.CurrencyCacheDao
 import com.fredy.mysavings.Data.Database.Dao.RecordDao
 import com.fredy.mysavings.Data.Database.Dao.UserDao
+import com.fredy.mysavings.Data.Database.FirebaseDataSource.RecordDataSource
+import com.fredy.mysavings.Data.Database.FirebaseDataSource.RecordDataSourceImpl
 import com.fredy.mysavings.Data.Database.SavingsDatabase
+import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,6 +21,7 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object DataModule {
+
     @Provides
     @Singleton
     fun savingsDatabase(@ApplicationContext appContext: Context): SavingsDatabase {
@@ -47,4 +51,8 @@ object DataModule {
     @Provides
     @Singleton
     fun provideCurrencyCacheDao(savingsDatabase: SavingsDatabase): CurrencyCacheDao = savingsDatabase.currencyCache
+
+    @Provides
+    @Singleton
+    fun provideRecordDataSource(firestore: FirebaseFirestore): RecordDataSource = RecordDataSourceImpl(firestore)
 }
