@@ -16,13 +16,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
-import com.fredy.mysavings.Data.Database.Entity.Account
+import com.fredy.mysavings.Data.Database.Model.Account
 import com.fredy.mysavings.Util.ActionWithName
 import com.fredy.mysavings.Util.BalanceColor
 import com.fredy.mysavings.Util.formatBalanceAmount
 import com.fredy.mysavings.ViewModels.Event.AccountEvent
-import com.fredy.mysavings.ui.NavigationComponent.Navigation.NavigationRoute
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.AdvancedEntityItem
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.CustomStickyHeader
 

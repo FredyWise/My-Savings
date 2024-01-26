@@ -2,9 +2,9 @@ package com.fredy.mysavings.ViewModels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.fredy.mysavings.Data.Database.Entity.Category
-import com.fredy.mysavings.Data.Database.Entity.Record
-import com.fredy.mysavings.Data.Database.Entity.UserData
+import com.fredy.mysavings.Data.Database.Model.Category
+import com.fredy.mysavings.Data.Database.Model.Record
+import com.fredy.mysavings.Data.Database.Model.UserData
 import com.fredy.mysavings.Data.Enum.FilterType
 import com.fredy.mysavings.Data.Enum.GraphType
 import com.fredy.mysavings.Data.Enum.RecordType

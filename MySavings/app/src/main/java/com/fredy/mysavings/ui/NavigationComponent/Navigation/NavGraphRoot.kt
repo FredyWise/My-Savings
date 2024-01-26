@@ -51,13 +51,13 @@ fun NavGraphRoot(
         composable(
             route = Graph.FirstNav,
             enterTransition = {
-                fadeIn(animationSpec = tween(3000))
+                fadeIn(animationSpec = tween(300))
             },
             exitTransition = {
-                fadeOut(animationSpec = tween(3000))
+                fadeOut(animationSpec = tween(300))
             },
         ) {
-            Box(modifier = Modifier.fillMaxSize())
+//            Box(modifier = Modifier.fillMaxSize())
             Log.d(TAG, "NavGraphRoot: ")
             val state by authViewModel.state.collectAsStateWithLifecycle()
             val startDestination = if (state.signedInUser != null) Graph.MainNav else Graph.Auth
@@ -159,12 +159,13 @@ fun NavHostController.navigateSingleTopTo(route: String) = this.navigate(
     route
 ) {
     popUpTo(
-        this@navigateSingleTopTo.graph.findStartDestination().id
+        this@navigateSingleTopTo.graph.startDestinationId
     ) {
         saveState = true
         inclusive = true
     }
     launchSingleTop = true
     restoreState = true
+
 }
 

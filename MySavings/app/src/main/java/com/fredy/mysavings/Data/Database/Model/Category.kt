@@ -1,9 +1,8 @@
-package com.fredy.mysavings.Data.Database.Entity
+package com.fredy.mysavings.Data.Database.Model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.fredy.mysavings.Data.Enum.RecordType
-import com.fredy.mysavings.R
 import com.fredy.mysavings.Util.categoryInitIcon
 
 @Entity

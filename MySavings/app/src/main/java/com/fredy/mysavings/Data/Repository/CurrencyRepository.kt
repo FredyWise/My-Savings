@@ -5,13 +5,12 @@ import co.yml.charts.common.extensions.isNotNull
 import com.fredy.mysavings.Data.APIs.CurrencyModels.CurrencyApi
 import com.fredy.mysavings.Data.APIs.CurrencyModels.Response.CurrencyResponse
 import com.fredy.mysavings.Data.APIs.CurrencyModels.Response.Rates
+import com.fredy.mysavings.Data.Database.Model.CurrencyCache
 import com.fredy.mysavings.Util.BalanceItem
 import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.TAG
-import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -43,10 +42,6 @@ class CurrencyRepositoryImpl @Inject constructor(
         const val CACHE_EXPIRATION_DAYS = 1
     }
 
-    data class CurrencyCache(
-        val currencyResponse: CurrencyResponse,
-        val timestamp: Timestamp
-    )
 
     override fun convertCurrency(
         amountStr: Double,
@@ -85,13 +80,14 @@ class CurrencyRepositoryImpl @Inject constructor(
         awaitClose {}
     }
 
+
     override fun getRates(base: String): Flow<Resource<CurrencyResponse>> {
         return flow {
             emit(Resource.Loading())
 
             val cachedData = getCachedRates(base)
             if (cachedData != null && isCacheValid(
-                    cachedData.timestamp
+                    cachedData.cachedTime
                 )) {
                 emit(
                     Resource.Success(
@@ -110,13 +106,22 @@ class CurrencyRepositoryImpl @Inject constructor(
         }
     }
 
+    private suspend fun getResponse(base: String): CurrencyResponse? {
+        val response = api.getRates(base)
+        val result = response.body()
+        Log.i(
+            TAG,
+            "currencyResponse:" + result,
+        )
+        return result
+    }
+
     private suspend fun cacheRates(
-        base: String,
-        response: CurrencyResponse
+        base: String, response: CurrencyResponse
     ) {
         val cache = CurrencyCache(
             currencyResponse = response,
-            timestamp = Timestamp.now()
+            cachedTime = Timestamp.now()
         )
         currencyCollection.document(
             base
@@ -133,16 +138,6 @@ class CurrencyRepositoryImpl @Inject constructor(
             base
         ).get().await()
         return snapshot.toObject<CurrencyCache>()
-    }
-
-    private suspend fun getResponse(base: String): CurrencyResponse? {
-        val response = api.getRates(base)
-        val result = response.body()
-        Log.i(
-            TAG,
-            "currencyResponse:" + result,
-        )
-        return result
     }
 
     private fun getRateForCurrency(

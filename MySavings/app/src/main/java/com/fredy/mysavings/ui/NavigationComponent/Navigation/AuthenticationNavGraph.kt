@@ -28,15 +28,6 @@ fun NavGraphBuilder.authenticationNavGraph(
     ) {
         composable(
             route = NavigationRoute.SignIn.route,
-            enterTransition = {
-                fadeIn(animationSpec = tween(1000))
-            },
-            exitTransition = {
-                fadeOut(animationSpec = tween(1000))
-            },
-            popEnterTransition = {
-                fadeIn(animationSpec = tween(1000))
-            },
         ) {
             val state by viewModel.state.collectAsStateWithLifecycle()
             val context = LocalContext.current
@@ -84,12 +75,6 @@ fun NavGraphBuilder.authenticationNavGraph(
         }
         composable(
             route = NavigationRoute.SignUp.route,
-            enterTransition = {
-                fadeIn(animationSpec = tween(1000))
-            },
-            exitTransition = {
-                fadeOut(animationSpec = tween(1000))
-            },
         ) {
             val state by viewModel.state.collectAsStateWithLifecycle()
             val context = LocalContext.current

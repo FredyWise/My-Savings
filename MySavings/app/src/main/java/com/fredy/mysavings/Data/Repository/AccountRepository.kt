@@ -2,11 +2,9 @@ package com.fredy.mysavings.Data.Repository
 
 import android.util.Log
 import co.yml.charts.common.extensions.isNotNull
-import com.fredy.mysavings.Data.Database.Entity.Account
+import com.fredy.mysavings.Data.Database.Model.Account
 import com.fredy.mysavings.Util.TAG
-import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.channels.awaitClose

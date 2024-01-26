@@ -3,9 +3,10 @@ package com.fredy.mysavings.Data.Repository
 import android.util.Log
 import co.yml.charts.common.extensions.isNotNull
 import com.fredy.mysavings.Data.Database.Converter.TimestampConverter
-import com.fredy.mysavings.Data.Database.Entity.Account
-import com.fredy.mysavings.Data.Database.Entity.Category
-import com.fredy.mysavings.Data.Database.Entity.Record
+import com.fredy.mysavings.Data.Database.Model.Account
+import com.fredy.mysavings.Data.Database.Model.Category
+import com.fredy.mysavings.Data.Database.Model.Record
+import com.fredy.mysavings.Data.Database.Model.TrueRecord
 import com.fredy.mysavings.Data.Enum.RecordType
 import com.fredy.mysavings.Data.Enum.SortType
 import com.fredy.mysavings.Util.Resource
@@ -17,11 +18,9 @@ import com.fredy.mysavings.ViewModels.RecordMap
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.auth
 import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
-import com.google.firebase.firestore.Source
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
 import com.google.firebase.firestore.toObjects
@@ -224,8 +223,19 @@ class RecordRepositoryImpl @Inject constructor(
             listener.remove()
         }
     }
-
-
+//this mapping shold be implemented on the function that needs record map, not inside the dao or data source
+//.groupBy {
+//                it.record.recordDateTime.toLocalDate()
+//            }.toSortedMap(if (sortType == SortType.DESCENDING) {
+//                compareByDescending { it }
+//            } else {
+//                compareBy { it }
+//            }).map {
+//                RecordMap(
+//                    recordDate = it.key,
+//                    records = it.value
+//                )
+//            }
     override fun getUserCategoryRecordsOrderedByDateTime(
         categoryId: String,
         sortType: SortType,
@@ -844,13 +854,6 @@ data class TrueRecordComponentResult(
     val fromAccount: List<Account>,
     val toAccount: List<Account>,
     val toCategory: List<Category>,
-)
-
-data class TrueRecord(
-    val record: Record = Record(),
-    val fromAccount: Account = Account(),
-    val toAccount: Account = Account(),
-    val toCategory: Category = Category(),
 )
 
 data class CategoryWithAmount(

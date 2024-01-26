@@ -42,7 +42,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.fredy.mysavings.Data.Database.Entity.UserData
+import com.fredy.mysavings.Data.Database.Model.UserData
 import com.fredy.mysavings.ui.NavigationComponent.Navigation.Graph
 import com.fredy.mysavings.ui.NavigationComponent.Navigation.HomeNavGraph
 import com.fredy.mysavings.ui.NavigationComponent.Navigation.NavigationRoute
@@ -111,7 +111,7 @@ fun MainScreen(
                                     )
                                     .show()
                                 rootNavController.navigateSingleTopTo(
-                                    Graph.Auth
+                                    Graph.FirstNav
                                 )
                             }
                             .padding(16.dp),

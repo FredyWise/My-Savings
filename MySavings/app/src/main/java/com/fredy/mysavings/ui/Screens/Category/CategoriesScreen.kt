@@ -19,7 +19,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import com.fredy.mysavings.Data.Database.Entity.Category
+import com.fredy.mysavings.Data.Database.Model.Category
 import com.fredy.mysavings.R
 import com.fredy.mysavings.ViewModels.CategoryState
 import com.fredy.mysavings.ViewModels.Event.CategoryEvent

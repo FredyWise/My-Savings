@@ -1,6 +1,6 @@
 package com.fredy.mysavings.ViewModels.Event
 
-import com.fredy.mysavings.Data.Database.Entity.Category
+import com.fredy.mysavings.Data.Database.Model.Category
 import com.fredy.mysavings.Data.Enum.RecordType
 import com.fredy.mysavings.Data.Enum.SortType
 

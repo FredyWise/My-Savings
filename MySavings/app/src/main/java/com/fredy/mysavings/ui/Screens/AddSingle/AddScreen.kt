@@ -31,9 +31,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import co.yml.charts.common.extensions.isNotNull
-import com.fredy.mysavings.Data.Database.Entity.Account
-import com.fredy.mysavings.Data.Database.Entity.Category
+import com.fredy.mysavings.Data.Database.Model.Account
+import com.fredy.mysavings.Data.Database.Model.Category
 import com.fredy.mysavings.Data.Enum.RecordType
 import com.fredy.mysavings.R
 import com.fredy.mysavings.Util.ActionWithName

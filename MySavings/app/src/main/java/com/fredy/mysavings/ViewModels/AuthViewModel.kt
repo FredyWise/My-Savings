@@ -3,7 +3,7 @@ package com.fredy.mysavings.ViewModels
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.fredy.mysavings.Data.Database.Entity.UserData
+import com.fredy.mysavings.Data.Database.Model.UserData
 import com.fredy.mysavings.Data.Enum.AuthMethod
 import com.fredy.mysavings.Data.Repository.AuthRepository
 import com.fredy.mysavings.Data.Repository.UserRepository

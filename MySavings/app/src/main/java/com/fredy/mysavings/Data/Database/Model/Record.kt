@@ -1,4 +1,4 @@
-package com.fredy.mysavings.Data.Database.Entity
+package com.fredy.mysavings.Data.Database.Model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

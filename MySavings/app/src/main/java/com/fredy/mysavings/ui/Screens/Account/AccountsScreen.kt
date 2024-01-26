@@ -21,9 +21,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import com.fredy.mysavings.Data.Database.Entity.Account
+import com.fredy.mysavings.Data.Database.Model.Account
 import com.fredy.mysavings.R
-import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.formatBalanceAmount
 import com.fredy.mysavings.ViewModels.AccountState
 import com.fredy.mysavings.ViewModels.Event.AccountEvent

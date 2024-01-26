@@ -6,9 +6,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.fredy.mysavings.Data.Database.Entity.Account
-import com.fredy.mysavings.Data.Database.Entity.Category
-import com.fredy.mysavings.Data.Database.Entity.Record
+import com.fredy.mysavings.Data.Database.Model.Account
+import com.fredy.mysavings.Data.Database.Model.Category
+import com.fredy.mysavings.Data.Database.Model.Record
 import com.fredy.mysavings.Data.Enum.RecordType
 import com.fredy.mysavings.ViewModels.Event.AddRecordEvent
 import com.fredy.mysavings.ViewModels.Event.CalcEvent

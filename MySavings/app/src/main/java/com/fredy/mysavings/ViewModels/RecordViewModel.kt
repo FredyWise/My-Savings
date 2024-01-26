@@ -1,21 +1,18 @@
 package com.fredy.mysavings.ViewModels
 
 import android.util.Log
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.fredy.mysavings.Data.Database.Entity.UserData
+import com.fredy.mysavings.Data.Database.Model.TrueRecord
+import com.fredy.mysavings.Data.Database.Model.UserData
 import com.fredy.mysavings.Data.Enum.FilterType
 import com.fredy.mysavings.Data.Enum.RecordType
 import com.fredy.mysavings.Data.Enum.SortType
 import com.fredy.mysavings.Data.Repository.AccountRepository
-import com.fredy.mysavings.Data.Repository.CurrencyRepository
 import com.fredy.mysavings.Data.Repository.RecordRepository
-import com.fredy.mysavings.Data.Repository.TrueRecord
+import com.fredy.mysavings.Data.Repository.UserRepository
 import com.fredy.mysavings.Util.BalanceItem
 import com.fredy.mysavings.Util.Resource
-import com.fredy.mysavings.Util.ResourceState
 import com.fredy.mysavings.Util.TAG
 import com.fredy.mysavings.Util.minusFilterDate
 import com.fredy.mysavings.Util.plusFilterDate
@@ -25,10 +22,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -45,6 +41,17 @@ class RecordViewModel @Inject constructor(
     private val accountRepository: AccountRepository,
     private val currentUserData: UserData?,
 ): ViewModel() {
+
+    init {
+        viewModelScope.launch {
+            accountRepository.getUserAvailableCurrency().collectLatest { currency ->
+                _filterState.update {
+                    it.copy(currencies = currency)
+                }
+            }
+        }
+    }
+
     private val _filterState = MutableStateFlow(
         FilterState()
     )
@@ -140,9 +147,21 @@ class RecordViewModel @Inject constructor(
     ) { balanceBar, totalExpense, totalIncome, totalRecordBalance ->
         val currency = currentUserData!!.userCurrency.ifBlank { "USD" }
         balanceBar.copy(
-            expense = BalanceItem("EXPENSE", totalExpense ?: 0.0, currency),
-            income = BalanceItem("INCOME", totalIncome ?: 0.0, currency),
-            balance = BalanceItem("BALANCE", totalRecordBalance ?: 0.0, currency),
+            expense = BalanceItem(
+                "EXPENSE",
+                totalExpense ?: 0.0,
+                currency
+            ),
+            income = BalanceItem(
+                "INCOME",
+                totalIncome ?: 0.0,
+                currency
+            ),
+            balance = BalanceItem(
+                "BALANCE",
+                totalRecordBalance ?: 0.0,
+                currency
+            ),
         )
     }.stateIn(
         viewModelScope,
@@ -253,7 +272,10 @@ class RecordViewModel @Inject constructor(
             }
 
             is RecordsEvent.SelectedCurrencies -> {
-                Log.i(TAG, "onEvent: ${state.value.availableCurrency}")
+                Log.i(
+                    TAG,
+                    "onEvent: ${state.value.availableCurrency}"
+                )
                 _filterState.update {
                     it.copy(
                         currencies = event.selectedCurrencies

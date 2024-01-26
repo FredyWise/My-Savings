@@ -45,8 +45,8 @@ import coil.compose.rememberImagePainter
 import com.canhub.cropper.CropImageContract
 import com.canhub.cropper.CropImageContractOptions
 import com.canhub.cropper.CropImageOptions
-import com.fredy.mysavings.Data.Database.Entity.Account
-import com.fredy.mysavings.Data.Database.Entity.Category
+import com.fredy.mysavings.Data.Database.Model.Account
+import com.fredy.mysavings.Data.Database.Model.Category
 import com.fredy.mysavings.R
 import com.fredy.mysavings.Util.isTransfer
 import com.fredy.mysavings.ViewModels.AccountViewModel

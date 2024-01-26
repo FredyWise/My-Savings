@@ -25,8 +25,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.fredy.mysavings.Data.Database.Model.TrueRecord
 import com.fredy.mysavings.Data.Enum.RecordType
-import com.fredy.mysavings.Data.Repository.TrueRecord
 import com.fredy.mysavings.Util.BalanceColor
 import com.fredy.mysavings.Util.formatDateTime
 import com.fredy.mysavings.Util.isTransfer

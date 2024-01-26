@@ -2,22 +2,19 @@ package com.fredy.mysavings.Data.Repository
 
 import android.content.Context
 import android.util.Log
-import com.fredy.mysavings.Data.Database.Entity.UserData
+import com.fredy.mysavings.Data.Database.Model.UserData
 import com.fredy.mysavings.MainActivity
 import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.TAG
 import com.google.android.gms.auth.api.identity.SignInClient
-import com.google.firebase.Firebase
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthOptions
 import com.google.firebase.auth.PhoneAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
