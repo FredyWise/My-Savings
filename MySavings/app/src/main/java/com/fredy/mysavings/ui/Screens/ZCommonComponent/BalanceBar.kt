@@ -68,7 +68,7 @@ fun BalanceItem(
         Text(
             text = formatBalanceAmount(
                 amount = amount,
-                currency = currency
+                currency = currency,isShortenToChar = true
             ),
             color = amountColor,
             style = amountStyle

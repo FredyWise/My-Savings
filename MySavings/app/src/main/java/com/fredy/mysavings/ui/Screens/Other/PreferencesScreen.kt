@@ -32,7 +32,7 @@ fun PreferencesScreen(
             onValueChange = { amount = it.toDouble() })
         CurrencyDropdown(selectedText = "",
             onClick = {
-                viewModel.convertFrom(
+                viewModel.convertTo(
                     amount.toString(),
                     it
                 )

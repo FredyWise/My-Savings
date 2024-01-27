@@ -3,10 +3,15 @@ package com.fredy.mysavings.Util
 import android.graphics.Color
 import androidx.compose.material3.MaterialTheme
 import co.yml.charts.common.model.Point
+import com.fredy.mysavings.Data.Database.Model.Account
+import com.fredy.mysavings.Data.Database.Model.Category
 import androidx.compose.ui.graphics.Color as toColor
 
 val TAG = "BABI"
 val WebClientId = "895326687881-e2kh5jh12kjvpf9se1cehbeias0iuvmq.apps.googleusercontent.com"
+
+val deletedCategory = Category(categoryName = "Deleted Category")
+val deletedAccount = Account(accountName = "Deleted Account")
 
 val defaultColors = listOf(
     toColor(Color.parseColor("#fff300")),

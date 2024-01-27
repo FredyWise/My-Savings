@@ -7,14 +7,14 @@ import com.google.gson.Gson
 object CurrencyRatesConverter {
     @TypeConverter
     @JvmStatic
-    fun toRates(json: String?): Rates? {
+    fun toRates(json: String): Rates {
         val gson = Gson()
         return gson.fromJson(json, Rates::class.java)
     }
 
     @TypeConverter
     @JvmStatic
-    fun fromRates(rates: Rates?): String? {
+    fun fromRates(rates: Rates): String {
         val gson = Gson()
         return gson.toJson(rates)
     }

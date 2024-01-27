@@ -80,7 +80,7 @@ interface RecordRepository {
 }
 
 class RecordRepositoryImpl @Inject constructor(
-    currencyRepository: CurrencyRepository,
+    private val currencyRepository: CurrencyRepository,
     private val recordDataSource: RecordDataSource,
     private val recordDao: RecordDao,
     private val firestore: FirebaseFirestore,
@@ -179,9 +179,7 @@ class RecordRepositoryImpl @Inject constructor(
                 TAG,
                 "getUserTrueRecordMapsFromSpecificTimeError: $e"
             )
-            e.message?.let {
-                emit(Resource.Error(it))
-            }
+            emit(Resource.Error(e.message.toString()))
         }
     }
 
@@ -222,9 +220,7 @@ class RecordRepositoryImpl @Inject constructor(
                 TAG,
                 "getUserCategoryRecordsOrderedByDateTimeData: $e"
             )
-            e.message?.let {
-                emit(Resource.Error(it))
-            }
+            emit(Resource.Error(e.message.toString()))
         }
     }
 
@@ -265,9 +261,7 @@ class RecordRepositoryImpl @Inject constructor(
                 TAG,
                 "getUserCategoryRecordsOrderedByDateTimeData: $e"
             )
-            e.message?.let {
-                emit(Resource.Error(it))
-            }
+            emit(Resource.Error(e.message.toString()))
         }
     }
 
@@ -320,9 +314,7 @@ class RecordRepositoryImpl @Inject constructor(
                 TAG,
                 "getUserCategoryRecordsOrderedByDateTimeData: $e"
             )
-            e.message?.let {
-                emit(Resource.Error(it))
-            }
+            emit(Resource.Error(e.message.toString()))
         }
     }
 
@@ -387,9 +379,7 @@ class RecordRepositoryImpl @Inject constructor(
                 TAG,
                 "getUserCategoryRecordsOrderedByDateTimeData: $e"
             )
-            e.message?.let {
-                emit(Resource.Error(it))
-            }
+            emit(Resource.Error(e.message.toString()))
         }
     }
 
@@ -466,9 +456,7 @@ class RecordRepositoryImpl @Inject constructor(
                 TAG,
                 "getUserCategoryRecordsOrderedByDateTimeData: $e"
             )
-            e.message?.let {
-                emit(Resource.Error(it))
-            }
+            emit(Resource.Error(e.message.toString()))
         }
     }
 

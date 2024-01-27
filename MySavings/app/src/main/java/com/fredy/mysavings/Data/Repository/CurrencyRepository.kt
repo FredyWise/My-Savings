@@ -5,6 +5,7 @@ import co.yml.charts.common.extensions.isNotNull
 import com.fredy.mysavings.Data.APIs.CurrencyModels.CurrencyApi
 import com.fredy.mysavings.Data.APIs.CurrencyModels.Response.CurrencyResponse
 import com.fredy.mysavings.Data.APIs.CurrencyModels.Response.Rates
+import com.fredy.mysavings.Data.Database.Converter.CurrencyRatesConverter
 import com.fredy.mysavings.Data.Database.Model.CurrencyCache
 import com.fredy.mysavings.Util.BalanceItem
 import com.fredy.mysavings.Util.Resource
@@ -15,16 +16,12 @@ import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 interface CurrencyRepository {
-    fun getRates(base: String): Flow<Resource<CurrencyResponse>>
-
     fun convertCurrency(
-        amountStr: Double,
+        amount: Double,
         fromCurrency: String,
         toCurrency: String,
     ): Flow<Resource<BalanceItem>>
@@ -42,24 +39,23 @@ class CurrencyRepositoryImpl @Inject constructor(
         const val CACHE_EXPIRATION_DAYS = 1
     }
 
-
     override fun convertCurrency(
-        amountStr: Double,
+        amount: Double,
         fromCurrency: String,
         toCurrency: String,
     ) = callbackFlow<Resource<BalanceItem>> {
         trySend(Resource.Loading())
-        Log.e(
+        Log.i(
             TAG,
-            "convert: $amountStr$fromCurrency"
+            "convert: $amount$fromCurrency\nto: $toCurrency"
         )
 
         val baseCurrency = if (fromCurrency.contains(
                 "None", ignoreCase = true
             )) toCurrency else fromCurrency
 
-        val response = getResponse(baseCurrency)
-        val rates = response!!.rates
+        val response = getRates(baseCurrency)
+        val rates = response.rates
         val rate = getRateForCurrency(
             toCurrency, rates
         )?.toDouble()
@@ -68,7 +64,7 @@ class CurrencyRepositoryImpl @Inject constructor(
             trySend(
                 Resource.Success(
                     BalanceItem(
-                        amount = amountStr * rate!!,
+                        amount = amount * rate!!,
                         currency = toCurrency
                     )
                 )
@@ -81,39 +77,44 @@ class CurrencyRepositoryImpl @Inject constructor(
     }
 
 
-    override fun getRates(base: String): Flow<Resource<CurrencyResponse>> {
-        return flow {
-            emit(Resource.Loading())
-
-            val cachedData = getCachedRates(base)
-            if (cachedData != null && isCacheValid(
-                    cachedData.cachedTime
-                )) {
-                emit(
-                    Resource.Success(
-                        cachedData.currencyResponse
-                    )
-                )
-            } else {
-                val result = getResponse(base)
-                result?.let {
-                    emit(Resource.Success(it))
-                    cacheRates(base, it)
-                }
-            }
-        }.catch {
-            emit(Resource.Error(it.message.toString()))
+    private suspend fun getRates(base: String): CurrencyResponse {
+        Log.i(TAG, "getRates: start")
+        val cachedData = getCachedRates(base)
+        Log.i(TAG, "getRates: ${cachedData}")
+        return if (cachedData != null && isCacheValid(cachedData.cachedTime)) {
+            val result = CurrencyResponse(
+                cachedData.base,
+                cachedData.date,
+                CurrencyRatesConverter.toRates(
+                    cachedData.rates
+                ),
+                cachedData.success,
+                cachedData.timestamp
+            )
+            Log.i(
+                TAG, "getCachedRates: ${result}"
+            )
+            result
+        } else {
+            val result = getApiRates(base)!!
+            cacheRates(base,result)
+            Log.i(
+                TAG, "getApiRates: ${result}"
+            )
+            result
         }
     }
 
-    private suspend fun getResponse(base: String): CurrencyResponse? {
+    private suspend fun getApiRates(base: String): CurrencyResponse? {
         val response = api.getRates(base)
-        val result = response.body()
-        Log.i(
-            TAG,
-            "currencyResponse:" + result,
-        )
-        return result
+        return response.body()
+    }
+
+    private suspend fun getCachedRates(base: String): CurrencyCache? {
+        val snapshot = currencyCollection.document(
+            base
+        ).get().await()
+        return snapshot.toObject<CurrencyCache>()
     }
 
     private suspend fun cacheRates(
@@ -123,22 +124,17 @@ class CurrencyRepositoryImpl @Inject constructor(
             currencyResponse = response,
             cachedTime = Timestamp.now()
         )
+        Log.i(TAG, "cacheRates: $cache")
         currencyCollection.document(
             base
         ).set(cache).await()
     }
-
     private fun isCacheValid(timestamp: Timestamp): Boolean {
-        val expirationTime = timestamp.nanoseconds + CACHE_EXPIRATION_DAYS * 24 * 60 * 60 * 1000//one day
+        val timestampInMilliseconds = timestamp.seconds * 1000
+        val expirationTime = timestampInMilliseconds + CACHE_EXPIRATION_DAYS * 24 * 60 * 60 * 1000
         return expirationTime >= System.currentTimeMillis()
     }
 
-    private suspend fun getCachedRates(base: String): CurrencyCache? {
-        val snapshot = currencyCollection.document(
-            base
-        ).get().await()
-        return snapshot.toObject<CurrencyCache>()
-    }
 
     private fun getRateForCurrency(
         currency: String, rates: Rates
