@@ -10,16 +10,14 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface AccountDao {
     @Upsert
-    suspend fun upsertContact(account: Account)
+    suspend fun upsertAccountItem(account: Account)
     @Delete
-    suspend fun deleteContact(account: Account)
-    @Query("SELECT * FROM account " +
-            "WHERE accountId=:accountId")
-    fun getAccount(accountId:Int): Flow<Account>
-    @Query("SELECT * FROM account " +
-            "ORDER BY accountName ASC")
-    fun getUserAccountOrderedByName(): Flow<List<Account>>
+    suspend fun deleteAccountItem(account: Account)
+    @Query("SELECT * FROM account WHERE accountId = :accountId")
+    suspend fun getAccount(accountId: String): Account
+    @Query("SELECT * FROM account WHERE userIdFk = :userId")
+    suspend fun getUserAccounts(userId: String): List<Account>
+    @Query("SELECT DISTINCT accountCurrency FROM account WHERE userIdFk = :userId")
+    suspend fun getUserAvailableCurrency(userId: String): List<String>
 
-    @Query("SELECT SUM(accountAmount) FROM account ")
-    fun getUserAccountTotalBalance(): Flow<Double>
 }

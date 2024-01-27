@@ -1,7 +1,9 @@
 package com.fredy.mysavings.DI
 
 import com.fredy.mysavings.Data.APIs.CurrencyModels.CurrencyApi
+import com.fredy.mysavings.Data.Database.Dao.AccountDao
 import com.fredy.mysavings.Data.Database.Dao.RecordDao
+import com.fredy.mysavings.Data.Database.FirebaseDataSource.AccountDataSource
 import com.fredy.mysavings.Data.Database.FirebaseDataSource.RecordDataSource
 import com.fredy.mysavings.Data.Repository.AccountRepository
 import com.fredy.mysavings.Data.Repository.AccountRepositoryImpl
@@ -72,10 +74,17 @@ object RepositoryModule {
     @Provides
     @Singleton
     fun provideAccountRepository(
+        currencyRepository: CurrencyRepository,
+        accountDataSource: AccountDataSource,
+        accountDao: AccountDao,
         firestore: FirebaseFirestore,
         firebaseAuth: FirebaseAuth
     ): AccountRepository = AccountRepositoryImpl(
-        firestore, firebaseAuth
+        currencyRepository,
+        accountDataSource,
+        accountDao,
+        firestore,
+        firebaseAuth
     )
 
     @Provides

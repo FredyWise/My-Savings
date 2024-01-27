@@ -121,7 +121,7 @@ fun ChartLine(
         paddingRight = 0.dp,
         paddingTop = 35.dp,
         bottomPadding = 0.dp,
-        containerPaddingEnd = 55.dp
+        containerPaddingEnd = 100.dp
     )
 
     LineChart(

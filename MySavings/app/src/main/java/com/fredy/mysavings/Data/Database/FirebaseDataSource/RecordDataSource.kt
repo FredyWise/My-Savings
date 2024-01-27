@@ -54,6 +54,7 @@ interface RecordDataSource {
     suspend fun getUserRecords(
         userId: String
     ): List<Record>
+
     suspend fun getUserRecordsFromSpecificTime(
         userId: String,
         startDate: LocalDateTime,
@@ -290,121 +291,24 @@ class RecordDataSourceImpl @Inject constructor(
         }
     }
 
+    override suspend fun getUserRecords(
+        userId: String
+    ): List<Record> {
+        return try {
+            val querySnapshot = recordCollection.whereEqualTo(
+                "userIdFk", userId
+            ).get().await()
 
-//    override suspend fun getUserCategoriesWithAmountFromSpecificTime(
-//        userId: String,
-//        categoryType: RecordType,
-//        startDate: LocalDateTime,
-//        endDate: LocalDateTime,
-//        currency: List<String>,
-//    ): List<CategoryWithAmount> {
-//        return try {
-//            val userCategories = getUserCategory(userId)
-//            val querySnapshot = recordCollection
-//                .whereGreaterThanOrEqualTo("recordTimestamp", TimestampConverter.fromDateTime(startDate))
-//                .whereLessThanOrEqualTo("recordTimestamp", TimestampConverter.fromDateTime(endDate))
-//                .whereEqualTo("recordType", categoryType)
-//                .whereEqualTo("userIdFk", userId)
-//                .orderBy("recordTimestamp", Query.Direction.DESCENDING)
-//                .get().await()
-//
-//            val records = querySnapshot.toObjects<Record>().filter {
-//                currency.contains(it.recordCurrency) || currency.isEmpty()
-//            }
-//
-//            val categoryWithAmountMap = mutableMapOf<String, CategoryWithAmount>()
-//            records.forEach { record ->
-//                val key = record.categoryIdFk + record.recordCurrency
-//                val existingCategory = categoryWithAmountMap[key]
-//                if (existingCategory != null) {
-//                    categoryWithAmountMap[key] = existingCategory.copy(
-//                        amount = existingCategory.amount + record.recordAmount
-//                    )
-//                } else {
-//                    val newCategory = CategoryWithAmount(
-//                        category = userCategories.first { it.categoryId == record.categoryIdFk },
-//                        amount = record.recordAmount,
-//                        currency = record.recordCurrency
-//                    )
-//                    categoryWithAmountMap[key] = newCategory
-//                }
-//            }
-//            categoryWithAmountMap.values.toList().sortedBy { it.amount }
-//        } catch (e: Exception) {
-//            Log.e(TAG, "getUserCategoriesWithAmountFromSpecificTimeError: ${e.message}")
-//            null
-//        }
-//    }
-//
-//    override suspend fun getUserAccountsWithAmountFromSpecificTime(
-//        userId: String,
-//        startDate: LocalDateTime,
-//        endDate: LocalDateTime,
-//    ): List<AccountWithAmountType> {
-//        return try {
-//            val userAccounts = getUserAccount(userId)
-//            val querySnapshot = recordCollection
-//                .whereGreaterThanOrEqualTo("recordTimestamp", TimestampConverter.fromDateTime(startDate))
-//                .whereLessThanOrEqualTo("recordTimestamp", TimestampConverter.fromDateTime(endDate))
-//                .whereEqualTo("userIdFk", userId)
-//                .orderBy("recordTimestamp", Query.Direction.DESCENDING)
-//                .get().await()
-//
-//            val records = querySnapshot.toObjects<Record>()
-//            val accountWithAmountMap = mutableMapOf<String, AccountWithAmountType>()
-//            userAccounts.forEach { account ->
-//                val key = account.accountId
-//                val newAccount = AccountWithAmountType(
-//                    account = account,
-//                    incomeAmount = 0.0,
-//                    expenseAmount = 0.0,
-//                )
-//                accountWithAmountMap[key] = newAccount
-//            }
-//            records.forEach { record ->
-//                val key = record.accountIdFromFk
-//                val existingAccount = accountWithAmountMap[key]
-//                if (!isTransfer(record.recordType)) {
-//                    val incomeAmount = if (isIncome(record.recordType)) record.recordAmount else 0.0
-//                    val expenseAmount = if (isExpense(record.recordType)) record.recordAmount else 0.0
-//                    if (existingAccount != null) {
-//                        accountWithAmountMap[key] = existingAccount.copy(
-//                            incomeAmount = existingAccount.incomeAmount + incomeAmount,
-//                            expenseAmount = existingAccount.expenseAmount + expenseAmount,
-//                        )
-//                    } else {
-//                        val newAccount = AccountWithAmountType(
-//                            account = userAccounts.first { it.accountId == record.accountIdFromFk },
-//                            incomeAmount = incomeAmount,
-//                            expenseAmount = expenseAmount,
-//                        )
-//                        accountWithAmountMap[key] = newAccount
-//                    }
-//                }
-//            }
-//            accountWithAmountMap.values.toList().sortedBy { it.account.accountName }
-//        } catch (e: Exception) {
-//            Log.e(TAG, "getUserAccountsWithAmountFromSpecificTimeError: ${e.message}")
-//            null
-//        }
-//    }
-override suspend fun getUserRecords(
-    userId: String
-): List<Record> {
-    return try {
-        val querySnapshot = recordCollection.whereEqualTo(
-            "userIdFk", userId
-        ).get().await()
-
-        querySnapshot.toObjects()
-    } catch (e: Exception) {
-        Log.e(
-            TAG,
-            "getUserTotalAmountByTypeError: ${e.message}"
-        )
-        throw e
+            querySnapshot.toObjects()
+        } catch (e: Exception) {
+            Log.e(
+                TAG,
+                "getUserTotalAmountByTypeError: ${e.message}"
+            )
+            throw e
+        }
     }
-}
+
     override suspend fun getUserRecordsFromSpecificTime(
         userId: String,
         startDate: LocalDateTime,
@@ -437,6 +341,7 @@ override suspend fun getUserRecords(
             throw e
         }
     }
+
     override suspend fun getUserRecordsByType(
         userId: String, recordType: RecordType
     ): List<Record> {

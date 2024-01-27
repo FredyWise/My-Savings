@@ -15,6 +15,7 @@ import com.fredy.mysavings.Data.Repository.RecordRepository
 import com.fredy.mysavings.Util.BalanceItem
 import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.isExpense
+import com.fredy.mysavings.Util.map
 import com.fredy.mysavings.Util.minusFilterDate
 import com.fredy.mysavings.Util.plusFilterDate
 import com.fredy.mysavings.Util.updateFilterState
@@ -37,7 +38,6 @@ import javax.inject.Inject
 class AnalysisViewModel @Inject constructor(
     private val recordRepository: RecordRepository,
     private val accountRepository: AccountRepository,
-    private val currentUserData: UserData?,
 ): ViewModel() {
     init {
         viewModelScope.launch {
@@ -61,47 +61,12 @@ class AnalysisViewModel @Inject constructor(
 
 
     private val _categoriesWithAmount = _filterState.flatMapLatest { filterState ->
-        when (filterState.filterType) {
-            FilterType.Daily -> recordRepository.getUserCategoriesWithAmountFromSpecificTime(
-                filterState.recordType,
-                filterState.start,
-                filterState.end,
-                filterState.currencies,
-            )
-
-            FilterType.Weekly -> recordRepository.getUserCategoriesWithAmountFromSpecificTime(
-                filterState.recordType,
-                filterState.start,
-                filterState.end,
-                filterState.currencies
-            )
-
-            FilterType.Monthly -> recordRepository.getUserCategoriesWithAmountFromSpecificTime(
-                filterState.recordType,
-                filterState.start,
-                filterState.end,
-                filterState.currencies
-            )
-
-            FilterType.Per3Months -> recordRepository.getUserCategoriesWithAmountFromSpecificTime(
-                filterState.recordType,
-                filterState.start,
-                filterState.end,
-                filterState.currencies
-            )
-
-            FilterType.Per6Months -> recordRepository.getUserCategoriesWithAmountFromSpecificTime(
-                filterState.recordType,
-                filterState.start,
-                filterState.end,
-                filterState.currencies
-            )
-
-            FilterType.Yearly -> recordRepository.getUserCategoriesWithAmountFromSpecificTime(
-                filterState.recordType,
-                filterState.start,
-                filterState.end,
-                filterState.currencies
+        filterState.map { start, end, recordType, _, currencies ->
+            recordRepository.getUserCategoriesWithAmountFromSpecificTime(
+                recordType,
+                start,
+                end,
+                currencies,
             )
         }
     }.stateIn(
@@ -111,35 +76,10 @@ class AnalysisViewModel @Inject constructor(
     )
 
     private val _accountsWithAmount = _filterState.flatMapLatest { filterState ->
-        when (filterState.filterType) {
-            FilterType.Daily -> recordRepository.getUserAccountsWithAmountFromSpecificTime(
-                filterState.start,
-                filterState.end,
-            )
-
-            FilterType.Weekly -> recordRepository.getUserAccountsWithAmountFromSpecificTime(
-                filterState.start,
-                filterState.end,
-            )
-
-            FilterType.Monthly -> recordRepository.getUserAccountsWithAmountFromSpecificTime(
-                filterState.start,
-                filterState.end,
-            )
-
-            FilterType.Per3Months -> recordRepository.getUserAccountsWithAmountFromSpecificTime(
-                filterState.start,
-                filterState.end,
-            )
-
-            FilterType.Per6Months -> recordRepository.getUserAccountsWithAmountFromSpecificTime(
-                filterState.start,
-                filterState.end,
-            )
-
-            FilterType.Yearly -> recordRepository.getUserAccountsWithAmountFromSpecificTime(
-                filterState.start,
-                filterState.end,
+        filterState.map { start, end, _, _, _ ->
+            recordRepository.getUserAccountsWithAmountFromSpecificTime(
+                start,
+                end,
             )
         }
     }.stateIn(
@@ -149,47 +89,12 @@ class AnalysisViewModel @Inject constructor(
     )
 
     private val _recordsWithinSpecificTime = _filterState.flatMapLatest { filterState ->
-        when (filterState.filterType) {
-            FilterType.Daily -> recordRepository.getUserRecordsFromSpecificTime(
-                filterState.recordType,
-                filterState.start,
-                filterState.end,
-                filterState.currencies,
-            )
-
-            FilterType.Weekly -> recordRepository.getUserRecordsFromSpecificTime(
-                filterState.recordType,
-                filterState.start,
-                filterState.end,
-                filterState.currencies,
-            )
-
-            FilterType.Monthly -> recordRepository.getUserRecordsFromSpecificTime(
-                filterState.recordType,
-                filterState.start,
-                filterState.end,
-                filterState.currencies,
-            )
-
-            FilterType.Per3Months -> recordRepository.getUserRecordsFromSpecificTime(
-                filterState.recordType,
-                filterState.start,
-                filterState.end,
-                filterState.currencies,
-            )
-
-            FilterType.Per6Months -> recordRepository.getUserRecordsFromSpecificTime(
-                filterState.recordType,
-                filterState.start,
-                filterState.end,
-                filterState.currencies,
-            )
-
-            FilterType.Yearly -> recordRepository.getUserRecordsFromSpecificTime(
-                filterState.recordType,
-                filterState.start,
-                filterState.end,
-                filterState.currencies,
+        filterState.map { start, end, recordType, _, currencies ->
+            recordRepository.getUserRecordsFromSpecificTime(
+                recordType,
+                start,
+                end,
+                currencies,
             )
         }
     }.stateIn(
@@ -199,26 +104,26 @@ class AnalysisViewModel @Inject constructor(
     )
 
 
-    private val _totalRecordBalance: StateFlow<Double?> = recordRepository.getUserTotalRecordBalance().stateIn(
+    private val _totalRecordBalance= recordRepository.getUserTotalRecordBalance().stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(),
-        0.0
+        BalanceItem()
     )
 
-    private val _totalExpense: StateFlow<Double?> = recordRepository.getUserTotalAmountByType(
+    private val _totalExpense= recordRepository.getUserTotalAmountByType(
         RecordType.Expense
     ).stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(),
-        0.0
+        BalanceItem()
     )
 
-    private val _totalIncome: StateFlow<Double?> = recordRepository.getUserTotalAmountByType(
+    private val _totalIncome= recordRepository.getUserTotalAmountByType(
         RecordType.Income
     ).stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(),
-        0.0
+        BalanceItem()
     )
 
     private val _balanceBar = MutableStateFlow(
@@ -231,11 +136,10 @@ class AnalysisViewModel @Inject constructor(
         _totalIncome,
         _totalRecordBalance
     ) { balanceBar, totalExpense, totalIncome, totalRecordBalance ->
-        val currency = currentUserData!!.userCurrency.ifBlank { "USD" }
         balanceBar.copy(
-            expense = BalanceItem("EXPENSE", totalExpense ?: 0.0, currency),
-            income = BalanceItem("INCOME", totalIncome ?: 0.0, currency),
-            balance = BalanceItem("BALANCE", totalRecordBalance ?: 0.0, currency),
+            expense = totalExpense,
+            income = totalIncome,
+            balance = totalRecordBalance,
         )
     }.stateIn(
         viewModelScope,

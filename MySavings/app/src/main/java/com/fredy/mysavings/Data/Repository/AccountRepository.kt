@@ -2,16 +2,16 @@ package com.fredy.mysavings.Data.Repository
 
 import android.util.Log
 import co.yml.charts.common.extensions.isNotNull
+import com.fredy.mysavings.Data.Database.Dao.AccountDao
+import com.fredy.mysavings.Data.Database.FirebaseDataSource.AccountDataSource
 import com.fredy.mysavings.Data.Database.Model.Account
+import com.fredy.mysavings.Util.BalanceItem
 import com.fredy.mysavings.Util.TAG
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.toObject
-import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 interface AccountRepository {
@@ -19,134 +19,138 @@ interface AccountRepository {
     suspend fun deleteAccount(account: Account)
     fun getAccount(accountId: String): Flow<Account>
     fun getUserAccountOrderedByName(): Flow<List<Account>>
-    fun getUserAccountTotalBalance(): Flow<Double>
+    fun getUserAccountTotalBalance(): Flow<BalanceItem>
     fun getUserAvailableCurrency(): Flow<List<String>>
 }
 
 
 class AccountRepositoryImpl @Inject constructor(
+    private val currencyRepository: CurrencyRepository,
+    private val accountDataSource: AccountDataSource,
+    private val accountDao: AccountDao,
     private val firestore: FirebaseFirestore,
     private val firebaseAuth: FirebaseAuth
 ): AccountRepository {
     private val accountCollection = firestore.collection(
         "account"
     )
+
+
     override suspend fun upsertAccount(account: Account) {
-        val currentUser = firebaseAuth.currentUser!!
-        val documentReference = if (account.accountId.isEmpty()) {
-            accountCollection.document()
-        } else {
-            accountCollection.document(account.accountId)
-        }
-        documentReference.set(
+        val currentUser = firebaseAuth.currentUser
+        val tempAccount = if (account.accountId.isEmpty()) {
+            val newAccountRef = accountCollection.document()
             account.copy(
-                accountId = documentReference.id,
-                userIdFk = currentUser.uid
+                accountId = newAccountRef.id,
+                userIdFk = currentUser!!.uid
             )
+        } else {
+            account.copy(
+                userIdFk = currentUser!!.uid
+            )
+        }
+
+        accountDao.upsertAccountItem(tempAccount)
+        accountDataSource.upsertAccountItem(
+            tempAccount
         )
     }
 
     override suspend fun deleteAccount(account: Account) {
-        accountCollection.document(account.accountId).delete()
+        accountDataSource.deleteAccountItem(
+            account
+        )
+        accountDao.deleteAccountItem(account)
     }
 
 
     override fun getAccount(accountId: String): Flow<Account> {
         return flow {
-            val result = accountCollection.document(
+            val account = accountDataSource.getAccount(
                 accountId
-            ).get().await().toObject<Account>() ?: Account()
-            emit(result)
-        }
-    }
-
-    override fun getUserAccountOrderedByName() = callbackFlow<List<Account>> {
-        val currentUser = firebaseAuth.currentUser
-        Log.i(
-            TAG,
-            "getUserAccountOrderedByName: " + currentUser!!.uid,
-
             )
-        val listener = accountCollection.whereEqualTo(
-            "userIdFk",
-            if (currentUser.isNotNull()) currentUser.uid else ""
-        ).addSnapshotListener { value, error ->
-            error?.let {
-                close(it)
-            }
-            value?.let {
-                val data = it.documents.map { document ->
-                    document.toObject<Account>()!!
-                }
-                Log.i(
-                    TAG,
-                    "getUserAccountOrderedByName: " + data,
-
-                    )
-                trySend(data)
-            }
-        }
-
-        awaitClose {
-            listener.remove()
+            emit(account)
         }
     }
 
-    override fun getUserAccountTotalBalance() = callbackFlow<Double> {
-        val currentUser = firebaseAuth.currentUser
-        val listener = accountCollection.whereEqualTo(
-            "userIdFk",
-            if (currentUser.isNotNull()) currentUser!!.uid else ""
-        ).addSnapshotListener { value, error ->
-            error?.let {
+    override fun getUserAccountOrderedByName(): Flow<List<Account>> {
+        return flow {
+//            emit(Resource.Loading())
+            val currentUser = firebaseAuth.currentUser!!
+            val userId = if (currentUser.isNotNull()) currentUser.uid else ""
+            val data = accountDataSource.getUserAccounts(
+                userId
+            )
+            emit(data)
+//            emit(Resource.Success(data))
+        }.catch { e ->
+            Log.i(
+                TAG,
+                "getUserTrueRecordMapsFromSpecificTimeError: $e"
+            )
+//            emit(Resource.Error(e.message.toString()))
+        }
+    }
+
+    override fun getUserAccountTotalBalance(): Flow<BalanceItem> {
+        return flow {
+            val currentUser = firebaseAuth.currentUser
+            val userId = if (currentUser.isNotNull()) currentUser!!.uid else ""
+            val userCurrency = "USD"
+
+            Log.i(
+                TAG,
+                "getUserAccountTotalBalance: $currentUser"
+            )
+            val accounts = accountDataSource.getUserAccounts(
+                userId
+            )
+            val totalAccountBalance = accounts.sumOf { account ->
                 Log.e(
                     TAG,
-                    "getUserAccountTotalBalance2: " + it.message,
+                    "getUserAccountTotalBalance2: tests2" + account,
                 )
-            }
-            value?.let {
-                Log.i(
-                    TAG,
-                    "getUserAccountTotalBalance2: " + it.documents,
+                currencyConverter(
+                    account.accountAmount,
+                    account.accountCurrency,
+                    userCurrency
                 )
-                val data = it.sumOf { document ->
-                    document.toObject<Account>().accountAmount
-                }
-                trySend(data)
-            }
-        }
 
-        awaitClose {
-            listener.remove()
+            }
+            val data = BalanceItem(
+                "Total Balance",
+                totalAccountBalance,
+                userCurrency
+            )
+            Log.i(
+                TAG,
+                "getUserAccountTotalBalance: $data"
+            )
+            emit(data)
         }
     }
 
-    override fun getUserAvailableCurrency() = callbackFlow<List<String>> {
-        val currentUser = firebaseAuth.currentUser
-        val listener = accountCollection.whereEqualTo(
-            "userIdFk",
-            if (currentUser.isNotNull()) currentUser!!.uid else ""
-        ).addSnapshotListener { value, error ->
-            error?.let {
-                Log.i(
-                    TAG,
-                    "getUserAccountTotalBalance2: " + it.message,
-                )
-            }
-            value?.let {
-                Log.i(
-                    TAG,
-                    "getUserAccountTotalBalance2: " + it.documents,
-                )
-                val data = it.map { document ->
-                    document.toObject<Account>().accountCurrency
-                }.toMutableList()
-                trySend(data.toList().distinct())
-            }
-        }
+    override fun getUserAvailableCurrency(): Flow<List<String>> {
+        return flow {
+            val currentUser = firebaseAuth.currentUser
+            val userId = if (currentUser.isNotNull()) currentUser!!.uid else ""
 
-        awaitClose {
-            listener.remove()
+            val data = accountDataSource.getUserAvailableCurrency(
+                userId
+            )
+            emit(data)
         }
+    }
+
+    private suspend fun currencyConverter(
+        amount: Double, from: String, to: String
+    ): Double {
+        Log.e(
+            TAG,
+            "currencyConverter: test" + amount + from + to
+        )
+        return currencyRepository.convertCurrencyData(
+            amount, from, to
+        ).amount
     }
 }

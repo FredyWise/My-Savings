@@ -10,6 +10,7 @@ import com.fredy.mysavings.Data.Database.Model.Record
 import com.fredy.mysavings.Data.Database.Model.TrueRecord
 import com.fredy.mysavings.Data.Enum.RecordType
 import com.fredy.mysavings.Data.Enum.SortType
+import com.fredy.mysavings.Util.BalanceItem
 import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.TAG
 import com.fredy.mysavings.Util.isExpense
@@ -69,14 +70,14 @@ interface RecordRepository {
         endDate: LocalDateTime,
     ): Flow<Resource<List<AccountWithAmountType>>>
 
-    fun getUserTotalAmountByType(recordType: RecordType): Flow<Double>
+    fun getUserTotalAmountByType(recordType: RecordType): Flow<BalanceItem>
     fun getUserTotalAmountByTypeFromSpecificTime(
         recordType: RecordType,
         startDate: LocalDateTime,
         endDate: LocalDateTime
-    ): Flow<Double>
+    ): Flow<BalanceItem>
 
-    fun getUserTotalRecordBalance(): Flow<Double>
+    fun getUserTotalRecordBalance(): Flow<BalanceItem>
 }
 
 class RecordRepositoryImpl @Inject constructor(
@@ -151,7 +152,7 @@ class RecordRepositoryImpl @Inject constructor(
             )
 
             val data = recordDataSource.getUserTrueRecordByCurrencyFromSpecificTime(
-                currentUser.uid,
+                userId,
                 startDate,
                 endDate,
                 currency
@@ -197,7 +198,7 @@ class RecordRepositoryImpl @Inject constructor(
 
                 )
             val data = recordDataSource.getUserCategoryRecordsOrderedByDateTime(
-                currentUser.uid, categoryId
+                userId, categoryId
             ).groupBy {
                 it.record.recordDateTime.toLocalDate()
             }.toSortedMap(if (sortType == SortType.DESCENDING) {
@@ -238,7 +239,7 @@ class RecordRepositoryImpl @Inject constructor(
 
                 )
             val data = recordDataSource.getUserAccountRecordsOrderedByDateTime(
-                currentUser.uid, accountId
+                userId, accountId
             ).groupBy {
                 it.record.recordDateTime.toLocalDate()
             }.toSortedMap(if (sortType == SortType.DESCENDING) {
@@ -290,12 +291,21 @@ class RecordRepositoryImpl @Inject constructor(
 
             val recordsMap = mutableMapOf<String, Record>()
             records.forEach { record ->
-                val key = record.recordDateTime.toLocalDate().toString() + record.recordCurrency
+                val key = record.recordDateTime.toLocalDate().toString()
                 val existingRecord = recordsMap[key]
 
                 if (existingRecord != null) {
+                    val amount = if (record.recordCurrency != existingRecord.recordCurrency) {
+                        currencyConverter(
+                            record.recordAmount,
+                            record.recordCurrency,
+                            existingRecord.recordCurrency
+                        )
+                    } else {
+                        record.recordAmount
+                    }
                     recordsMap[key] = existingRecord.copy(
-                        recordAmount = existingRecord.recordAmount + record.recordAmount
+                        recordAmount = existingRecord.recordAmount + amount
                     )
                 } else {
                     recordsMap[key] = record
@@ -463,20 +473,30 @@ class RecordRepositoryImpl @Inject constructor(
 
     override fun getUserTotalAmountByType(
         recordType: RecordType
-    ): Flow<Double> {
+    ): Flow<BalanceItem> {
         return flow {
             val currentUser = firebaseAuth.currentUser!!
             val userId = if (currentUser.isNotNull()) currentUser.uid else ""
+            val userCurrency = "USD"
             Log.i(
                 TAG,
                 "getUserTotalAmountByType: $recordType",
 
                 )
-            val data = recordDataSource.getUserRecordsByType(
+            val recordTotalAmount = recordDataSource.getUserRecordsByType(
                 userId, recordType
             ).sumOf { record ->
-                record.recordAmount
+                currencyConverter(
+                    record.recordAmount,
+                    record.recordCurrency,
+                    userCurrency
+                )
             }
+            val data = BalanceItem(
+                name = "${recordType.name}: ",
+                amount = recordTotalAmount,
+                currency = userCurrency
+            )
             Log.i(
                 TAG,
                 "getUserTotalAmountByTypeResult: $data",
@@ -496,23 +516,33 @@ class RecordRepositoryImpl @Inject constructor(
         recordType: RecordType,
         startDate: LocalDateTime,
         endDate: LocalDateTime
-    ): Flow<Double> {
+    ): Flow<BalanceItem> {
         return flow {
             val currentUser = firebaseAuth.currentUser!!
             val userId = if (currentUser.isNotNull()) currentUser.uid else ""
+            val userCurrency = "USD"
             Log.i(
                 TAG,
                 "getUserTotalAmountByTypeFromSpecificTime: $recordType",
 
                 )
-            val data = recordDataSource.getUserRecordsByTypeFromSpecificTime(
+            val recordTotalAmount = recordDataSource.getUserRecordsByTypeFromSpecificTime(
                 userId,
                 recordType,
                 startDate,
                 endDate
             ).sumOf { record ->
-                record.recordAmount
+                currencyConverter(
+                    record.recordAmount,
+                    record.recordCurrency,
+                    userCurrency
+                )
             }
+            val data = BalanceItem(
+                name = "${recordType.name}: ",
+                amount = recordTotalAmount,
+                currency = userCurrency
+            )
 
             Log.i(
                 TAG,
@@ -527,24 +557,38 @@ class RecordRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getUserTotalRecordBalance(): Flow<Double> {
+    override fun getUserTotalRecordBalance(): Flow<BalanceItem> {
         return flow {
             val currentUser = firebaseAuth.currentUser!!
             val userId = if (currentUser.isNotNull()) currentUser.uid else ""
+            val userCurrency = "USD"
             Log.i(
                 TAG,
                 "getUserTotalRecordBalance: ",
 
                 )
-            val data = recordDataSource.getUserRecordsByType(
+            val recordTotalAmount = recordDataSource.getUserRecordsByType(
                 userId, RecordType.Expense
             ).sumOf { record ->
-                record.recordAmount
-            } + recordDataSource.getUserRecordsByType(
+                currencyConverter(
+                    record.recordAmount,
+                    record.recordCurrency,
+                    userCurrency
+                )
+            }+ recordDataSource.getUserRecordsByType(
                 userId, RecordType.Income
             ).sumOf { record ->
-                record.recordAmount
+                currencyConverter(
+                    record.recordAmount,
+                    record.recordCurrency,
+                    userCurrency
+                )
             }
+            val data = BalanceItem(
+                name = "Balance: ",
+                amount = recordTotalAmount,
+                currency = userCurrency
+            )
             Log.i(
                 TAG,
                 "getUserTotalRecordBalanceResult: $data",
@@ -574,6 +618,15 @@ class RecordRepositoryImpl @Inject constructor(
     ).whereEqualTo(
         "userIdFk", userId
     ).get().await().toObjects<Category>()
+
+    private suspend fun currencyConverter(
+        amount: Double, from: String, to: String
+    ): Double {
+        return currencyRepository.convertCurrencyData(
+            amount, from, to
+        ).amount
+    }
+
 }
 
 

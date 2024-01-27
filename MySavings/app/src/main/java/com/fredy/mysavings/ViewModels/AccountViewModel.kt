@@ -50,26 +50,26 @@ class AccountViewModel @Inject constructor(
         SortType.ASCENDING
     )
 
-    private val _totalAccountBalance: StateFlow<Double?> = accountRepository.getUserAccountTotalBalance().stateIn(
+    private val _totalAccountBalance = accountRepository.getUserAccountTotalBalance().stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(),
-        0.0
+        BalanceItem()
     )
 
-    private val _totalExpense: StateFlow<Double?> = recordRepository.getUserTotalAmountByType(
+    private val _totalExpense = recordRepository.getUserTotalAmountByType(
         RecordType.Expense
     ).stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(),
-        0.0
+        BalanceItem()
     )
 
-    private val _totalIncome: StateFlow<Double?> = recordRepository.getUserTotalAmountByType(
+    private val _totalIncome = recordRepository.getUserTotalAmountByType(
         RecordType.Income
     ).stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(),
-        0.0
+        BalanceItem()
     )
 
     private val _balanceBar = MutableStateFlow(
@@ -83,21 +83,10 @@ class AccountViewModel @Inject constructor(
         _totalAccountBalance
     ) { balanceBar, totalExpense, totalIncome, totalAccountBalance ->
         val currency = _state.value.currentUser.userCurrency.ifBlank { "USD" }
-        val expense = (totalExpense ?: 0.0)
-        val income = ((totalIncome ?: 0.0) + (totalAccountBalance ?: 0.0))
-        val total = expense + income
         balanceBar.copy(
-            expense = BalanceItem(
-                "Expense So Far",
-                expense,
-                currency
-            ),
-            income = BalanceItem(
-                "Income So Far", income, currency
-            ),
-            balance = BalanceItem(
-                "Total Balance", total, currency
-            ),
+            expense = totalExpense.copy(name = "Expense So Far"),
+            income = totalIncome.copy(name = "Income So Far"),
+            balance = totalAccountBalance.copy(name = "Total Balance"),
         )
     }.stateIn(
         viewModelScope,

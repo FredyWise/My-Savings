@@ -14,6 +14,7 @@ import com.fredy.mysavings.Data.Repository.UserRepository
 import com.fredy.mysavings.Util.BalanceItem
 import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.TAG
+import com.fredy.mysavings.Util.map
 import com.fredy.mysavings.Util.minusFilterDate
 import com.fredy.mysavings.Util.plusFilterDate
 import com.fredy.mysavings.Util.updateFilterState
@@ -39,7 +40,6 @@ import javax.inject.Inject
 class RecordViewModel @Inject constructor(
     private val recordRepository: RecordRepository,
     private val accountRepository: AccountRepository,
-    private val currentUserData: UserData?,
 ): ViewModel() {
 
     init {
@@ -64,47 +64,12 @@ class RecordViewModel @Inject constructor(
 
 
     private val _records = _filterState.flatMapLatest { filterState ->
-        when (filterState.filterType) {
-            FilterType.Daily -> recordRepository.getUserTrueRecordMapsFromSpecificTime(
-                filterState.start,
-                filterState.end,
-                filterState.sortType,
-                filterState.currencies
-            )
-
-            FilterType.Weekly -> recordRepository.getUserTrueRecordMapsFromSpecificTime(
-                filterState.start,
-                filterState.end,
-                filterState.sortType,
-                filterState.currencies
-            )
-
-            FilterType.Monthly -> recordRepository.getUserTrueRecordMapsFromSpecificTime(
-                filterState.start,
-                filterState.end,
-                filterState.sortType,
-                filterState.currencies
-            )
-
-            FilterType.Per3Months -> recordRepository.getUserTrueRecordMapsFromSpecificTime(
-                filterState.start,
-                filterState.end,
-                filterState.sortType,
-                filterState.currencies
-            )
-
-            FilterType.Per6Months -> recordRepository.getUserTrueRecordMapsFromSpecificTime(
-                filterState.start,
-                filterState.end,
-                filterState.sortType,
-                filterState.currencies
-            )
-
-            FilterType.Yearly -> recordRepository.getUserTrueRecordMapsFromSpecificTime(
-                filterState.start,
-                filterState.end,
-                filterState.sortType,
-                filterState.currencies
+        filterState.map { start, end, _, sortType, currencies ->
+            recordRepository.getUserTrueRecordMapsFromSpecificTime(
+                start,
+                end,
+                sortType,
+                currencies
             )
         }
     }.stateIn(
@@ -113,26 +78,26 @@ class RecordViewModel @Inject constructor(
         Resource.Success(emptyList())
     )
 
-    private val _totalRecordBalance: StateFlow<Double?> = recordRepository.getUserTotalRecordBalance().stateIn(
+    private val _totalBalance = recordRepository.getUserTotalRecordBalance().stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(),
-        0.0
+        BalanceItem()
     )
 
-    private val _totalExpense: StateFlow<Double?> = recordRepository.getUserTotalAmountByType(
+    private val _totalExpense = recordRepository.getUserTotalAmountByType(
         RecordType.Expense
     ).stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(),
-        0.0
+        BalanceItem()
     )
 
-    private val _totalIncome: StateFlow<Double?> = recordRepository.getUserTotalAmountByType(
+    private val _totalIncome= recordRepository.getUserTotalAmountByType(
         RecordType.Income
     ).stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(),
-        0.0
+        BalanceItem()
     )
 
     private val _balanceBar = MutableStateFlow(
@@ -143,25 +108,12 @@ class RecordViewModel @Inject constructor(
         _balanceBar,
         _totalExpense,
         _totalIncome,
-        _totalRecordBalance
-    ) { balanceBar, totalExpense, totalIncome, totalRecordBalance ->
-        val currency = currentUserData!!.userCurrency.ifBlank { "USD" }
+        _totalBalance
+    ) { balanceBar, totalExpense, totalIncome, totalBalance ->
         balanceBar.copy(
-            expense = BalanceItem(
-                "EXPENSE",
-                totalExpense ?: 0.0,
-                currency
-            ),
-            income = BalanceItem(
-                "INCOME",
-                totalIncome ?: 0.0,
-                currency
-            ),
-            balance = BalanceItem(
-                "BALANCE",
-                totalRecordBalance ?: 0.0,
-                currency
-            ),
+            expense = totalExpense,
+            income = totalIncome,
+            balance = totalBalance,
         )
     }.stateIn(
         viewModelScope,

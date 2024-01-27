@@ -1,7 +1,7 @@
 package com.fredy.mysavings.Data.Repository
 
 import android.util.Log
-import co.yml.charts.common.extensions.isNotNull
+import com.fredy.mysavings.Data.APIs.ApiCredentials
 import com.fredy.mysavings.Data.APIs.CurrencyModels.CurrencyApi
 import com.fredy.mysavings.Data.APIs.CurrencyModels.Response.CurrencyResponse
 import com.fredy.mysavings.Data.APIs.CurrencyModels.Response.Rates
@@ -13,9 +13,9 @@ import com.fredy.mysavings.Util.TAG
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
-import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -25,6 +25,12 @@ interface CurrencyRepository {
         fromCurrency: String,
         toCurrency: String,
     ): Flow<Resource<BalanceItem>>
+
+    suspend fun convertCurrencyData(
+        amount: Double,
+        fromCurrency: String,
+        toCurrency: String,
+    ): BalanceItem
 }
 
 class CurrencyRepositoryImpl @Inject constructor(
@@ -35,75 +41,124 @@ class CurrencyRepositoryImpl @Inject constructor(
         "currencyCache"
     )
 
-    private companion object {
-        const val CACHE_EXPIRATION_DAYS = 1
-    }
-
     override fun convertCurrency(
         amount: Double,
         fromCurrency: String,
         toCurrency: String,
-    ) = callbackFlow<Resource<BalanceItem>> {
-        trySend(Resource.Loading())
-        Log.i(
-            TAG,
-            "convert: $amount$fromCurrency\nto: $toCurrency"
-        )
+    ): Flow<Resource<BalanceItem>> {
+        return flow {
+            emit(Resource.Loading())
+            Log.i(
+                TAG,
+                "convert: $amount$fromCurrency\nto: $toCurrency"
+            )
+            val baseCurrency = ApiCredentials.CurrencyModels.BASE_CURRENCY
+            val tempFromCurrency = if (fromCurrency.contains(
+                    "None", ignoreCase = true
+                )) toCurrency else fromCurrency
 
-        val baseCurrency = if (fromCurrency.contains(
-                "None", ignoreCase = true
-            )) toCurrency else fromCurrency
-
-        val response = getRates(baseCurrency)
-        val rates = response.rates
-        val rate = getRateForCurrency(
-            toCurrency, rates
-        )?.toDouble()
-
-        if (rate.isNotNull()) {
-            trySend(
+            val response = getRates(baseCurrency)
+            val rates = response.rates
+            val result = singleBaseCurrencyConverter(
+                amount,
+                tempFromCurrency,
+                toCurrency,
+                rates
+            )
+            emit(
                 Resource.Success(
                     BalanceItem(
-                        amount = amount * rate!!,
+                        amount = result,
                         currency = toCurrency
                     )
                 )
             )
-        } else {
-            trySend(Resource.Error("Unexpected error"))
+        }.catch { e ->
+            Log.e(
+                TAG,
+                "Failed to convert currency: $e"
+            )
+            emit(Resource.Error(e.message.toString()))
         }
+    }
 
-        awaitClose {}
+    override suspend fun convertCurrencyData(
+        amount: Double,
+        fromCurrency: String,
+        toCurrency: String,
+    ): BalanceItem {
+        Log.i(
+            TAG,
+            "convert: $amount$fromCurrency\nto: $toCurrency"
+        )
+        val baseCurrency = ApiCredentials.CurrencyModels.BASE_CURRENCY
+        val tempFromCurrency = if (fromCurrency.contains(
+                "None", ignoreCase = true
+            )) toCurrency else fromCurrency
+
+        return try {
+            val response = getRates(baseCurrency)
+            val rates = response.rates
+            val result = singleBaseCurrencyConverter(
+                amount,
+                tempFromCurrency,
+                toCurrency,
+                rates
+            )
+            BalanceItem(
+                amount = result,
+                currency = toCurrency
+            )
+        } catch (e: Exception) {
+            Log.e(
+                TAG,
+                "Failed to convert currency: $e"
+            )
+            throw e
+        }
     }
 
 
     private suspend fun getRates(base: String): CurrencyResponse {
         Log.i(TAG, "getRates: start")
-        val cachedData = getCachedRates(base)
-        Log.i(TAG, "getRates: ${cachedData}")
-        return if (cachedData != null && isCacheValid(cachedData.cachedTime)) {
-            val result = CurrencyResponse(
-                cachedData.base,
-                cachedData.date,
-                CurrencyRatesConverter.toRates(
-                    cachedData.rates
-                ),
-                cachedData.success,
-                cachedData.timestamp
+
+        return try {
+            val cachedData = getCachedRates(base)
+            Log.i(TAG, "getRates: ${cachedData}")
+
+            if (cachedData != null && isCacheValid(
+                    cachedData.cachedTime
+                )) {// should be about online or offline
+                val result = CurrencyResponse(
+                    cachedData.base,
+                    cachedData.date,
+                    CurrencyRatesConverter.toRates(
+                        cachedData.rates
+                    ),
+                    cachedData.success,
+                    cachedData.timestamp
+                )
+                Log.i(
+                    TAG,
+                    "getCachedRates: ${result}"
+                )
+                result
+            } else {
+                val result = getApiRates(base)!!
+                cacheRates(base, result)
+                Log.i(
+                    TAG, "getApiRates: ${result}"
+                )
+                result
+            }
+        } catch (e: Exception) {
+            Log.e(
+                TAG, "Failed to fetch rates: $e"
             )
-            Log.i(
-                TAG, "getCachedRates: ${result}"
-            )
-            result
-        } else {
-            val result = getApiRates(base)!!
-            cacheRates(base,result)
-            Log.i(
-                TAG, "getApiRates: ${result}"
-            )
-            result
+            throw e
         }
     }
+
 
     private suspend fun getApiRates(base: String): CurrencyResponse? {
         val response = api.getRates(base)
@@ -129,10 +184,30 @@ class CurrencyRepositoryImpl @Inject constructor(
             base
         ).set(cache).await()
     }
+
     private fun isCacheValid(timestamp: Timestamp): Boolean {
         val timestampInMilliseconds = timestamp.seconds * 1000
-        val expirationTime = timestampInMilliseconds + CACHE_EXPIRATION_DAYS * 24 * 60 * 60 * 1000
+        val expirationTime = timestampInMilliseconds + ApiCredentials.CurrencyModels.CACHE_EXPIRATION_DAYS * 24 * 60 * 60 * 1000
         return expirationTime >= System.currentTimeMillis()
+    }
+
+    private fun singleBaseCurrencyConverter(
+        amount: Double,
+        fromCurrency: String,
+        toCurrency: String,
+        rates: Rates
+    ): Double {
+        val toUsdRate = getRateForCurrency(
+            toCurrency, rates
+        )?.toDouble() ?: throw IllegalArgumentException(
+            "Currency '$toCurrency' not found in rates."
+        )
+        val fromUsdRate = getRateForCurrency(
+            fromCurrency, rates
+        )?.toDouble() ?: throw IllegalArgumentException(
+            "Currency '$fromCurrency' not found in rates."
+        )
+        return amount * (fromUsdRate / toUsdRate)
     }
 
 
