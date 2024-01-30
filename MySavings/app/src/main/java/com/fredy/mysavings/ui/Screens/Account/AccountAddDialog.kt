@@ -31,7 +31,6 @@ fun AccountAddDialog(
         modifier = modifier,
         title = if (state.accountId.isEmpty()) "Add New Account" else "Update Account",
         onDismissRequest = { onEvent(AccountEvent.HideDialog) },
-        onCancelClicked = { onEvent(AccountEvent.HideDialog) },
         onSaveClicked = { onEvent(AccountEvent.SaveAccount) },
     ) {
         TextField(

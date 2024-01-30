@@ -288,7 +288,6 @@ class RecordRepositoryImpl @Inject constructor(
                 endDate,
                 currency
             )
-
             val recordsMap = mutableMapOf<String, Record>()
             records.forEach { record ->
                 val key = record.recordDateTime.toLocalDate().toString()
@@ -483,9 +482,10 @@ class RecordRepositoryImpl @Inject constructor(
                 "getUserTotalAmountByType: $recordType",
 
                 )
-            val recordTotalAmount = recordDataSource.getUserRecordsByType(
+            val records = recordDataSource.getUserRecordsByType(
                 userId, recordType
-            ).sumOf { record ->
+            )
+            val recordTotalAmount = records.sumOf { record ->
                 currencyConverter(
                     record.recordAmount,
                     record.recordCurrency,

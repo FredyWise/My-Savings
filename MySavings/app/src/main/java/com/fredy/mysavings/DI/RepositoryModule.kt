@@ -2,8 +2,12 @@ package com.fredy.mysavings.DI
 
 import com.fredy.mysavings.Data.APIs.CurrencyModels.CurrencyApi
 import com.fredy.mysavings.Data.Database.Dao.AccountDao
+import com.fredy.mysavings.Data.Database.Dao.CategoryDao
+import com.fredy.mysavings.Data.Database.Dao.CurrencyCacheDao
 import com.fredy.mysavings.Data.Database.Dao.RecordDao
 import com.fredy.mysavings.Data.Database.FirebaseDataSource.AccountDataSource
+import com.fredy.mysavings.Data.Database.FirebaseDataSource.CategoryDataSource
+import com.fredy.mysavings.Data.Database.FirebaseDataSource.CurrencyDataSource
 import com.fredy.mysavings.Data.Database.FirebaseDataSource.RecordDataSource
 import com.fredy.mysavings.Data.Repository.AccountRepository
 import com.fredy.mysavings.Data.Repository.AccountRepositoryImpl
@@ -40,9 +44,12 @@ object RepositoryModule {
     @Singleton
     fun provideCurrencyRepository(
         currencyApi: CurrencyApi,
-        firestore: FirebaseFirestore
+        currencyDataSource: CurrencyDataSource,
+        currencyCacheDao: CurrencyCacheDao,
     ): CurrencyRepository = CurrencyRepositoryImpl(
-        currencyApi, firestore
+        currencyApi,
+        currencyDataSource,
+        currencyCacheDao,
     )
 
     @Provides
@@ -91,9 +98,11 @@ object RepositoryModule {
     @Singleton
     fun provideCategoryRepository(
         firestore: FirebaseFirestore,
+        categoryDataSource: CategoryDataSource,
+        categoryDao: CategoryDao,
         firebaseAuth: FirebaseAuth
     ): CategoryRepository = CategoryRepositoryImpl(
-        firestore, firebaseAuth
+        categoryDataSource, categoryDao, firestore, firebaseAuth
     )
 
     @Provides

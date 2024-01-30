@@ -12,6 +12,7 @@ import com.fredy.mysavings.Data.Repository.AccountRepository
 import com.fredy.mysavings.Data.Repository.RecordRepository
 import com.fredy.mysavings.Data.Repository.UserRepository
 import com.fredy.mysavings.Util.BalanceItem
+import com.fredy.mysavings.Util.FilterState
 import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.TAG
 import com.fredy.mysavings.Util.map
@@ -272,19 +273,3 @@ data class BalanceBar(
     val balance: BalanceItem = BalanceItem(),
 )
 
-data class FilterState(
-    val recordType: RecordType = RecordType.Expense,
-    val filterType: FilterType = FilterType.Monthly,
-    val sortType: SortType = SortType.DESCENDING,
-    val currencies: List<String> = emptyList(),
-    val start: LocalDateTime = LocalDateTime.of(
-        LocalDate.now().with(
-            TemporalAdjusters.firstDayOfMonth()
-        ), LocalTime.MIN
-    ),
-    val end: LocalDateTime = LocalDateTime.of(
-        LocalDate.now().with(
-            TemporalAdjusters.lastDayOfMonth()
-        ), LocalTime.MAX
-    ),
-)

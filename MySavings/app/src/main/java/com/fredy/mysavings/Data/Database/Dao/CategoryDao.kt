@@ -11,9 +11,9 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface CategoryDao {
     @Upsert
-    suspend fun upsertCategory(category: Category)
+    suspend fun upsertCategoryItem(category: Category)
     @Delete
-    suspend fun deleteCategory(category: Category)
+    suspend fun deleteCategoryItem(category: Category)
 
     @Query("SELECT * FROM category " +
             "WHERE categoryId=:categoryId")

@@ -1,22 +1,22 @@
 package com.fredy.mysavings.Data.Repository
 
 import android.util.Log
+import androidx.lifecycle.MutableLiveData
 import com.fredy.mysavings.Data.APIs.ApiCredentials
 import com.fredy.mysavings.Data.APIs.CurrencyModels.CurrencyApi
 import com.fredy.mysavings.Data.APIs.CurrencyModels.Response.CurrencyResponse
 import com.fredy.mysavings.Data.APIs.CurrencyModels.Response.Rates
 import com.fredy.mysavings.Data.Database.Converter.CurrencyRatesConverter
+import com.fredy.mysavings.Data.Database.Dao.CurrencyCacheDao
+import com.fredy.mysavings.Data.Database.FirebaseDataSource.CurrencyDataSource
 import com.fredy.mysavings.Data.Database.Model.CurrencyCache
 import com.fredy.mysavings.Util.BalanceItem
 import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.TAG
 import com.google.firebase.Timestamp
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 interface CurrencyRepository {
@@ -25,6 +25,8 @@ interface CurrencyRepository {
         fromCurrency: String,
         toCurrency: String,
     ): Flow<Resource<BalanceItem>>
+
+    fun getRates():Flow<Resource<CurrencyResponse>>
 
     suspend fun convertCurrencyData(
         amount: Double,
@@ -35,12 +37,10 @@ interface CurrencyRepository {
 
 class CurrencyRepositoryImpl @Inject constructor(
     private val api: CurrencyApi,
-    private val firestore: FirebaseFirestore
+    private val currencyDataSource: CurrencyDataSource,
+    private val currencyCacheDao: CurrencyCacheDao,
 ): CurrencyRepository {
-    private val currencyCollection = firestore.collection(
-        "currencyCache"
-    )
-
+    private val _cachedRates = MutableLiveData<CurrencyResponse>()
     override fun convertCurrency(
         amount: Double,
         fromCurrency: String,
@@ -52,13 +52,14 @@ class CurrencyRepositoryImpl @Inject constructor(
                 TAG,
                 "convert: $amount$fromCurrency\nto: $toCurrency"
             )
-            val baseCurrency = ApiCredentials.CurrencyModels.BASE_CURRENCY
             val tempFromCurrency = if (fromCurrency.contains(
                     "None", ignoreCase = true
                 )) toCurrency else fromCurrency
 
-            val response = getRates(baseCurrency)
-            val rates = response.rates
+            var rates = _cachedRates.value?.rates
+            if (rates == null) {
+                rates = getRates(ApiCredentials.CurrencyModels.BASE_CURRENCY).rates
+            }
             val result = singleBaseCurrencyConverter(
                 amount,
                 tempFromCurrency,
@@ -82,6 +83,28 @@ class CurrencyRepositoryImpl @Inject constructor(
         }
     }
 
+    override fun getRates(): Flow<Resource<CurrencyResponse>> {
+        return flow {
+            emit(Resource.Loading())
+
+            var currencyResponse = _cachedRates.value
+            if (currencyResponse == null) {
+                currencyResponse = getRates(ApiCredentials.CurrencyModels.BASE_CURRENCY)
+            }
+            emit(
+                Resource.Success(
+                    currencyResponse
+                )
+            )
+        }.catch { e ->
+            Log.e(
+                TAG,
+                "Failed to convert currency: $e"
+            )
+            emit(Resource.Error(e.message.toString()))
+        }
+    }
+
     override suspend fun convertCurrencyData(
         amount: Double,
         fromCurrency: String,
@@ -91,14 +114,15 @@ class CurrencyRepositoryImpl @Inject constructor(
             TAG,
             "convert: $amount$fromCurrency\nto: $toCurrency"
         )
-        val baseCurrency = ApiCredentials.CurrencyModels.BASE_CURRENCY
         val tempFromCurrency = if (fromCurrency.contains(
                 "None", ignoreCase = true
             )) toCurrency else fromCurrency
 
         return try {
-            val response = getRates(baseCurrency)
-            val rates = response.rates
+            var rates = _cachedRates.value?.rates
+            if (rates == null) {
+                rates = getRates(ApiCredentials.CurrencyModels.BASE_CURRENCY).rates
+            }
             val result = singleBaseCurrencyConverter(
                 amount,
                 tempFromCurrency,
@@ -122,14 +146,14 @@ class CurrencyRepositoryImpl @Inject constructor(
     private suspend fun getRates(base: String): CurrencyResponse {
         Log.i(TAG, "getRates: start")
 
-        return try {
+        val result = try {
             val cachedData = getCachedRates(base)
             Log.i(TAG, "getRates: ${cachedData}")
 
             if (cachedData != null && isCacheValid(
                     cachedData.cachedTime
                 )) {// should be about online or offline
-                val result = CurrencyResponse(
+                val cachedResult = CurrencyResponse(
                     cachedData.base,
                     cachedData.date,
                     CurrencyRatesConverter.toRates(
@@ -140,16 +164,17 @@ class CurrencyRepositoryImpl @Inject constructor(
                 )
                 Log.i(
                     TAG,
-                    "getCachedRates: ${result}"
+                    "getCachedRates: ${cachedResult}"
                 )
-                result
+                cachedResult
             } else {
-                val result = getApiRates(base)!!
-                cacheRates(base, result)
+                val apiResult = getApiRates(base)!!
+                cacheRates(apiResult)
                 Log.i(
-                    TAG, "getApiRates: ${result}"
+                    TAG,
+                    "getApiRates: ${apiResult}"
                 )
-                result
+                apiResult
             }
         } catch (e: Exception) {
             Log.e(
@@ -157,6 +182,8 @@ class CurrencyRepositoryImpl @Inject constructor(
             )
             throw e
         }
+        _cachedRates.postValue(result)
+        return result
     }
 
 
@@ -165,24 +192,24 @@ class CurrencyRepositoryImpl @Inject constructor(
         return response.body()
     }
 
-    private suspend fun getCachedRates(base: String): CurrencyCache? {
-        val snapshot = currencyCollection.document(
+    private suspend fun getCachedRates(base: String): CurrencyCache {// this should be able from room and firebase
+        return currencyCacheDao.getCurrencyCache(
             base
-        ).get().await()
-        return snapshot.toObject<CurrencyCache>()
+        )
     }
 
     private suspend fun cacheRates(
-        base: String, response: CurrencyResponse
+        response: CurrencyResponse
     ) {
         val cache = CurrencyCache(
             currencyResponse = response,
             cachedTime = Timestamp.now()
         )
         Log.i(TAG, "cacheRates: $cache")
-        currencyCollection.document(
-            base
-        ).set(cache).await()
+        currencyDataSource.upsertCurrencyCacheItem(
+            cache
+        )
+        currencyCacheDao.upsertCurrencyCache(cache)
     }
 
     private fun isCacheValid(timestamp: Timestamp): Boolean {
@@ -190,6 +217,7 @@ class CurrencyRepositoryImpl @Inject constructor(
         val expirationTime = timestampInMilliseconds + ApiCredentials.CurrencyModels.CACHE_EXPIRATION_DAYS * 24 * 60 * 60 * 1000
         return expirationTime >= System.currentTimeMillis()
     }
+
 
     private fun singleBaseCurrencyConverter(
         amount: Double,

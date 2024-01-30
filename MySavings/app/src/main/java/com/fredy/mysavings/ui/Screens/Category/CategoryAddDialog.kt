@@ -34,7 +34,6 @@ fun CategoryAddDialog(
         modifier = modifier,
         title = if (state.categoryId.isEmpty()) "Add New Category" else "Update Category",
         onDismissRequest = { onEvent(CategoryEvent.HideDialog) },
-        onCancelClicked = { onEvent(CategoryEvent.HideDialog) },
         onSaveClicked = { onEvent(CategoryEvent.SaveCategory) },
     ) {
         TypeRadioButton(

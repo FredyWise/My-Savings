@@ -82,7 +82,6 @@ class AccountViewModel @Inject constructor(
         _totalIncome,
         _totalAccountBalance
     ) { balanceBar, totalExpense, totalIncome, totalAccountBalance ->
-        val currency = _state.value.currentUser.userCurrency.ifBlank { "USD" }
         balanceBar.copy(
             expense = totalExpense.copy(name = "Expense So Far"),
             income = totalIncome.copy(name = "Income So Far"),
@@ -137,7 +136,7 @@ class AccountViewModel @Inject constructor(
     }.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(),
-        _accounts.value
+        emptyList()
     )
 
     val state = combine(

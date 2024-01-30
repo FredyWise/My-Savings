@@ -149,6 +149,7 @@ fun SearchBar(
                 ),
                 leadingIcon = leadingIcon,
                 trailingIcon = trailingIcon,
+                singleLine = true
             )
             trailingContent()
         }

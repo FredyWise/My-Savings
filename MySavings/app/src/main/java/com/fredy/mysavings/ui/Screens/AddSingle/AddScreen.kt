@@ -36,6 +36,7 @@ import com.fredy.mysavings.Data.Database.Model.Category
 import com.fredy.mysavings.Data.Enum.RecordType
 import com.fredy.mysavings.R
 import com.fredy.mysavings.Util.ActionWithName
+import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.isTransfer
 import com.fredy.mysavings.ViewModels.AccountViewModel
 import com.fredy.mysavings.ViewModels.AddSingleRecordViewModel
@@ -64,7 +65,7 @@ fun AddScreen(
     accountViewModel: AccountViewModel = hiltViewModel()
 ) {
     val state = viewModel.state
-    val resource = viewModel.resource.value
+    val resource by viewModel.resource.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val categoryState by categoryViewModel.state.collectAsStateWithLifecycle()
     val accountState by accountViewModel.state.collectAsStateWithLifecycle()
@@ -75,37 +76,49 @@ fun AddScreen(
             true
         )
     }
-    var isShowWarning by remember {
-        mutableStateOf(
-            false
-        )
-    }
     viewModel.onEvent(
         AddRecordEvent.SetId(id)
     )
     LaunchedEffect(
-        key1 = resource.error,
+        key1 = resource,
     ) {
-        if (!resource.error.isNullOrEmpty()) {
-            val error = resource.error
-            Toast.makeText(
-                context,
-                "${error}",
-                Toast.LENGTH_LONG
-            ).show()
-        }
-        if (!resource.success.isNullOrEmpty()) {
-            isShowWarning = true
+        when (resource) {
+            is Resource.Error -> {
+                if (!state.isShowWarning) {
+                    Toast.makeText(
+                        context,
+                        resource.message,
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
+
+            is Resource.Loading -> {
+
+            }
+
+            is Resource.Success -> {
+                Toast.makeText(
+                    context,
+                    resource.data,
+                    Toast.LENGTH_LONG
+                ).show()
+            }
         }
     }
-    if (isShowWarning){
+    if (state.isShowWarning) {
         SimpleDialog(
-            title = resource.success!!,
+            title = "Warning!!",
             cancelName = "No",
             saveName = "Yes",
-            onDismissRequest = { isShowWarning = false },
-            onCancelClicked = { isShowWarning = false },
-            onSaveClicked = { /*TODO*/ }) {
+            onDismissRequest = {
+                viewModel.onEvent(AddRecordEvent.ShowWarning)
+            },
+            onSaveClicked = {
+                viewModel.onEvent(AddRecordEvent.ConvertCurrency)
+            },
+        ) {
+            Text(text = resource.message.toString())
         }
     }
 
@@ -169,7 +182,7 @@ fun AddScreen(
                 )
             } else {
                 CategoryBottomSheet(
-                    categoryMaps = categoryState.categories,
+                    categoryMaps = categoryState.categoryMaps,
                     recordType = state.recordType,
                     onSelectCategory = {
                         viewModel.onEvent(
@@ -202,7 +215,7 @@ fun AddScreen(
         )
     }
     if (categoryState.isAddingCategory) {
-        if (state.recordType != categoryState.categoryType){
+        if (state.recordType != categoryState.categoryType) {
             categoryViewModel.onEvent(
                 CategoryEvent.CategoryTypes(
                     state.recordType
@@ -250,11 +263,6 @@ fun AddScreen(
                                     )
                                 )
                             }
-                            Toast.makeText(
-                                context,
-                                "Add Success",
-                                Toast.LENGTH_SHORT
-                            ).show()
                             navigateUp()
                         },
                     )

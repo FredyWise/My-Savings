@@ -51,7 +51,7 @@ fun AccountBottomSheet(
                 .padding(
                     vertical = 8.dp
                 ),
-            text = "Select a Account",
+            text = "Select an Account",
             color = textColor,
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.headlineSmall

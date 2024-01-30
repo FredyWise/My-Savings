@@ -1,6 +1,6 @@
 package com.fredy.mysavings.ViewModels
 
-import androidx.compose.runtime.State
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -10,16 +10,20 @@ import com.fredy.mysavings.Data.Database.Model.Account
 import com.fredy.mysavings.Data.Database.Model.Category
 import com.fredy.mysavings.Data.Database.Model.Record
 import com.fredy.mysavings.Data.Enum.RecordType
-import com.fredy.mysavings.ViewModels.Event.AddRecordEvent
-import com.fredy.mysavings.ViewModels.Event.CalcEvent
-import com.fredy.mysavings.ViewModels.Event.CalcOperation
+import com.fredy.mysavings.Data.Repository.CurrencyRepository
+import com.fredy.mysavings.Data.Repository.RecordRepository
+import com.fredy.mysavings.Util.Resource
+import com.fredy.mysavings.Util.TAG
 import com.fredy.mysavings.Util.isExpense
 import com.fredy.mysavings.Util.isIncome
 import com.fredy.mysavings.Util.isTransfer
-import com.fredy.mysavings.Data.Repository.RecordRepository
-import com.fredy.mysavings.Util.ResourceState
+import com.fredy.mysavings.ViewModels.Event.AddRecordEvent
+import com.fredy.mysavings.ViewModels.Event.CalcEvent
+import com.fredy.mysavings.ViewModels.Event.CalcOperation
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalTime
@@ -30,14 +34,14 @@ import kotlin.math.absoluteValue
 @HiltViewModel
 class AddSingleRecordViewModel @Inject constructor(
     private val recordRepository: RecordRepository,
+    private val currencyRepository: CurrencyRepository,
 ): ViewModel() {
     var state by mutableStateOf(AddRecordState())
     var calcState by mutableStateOf(CalcState())
 
-    private val _resource = mutableStateOf(
-        ResourceState()
+    val resource = MutableStateFlow<Resource<String>>(
+        Resource.Loading()
     )
-    val resource: State<ResourceState> = _resource
 
     fun onEvent(event: AddRecordEvent) {
         when (event) {
@@ -63,15 +67,18 @@ class AddSingleRecordViewModel @Inject constructor(
                                 recordNotes = it.record.recordNotes,
                                 isFirst = !state.isFirst
                             )
-                            calcState = calcState.copy(number1 = it.record.recordAmount.absoluteValue.toString())
+                            calcState = calcState.copy(
+                                number1 = it.record.recordAmount.absoluteValue.toString()
+                            )
                         }
                     }
                 }
             }
+
             is AddRecordEvent.SaveRecord -> {
-                _resource.value = ResourceState(
-                    isLoading = true
-                )
+                resource.update {
+                    Resource.Loading()
+                }
                 performCalculation()
                 val recordId = state.recordId
                 val accountIdFromFk = state.accountIdFromFk
@@ -82,13 +89,14 @@ class AddSingleRecordViewModel @Inject constructor(
                 )
                 var recordAmount = calcState.number1.toDouble().absoluteValue
                 val recordCurrency = state.recordCurrency
-                val accountCurrency = state.fromAccount.accountCurrency
+                val fromAccountCurrency = state.fromAccount.accountCurrency
+                val toAccountCurrency = state.toAccount.accountCurrency
                 val recordType = state.recordType
                 val recordNotes = state.recordNotes
                 var difference = state.recordAmount.absoluteValue
-                if (recordId == ""){
+                if (recordId == "") {
                     difference += recordAmount
-                }else{
+                } else {
                     difference -= recordAmount
                     difference = -difference
                 }
@@ -100,44 +108,64 @@ class AddSingleRecordViewModel @Inject constructor(
                 }
 
                 if (recordDateTime == null || recordAmount == 0.0 || recordCurrency.isBlank() || accountIdFromFk == null || accountIdToFk == null || categoryIdToFk == null) {
-                    _resource.value = ResourceState(
-                        error = "You must fill all required information"
-                    )
+                    resource.update {
+                        Resource.Error(
+                            "You must fill all required information"
+                        )
+                    }
                     return
                 }
-                if (recordCurrency != accountCurrency){
-                    _resource.value = ResourceState(
-                        error = "This Account cant be used for this type of currency"
-                    )
+                if ((state.fromAccount.accountAmount < difference && !isIncome(
+                        recordType
+                    ))) {
+                    resource.update {
+                        Resource.Error(
+                            "Account balance is not enough"
+                        )
+                    }
                     return
                 }
-                if ((state.fromAccount.accountAmount < difference && !isIncome(recordType))){
-                    _resource.value = ResourceState(
-                        error = "Account balance is not enough"
-                    )
+                if ((recordType != state.toCategory.categoryType && !isTransfer(
+                        recordType
+                    ))) {
+                    resource.update {
+                        Resource.Error(
+                            "Record Type is not the same with category type"
+                        )
+                    }
                     return
                 }
-                if ((recordType != state.toCategory.categoryType && !isTransfer(recordType))){
-                    _resource.value = ResourceState(
-                        error = "Record Type is not the same with category type"
-                    )
-                    return
-                }
-                if (isTransfer(recordType) && state.fromAccount.accountCurrency != state.toAccount.accountCurrency) {
-                    _resource.value = ResourceState(
-                        error = "Record Type is not the same with category type",
-                        success = "Are you sure want to Transfer from ${state.fromAccount.accountCurrency} to ${state.toAccount.accountCurrency}?"
-                    )
-                    return
+                if (isTransfer(recordType)) {
+                    if (state.fromAccount == state.toAccount) {
+                        resource.update {
+                            Resource.Error(
+                                "You Can't transfer into the same account"
+                            )
+                        }
+                        return
+                    }
+                    if (!state.isAgreeToConvert && fromAccountCurrency != toAccountCurrency) {
+                        resource.update {
+                            Resource.Error(
+                                "Record Type is not the same with category type!!!, " + "Are you sure want to Transfer from $fromAccountCurrency to ${toAccountCurrency}?"
+                            )
+                        }
+                        state = state.copy(
+                            isShowWarning = true
+                        )
+                        return
+                    }
                 }
 
                 if (isExpense(recordType)) {
                     state.fromAccount.accountAmount -= difference
                     recordAmount = -recordAmount
-                }else if(isTransfer(recordType)){
+                } else if (isTransfer(
+                        recordType
+                    )) {
                     state.fromAccount.accountAmount -= difference
                     state.toAccount.accountAmount += difference
-                }else {
+                } else {
                     state.fromAccount.accountAmount += difference
                 }
 
@@ -159,12 +187,13 @@ class AddSingleRecordViewModel @Inject constructor(
                     )
                 }
 
-                _resource.value = ResourceState(
-                    isLoading = false
-                )
+                resource.update {
+                    Resource.Success("Record Data Successfully Added")
+                }
 
                 state = AddRecordState()
                 event.navigateUp()
+
             }
 
             is AddRecordEvent.AccountIdFromFk -> {
@@ -206,9 +235,9 @@ class AddSingleRecordViewModel @Inject constructor(
 
             }
 
-            is AddRecordEvent.RecordAmount -> {
+            is AddRecordEvent.RecordAmount -> {//useless
                 state = state.copy(
-                    recordAmount = calcState.number1.toDouble()
+                    recordAmount = calcState.number1.toDouble()//useless
                 )
 
             }
@@ -227,12 +256,34 @@ class AddSingleRecordViewModel @Inject constructor(
                 )
             }
 
-
             is AddRecordEvent.RecordNotes -> {
                 state = state.copy(
                     recordNotes = event.notes
                 )
 
+            }
+
+            is AddRecordEvent.ShowWarning -> {
+                state = state.copy(
+                    isShowWarning = false
+                )
+            }
+
+            is AddRecordEvent.ConvertCurrency -> {
+                viewModelScope.launch {
+                    val balanceItem = currencyRepository.convertCurrencyData(
+                        calcState.number1.toDouble().absoluteValue,
+                        state.fromAccount.accountCurrency,
+                        state.toAccount.accountCurrency
+                    )
+                    calcState = calcState.copy(
+                        number1 = balanceItem.amount.toString()
+                    )
+                    state = state.copy(
+                        recordCurrency = balanceItem.currency,
+                        isAgreeToConvert = true
+                    )
+                }
             }
         }
     }
@@ -242,11 +293,13 @@ class AddSingleRecordViewModel @Inject constructor(
             is CalcEvent.Number -> enterNumber(
                 event.number
             )
+
             is CalcEvent.DecimalPoint -> enterDecimal()
             is CalcEvent.Clear -> calcState = CalcState()
             is CalcEvent.Operation -> enterOperation(
                 event.operation
             )
+
             is CalcEvent.Calculate -> performCalculation()
             is CalcEvent.Delete -> performDeletion()
             is CalcEvent.Percent -> performPercent()
@@ -257,7 +310,9 @@ class AddSingleRecordViewModel @Inject constructor(
     private fun performDeletion() {
         when {
             calcState.number2.isNotBlank() -> calcState = calcState.copy(
-                number2 = calcState.number2.dropLast(1)
+                number2 = calcState.number2.dropLast(
+                    1
+                )
             )
 
             calcState.operation != null -> calcState = calcState.copy(
@@ -269,7 +324,9 @@ class AddSingleRecordViewModel @Inject constructor(
             )
 
             calcState.number1.isNotBlank() && calcState.number1 != "0" -> calcState = calcState.copy(
-                number1 = calcState.number1.dropLast(1)
+                number1 = calcState.number1.dropLast(
+                    1
+                )
             )
         }
     }
@@ -342,13 +399,17 @@ class AddSingleRecordViewModel @Inject constructor(
                 ".0"
             ) && calcState.number1.isNotBlank()) {
             calcState = calcState.copy(
-                number1 = calcState.number1.dropLast(2)
+                number1 = calcState.number1.dropLast(
+                    2
+                )
             )
             return
         }
         if (calcState.number2.endsWith(".0") && calcState.number2.isNotBlank()) {
             calcState = calcState.copy(
-                number2 = calcState.number2.dropLast(2)
+                number2 = calcState.number2.dropLast(
+                    2
+                )
             )
         }
     }
@@ -408,7 +469,9 @@ data class AddRecordState(
     val recordCurrency: String = "",
     val recordNotes: String = "",
     val recordType: RecordType = RecordType.Expense,
-    val isFirst: Boolean = true
+    val isFirst: Boolean = true,
+    val isShowWarning: Boolean = false,
+    val isAgreeToConvert: Boolean = false,
 )
 
 data class CalcState(

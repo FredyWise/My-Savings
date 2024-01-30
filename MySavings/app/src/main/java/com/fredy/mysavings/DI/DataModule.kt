@@ -9,6 +9,10 @@ import com.fredy.mysavings.Data.Database.Dao.RecordDao
 import com.fredy.mysavings.Data.Database.Dao.UserDao
 import com.fredy.mysavings.Data.Database.FirebaseDataSource.AccountDataSource
 import com.fredy.mysavings.Data.Database.FirebaseDataSource.AccountDataSourceImpl
+import com.fredy.mysavings.Data.Database.FirebaseDataSource.CategoryDataSource
+import com.fredy.mysavings.Data.Database.FirebaseDataSource.CategoryDataSourceImpl
+import com.fredy.mysavings.Data.Database.FirebaseDataSource.CurrencyDataSource
+import com.fredy.mysavings.Data.Database.FirebaseDataSource.CurrencyDataSourceImpl
 import com.fredy.mysavings.Data.Database.FirebaseDataSource.RecordDataSource
 import com.fredy.mysavings.Data.Database.FirebaseDataSource.RecordDataSourceImpl
 import com.fredy.mysavings.Data.Database.SavingsDatabase
@@ -61,4 +65,12 @@ object DataModule {
     @Provides
     @Singleton
     fun provideAccountDataSource(firestore: FirebaseFirestore): AccountDataSource = AccountDataSourceImpl(firestore)
+
+    @Provides
+    @Singleton
+    fun provideCategoryDataSource(firestore: FirebaseFirestore): CategoryDataSource = CategoryDataSourceImpl(firestore)
+
+    @Provides
+    @Singleton
+    fun provideCurrencyCacheDataSource(firestore: FirebaseFirestore): CurrencyDataSource = CurrencyDataSourceImpl(firestore)
 }

@@ -126,7 +126,7 @@ fun CategoriesScreen(
             },
         ) {
             CategoryBody(
-                categoryMaps = state.categories,
+                categoryMaps = state.categoryMaps,
                 onEvent = onEvent,
                 onEntityClick = {
                     isSheetOpen = true

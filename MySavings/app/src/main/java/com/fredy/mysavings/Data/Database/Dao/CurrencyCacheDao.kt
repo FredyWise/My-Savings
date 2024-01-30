@@ -17,9 +17,7 @@ interface CurrencyCacheDao {
     suspend fun deleteCurrencyCache(userData: CurrencyCache)
 
     @Query("SELECT * FROM CurrencyCache WHERE base = :base")
-    fun getCurrencyCache(base: String): Flow<CurrencyCache>
+    suspend fun getCurrencyCache(base: String): CurrencyCache
 
-    @Query("SELECT * FROM CurrencyCache ORDER BY cachedTime ASC")
-    fun getAllCurrencyCachesOrderedByTime(): Flow<List<CurrencyCache>>
 
 }

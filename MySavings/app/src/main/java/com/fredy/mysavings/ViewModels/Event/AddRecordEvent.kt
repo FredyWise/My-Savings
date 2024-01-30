@@ -18,5 +18,7 @@ sealed interface AddRecordEvent {
     data class RecordTypes(val recordType: RecordType): AddRecordEvent
     data class RecordNotes(val notes: String): AddRecordEvent
     data class SetId(val id: String): AddRecordEvent
+    object ShowWarning: AddRecordEvent
+    object ConvertCurrency: AddRecordEvent
 
 }

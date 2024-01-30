@@ -70,7 +70,6 @@ fun SimpleDialog(
     cancelName:String = "Cancel",
     saveName:String = "Save",
     onDismissRequest: () -> Unit,
-    onCancelClicked: () -> Unit,
     onSaveClicked: () -> Unit,
     content: @Composable () -> Unit,
 ) {
@@ -105,7 +104,7 @@ fun SimpleDialog(
                     shape = MaterialTheme.shapes.small
                 )
                 .clickable {
-                    onCancelClicked()
+                    onDismissRequest()
                 }) {
                 Text(
                     modifier = Modifier.padding(8.dp),
@@ -126,6 +125,7 @@ fun SimpleDialog(
                 )
                 .clickable {
                     onSaveClicked()
+                    onDismissRequest()
                 }) {
                 Text(
                     modifier = Modifier.padding(8.dp),

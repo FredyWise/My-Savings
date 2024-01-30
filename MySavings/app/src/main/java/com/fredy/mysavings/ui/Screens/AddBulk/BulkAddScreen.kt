@@ -225,7 +225,7 @@ fun BulkAddScreen(
                 )
             } else {
                 CategoryBottomSheet(
-                    categoryMaps = categoryState.categories,
+                    categoryMaps = categoryState.categoryMaps,
                     recordType = state.recordType,
                     onSelectCategory = {
                         viewModel.onEvent(
