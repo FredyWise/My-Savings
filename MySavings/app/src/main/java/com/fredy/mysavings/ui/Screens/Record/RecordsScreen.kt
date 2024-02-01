@@ -11,6 +11,7 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -60,7 +61,8 @@ fun RecordsScreen(
             )
         },
         selectedDateFormat = formatRangeOfDate(
-            state.filterState.selectedDate, state.filterState.filterType
+            state.filterState.selectedDate,
+            state.filterState.filterType
         ),
         isChoosingFilter = state.isChoosingFilter,
         selectedFilter = state.filterState.filterType.name,
@@ -82,7 +84,7 @@ fun RecordsScreen(
         balanceBar = state.balanceBar,
         leadingIcon = {
             Icon(
-                imageVector = Icons.Outlined.Info,
+                imageVector = Icons.Outlined.Search,
                 contentDescription = "",
                 tint = MaterialTheme.colorScheme.onSurface,
             )
@@ -94,19 +96,25 @@ fun RecordsScreen(
                 tint = MaterialTheme.colorScheme.onSurface,
             )
         },
-        sortType = when(state.filterState.sortType){
+        sortType = when (state.filterState.sortType) {
             SortType.ASCENDING -> true
             SortType.DESCENDING -> false
         },
         showTotal = state.filterState.showTotal,
         carryOn = state.filterState.carryOn,
-        onShowTotalChange = {onEvent(RecordsEvent.ToggleShowTotal)},
-        onCarryOnChange = {onEvent(RecordsEvent.ToggleCarryOn)},
-        onShortChange = {onEvent(RecordsEvent.ToggleSortType)},
+        onShowTotalChange = { onEvent(RecordsEvent.ToggleShowTotal) },
+        onCarryOnChange = { onEvent(RecordsEvent.ToggleCarryOn) },
+        onShortChange = { onEvent(RecordsEvent.ToggleSortType) },
         onPrevious = { onEvent(RecordsEvent.ShowPreviousList) },
         onNext = { onEvent(RecordsEvent.ShowNextList) },
-        onLeadingIconClick = {},
-        onTrailingIconClick = { onEvent(RecordsEvent.ShowFilterDialog)}
+        onLeadingIconClick = {
+            rootNavController.navigate(
+                NavigationRoute.Search.route
+            )
+        },
+        onTrailingIconClick = {
+            onEvent(RecordsEvent.ShowFilterDialog)
+        },
     ) {
         AnimatedVisibility(
             modifier = modifier,

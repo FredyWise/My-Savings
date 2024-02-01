@@ -59,12 +59,12 @@ class CategoryViewModel @Inject constructor(
             )
         }
     }.combine(_categoryMap) { state, categoryMaps ->
-        if (state.searchText.isBlank()) {
+        if (state.searchQuery.isBlank()) {
             categoryMaps
         } else {
             categoryMaps.map { categoryMap ->
                 categoryMap.copy(categories = categoryMap.categories.filter {
-                    it.doesMatchSearchQuery(state.searchText)
+                    it.doesMatchSearchQuery(state.searchQuery)
                 })
             }
         }
@@ -197,7 +197,7 @@ class CategoryViewModel @Inject constructor(
             is CategoryEvent.SearchCategory -> {
                 _state.update {
                     it.copy(
-                        searchText = event.name
+                        searchQuery = event.searchQuery
                     )
                 }
             }
@@ -220,7 +220,7 @@ data class CategoryState(
     val categoryIcon: Int = 0,
     val categoryIconDescription: String = "",
     val isAddingCategory: Boolean = false,
-    val searchText: String = "",
+    val searchQuery: String = "",
     val isSearching: Boolean = false,
     val sortType: SortType = SortType.ASCENDING
 )

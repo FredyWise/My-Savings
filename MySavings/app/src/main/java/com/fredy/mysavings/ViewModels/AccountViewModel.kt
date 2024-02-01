@@ -16,7 +16,6 @@ import com.fredy.mysavings.ViewModels.Event.AccountEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
@@ -121,11 +120,11 @@ class AccountViewModel @Inject constructor(
             )
         }
     }.combine(_accounts) { state, accounts ->
-        if (state.searchText.isBlank()) {
+        if (state.searchQuery.isBlank()) {
             accounts
         } else {
             accounts.filter {
-                it.doesMatchSearchQuery(state.searchText)
+                it.doesMatchSearchQuery(state.searchQuery)
             }
         }
     }.onEach {
@@ -276,7 +275,7 @@ class AccountViewModel @Inject constructor(
             is AccountEvent.SearchAccount -> {
                 _state.update {
                     it.copy(
-                        searchText = event.name
+                        searchQuery = event.searchQuery
                     )
                 }
             }
@@ -302,7 +301,7 @@ data class AccountState(
     val accountIcon: Int = 0,
     val accountIconDescription: String = "",
     val isAddingAccount: Boolean = false,
-    val searchText: String = "",
+    val searchQuery: String = "",
     val isSearching: Boolean = false,
     val sortType: SortType = SortType.ASCENDING
 )

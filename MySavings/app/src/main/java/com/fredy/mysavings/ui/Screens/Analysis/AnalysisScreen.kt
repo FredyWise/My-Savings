@@ -8,6 +8,7 @@ import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -93,7 +94,7 @@ fun AnalysisScreen(
         balanceBar = state.balanceBar,
         leadingIcon = {
             Icon(
-                imageVector = Icons.Outlined.Info,
+                imageVector = Icons.Outlined.Search,
                 contentDescription = "",
                 tint = MaterialTheme.colorScheme.onSurface,
             )
@@ -116,7 +117,11 @@ fun AnalysisScreen(
         onShortChange = {onEvent(AnalysisEvent.ToggleSortType)},
         onPrevious = { onEvent(AnalysisEvent.ShowPreviousList) },
         onNext = { onEvent(AnalysisEvent.ShowNextList) },
-        onLeadingIconClick = {},
+        onLeadingIconClick = {
+            rootNavController.navigate(
+                NavigationRoute.Search.route
+            )
+        },
         onTrailingIconClick = {
             onEvent(AnalysisEvent.ShowFilterDialog)
         },

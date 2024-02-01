@@ -25,6 +25,9 @@ interface RecordDataSource {
     suspend fun upsertRecordItem(record: Record)
     suspend fun deleteRecordItem(record: Record)
     suspend fun getRecordById(recordId: String): TrueRecord
+    suspend fun getAllUserTrueRecords(
+        userId: String,
+    ): List<TrueRecord>
 
     suspend fun getUserTrueRecordByCurrencyFromSpecificTime(
         userId: String,
@@ -117,7 +120,38 @@ class RecordDataSourceImpl @Inject constructor(
             throw e
         }
     }
+    override suspend fun getAllUserTrueRecords(
+        userId: String,
+    ): List<TrueRecord> {
+        val trueRecordComponentResult = getTrueRecordsComponent(
+            userId
+        )
 
+        return try {
+            val querySnapshot = recordCollection.whereEqualTo(
+                "userIdFk", userId
+            ).orderBy(
+                "recordTimestamp",
+                Query.Direction.DESCENDING
+            ).get().await()
+
+            val records = querySnapshot.toObjects<Record>()
+            records.map { record ->
+                TrueRecord(
+                    record = record,
+                    fromAccount = trueRecordComponentResult.fromAccount.single { it.accountId == record.accountIdFromFk },
+                    toAccount = trueRecordComponentResult.toAccount.single { it.accountId == record.accountIdToFk },
+                    toCategory = trueRecordComponentResult.toCategory.single { it.categoryId == record.categoryIdFk },
+                )
+            }
+        } catch (e: Exception) {
+            Log.e(
+                TAG,
+                "getUserTrueRecordFromSpecificTimeError: ${e.message}"
+            )
+            throw e
+        }
+    }
     override suspend fun getUserTrueRecordByCurrencyFromSpecificTime(
         userId: String,
         startDate: LocalDateTime,

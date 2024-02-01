@@ -5,17 +5,19 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -33,6 +35,7 @@ fun AppBar(
     backgroundColor: Color = MaterialTheme.colorScheme.surface,
     contentColor: Color = MaterialTheme.colorScheme.onSurface,
     onNavigationIconClick: () -> Unit,
+//    onSearchButtonClick: () -> Unit,
     onProfilePictureClick: () -> Unit,
     currentUser: UserData,
 ) {
@@ -44,7 +47,7 @@ fun AppBar(
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = backgroundColor,
             navigationIconContentColor = contentColor,
-            titleContentColor =contentColor
+            titleContentColor = contentColor
         ),
         navigationIcon = {
             IconButton(onClick = onNavigationIconClick) {
@@ -55,6 +58,26 @@ fun AppBar(
             }
         },
         actions = {
+//            Box(
+//                modifier = Modifier
+//                    .padding(
+//                        horizontal = 8.dp
+//                    )
+//                    .size(40.dp)
+//                    .clip(CircleShape)
+//                    .clickable {
+//                        onSearchButtonClick()
+//                    },
+//                contentAlignment = Alignment.Center
+//            ) {
+//                Icon(
+//                    imageVector = Icons.Default.Search,
+//                    contentDescription = "Search",
+//                    modifier = Modifier.size(
+//                        30.dp
+//                    ),
+//                )
+//            }
             Box(
                 modifier = Modifier
                     .padding(
@@ -71,8 +94,8 @@ fun AppBar(
                         model = currentUser.profilePictureUrl,
                         contentDescription = "Profile picture",
                         modifier = Modifier.size(
-                                40.dp
-                            ),
+                            40.dp
+                        ),
                         contentScale = ContentScale.Crop
                     )
                 } else {
@@ -80,8 +103,8 @@ fun AppBar(
                         imageVector = Icons.Default.AccountCircle,
                         contentDescription = "Profile picture",
                         modifier = Modifier.size(
-                                40.dp
-                            ),
+                            40.dp
+                        ),
                     )
                 }
             }

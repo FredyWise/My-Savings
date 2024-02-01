@@ -56,12 +56,12 @@ fun AccountsScreen(
                 ResourceHandler(
                     resource = resource,
                     nullOrEmptyMessage = "You haven't made any Record using this account yet",
-                    errorMessage = resource.message?:"",
-                    isNullOrEmpty = {it.isNullOrEmpty()},
+                    errorMessage = resource.message ?: "",
+                    isNullOrEmpty = { it.isNullOrEmpty() },
                     onMessageClick = {
                         isSheetOpen = false
                     },
-                ){ data ->
+                ) { data ->
                     AccountDetailSheet(
                         recordMaps = data,
                         icon = state.account.accountIcon,
@@ -102,12 +102,30 @@ fun AccountsScreen(
                     MaterialTheme.colorScheme.surface
                 ), state = state
         )
+        SearchBar(
+            searchText = state.searchQuery,
+            onValueChange = {
+                onEvent(
+                    AccountEvent.SearchAccount(
+                        it
+                    )
+                )
+            },
+            isSearching = state.isSearching,
+            trailingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Search,
+                    contentDescription = "Search"
+                )
+            },
+        )
         SimpleButton(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(
                     horizontal = 50.dp
                 )
+                .padding(top = 16.dp)
                 .clip(
                     MaterialTheme.shapes.medium
                 )
@@ -130,29 +148,14 @@ fun AccountsScreen(
                 MaterialTheme.colorScheme.onBackground
             )
         )
-        SearchBar(searchText = state.searchText,
-            onValueChange = {
-                onEvent(
-                    AccountEvent.SearchAccount(
-                        it
-                    )
-                )
+        AccountBody(
+            accounts = state.accounts,
+            onEvent = onEvent,
+            onEntityClick = {
+                isSheetOpen = true
             },
-            isSearching = state.isSearching,
-            trailingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Search,
-                    contentDescription = "Search"
-                )
-            }) {
-            AccountBody(
-                accounts = state.accounts,
-                onEvent = onEvent,
-                onEntityClick = {
-                    isSheetOpen = true
-                },
-            )
-        }
+        )
+
     }
 }
 

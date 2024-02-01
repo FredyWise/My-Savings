@@ -25,6 +25,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -59,7 +60,7 @@ class RecordViewModel @Inject constructor(
     )
 
 
-    private val _records = _filterState.flatMapLatest { filterState ->
+    private val _recordResource = _filterState.flatMapLatest { filterState ->
         filterState.map { start, end, _, sortType, currencies ->
             recordRepository.getUserTrueRecordMapsFromSpecificTime(
                 start, end, sortType, currencies
@@ -133,13 +134,13 @@ class RecordViewModel @Inject constructor(
 
     val state = combine(
         _state,
-        _records,
+        _recordResource,
         _availableCurrency,
         balanceBar,
         _filterState,
-    ) { state, records, availableCurrency, balanceBar, filterState ->
+    ) { state, recordResource, availableCurrency, balanceBar, filterState ->
         state.copy(
-            recordMapsResource = records,
+            recordMapsResource = recordResource,
             availableCurrency = availableCurrency,
             balanceBar = balanceBar,
             filterState = filterState
@@ -248,6 +249,7 @@ class RecordViewModel @Inject constructor(
                     it.copy(carryOn = !it.carryOn)
                 }
             }
+
             RecordsEvent.ToggleShowTotal -> {
                 _filterState.update {
                     it.copy(showTotal = !it.showTotal)
@@ -265,7 +267,9 @@ data class RecordState(
     val selectedCheckbox: List<String> = listOf(),
     val balanceBar: BalanceBar = BalanceBar(),
     val isChoosingFilter: Boolean = false,
-    val filterState: FilterState = FilterState()
+    val filterState: FilterState = FilterState(),
+    val isSearching: Boolean = false,
+    val searchQuery: String = "",
 )
 
 data class RecordMap(

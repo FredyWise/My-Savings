@@ -13,6 +13,7 @@ import androidx.compose.material.icons.filled.Password
 import androidx.compose.material.icons.filled.PieChart
 import androidx.compose.material.icons.filled.Receipt
 import androidx.compose.material.icons.filled.Save
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.UploadFile
 import androidx.compose.material.icons.outlined.AccountBalanceWallet
@@ -27,6 +28,7 @@ import androidx.compose.material.icons.outlined.Password
 import androidx.compose.material.icons.outlined.PieChart
 import androidx.compose.material.icons.outlined.Receipt
 import androidx.compose.material.icons.outlined.Save
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.UploadFile
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -191,12 +193,12 @@ sealed class NavigationRoute(
     )
 
     //other screen
-    object Detail: NavigationRoute(
-        route = "detail",
-        title = "Detail",
-        contentDescription = "Go to Detail Screen",
-        icon = Icons.Default.AddBox,
-        iconNot = Icons.Outlined.AddBox
+    object Search: NavigationRoute(
+        route = "search",
+        title = "Search",
+        contentDescription = "Go to Search Screen",
+        icon = Icons.Default.Search,
+        iconNot = Icons.Outlined.Search
     )
     object Add: NavigationRoute(
         route = "add",

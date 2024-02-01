@@ -80,12 +80,30 @@ fun CategoriesScreen(
         )
     }
     Column(modifier = modifier) {
+        SearchBar(
+            searchText = state.searchQuery,
+            onValueChange = {
+                onEvent(
+                    CategoryEvent.SearchCategory(
+                        it
+                    )
+                )
+            },
+            isSearching = state.isSearching,
+            trailingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Search,
+                    contentDescription = "Search"
+                )
+            },
+        )
         SimpleButton(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(
                     horizontal = 50.dp
                 )
+                .padding(top = 16.dp)
                 .clip(
                     MaterialTheme.shapes.medium
                 )
@@ -108,23 +126,6 @@ fun CategoriesScreen(
                 MaterialTheme.colorScheme.onBackground
             )
         )
-        SearchBar(
-            searchText = state.searchText,
-            onValueChange = {
-                onEvent(
-                    CategoryEvent.SearchCategory(
-                        it
-                    )
-                )
-            },
-            isSearching = state.isSearching,
-            trailingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Search,
-                    contentDescription = "Search"
-                )
-            },
-        ) {
             CategoryBody(
                 categoryMaps = state.categoryMaps,
                 onEvent = onEvent,
@@ -132,6 +133,5 @@ fun CategoriesScreen(
                     isSheetOpen = true
                 },
             )
-        }
     }
 }

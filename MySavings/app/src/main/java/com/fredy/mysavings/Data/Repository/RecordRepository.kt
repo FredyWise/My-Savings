@@ -34,6 +34,7 @@ interface RecordRepository {
     suspend fun upsertRecordItem(record: Record)
     suspend fun deleteRecordItem(record: Record)
     fun getRecordById(recordId: String): Flow<TrueRecord>
+    fun getAllRecords():Flow<Resource<List<RecordMap>>>
 
     fun getUserTrueRecordMapsFromSpecificTime(
         startDate: LocalDateTime,
@@ -82,6 +83,7 @@ interface RecordRepository {
     ): Flow<BalanceItem>
 
     fun getUserTotalRecordBalance(): Flow<BalanceItem>
+
 }
 
 class RecordRepositoryImpl @Inject constructor(
@@ -137,6 +139,29 @@ class RecordRepositoryImpl @Inject constructor(
                 record
             )
 
+        }
+    }
+
+    override fun getAllRecords(): Flow<Resource<List<RecordMap>>> {
+        return flow {
+            emit(Resource.Loading())
+            val currentUser = firebaseAuth.currentUser!!
+            val userId = if (currentUser.isNotNull()) currentUser.uid else ""
+            val data = recordDataSource.getAllUserTrueRecords(userId).groupBy {
+                it.record.recordDateTime.toLocalDate()
+            }.map {
+                RecordMap(
+                    recordDate = it.key,
+                    records = it.value
+                )
+            }
+            emit(Resource.Success(data))
+        }.catch { e ->
+            Log.i(
+                TAG,
+                "getUserTrueRecordMapsFromSpecificTimeError: $e"
+            )
+            emit(Resource.Error(e.message.toString()))
         }
     }
 

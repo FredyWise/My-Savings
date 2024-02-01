@@ -129,7 +129,7 @@ fun SearchBar(
     leadingIcon: @Composable (() -> Unit)? = null,
     trailingIcon: @Composable (() -> Unit)? = null,
     trailingContent: @Composable () -> Unit = {},
-    searchBody: @Composable () -> Unit,
+    searchBody: @Composable () -> Unit = {},
 ) {
     Column(modifier) {
         Spacer(modifier = Modifier.height(8.dp))

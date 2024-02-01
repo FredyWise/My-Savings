@@ -4,8 +4,6 @@ import android.util.Log
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -27,6 +24,8 @@ import androidx.navigation.navigation
 import com.fredy.mysavings.Util.TAG
 import com.fredy.mysavings.ViewModels.AuthViewModel
 import com.fredy.mysavings.ViewModels.Event.AuthEvent
+import com.fredy.mysavings.ViewModels.RecordViewModel
+import com.fredy.mysavings.ViewModels.SearchViewModel
 import com.fredy.mysavings.ui.NavigationComponent.MainScreen
 import com.fredy.mysavings.ui.Screens.AddBulk.BulkAddScreen
 import com.fredy.mysavings.ui.Screens.AddSingle.AddScreen
@@ -34,6 +33,7 @@ import com.fredy.mysavings.ui.Screens.Other.BackupScreen
 import com.fredy.mysavings.ui.Screens.Other.ExportScreen
 import com.fredy.mysavings.ui.Screens.Other.PreferencesScreen
 import com.fredy.mysavings.ui.Screens.Other.ProfileScreen
+import com.fredy.mysavings.ui.Search.SearchScreen
 
 @Composable
 fun NavGraphRoot(
@@ -88,8 +88,8 @@ fun NavGraphRoot(
                         },
                         currentUser = it
                     )
-                }?: run {
-                    Box(modifier = Modifier.fillMaxSize()){}
+                } ?: run {
+                    Box(modifier = Modifier.fillMaxSize()) {}
                 }
             }
             composable(
@@ -128,27 +128,51 @@ fun NavGraphRoot(
             composable(
                 route = NavigationRoute.Preferences.route
             ) {
-            PreferencesScreen(title = NavigationRoute.Preferences.title, rootNavController = navController)
+                PreferencesScreen(
+                    title = NavigationRoute.Preferences.title,
+                    rootNavController = navController
+                )
             }
             composable(
                 route = NavigationRoute.Export.route
             ) {
-            ExportScreen(title = NavigationRoute.Export.title, rootNavController = navController)
+                ExportScreen(
+                    title = NavigationRoute.Export.title,
+                    rootNavController = navController
+                )
             }
             composable(
                 route = NavigationRoute.Restore.route
             ) {
-            BackupScreen(title = NavigationRoute.Restore.title, rootNavController = navController)
-            }
-            composable(
-                route = NavigationRoute.Reset.route
-            ) {
-//            ResetScreen()
+                BackupScreen(
+                    title = NavigationRoute.Restore.title,
+                    rootNavController = navController
+                )
             }
             composable(
                 route = NavigationRoute.Profile.route
             ) {
-            ProfileScreen(title = NavigationRoute.Profile.title, rootNavController = navController)
+                ProfileScreen(
+                    title = NavigationRoute.Profile.title,
+                    rootNavController = navController
+                )
+            }
+            composable(
+                route = NavigationRoute.Search.route
+            ) {
+                val viewModel: SearchViewModel = hiltViewModel()
+                val state by viewModel.state.collectAsStateWithLifecycle()
+                val recordViewModel: RecordViewModel = hiltViewModel()
+                val recordState by recordViewModel.state.collectAsStateWithLifecycle()
+
+                SearchScreen(
+                    title = NavigationRoute.Search.title,
+                    rootNavController = navController,
+                    state = state,
+                    onSearch = viewModel::onSearch,
+                    recordState = recordState,
+                    onEvent = recordViewModel::onEvent
+                )
             }
         }
 
