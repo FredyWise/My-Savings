@@ -29,9 +29,11 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.fredy.mysavings.Data.Enum.SortType
 import com.fredy.mysavings.Util.formatRangeOfDate
 import com.fredy.mysavings.ViewModels.AnalysisState
 import com.fredy.mysavings.ViewModels.Event.AnalysisEvent
+import com.fredy.mysavings.ViewModels.Event.RecordsEvent
 import com.fredy.mysavings.ui.NavigationComponent.MainFilterAppBar
 import com.fredy.mysavings.ui.NavigationComponent.Navigation.AnalysisNavGraph
 import com.fredy.mysavings.ui.NavigationComponent.Navigation.NavigationRoute
@@ -60,17 +62,17 @@ fun AnalysisScreen(
 
     MainFilterAppBar(
         modifier = modifier,
-        selectedDate = state.selectedDate,
+        selectedDate = state.filterState.selectedDate,
         onDateChange = {
             onEvent(
                 AnalysisEvent.ChangeDate(it)
             )
         },
         selectedDateFormat = formatRangeOfDate(
-            state.selectedDate, state.filterType
+            state.filterState.selectedDate, state.filterState.filterType
         ),
         isChoosingFilter = state.isChoosingFilter,
-        selectedFilter = state.filterType.name,
+        selectedFilter = state.filterState.filterType.name,
         checkboxesFilter = state.availableCurrency,
         selectedCheckbox = state.selectedCheckbox,
         onDismissFilterDialog = {
@@ -103,6 +105,15 @@ fun AnalysisScreen(
                 tint = MaterialTheme.colorScheme.onSurface,
             )
         },
+        sortType = when(state.filterState.sortType){
+            SortType.ASCENDING -> true
+            SortType.DESCENDING -> false
+        },
+        showTotal = state.filterState.showTotal,
+        carryOn = state.filterState.carryOn,
+        onShowTotalChange = {onEvent(AnalysisEvent.ToggleShowTotal)},
+        onCarryOnChange = {onEvent(AnalysisEvent.ToggleCarryOn)},
+        onShortChange = {onEvent(AnalysisEvent.ToggleSortType)},
         onPrevious = { onEvent(AnalysisEvent.ShowPreviousList) },
         onNext = { onEvent(AnalysisEvent.ShowNextList) },
         onLeadingIconClick = {},

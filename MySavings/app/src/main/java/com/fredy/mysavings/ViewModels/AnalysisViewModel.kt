@@ -4,27 +4,29 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fredy.mysavings.Data.Database.Model.Category
 import com.fredy.mysavings.Data.Database.Model.Record
-import com.fredy.mysavings.Data.Database.Model.UserData
 import com.fredy.mysavings.Data.Enum.FilterType
 import com.fredy.mysavings.Data.Enum.GraphType
 import com.fredy.mysavings.Data.Enum.RecordType
+import com.fredy.mysavings.Data.Enum.SortType
 import com.fredy.mysavings.Data.Repository.AccountRepository
 import com.fredy.mysavings.Data.Repository.AccountWithAmountType
 import com.fredy.mysavings.Data.Repository.CategoryWithAmount
 import com.fredy.mysavings.Data.Repository.RecordRepository
+import com.fredy.mysavings.Util.BalanceBar
 import com.fredy.mysavings.Util.BalanceItem
 import com.fredy.mysavings.Util.FilterState
 import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.isExpense
 import com.fredy.mysavings.Util.map
-import com.fredy.mysavings.Util.minusFilterDate
-import com.fredy.mysavings.Util.plusFilterDate
-import com.fredy.mysavings.Util.updateFilterState
+import com.fredy.mysavings.Util.minusDate
+import com.fredy.mysavings.Util.plusDate
+import com.fredy.mysavings.Util.updateDate
+import com.fredy.mysavings.Util.updateType
 import com.fredy.mysavings.ViewModels.Event.AnalysisEvent
+import com.fredy.mysavings.ViewModels.Event.RecordsEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
@@ -62,9 +64,10 @@ class AnalysisViewModel @Inject constructor(
 
 
     private val _categoriesWithAmount = _filterState.flatMapLatest { filterState ->
-        filterState.map { start, end, recordType, _, currencies ->
+        filterState.map { start, end, recordType, sortType, currencies ->
             recordRepository.getUserCategoriesWithAmountFromSpecificTime(
                 recordType,
+                sortType,
                 start,
                 end,
                 currencies,
@@ -77,8 +80,9 @@ class AnalysisViewModel @Inject constructor(
     )
 
     private val _accountsWithAmount = _filterState.flatMapLatest { filterState ->
-        filterState.map { start, end, _, _, _ ->
+        filterState.map { start, end, _, sortType, _ ->
             recordRepository.getUserAccountsWithAmountFromSpecificTime(
+                sortType,
                 start,
                 end,
             )
@@ -90,9 +94,10 @@ class AnalysisViewModel @Inject constructor(
     )
 
     private val _recordsWithinSpecificTime = _filterState.flatMapLatest { filterState ->
-        filterState.map { start, end, recordType, _, currencies ->
+        filterState.map { start, end, recordType, sortType, currencies ->
             recordRepository.getUserRecordsFromSpecificTime(
                 recordType,
+                sortType,
                 start,
                 end,
                 currencies,
@@ -105,23 +110,31 @@ class AnalysisViewModel @Inject constructor(
     )
 
 
-    private val _totalRecordBalance= recordRepository.getUserTotalRecordBalance().stateIn(
+    private val _totalBalance = recordRepository.getUserTotalRecordBalance().stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(),
         BalanceItem()
     )
 
-    private val _totalExpense= recordRepository.getUserTotalAmountByType(
-        RecordType.Expense
-    ).stateIn(
+    private val _totalExpense = _filterState.flatMapLatest { filterState ->
+        filterState.map { start, end, _, _, _ ->
+            recordRepository.getUserTotalAmountByTypeFromSpecificTime(
+                RecordType.Expense, start, end
+            )
+        }
+    }.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(),
         BalanceItem()
     )
 
-    private val _totalIncome= recordRepository.getUserTotalAmountByType(
-        RecordType.Income
-    ).stateIn(
+    private val _totalIncome = _filterState.flatMapLatest { filterState ->
+        filterState.map { start, end, _, _, _ ->
+            recordRepository.getUserTotalAmountByTypeFromSpecificTime(
+                RecordType.Income, start, end
+            )
+        }
+    }.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(),
         BalanceItem()
@@ -135,12 +148,17 @@ class AnalysisViewModel @Inject constructor(
         _balanceBar,
         _totalExpense,
         _totalIncome,
-        _totalRecordBalance
-    ) { balanceBar, totalExpense, totalIncome, totalRecordBalance ->
+        _totalBalance,
+        _filterState,
+    ) { balanceBar, totalExpense, totalIncome, totalBalance, filterState ->
         balanceBar.copy(
             expense = totalExpense,
             income = totalIncome,
-            balance = totalRecordBalance,
+            balance = if (filterState.carryOn) totalBalance else BalanceItem(
+                name = totalBalance.name,
+                amount = totalExpense.amount + totalIncome.amount,
+                currency = totalBalance.currency
+            ),
         )
     }.stateIn(
         viewModelScope,
@@ -178,13 +196,13 @@ class AnalysisViewModel @Inject constructor(
         balanceBar,
         analysisData,
         _availableCurrency,
-    ) { state, balanceBar, analysisData, availableCurrency ->
+        _filterState,
+    ) { state, balanceBar, analysisData, availableCurrency, filterState ->
         state.copy(
-            categoriesWithAmountResource = analysisData.categoriesWithAmountResource,
-            recordsWithinTimeResource = analysisData.recordsWithinTimeResource,
-            accountsWithAmountResource = analysisData.accountsWithAmountResource,
+            analysisData = analysisData,
             availableCurrency = availableCurrency,
             balanceBar = balanceBar,
+            filterState = filterState,
         )
     }.stateIn(
         viewModelScope,
@@ -220,52 +238,36 @@ class AnalysisViewModel @Inject constructor(
             }
 
             is AnalysisEvent.FilterRecord -> {
-                _state.update {
-                    it.copy(
-                        filterType = event.filterType
-                    )
+                _filterState.update {
+                    it.updateType(event.filterType)
                 }
             }
 
             is AnalysisEvent.ShowNextList -> {
-                _state.update {
-                    it.copy(
-                        selectedDate = plusFilterDate(
-                            state.value.filterType,
-                            it.selectedDate
-                        )
-                    )
+                _filterState.update {
+                    it.plusDate()
                 }
             }
 
             is AnalysisEvent.ShowPreviousList -> {
-                _state.update {
-                    it.copy(
-                        selectedDate = minusFilterDate(
-                            state.value.filterType,
-                            it.selectedDate
-                        )
-                    )
+                _filterState.update {
+                    it.minusDate()
                 }
             }
 
             is AnalysisEvent.ChangeDate -> {
-                _state.update {
-                    it.copy(
-                        selectedDate = event.selectedDate
-                    )
+                _filterState.update {
+                    it.updateDate(event.selectedDate)
                 }
             }
 
             is AnalysisEvent.ToggleRecordType -> {
-                _state.update {
+                _filterState.update {
                     it.copy(
-                        recordType = if (isExpense(
-                                it.recordType
-                            )) {
-                            RecordType.Income
-                        } else {
-                            RecordType.Expense
+                        recordType = when(it.recordType){
+                            RecordType.Expense -> RecordType.Income
+                            RecordType.Income -> RecordType.Expense
+                            RecordType.Transfer -> RecordType.Expense
                         }
                     )
                 }
@@ -281,31 +283,42 @@ class AnalysisViewModel @Inject constructor(
                     it.copy(selectedCheckbox = event.selectedCurrencies)
                 }
             }
-        }
-        _filterState.update {
-            updateFilterState(
-                state.value.filterType,
-                state.value.selectedDate,
-                it.copy(recordType = _state.value.recordType)
-            )
+
+            is AnalysisEvent.ToggleSortType -> {
+                _filterState.update {
+                    it.copy(
+                        sortType = when (it.sortType) {
+                            SortType.ASCENDING -> SortType.DESCENDING
+                            SortType.DESCENDING -> SortType.ASCENDING
+                        }
+                    )
+                }
+            }
+
+            AnalysisEvent.ToggleCarryOn -> {
+                _filterState.update {
+                    it.copy(carryOn = !it.carryOn)
+                }
+            }
+            AnalysisEvent.ToggleShowTotal -> {
+                _filterState.update {
+                    it.copy(showTotal = !it.showTotal)
+                }
+            }
         }
     }
 
 }
 
 data class AnalysisState(
-    val categoriesWithAmountResource: Resource<List<CategoryWithAmount>> = Resource.Loading(),
-    val accountsWithAmountResource: Resource<List<AccountWithAmountType>> = Resource.Loading(),
-    val recordsWithinTimeResource: Resource<List<Record>> = Resource.Loading(),
+    val analysisData: AnalysisData = AnalysisData(),
     val availableCurrency: List<String> = emptyList(),
     val selectedCheckbox: List<String> = emptyList(),
     val category: Category? = null,
     val balanceBar: BalanceBar = BalanceBar(),
     val graphType: GraphType = GraphType.SlimDonut,
-    val recordType: RecordType = RecordType.Expense,
-    val selectedDate: LocalDate = LocalDate.now(),
     val isChoosingFilter: Boolean = false,
-    val filterType: FilterType = FilterType.Monthly
+    val filterState: FilterState = FilterState()
 )
 
 data class AnalysisData(

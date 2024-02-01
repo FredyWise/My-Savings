@@ -45,7 +45,7 @@ fun AnalysisAccount(
     onEvent: (AnalysisEvent) -> Unit,
 ) {
 
-    val key = state.categoriesWithAmountResource.hashCode()
+    val key = state.analysisData.categoriesWithAmountResource.hashCode()
     val isVisible = remember(key) {
         MutableTransitionState(
             false
@@ -67,10 +67,10 @@ fun AnalysisAccount(
             targetOffsetY = { fullHeight -> fullHeight },
         ) + fadeOut()
     ) {
-        state.accountsWithAmountResource.let { resource ->
+        state.analysisData.accountsWithAmountResource.let { resource ->
             ResourceHandler(
                 resource = resource,
-                nullOrEmptyMessage = "There is no ${state.recordType.name} on this date yet",
+                nullOrEmptyMessage = "There is no ${state.filterState.recordType.name} on this date yet",
                 errorMessage = resource.message ?: "",
                 isNullOrEmpty = { it.isNullOrEmpty() },
                 onMessageClick = {

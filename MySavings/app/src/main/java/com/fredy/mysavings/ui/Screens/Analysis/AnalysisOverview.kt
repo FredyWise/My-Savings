@@ -55,7 +55,7 @@ fun AnalysisOverview(
     state: AnalysisState,
     onEvent: (AnalysisEvent) -> Unit,
 ) {
-    val key = state.categoriesWithAmountResource.hashCode()
+    val key = state.analysisData.categoriesWithAmountResource.hashCode()
     val isVisible = remember(key) {
         MutableTransitionState(
             false
@@ -77,14 +77,14 @@ fun AnalysisOverview(
             targetOffsetY = { fullHeight -> fullHeight },
         ) + fadeOut()
     ) {
-        state.categoriesWithAmountResource.let { resource ->
+        state.analysisData.categoriesWithAmountResource.let { resource ->
             Log.e(
                 TAG,
                 "AnalysisOverview: " + resource,
             )
             ResourceHandler(
                 resource = resource,
-                nullOrEmptyMessage = "There is no ${state.recordType.name} on this date yet",
+                nullOrEmptyMessage = "There is no ${state.filterState.recordType.name} on this date yet",
                 isNullOrEmpty = { it.isNullOrEmpty() },
                 errorMessage = resource.message ?: "",
                 onMessageClick = {

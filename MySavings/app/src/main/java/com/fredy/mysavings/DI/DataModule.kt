@@ -2,6 +2,8 @@ package com.fredy.mysavings.DI
 
 import android.content.Context
 import androidx.room.Room
+import com.fredy.mysavings.Data.CSV.CSVDao
+import com.fredy.mysavings.Data.CSV.CSVDaoImpl
 import com.fredy.mysavings.Data.Database.Dao.AccountDao
 import com.fredy.mysavings.Data.Database.Dao.CategoryDao
 import com.fredy.mysavings.Data.Database.Dao.CurrencyCacheDao
@@ -73,4 +75,8 @@ object DataModule {
     @Provides
     @Singleton
     fun provideCurrencyCacheDataSource(firestore: FirebaseFirestore): CurrencyDataSource = CurrencyDataSourceImpl(firestore)
+
+    @Provides
+    @Singleton
+    fun provideCSVDao(): CSVDao = CSVDaoImpl()
 }

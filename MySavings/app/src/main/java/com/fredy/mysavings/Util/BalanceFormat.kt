@@ -8,6 +8,11 @@ import com.fredy.mysavings.Data.Enum.RecordType
 import java.text.DecimalFormat
 import kotlin.math.absoluteValue
 
+data class BalanceBar(
+    val expense: BalanceItem = BalanceItem(),
+    val income: BalanceItem = BalanceItem(),
+    val balance: BalanceItem = BalanceItem(),
+)
 
 data class BalanceItem(
     var name: String = "",

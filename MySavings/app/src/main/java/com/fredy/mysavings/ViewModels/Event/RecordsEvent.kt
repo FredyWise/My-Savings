@@ -15,6 +15,9 @@ sealed interface RecordsEvent{
     data class FilterRecord(val filterType: FilterType): RecordsEvent
     object ShowNextList: RecordsEvent
     object ShowPreviousList: RecordsEvent
+    object ToggleSortType: RecordsEvent
+    object ToggleShowTotal: RecordsEvent
+    object ToggleCarryOn: RecordsEvent
     data class DeleteRecord(val record: Record): RecordsEvent
 
 }

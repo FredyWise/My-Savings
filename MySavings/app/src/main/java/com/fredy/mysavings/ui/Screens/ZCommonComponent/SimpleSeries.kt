@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -67,8 +68,8 @@ fun SimpleAlertDialog(
 fun SimpleDialog(
     modifier: Modifier = Modifier,
     title: String,
-    cancelName:String = "Cancel",
-    saveName:String = "Save",
+    cancelName: String = "Cancel",
+    saveName: String = "Save",
     onDismissRequest: () -> Unit,
     onSaveClicked: () -> Unit,
     content: @Composable () -> Unit,
@@ -93,45 +94,54 @@ fun SimpleDialog(
             }
         },
         onDismissRequest = onDismissRequest,
-        dismissButton = {
-            Box(modifier = modifier
-                .clip(
-                    MaterialTheme.shapes.small
-                )
-                .border(
-                    width = 2.dp,
-                    color = MaterialTheme.colorScheme.secondary,
-                    shape = MaterialTheme.shapes.small
-                )
-                .clickable {
-                    onDismissRequest()
-                }) {
-                Text(
-                    modifier = Modifier.padding(8.dp),
-                    style = MaterialTheme.typography.titleMedium,
-                    text = cancelName
-                )
-            }
-        },
         confirmButton = {
-            Box(modifier = modifier
-                .clip(
-                    MaterialTheme.shapes.small
-                )
-                .border(
-                    width = 2.dp,
-                    color = MaterialTheme.colorScheme.secondary,
-                    shape = MaterialTheme.shapes.small
-                )
-                .clickable {
-                    onSaveClicked()
-                    onDismissRequest()
-                }) {
-                Text(
-                    modifier = Modifier.padding(8.dp),
-                    style = MaterialTheme.typography.titleMedium,
-                    text = saveName
-                )
+            Row(horizontalArrangement = Arrangement.SpaceBetween) {
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier
+                        .weight(0.5f)
+                        .clip(
+                            MaterialTheme.shapes.small
+                        )
+                        .border(
+                            width = 2.dp,
+                            color = MaterialTheme.colorScheme.secondary,
+                            shape = MaterialTheme.shapes.small
+                        )
+                        .clickable {
+                            onDismissRequest()
+                        },
+                ) {
+                    Text(
+                        modifier = Modifier.padding(8.dp),
+                        style = MaterialTheme.typography.titleMedium,
+                        text = cancelName
+                    )
+                }
+                Spacer(modifier = Modifier.weight(
+                    0.03f
+                ))
+                Row(horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier
+                        .weight(0.5f)
+                        .clip(
+                            MaterialTheme.shapes.small
+                        )
+                        .border(
+                            width = 2.dp,
+                            color = MaterialTheme.colorScheme.secondary,
+                            shape = MaterialTheme.shapes.small
+                        )
+                        .clickable {
+                            onSaveClicked()
+                            onDismissRequest()
+                        }) {
+                    Text(
+                        modifier = Modifier.padding(8.dp),
+                        style = MaterialTheme.typography.titleMedium,
+                        text = saveName
+                    )
+                }
             }
         },
     )

@@ -13,7 +13,10 @@ data class FilterState(
     val recordType: RecordType = RecordType.Expense,
     val filterType: FilterType = FilterType.Monthly,
     val sortType: SortType = SortType.DESCENDING,
+    val carryOn: Boolean = true,
+    val showTotal: Boolean = true,
     val currencies: List<String> = emptyList(),
+    val selectedDate: LocalDate = LocalDate.now(),
     val start: LocalDateTime = LocalDateTime.of(
         LocalDate.now().with(
             TemporalAdjusters.firstDayOfMonth()
@@ -78,15 +81,11 @@ fun <T> FilterState.map(target: (start: LocalDateTime, end: LocalDateTime, Recor
     }
 }
 
-fun updateFilterState(
-    event: FilterType,
-    selectedDate: LocalDate,
-    currentFilterState: FilterState
-): FilterState {
+fun FilterState.updateType(filterType: FilterType):FilterState{
     val startDate: LocalDateTime
     val endDate: LocalDateTime
 
-    when (event) {
+    when (filterType) {
         FilterType.Daily -> {
             startDate = LocalDateTime.of(
                 selectedDate, LocalTime.MIN
@@ -126,7 +125,7 @@ fun updateFilterState(
         }
 
         FilterType.Per3Months, FilterType.Per6Months -> {
-            val monthsToAdd: Long = if (event == FilterType.Per3Months) 2 else 5
+            val monthsToAdd: Long = if (filterType == FilterType.Per3Months) 2 else 5
             startDate = LocalDateTime.of(
                 selectedDate.with(
                     TemporalAdjusters.firstDayOfMonth()
@@ -154,18 +153,98 @@ fun updateFilterState(
         }
     }
 
-    return currentFilterState.copy(
-        filterType = event,
+    return this.copy(
+        filterType = filterType,
         start = startDate,
         end = endDate
     )
 }
 
-fun minusFilterDate(
-    filterType: FilterType,
-    selectedDate: LocalDate
-): LocalDate {
-    return when (filterType) {
+fun FilterState.updateDate(
+    selectedDate: LocalDate,
+):FilterState {
+    val startDate: LocalDateTime
+    val endDate: LocalDateTime
+
+    when (filterType) {
+        FilterType.Daily -> {
+            startDate = LocalDateTime.of(
+                selectedDate, LocalTime.MIN
+            )
+            endDate = LocalDateTime.of(
+                selectedDate, LocalTime.MAX
+            )
+        }
+
+        FilterType.Weekly -> {
+            val monday = selectedDate.with(
+                TemporalAdjusters.previousOrSame(
+                    DayOfWeek.MONDAY
+                )
+            )
+            startDate = LocalDateTime.of(
+                monday, LocalTime.MIN
+            )
+            endDate = LocalDateTime.of(
+                monday.plusDays(
+                    6
+                ), LocalTime.MAX
+            )
+        }
+
+        FilterType.Monthly -> {
+            startDate = LocalDateTime.of(
+                selectedDate.with(
+                    TemporalAdjusters.firstDayOfMonth()
+                ), LocalTime.MIN
+            )
+            endDate = LocalDateTime.of(
+                selectedDate.with(
+                    TemporalAdjusters.lastDayOfMonth()
+                ), LocalTime.MAX
+            )
+        }
+
+        FilterType.Per3Months, FilterType.Per6Months -> {
+            val monthsToAdd: Long = if (filterType == FilterType.Per3Months) 2 else 5
+            startDate = LocalDateTime.of(
+                selectedDate.with(
+                    TemporalAdjusters.firstDayOfMonth()
+                ), LocalTime.MIN
+            )
+            endDate = LocalDateTime.of(
+                selectedDate.plusMonths(
+                    monthsToAdd
+                ).with(TemporalAdjusters.lastDayOfMonth()),
+                LocalTime.MAX
+            )
+        }
+
+        FilterType.Yearly -> {
+            startDate = LocalDateTime.of(
+                selectedDate.with(
+                    TemporalAdjusters.firstDayOfYear()
+                ), LocalTime.MIN
+            )
+            endDate = LocalDateTime.of(
+                selectedDate.with(
+                    TemporalAdjusters.lastDayOfYear()
+                ), LocalTime.MAX
+            )
+        }
+    }
+
+    return this.copy(
+        selectedDate = selectedDate,
+        start = startDate,
+        end = endDate
+    )
+
+}
+
+fun FilterState.minusDate(
+):FilterState {
+    val selectedDate = when (filterType) {
         FilterType.Daily -> selectedDate.minusDays(
             1
         )
@@ -190,13 +269,11 @@ fun minusFilterDate(
             1
         )
     }
+    return this.updateDate(selectedDate)
 }
 
-fun plusFilterDate(
-    filterType: FilterType,
-    selectedDate: LocalDate
-): LocalDate {
-    return when (filterType) {
+fun FilterState.plusDate():FilterState {
+     val selectedDate = when (filterType) {
         FilterType.Daily -> selectedDate.plusDays(
             1
         )
@@ -221,4 +298,5 @@ fun plusFilterDate(
             1
         )
     }
+    return this.updateDate(selectedDate)
 }

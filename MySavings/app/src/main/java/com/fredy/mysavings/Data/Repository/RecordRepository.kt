@@ -34,12 +34,6 @@ interface RecordRepository {
     suspend fun upsertRecordItem(record: Record)
     suspend fun deleteRecordItem(record: Record)
     fun getRecordById(recordId: String): Flow<TrueRecord>
-    fun getUserRecordsFromSpecificTime(
-        recordType: RecordType,
-        startDate: LocalDateTime,
-        endDate: LocalDateTime,
-        currency: List<String>,
-    ): Flow<Resource<List<Record>>>
 
     fun getUserTrueRecordMapsFromSpecificTime(
         startDate: LocalDateTime,
@@ -58,14 +52,24 @@ interface RecordRepository {
         sortType: SortType,
     ): Flow<Resource<List<RecordMap>>>
 
+    fun getUserRecordsFromSpecificTime(
+        recordType: RecordType,
+        sortType: SortType,
+        startDate: LocalDateTime,
+        endDate: LocalDateTime,
+        currency: List<String>,
+    ): Flow<Resource<List<Record>>>
+
     fun getUserCategoriesWithAmountFromSpecificTime(
         categoryType: RecordType,
+        sortType: SortType,
         startDate: LocalDateTime,
         endDate: LocalDateTime,
         currency: List<String>,
     ): Flow<Resource<List<CategoryWithAmount>>>
 
     fun getUserAccountsWithAmountFromSpecificTime(
+        sortType: SortType,
         startDate: LocalDateTime,
         endDate: LocalDateTime,
     ): Flow<Resource<List<AccountWithAmountType>>>
@@ -269,6 +273,7 @@ class RecordRepositoryImpl @Inject constructor(
 
     override fun getUserRecordsFromSpecificTime(
         recordType: RecordType,
+        sortType: SortType,
         startDate: LocalDateTime,
         endDate: LocalDateTime,
         currency: List<String>,
@@ -310,7 +315,13 @@ class RecordRepositoryImpl @Inject constructor(
                     recordsMap[key] = record
                 }
             }
-            val data = recordsMap.values.toList().sortedBy { it.recordAmount }
+            val data = recordsMap.values.toList().let { value ->
+                if (sortType == SortType.ASCENDING) {
+                    value.sortedBy { it.recordAmount }
+                } else {
+                    value.sortedByDescending { it.recordAmount }
+                }
+            }
 
             Log.i(
                 TAG,
@@ -329,6 +340,7 @@ class RecordRepositoryImpl @Inject constructor(
 
     override fun getUserCategoriesWithAmountFromSpecificTime(
         categoryType: RecordType,
+        sortType: SortType,
         startDate: LocalDateTime,
         endDate: LocalDateTime,
         currency: List<String>,
@@ -376,7 +388,13 @@ class RecordRepositoryImpl @Inject constructor(
                 }
             }
 
-            val data = categoryWithAmountMap.values.toList().sortedBy { it.amount }
+            val data = categoryWithAmountMap.values.toList().let { value ->
+                if (sortType == SortType.ASCENDING) {
+                    value.sortedBy { it.amount }
+                } else {
+                    value.sortedByDescending { it.amount }
+                }
+            }
             Log.i(
                 TAG,
                 "getUserCategoriesWithAmountFromSpecificTimeData: $data",
@@ -394,6 +412,7 @@ class RecordRepositoryImpl @Inject constructor(
 
 
     override fun getUserAccountsWithAmountFromSpecificTime(
+        sortType: SortType,
         startDate: LocalDateTime,
         endDate: LocalDateTime,
     ): Flow<Resource<List<AccountWithAmountType>>> {
@@ -452,7 +471,13 @@ class RecordRepositoryImpl @Inject constructor(
                 }
             }
 
-            val data = accountWithAmountMap.values.toList().sortedBy { it.account.accountName }
+            val data = accountWithAmountMap.values.toList().let { value ->
+                if (sortType == SortType.ASCENDING) {
+                    value.sortedBy { it.account.accountName }
+                } else {
+                    value.sortedByDescending { it.account.accountName }
+                }
+            }
             Log.i(
                 TAG,
                 "getUserAccountsWithAmountFromSpecificTimeData: $data",
@@ -575,7 +600,7 @@ class RecordRepositoryImpl @Inject constructor(
                     record.recordCurrency,
                     userCurrency
                 )
-            }+ recordDataSource.getUserRecordsByType(
+            } + recordDataSource.getUserRecordsByType(
                 userId, RecordType.Income
             ).sumOf { record ->
                 currencyConverter(

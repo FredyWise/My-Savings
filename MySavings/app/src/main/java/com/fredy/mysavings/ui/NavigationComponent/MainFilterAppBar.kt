@@ -8,9 +8,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.Data.Enum.FilterType
-import com.fredy.mysavings.ViewModels.BalanceBar
+import com.fredy.mysavings.Util.BalanceBar
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.BalanceBar
-import com.fredy.mysavings.ui.Screens.ZCommonComponent.BalanceItem
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.DisplayBar
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.FilterDialog
 import java.time.LocalDate
@@ -27,6 +26,12 @@ fun MainFilterAppBar(
     checkboxesFilter: List<String> = emptyList(),
     selectedCheckbox: List<String> = emptyList(),
     onSelectCheckboxFilter: (List<String>) -> Unit,
+    sortType: Boolean = false,
+    carryOn: Boolean = true,
+    showTotal: Boolean = true,
+    onShortChange: () -> Unit = {},
+    onCarryOnChange: () -> Unit = {},
+    onShowTotalChange: () -> Unit = {},
     onDismissFilterDialog: () -> Unit,
     balanceBar: BalanceBar,
     onPrevious: () -> Unit,
@@ -37,12 +42,26 @@ fun MainFilterAppBar(
     trailingIcon: @Composable () -> Unit = {},
     content: @Composable () -> Unit,
 ) {
+    val displayedBalance = mutableListOf(
+        balanceBar.expense,
+        balanceBar.income
+    )
+    if (showTotal) {
+        displayedBalance.add(balanceBar.balance)
+    }
+
     if (isChoosingFilter) {
         FilterDialog(
             title = "Display Option",
             selectedName = selectedFilter,
             checkboxList = checkboxesFilter,
             selectedCheckbox = selectedCheckbox,
+            sortType = sortType,
+            carryOn = carryOn,
+            showTotal = showTotal,
+            onShortChange = onShortChange,
+            onCarryOnChange = onCarryOnChange,
+            onShowTotalChange = onShowTotalChange,
             onDismissRequest = onDismissFilterDialog,
             onSelectItem = { item ->
                 onSelectFilter(item)
@@ -72,11 +91,7 @@ fun MainFilterAppBar(
                     MaterialTheme.colorScheme.surface
                 )
                 .padding(vertical = 5.dp),
-            amountBars = listOf(
-                balanceBar.expense,
-                balanceBar.income,
-                balanceBar.balance,
-            )
+            amountBars = displayedBalance
         )
         content()
     }

@@ -118,7 +118,10 @@ fun AddScreen(
                 viewModel.onEvent(AddRecordEvent.ConvertCurrency)
             },
         ) {
-            Text(text = resource.message.toString())
+            Text(
+                text = resource.message.toString(),
+                style = MaterialTheme.typography.titleLarge
+            )
         }
     }
 

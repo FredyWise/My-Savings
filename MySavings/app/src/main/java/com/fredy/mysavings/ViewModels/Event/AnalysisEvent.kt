@@ -13,6 +13,9 @@ sealed interface AnalysisEvent{
     object ShowNextList: AnalysisEvent
     object ShowPreviousList: AnalysisEvent
     object ToggleRecordType: AnalysisEvent
+    object ToggleSortType: AnalysisEvent
+    object ToggleShowTotal: AnalysisEvent
+    object ToggleCarryOn: AnalysisEvent
     data class DeleteRecord(val record: Record): AnalysisEvent
 
 }

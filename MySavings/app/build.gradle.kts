@@ -113,7 +113,7 @@ dependencies {
     //    Navigation
     implementation("androidx.navigation:navigation-compose:2.7.6")
 
-    var compose_version = "1.5.4"
+    var compose_version = "1.6.0"
     // Compose Material Design
     implementation("androidx.compose.material:material:$compose_version")
     // Compose UI
@@ -132,5 +132,8 @@ dependencies {
     kapt("com.google.dagger:hilt-android-compiler:2.50")
     kapt("androidx.hilt:hilt-compiler:1.1.0")
     implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
+
+    //Biometric Auth
+//    implementation ("androidx.biometric:biometric-ktx:1.2.0-alpha05")
 
 }

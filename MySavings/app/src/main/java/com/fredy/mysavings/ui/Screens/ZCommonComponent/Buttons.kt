@@ -149,6 +149,7 @@ fun CheckBoxes(
 
 @Composable
 fun Switch(
+    modifier: Modifier = Modifier,
     switchState: Boolean = false,
     leftIcon: ImageVector,
     rightIcon: ImageVector,
@@ -163,10 +164,10 @@ fun Switch(
 ) {
     val offset by animateDpAsState(
         targetValue = if (switchState) 0.dp else size,
-        animationSpec = animationSpec
+        animationSpec = animationSpec, label = ""
     )
 
-    Box(modifier = Modifier
+    Box(modifier = modifier
         .width(size * 2)
         .height(size)
         .clip(shape = parentShape)

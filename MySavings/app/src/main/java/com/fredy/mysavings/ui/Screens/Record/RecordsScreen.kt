@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import com.fredy.mysavings.Data.Enum.SortType
 import com.fredy.mysavings.Util.formatRangeOfDate
 import com.fredy.mysavings.ViewModels.Event.RecordsEvent
 import com.fredy.mysavings.ViewModels.RecordState
@@ -52,17 +53,17 @@ fun RecordsScreen(
     }
     MainFilterAppBar(
         modifier = modifier,
-        selectedDate = state.selectedDate,
+        selectedDate = state.filterState.selectedDate,
         onDateChange = {
             onEvent(
                 RecordsEvent.ChangeDate(it)
             )
         },
         selectedDateFormat = formatRangeOfDate(
-            state.selectedDate, state.filterType
+            state.filterState.selectedDate, state.filterState.filterType
         ),
         isChoosingFilter = state.isChoosingFilter,
-        selectedFilter = state.filterType.name,
+        selectedFilter = state.filterState.filterType.name,
         checkboxesFilter = state.availableCurrency,
         selectedCheckbox = state.selectedCheckbox,
         onDismissFilterDialog = {
@@ -93,6 +94,15 @@ fun RecordsScreen(
                 tint = MaterialTheme.colorScheme.onSurface,
             )
         },
+        sortType = when(state.filterState.sortType){
+            SortType.ASCENDING -> true
+            SortType.DESCENDING -> false
+        },
+        showTotal = state.filterState.showTotal,
+        carryOn = state.filterState.carryOn,
+        onShowTotalChange = {onEvent(RecordsEvent.ToggleShowTotal)},
+        onCarryOnChange = {onEvent(RecordsEvent.ToggleCarryOn)},
+        onShortChange = {onEvent(RecordsEvent.ToggleSortType)},
         onPrevious = { onEvent(RecordsEvent.ShowPreviousList) },
         onNext = { onEvent(RecordsEvent.ShowNextList) },
         onLeadingIconClick = {},

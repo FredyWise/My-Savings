@@ -42,7 +42,7 @@ fun AnalysisFlow(
     state: AnalysisState,
     onEvent: (AnalysisEvent) -> Unit,
 ) {
-    val key = state.recordsWithinTimeResource.hashCode()
+    val key = state.analysisData.recordsWithinTimeResource.hashCode()
     val isVisible = remember(key) {
         MutableTransitionState(
             false
@@ -64,10 +64,10 @@ fun AnalysisFlow(
             targetOffsetY = { fullHeight -> fullHeight },
         ) + fadeOut()
     ) {
-        state.recordsWithinTimeResource.let { resource ->
+        state.analysisData.recordsWithinTimeResource.let { resource ->
             ResourceHandler(
                 resource = resource,
-                nullOrEmptyMessage = "There is no ${state.recordType.name} on this date yet",
+                nullOrEmptyMessage = "There is no ${state.filterState.recordType.name} on this date yet",
                 errorMessage = resource.message ?: "",
                 isNullOrEmpty = { it.isNullOrEmpty() },
                 onMessageClick = {
@@ -104,11 +104,11 @@ fun AnalysisFlow(
                         calendarInput = items.associate {
                             it.recordDateTime.dayOfMonth to it.recordAmount.toString()
                         }.toMutableMap(),
-                        date = state.selectedDate,
+                        date = state.filterState.selectedDate,
                         title = {
                             Text(
-                                text = state.recordType.name + ": " + formatRangeOfDate(
-                                    state.selectedDate, state.filterType
+                                text = state.filterState.recordType.name + ": " + formatRangeOfDate(
+                                    state.filterState.selectedDate, state.filterState.filterType
                                 ),
                                 modifier = Modifier.clickable {
                                     onEvent(

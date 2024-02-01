@@ -29,7 +29,6 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DisplayBar(
     modifier: Modifier = Modifier,
@@ -45,6 +44,7 @@ fun DisplayBar(
     tint: Color = MaterialTheme.colorScheme.onSurface
 ) {
     val dateDialogState = rememberMaterialDialogState()
+
     Row(
         modifier = modifier
             .fillMaxWidth()

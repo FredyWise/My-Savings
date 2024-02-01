@@ -4,26 +4,24 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fredy.mysavings.Data.Database.Model.TrueRecord
-import com.fredy.mysavings.Data.Database.Model.UserData
-import com.fredy.mysavings.Data.Enum.FilterType
 import com.fredy.mysavings.Data.Enum.RecordType
 import com.fredy.mysavings.Data.Enum.SortType
 import com.fredy.mysavings.Data.Repository.AccountRepository
 import com.fredy.mysavings.Data.Repository.RecordRepository
-import com.fredy.mysavings.Data.Repository.UserRepository
+import com.fredy.mysavings.Util.BalanceBar
 import com.fredy.mysavings.Util.BalanceItem
 import com.fredy.mysavings.Util.FilterState
 import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.TAG
 import com.fredy.mysavings.Util.map
-import com.fredy.mysavings.Util.minusFilterDate
-import com.fredy.mysavings.Util.plusFilterDate
-import com.fredy.mysavings.Util.updateFilterState
+import com.fredy.mysavings.Util.minusDate
+import com.fredy.mysavings.Util.plusDate
+import com.fredy.mysavings.Util.updateDate
+import com.fredy.mysavings.Util.updateType
 import com.fredy.mysavings.ViewModels.Event.RecordsEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
@@ -31,9 +29,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
-import java.time.temporal.TemporalAdjusters
 import javax.inject.Inject
 
 
@@ -67,10 +62,7 @@ class RecordViewModel @Inject constructor(
     private val _records = _filterState.flatMapLatest { filterState ->
         filterState.map { start, end, _, sortType, currencies ->
             recordRepository.getUserTrueRecordMapsFromSpecificTime(
-                start,
-                end,
-                sortType,
-                currencies
+                start, end, sortType, currencies
             )
         }
     }.stateIn(
@@ -85,17 +77,25 @@ class RecordViewModel @Inject constructor(
         BalanceItem()
     )
 
-    private val _totalExpense = recordRepository.getUserTotalAmountByType(
-        RecordType.Expense
-    ).stateIn(
+    private val _totalExpense = _filterState.flatMapLatest { filterState ->
+        filterState.map { start, end, _, _, _ ->
+            recordRepository.getUserTotalAmountByTypeFromSpecificTime(
+                RecordType.Expense, start, end
+            )
+        }
+    }.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(),
         BalanceItem()
     )
 
-    private val _totalIncome= recordRepository.getUserTotalAmountByType(
-        RecordType.Income
-    ).stateIn(
+    private val _totalIncome = _filterState.flatMapLatest { filterState ->
+        filterState.map { start, end, _, _, _ ->
+            recordRepository.getUserTotalAmountByTypeFromSpecificTime(
+                RecordType.Income, start, end
+            )
+        }
+    }.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(),
         BalanceItem()
@@ -109,12 +109,17 @@ class RecordViewModel @Inject constructor(
         _balanceBar,
         _totalExpense,
         _totalIncome,
-        _totalBalance
-    ) { balanceBar, totalExpense, totalIncome, totalBalance ->
+        _totalBalance,
+        _filterState,
+    ) { balanceBar, totalExpense, totalIncome, totalBalance, filterState ->
         balanceBar.copy(
             expense = totalExpense,
             income = totalIncome,
-            balance = totalBalance,
+            balance = if (filterState.carryOn) totalBalance else BalanceItem(
+                name = totalBalance.name,
+                amount = totalExpense.amount + totalIncome.amount,
+                currency = totalBalance.currency
+            ),
         )
     }.stateIn(
         viewModelScope,
@@ -131,11 +136,13 @@ class RecordViewModel @Inject constructor(
         _records,
         _availableCurrency,
         balanceBar,
-    ) { state, records, availableCurrency, balanceBar ->
+        _filterState,
+    ) { state, records, availableCurrency, balanceBar, filterState ->
         state.copy(
             recordMapsResource = records,
             availableCurrency = availableCurrency,
-            balanceBar = balanceBar
+            balanceBar = balanceBar,
+            filterState = filterState
         )
     }.stateIn(
         viewModelScope,
@@ -187,40 +194,26 @@ class RecordViewModel @Inject constructor(
             }
 
             is RecordsEvent.FilterRecord -> {
-                _state.update {
-                    it.copy(
-                        filterType = event.filterType
-                    )
+                _filterState.update {
+                    it.updateType(event.filterType)
                 }
             }
 
             is RecordsEvent.ShowNextList -> {
-                _state.update {
-                    it.copy(
-                        selectedDate = plusFilterDate(
-                            state.value.filterType,
-                            it.selectedDate
-                        )
-                    )
+                _filterState.update {
+                    it.plusDate()
                 }
             }
 
             is RecordsEvent.ShowPreviousList -> {
-                _state.update {
-                    it.copy(
-                        selectedDate = minusFilterDate(
-                            state.value.filterType,
-                            it.selectedDate
-                        )
-                    )
+                _filterState.update {
+                    it.minusDate()
                 }
             }
 
             is RecordsEvent.ChangeDate -> {
-                _state.update {
-                    it.copy(
-                        selectedDate = event.selectedDate
-                    )
+                _filterState.update {
+                    it.updateDate(event.selectedDate)
                 }
             }
 
@@ -238,13 +231,28 @@ class RecordViewModel @Inject constructor(
                     it.copy(selectedCheckbox = event.selectedCurrencies)
                 }
             }
-        }
-        _filterState.update {
-            updateFilterState(
-                state.value.filterType,
-                state.value.selectedDate,
-                it
-            )
+
+            is RecordsEvent.ToggleSortType -> {
+                _filterState.update {
+                    it.copy(
+                        sortType = when (it.sortType) {
+                            SortType.ASCENDING -> SortType.DESCENDING
+                            SortType.DESCENDING -> SortType.ASCENDING
+                        }
+                    )
+                }
+            }
+
+            RecordsEvent.ToggleCarryOn -> {
+                _filterState.update {
+                    it.copy(carryOn = !it.carryOn)
+                }
+            }
+            RecordsEvent.ToggleShowTotal -> {
+                _filterState.update {
+                    it.copy(showTotal = !it.showTotal)
+                }
+            }
         }
     }
 
@@ -256,10 +264,8 @@ data class RecordState(
     val availableCurrency: List<String> = listOf(),
     val selectedCheckbox: List<String> = listOf(),
     val balanceBar: BalanceBar = BalanceBar(),
-    val sortType: SortType = SortType.ASCENDING,
-    val selectedDate: LocalDate = LocalDate.now(),
     val isChoosingFilter: Boolean = false,
-    val filterType: FilterType = FilterType.Monthly
+    val filterState: FilterState = FilterState()
 )
 
 data class RecordMap(
@@ -267,9 +273,5 @@ data class RecordMap(
     val records: List<TrueRecord>
 )
 
-data class BalanceBar(
-    val expense: BalanceItem = BalanceItem(),
-    val income: BalanceItem = BalanceItem(),
-    val balance: BalanceItem = BalanceItem(),
-)
+
 

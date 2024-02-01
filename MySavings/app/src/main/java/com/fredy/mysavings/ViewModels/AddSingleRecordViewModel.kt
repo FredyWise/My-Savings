@@ -1,6 +1,5 @@
 package com.fredy.mysavings.ViewModels
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -13,7 +12,6 @@ import com.fredy.mysavings.Data.Enum.RecordType
 import com.fredy.mysavings.Data.Repository.CurrencyRepository
 import com.fredy.mysavings.Data.Repository.RecordRepository
 import com.fredy.mysavings.Util.Resource
-import com.fredy.mysavings.Util.TAG
 import com.fredy.mysavings.Util.isExpense
 import com.fredy.mysavings.Util.isIncome
 import com.fredy.mysavings.Util.isTransfer
@@ -147,7 +145,7 @@ class AddSingleRecordViewModel @Inject constructor(
                     if (!state.isAgreeToConvert && fromAccountCurrency != toAccountCurrency) {
                         resource.update {
                             Resource.Error(
-                                "Record Type is not the same with category type!!!, " + "Are you sure want to Transfer from $fromAccountCurrency to ${toAccountCurrency}?"
+                                "Account Currencies Are not The same!!!, " + "Are you sure want to Transfer from $fromAccountCurrency Currency to ${toAccountCurrency} Currency? \n(Result Will be Converted)"
                             )
                         }
                         state = state.copy(
@@ -193,7 +191,6 @@ class AddSingleRecordViewModel @Inject constructor(
 
                 state = AddRecordState()
                 event.navigateUp()
-
             }
 
             is AddRecordEvent.AccountIdFromFk -> {
@@ -202,7 +199,6 @@ class AddSingleRecordViewModel @Inject constructor(
                     accountIdFromFk = event.fromAccount.accountId,
                     fromAccount = event.fromAccount
                 )
-
             }
 
             is AddRecordEvent.AccountIdToFk -> {
@@ -210,7 +206,6 @@ class AddSingleRecordViewModel @Inject constructor(
                     accountIdToFk = event.toAccount.accountId,
                     toAccount = event.toAccount
                 )
-
             }
 
             is AddRecordEvent.CategoryIdFk -> {
@@ -218,35 +213,30 @@ class AddSingleRecordViewModel @Inject constructor(
                     categoryIdFk = event.toCategory.categoryId,
                     toCategory = event.toCategory
                 )
-
             }
 
             is AddRecordEvent.RecordDate -> {
                 state = state.copy(
                     recordDate = event.date
                 )
-
             }
 
             is AddRecordEvent.RecordTime -> {
                 state = state.copy(
                     recordTime = event.time
                 )
-
             }
 
             is AddRecordEvent.RecordAmount -> {//useless
                 state = state.copy(
                     recordAmount = calcState.number1.toDouble()//useless
                 )
-
             }
 
             is AddRecordEvent.RecordCurrency -> {//useless
                 state = state.copy(
                     recordCurrency = event.currency
                 )
-
             }
 
             is AddRecordEvent.RecordTypes -> {
@@ -260,7 +250,6 @@ class AddSingleRecordViewModel @Inject constructor(
                 state = state.copy(
                     recordNotes = event.notes
                 )
-
             }
 
             is AddRecordEvent.ShowWarning -> {

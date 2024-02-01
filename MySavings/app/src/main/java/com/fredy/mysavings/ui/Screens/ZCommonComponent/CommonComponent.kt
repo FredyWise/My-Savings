@@ -25,7 +25,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -243,6 +243,7 @@ fun AdvancedEntityItem(
 @Composable
 fun CustomStickyHeader(
     modifier: Modifier = Modifier,
+    topPadding: Dp = 28.dp,
     title: String,
     textStyle: TextStyle
 ) {
@@ -257,7 +258,7 @@ fun CustomStickyHeader(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(
-                    top = 28.dp,
+                    top = topPadding,
                     start = 8.dp,
                     bottom = 4.dp
                 ),
