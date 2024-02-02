@@ -18,7 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -43,7 +43,7 @@ import com.fredy.mysavings.Data.Enum.AuthMethod
 import com.fredy.mysavings.R
 import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.TAG
-import com.fredy.mysavings.Util.emailLogin
+import com.fredy.mysavings.Util.isValidLogin
 import com.fredy.mysavings.Util.isValidPhoneNumber
 import com.fredy.mysavings.ViewModels.AuthState
 import com.fredy.mysavings.ViewModels.Event.AuthEvent
@@ -215,7 +215,7 @@ fun SignIn(
                     )
                 }
             },
-            enabled = if (switchState) emailLogin(
+            enabled = if (switchState) isValidLogin(
                 emailOrPhone,
                 password
             ) else isValidPhoneNumber(emailOrPhone),
@@ -243,7 +243,6 @@ fun SignIn(
                     modifier = Modifier.padding(10.dp)
                 )
             }
-
         }
         Spacer(modifier = Modifier.height(8.dp))
         Text(

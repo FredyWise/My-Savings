@@ -34,13 +34,18 @@ class AccountViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             userRepository.getCurrentUser().collectLatest { currentUser ->
-                currentUser?.let {
-                    _state.update {
-                        AccountState(
-                            currentUser = currentUser,
-                            accountCurrency = currentUser.userCurrency
-                        )
+                when(currentUser){
+                    is Resource.Success -> {
+                        currentUser.data?.let { user ->
+                            _state.update {
+                                AccountState(
+                                    currentUser = user,
+                                    accountCurrency = user.userCurrency
+                                )
+                            }
+                        }
                     }
+                    else -> {}
                 }
             }
         }

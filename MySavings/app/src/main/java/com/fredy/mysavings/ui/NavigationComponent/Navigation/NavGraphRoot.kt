@@ -57,7 +57,7 @@ fun NavGraphRoot(
         composable(
             route = Graph.FirstNav,
         ) {
-//            Box(modifier = Modifier.fillMaxSize())
+            Box(modifier = Modifier.fillMaxSize())
             Log.d(TAG, "NavGraphRoot: ")
             val state by authViewModel.state.collectAsStateWithLifecycle()
             val startDestination = if (state.signedInUser != null) Graph.MainNav else Graph.Auth
@@ -76,21 +76,19 @@ fun NavGraphRoot(
             composable(
                 route = Graph.HomeNav,
             ) {
+                authViewModel.onEvent(
+                    AuthEvent.GetCurrentUser
+                )
                 val state by authViewModel.state.collectAsStateWithLifecycle()
-
-                state.signedInUser?.let {
-                    MainScreen(
-                        rootNavController = navController,
-                        signOut = {
-                            authViewModel.onEvent(
-                                AuthEvent.SignOut
-                            )
-                        },
-                        currentUser = it
-                    )
-                } ?: run {
-                    Box(modifier = Modifier.fillMaxSize()) {}
-                }
+                MainScreen(
+                    rootNavController = navController,
+                    signOut = {
+                        authViewModel.onEvent(
+                            AuthEvent.SignOut
+                        )
+                    },
+                    currentUser = state.signedInUser
+                )
             }
             composable(
                 route = NavigationRoute.BulkAdd.route,
@@ -152,10 +150,19 @@ fun NavGraphRoot(
             composable(
                 route = NavigationRoute.Profile.route,
             ) {
-                ProfileScreen(
-                    title = NavigationRoute.Profile.title,
-                    rootNavController = navController
-                )
+                val state by authViewModel.state.collectAsStateWithLifecycle()
+
+                state.signedInUser?.let {
+                    ProfileScreen(
+                        rootNavController = navController,
+                        title = NavigationRoute.Profile.title,
+                        currentUserData = it,
+                        state = state,
+                        onEvent = authViewModel::onEvent
+                    )
+                } ?: run {
+                    Box(modifier = Modifier.fillMaxSize())
+                }
             }
             composable(
                 route = NavigationRoute.Search.route,

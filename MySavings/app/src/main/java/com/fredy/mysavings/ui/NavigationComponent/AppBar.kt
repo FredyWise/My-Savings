@@ -9,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -35,9 +36,8 @@ fun AppBar(
     backgroundColor: Color = MaterialTheme.colorScheme.surface,
     contentColor: Color = MaterialTheme.colorScheme.onSurface,
     onNavigationIconClick: () -> Unit,
-//    onSearchButtonClick: () -> Unit,
     onProfilePictureClick: () -> Unit,
-    currentUser: UserData,
+    currentUser: UserData?,
 ) {
     TopAppBar(
         modifier = modifier,
@@ -58,26 +58,6 @@ fun AppBar(
             }
         },
         actions = {
-//            Box(
-//                modifier = Modifier
-//                    .padding(
-//                        horizontal = 8.dp
-//                    )
-//                    .size(40.dp)
-//                    .clip(CircleShape)
-//                    .clickable {
-//                        onSearchButtonClick()
-//                    },
-//                contentAlignment = Alignment.Center
-//            ) {
-//                Icon(
-//                    imageVector = Icons.Default.Search,
-//                    contentDescription = "Search",
-//                    modifier = Modifier.size(
-//                        30.dp
-//                    ),
-//                )
-//            }
             Box(
                 modifier = Modifier
                     .padding(
@@ -89,24 +69,33 @@ fun AppBar(
                         onProfilePictureClick()
                     },
             ) {
-                if (currentUser.profilePictureUrl != null && currentUser.profilePictureUrl != "null") {
-                    AsyncImage(
-                        model = currentUser.profilePictureUrl,
-                        contentDescription = "Profile picture",
-                        modifier = Modifier.size(
-                            40.dp
+                currentUser?.let {
+                    if (it.profilePictureUrl != null && it.profilePictureUrl != "null") {
+                        AsyncImage(
+                            model = it.profilePictureUrl,
+                            contentDescription = "Profile picture",
+                            modifier = Modifier.size(
+                                40.dp
+                            ),
+                            contentScale = ContentScale.Crop
+                        )
+                    } else {
+                        Icon(
+                            imageVector = Icons.Default.AccountCircle,
+                            contentDescription = "Profile picture",
+                            modifier = Modifier.size(
+                                40.dp
+                            ),
+                        )
+                    }
+                }?: CircularProgressIndicator(
+                    modifier = Modifier
+                        .size(
+                            16.dp
                         ),
-                        contentScale = ContentScale.Crop
-                    )
-                } else {
-                    Icon(
-                        imageVector = Icons.Default.AccountCircle,
-                        contentDescription = "Profile picture",
-                        modifier = Modifier.size(
-                            40.dp
-                        ),
-                    )
-                }
+                    strokeWidth = 2.dp,
+                    color = contentColor
+                )
             }
         },
     )

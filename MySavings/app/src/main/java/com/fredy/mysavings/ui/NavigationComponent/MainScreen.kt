@@ -59,7 +59,7 @@ fun MainScreen(
     contentColor: Color = MaterialTheme.colorScheme.surface,
     onContentColor: Color = MaterialTheme.colorScheme.onSurface,
     rootNavController: NavHostController,
-    currentUser: UserData,
+    currentUser: UserData?,
     signOut: () -> Unit,
 ) {
     val navController = rememberNavController()

@@ -1,6 +1,6 @@
 package com.fredy.mysavings.Util
 
-fun emailLogin(
+fun isValidLogin(
     email: String, password: String
 ): Boolean {
     return isValidEmail(email) && isValidPassword(password)
@@ -28,4 +28,8 @@ fun isValidPhoneNumber(phoneNumber: String): Boolean {
     val phoneRegex = Regex("^\\+?[0-9-]+\$")
 
     return phoneNumber.matches(phoneRegex) && isNumberLengthValid
+}
+
+fun isValidEmailOrPhone(emailOrPhoneNumber:String):Boolean{
+    return isValidEmail(emailOrPhoneNumber) || isValidPhoneNumber(emailOrPhoneNumber)
 }

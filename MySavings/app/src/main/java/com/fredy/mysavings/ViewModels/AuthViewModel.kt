@@ -26,7 +26,7 @@ class AuthViewModel @Inject constructor(
     private val repository: AuthRepository,
     private val userRepository: UserRepository,
     private val currentUserData: UserData?,
-): ViewModel() {
+) : ViewModel() {
 
     private val _state = MutableStateFlow(
         AuthState()
@@ -49,7 +49,7 @@ class AuthViewModel @Inject constructor(
                 viewModelScope.launch {
                     repository.googleSignIn(event.credential).collect { result ->
                         if (result is Resource.Success) {
-                            upsertUser(result)
+                            insertUser(result)
                         }
                         _state.update {
                             it.copy(
@@ -96,7 +96,7 @@ class AuthViewModel @Inject constructor(
                         event.code
                     ).collect { result ->
                         if (result is Resource.Success) {
-                            upsertUser(result)
+                            insertUser(result)
                         }
                         _state.update {
                             it.copy(
@@ -131,7 +131,7 @@ class AuthViewModel @Inject constructor(
                         event.password
                     ).collect { result ->
                         if (result is Resource.Success) {
-                            upsertUser(
+                            insertUser(
                                 result,
                                 event.photoUrl
                             )
@@ -146,15 +146,49 @@ class AuthViewModel @Inject constructor(
                 }
             }
 
+            is AuthEvent.UpdateUserData -> {
+                viewModelScope.launch {
+                    _state.update { it.copy(updateResource = Resource.Loading()) }
+                    val user = _state.value.signedInUser!!.run {
+                        val profilePictureUrl = if (event.photoUrl != Uri.EMPTY) {
+                            uploadProfilePicture(
+                                firebaseUserId, event.photoUrl
+                            )
+                        } else {
+                            profilePictureUrl
+                        }
+                        UserData(
+                            firebaseUserId = firebaseUserId,
+                            username = event.username,
+                            emailOrPhone = event.email,
+                            profilePictureUrl = profilePictureUrl
+                        )
+                    }
+                    userRepository.upsertUser(user)
+                    _state.update { it.copy(updateResource = Resource.Success("User Data Successfully Updated")) }
+                    onEvent(AuthEvent.GetCurrentUser)
+
+                }
+            }
+
             AuthEvent.GetCurrentUser -> {
                 viewModelScope.launch {
                     userRepository.getCurrentUser().collectLatest { currentUser ->
-                        _state.update {
-                            it.copy(
-                                signedInUser = currentUser
-                            )
+                        when (currentUser) {
+                            is Resource.Success -> {
+                                currentUser.data?.let { user ->
+                                    _state.update {
+                                        it.copy(
+                                            signedInUser = user
+                                        )
+                                    }
+                                }
+                            }
+                            else -> {
+                            }
                         }
                     }
+                    _state.update { it.copy(updateResource = Resource.Error("")) }
                 }
             }
 
@@ -169,17 +203,17 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    private suspend fun upsertUser(
+    private suspend fun insertUser(
         result: Resource<AuthResult>,
-        photoUri: Uri? = null
+        photoUri: Uri = Uri.EMPTY
     ) {
         val user = result.data!!.user
         val userData = user?.run {
-            val profilePictureUrl = photoUri?.let {
+            val profilePictureUrl = if (photoUri != Uri.EMPTY) {
                 uploadProfilePicture(
-                    uid, it
+                    uid, photoUri
                 )
-            } ?: run {
+            } else {
                 photoUrl.toString()
             }
             UserData(
@@ -189,7 +223,7 @@ class AuthViewModel @Inject constructor(
                 profilePictureUrl = profilePictureUrl
             )
         }
-        userRepository.upsertUser(
+        userRepository.insertUser(
             userData!!
         )
     }
@@ -197,10 +231,9 @@ class AuthViewModel @Inject constructor(
     private suspend fun uploadProfilePicture(
         uid: String, imageUri: Uri
     ): String {
-        val storageRef = Firebase.storage.reference
-        val profilePictureRef = storageRef.child("profile_pictures/$uid.jpg")
-
         return try {
+            val storageRef = Firebase.storage.reference
+            val profilePictureRef = storageRef.child("profile_pictures/$uid.jpg")
             val downloadUri = profilePictureRef.putFile(
                 imageUri
             ).await().storage.downloadUrl.await()
@@ -212,6 +245,7 @@ class AuthViewModel @Inject constructor(
 }
 
 data class AuthState(
+    val updateResource: Resource<String> = Resource.Error(""),
     val authResource: Resource<AuthResult> = Resource.Loading(),
     val sendOtpResource: Resource<String> = Resource.Loading(),
     val authType: AuthMethod = AuthMethod.None,

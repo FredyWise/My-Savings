@@ -30,6 +30,12 @@ sealed interface AuthEvent {
         val photoUrl: Uri,
     ): AuthEvent
 
+    data class UpdateUserData(
+        val email: String,
+        val username: String,
+        val photoUrl: Uri,
+    ): AuthEvent
+
     object SignOut: AuthEvent
     object GetCurrentUser: AuthEvent
 

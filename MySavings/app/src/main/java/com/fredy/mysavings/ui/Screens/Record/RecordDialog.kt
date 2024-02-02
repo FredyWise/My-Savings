@@ -36,12 +36,20 @@ import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleEntityItem
 
 @Composable
 fun RecordDialog(
-    trueRecord: TrueRecord,
-    onEvent: (RecordsEvent) -> Unit,
-    onEdit: () -> Unit,
     modifier: Modifier = Modifier,
-    onSurface: Color = MaterialTheme.colorScheme.onSurface,
-    onPrimary: Color = MaterialTheme.colorScheme.onSecondary
+    onSurface: Color = MaterialTheme.colorScheme.onBackground,
+    surface:Color = MaterialTheme.colorScheme.surface.copy(alpha = 0.8f),
+    background :Color = MaterialTheme.colorScheme.background,
+    onAmountBox: Color = MaterialTheme.colorScheme.onSecondary,
+    onEdit: () -> Unit,
+    trueRecord: TrueRecord,
+    balanceColor: Color = BalanceColor(
+        amount = trueRecord.record.recordAmount,
+        isTransfer = isTransfer(
+            trueRecord.record.recordType
+        )
+    ).copy(alpha = 0.9f),
+    onEvent: (RecordsEvent) -> Unit,
 ) {
     Dialog(onDismissRequest = {
         onEvent(
@@ -50,25 +58,21 @@ fun RecordDialog(
     }) {
         Column(
             modifier = modifier
+                .background(background)
                 .padding(
                     vertical = 4.dp
                 )
                 .clip(MaterialTheme.shapes.medium)
                 .border(
                     width = 2.dp,
-                    color = MaterialTheme.colorScheme.secondary,
+                    color =balanceColor,
                     shape = MaterialTheme.shapes.medium
                 ),
         ) {
             Box(
                 modifier = Modifier
                     .background(
-                        color = BalanceColor(
-                            amount = trueRecord.record.recordAmount,
-                            isTransfer = isTransfer(
-                                trueRecord.record.recordType
-                            )
-                        )
+                        color = balanceColor
                     )
                     .padding(8.dp)
             ) {
@@ -87,7 +91,7 @@ fun RecordDialog(
                                 .padding(4.dp),
                             imageVector = Icons.Outlined.Close,
                             contentDescription = "",
-                            tint = onPrimary,
+                            tint = onAmountBox,
                         )
                         Divider(
                             modifier = Modifier.weight(
@@ -113,7 +117,7 @@ fun RecordDialog(
                                 .padding(4.dp),
                             imageVector = Icons.Outlined.Delete,
                             contentDescription = "",
-                            tint = onPrimary,
+                            tint = onAmountBox,
                         )
                         Icon(
                             modifier = Modifier
@@ -129,7 +133,7 @@ fun RecordDialog(
                                 .padding(4.dp),
                             imageVector = Icons.Outlined.Edit,
                             contentDescription = "",
-                            tint = onPrimary,
+                            tint = onAmountBox,
                         )
                     }
                     Column(
@@ -138,9 +142,9 @@ fun RecordDialog(
                     ) {
                         BalanceItem(
                             title = trueRecord.toCategory.categoryType.name,
-                            titleColor = onPrimary,
+                            titleColor = onAmountBox,
                             amount = trueRecord.record.recordAmount,
-                            amountColor = onPrimary,
+                            amountColor = onAmountBox,
                             currency = trueRecord.record.recordCurrency,
                             titleStyle = MaterialTheme.typography.titleLarge,
                             amountStyle = MaterialTheme.typography.headlineMedium
@@ -151,7 +155,7 @@ fun RecordDialog(
                                 trueRecord.record.recordDateTime
                             ),
                             textAlign = TextAlign.End,
-                            color = onPrimary
+                            color = onAmountBox
                         )
                     }
                 }
@@ -159,7 +163,7 @@ fun RecordDialog(
             Box(
                 modifier = Modifier
                     .background(
-                        color = MaterialTheme.colorScheme.surface
+                        color = surface
                     )
                     .padding(8.dp)
             ) {
@@ -173,7 +177,8 @@ fun RecordDialog(
                         Text(
                             text = if (isTransfer(
                                     trueRecord.record.recordType
-                                )) "From: " else "Account: ",
+                                )
+                            ) "From: " else "Account: ",
                             color = onSurface
                         )
                         SimpleEntityItem(
@@ -186,11 +191,11 @@ fun RecordDialog(
                                 )
                                 .border(
                                     width = 2.dp,
-                                    color = MaterialTheme.colorScheme.secondary,
+                                    color =balanceColor,
                                     shape = MaterialTheme.shapes.medium
                                 )
                                 .background(
-                                    MaterialTheme.colorScheme.surface
+                                    surface
                                 )
                                 .padding(8.dp),
                             icon = trueRecord.fromAccount.accountIcon,
@@ -230,11 +235,11 @@ fun RecordDialog(
                                 )
                                 .border(
                                     width = 2.dp,
-                                    color = MaterialTheme.colorScheme.secondary,
+                                    color =balanceColor,
                                     shape = MaterialTheme.shapes.medium
                                 )
                                 .background(
-                                    MaterialTheme.colorScheme.surface
+                                    surface
                                 )
                                 .padding(8.dp),
                             icon = trueRecord.toCategory.categoryIcon,

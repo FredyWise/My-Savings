@@ -49,9 +49,6 @@ fun NavGraphBuilder.authenticationNavGraph(
                     }
 
                     is Resource.Success -> {
-                        viewModel.onEvent(
-                            AuthEvent.GetCurrentUser
-                        )
                         Toast.makeText(
                             context,
                             "SignIn Success",
@@ -96,9 +93,6 @@ fun NavGraphBuilder.authenticationNavGraph(
                     }
 
                     is Resource.Success -> {
-                        viewModel.onEvent(
-                            AuthEvent.GetCurrentUser
-                        )
                         Toast.makeText(
                             context,
                             "SignIn Success",
