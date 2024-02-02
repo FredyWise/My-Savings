@@ -46,16 +46,16 @@ fun NavGraphRoot(
         ),
         navController = navController,
         startDestination = Graph.FirstNav,
-        route = Graph.Root
+        route = Graph.Root,
+        enterTransition = {
+            fadeIn(animationSpec = tween(300))
+        },
+        exitTransition = {
+            fadeOut(animationSpec = tween(300))
+        },
     ) {
         composable(
             route = Graph.FirstNav,
-            enterTransition = {
-                fadeIn(animationSpec = tween(300))
-            },
-            exitTransition = {
-                fadeOut(animationSpec = tween(300))
-            },
         ) {
 //            Box(modifier = Modifier.fillMaxSize())
             Log.d(TAG, "NavGraphRoot: ")
@@ -74,7 +74,7 @@ fun NavGraphRoot(
             startDestination = Graph.HomeNav,
         ) {
             composable(
-                route = Graph.HomeNav
+                route = Graph.HomeNav,
             ) {
                 val state by authViewModel.state.collectAsStateWithLifecycle()
 
@@ -150,7 +150,7 @@ fun NavGraphRoot(
                 )
             }
             composable(
-                route = NavigationRoute.Profile.route
+                route = NavigationRoute.Profile.route,
             ) {
                 ProfileScreen(
                     title = NavigationRoute.Profile.title,
@@ -158,7 +158,7 @@ fun NavGraphRoot(
                 )
             }
             composable(
-                route = NavigationRoute.Search.route
+                route = NavigationRoute.Search.route,
             ) {
                 val viewModel: SearchViewModel = hiltViewModel()
                 val state by viewModel.state.collectAsStateWithLifecycle()

@@ -159,7 +159,7 @@ class RecordRepositoryImpl @Inject constructor(
         }.catch { e ->
             Log.i(
                 TAG,
-                "getUserTrueRecordMapsFromSpecificTimeError: $e"
+                "getAllRecords.Error: $e"
             )
             emit(Resource.Error(e.message.toString()))
         }
@@ -207,7 +207,7 @@ class RecordRepositoryImpl @Inject constructor(
         }.catch { e ->
             Log.i(
                 TAG,
-                "getUserTrueRecordMapsFromSpecificTimeError: $e"
+                "getUserTrueRecordMapsFromSpecificTime.Error: $e"
             )
             emit(Resource.Error(e.message.toString()))
         }
@@ -248,7 +248,7 @@ class RecordRepositoryImpl @Inject constructor(
         }.catch { e ->
             Log.i(
                 TAG,
-                "getUserCategoryRecordsOrderedByDateTimeData: $e"
+                "getUserCategoryRecordsOrderedByDateTimeData.Error: $e"
             )
             emit(Resource.Error(e.message.toString()))
         }
@@ -289,7 +289,7 @@ class RecordRepositoryImpl @Inject constructor(
         }.catch { e ->
             Log.i(
                 TAG,
-                "getUserCategoryRecordsOrderedByDateTimeData: $e"
+                "getUserAccountRecordsOrderedByDateTime.Error: $e"
             )
             emit(Resource.Error(e.message.toString()))
         }
@@ -357,7 +357,7 @@ class RecordRepositoryImpl @Inject constructor(
         }.catch { e ->
             Log.i(
                 TAG,
-                "getUserCategoryRecordsOrderedByDateTimeData: $e"
+                "getUserRecordsFromSpecificTimeData.Error: $e"
             )
             emit(Resource.Error(e.message.toString()))
         }
@@ -429,7 +429,7 @@ class RecordRepositoryImpl @Inject constructor(
         }.catch { e ->
             Log.i(
                 TAG,
-                "getUserCategoryRecordsOrderedByDateTimeData: $e"
+                "getUserCategoriesWithAmountFromSpecificTimeData.Error: $e"
             )
             emit(Resource.Error(e.message.toString()))
         }
@@ -458,7 +458,7 @@ class RecordRepositoryImpl @Inject constructor(
             val accountWithAmountMap = mutableMapOf<String, AccountWithAmountType>()
             Log.i(
                 TAG,
-                "getUserAccountsWithAmountFromSpecificTimeResult: $records",
+                "getUserAccountsWithAmountFromSpecificTime.Result: $records",
 
                 )
             userAccounts.forEach { account ->
@@ -505,7 +505,7 @@ class RecordRepositoryImpl @Inject constructor(
             }
             Log.i(
                 TAG,
-                "getUserAccountsWithAmountFromSpecificTimeData: $data",
+                "getUserAccountsWithAmountFromSpecificTime.Data: $data",
 
                 )
             emit(Resource.Success(data))
@@ -513,7 +513,7 @@ class RecordRepositoryImpl @Inject constructor(
         }.catch { e ->
             Log.i(
                 TAG,
-                "getUserCategoryRecordsOrderedByDateTimeData: $e"
+                "getUserAccountsWithAmountFromSpecificTime.Error: $e"
             )
             emit(Resource.Error(e.message.toString()))
         }
@@ -549,14 +549,14 @@ class RecordRepositoryImpl @Inject constructor(
             )
             Log.i(
                 TAG,
-                "getUserTotalAmountByTypeResult: $data",
+                "getUserTotalAmountByType.Result: $data",
 
                 )
             emit(data)
         }.catch { e ->
             Log.i(
                 TAG,
-                "getUserCategoryRecordsOrderedByDateTimeData: $e"
+                "getUserTotalAmountByType.Error: $e"
             )
         }
     }
@@ -596,13 +596,13 @@ class RecordRepositoryImpl @Inject constructor(
 
             Log.i(
                 TAG,
-                "getUserTotalAmountByTypeFromSpecificTime: $data"
+                "getUserTotalAmountByTypeFromSpecificTime.Data: $data"
             )
             emit(data)
         }.catch { e ->
             Log.i(
                 TAG,
-                "getUserCategoryRecordsOrderedByDateTimeData: $e"
+                "getUserTotalAmountByTypeFromSpecificTime.Error: $e"
             )
         }
     }
@@ -641,14 +641,14 @@ class RecordRepositoryImpl @Inject constructor(
             )
             Log.i(
                 TAG,
-                "getUserTotalRecordBalanceResult: $data",
+                "getUserTotalRecordBalance.Result: $data",
 
                 )
             emit(data)
         }.catch { e ->
             Log.i(
                 TAG,
-                "getUserCategoryRecordsOrderedByDateTimeData: $e"
+                "getUserTotalRecordBalance.Error: $e"
             )
         }
     }

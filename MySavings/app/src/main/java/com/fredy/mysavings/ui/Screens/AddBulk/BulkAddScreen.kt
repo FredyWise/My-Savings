@@ -23,7 +23,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -45,19 +44,14 @@ import coil.compose.rememberImagePainter
 import com.canhub.cropper.CropImageContract
 import com.canhub.cropper.CropImageContractOptions
 import com.canhub.cropper.CropImageOptions
-import com.fredy.mysavings.Data.Database.Model.Account
-import com.fredy.mysavings.Data.Database.Model.Category
 import com.fredy.mysavings.R
 import com.fredy.mysavings.Util.isTransfer
 import com.fredy.mysavings.ViewModels.AccountViewModel
 import com.fredy.mysavings.ViewModels.AddSingleRecordViewModel
 import com.fredy.mysavings.ViewModels.CategoryViewModel
-import com.fredy.mysavings.ViewModels.Event.AccountEvent
 import com.fredy.mysavings.ViewModels.Event.AddRecordEvent
-import com.fredy.mysavings.ViewModels.Event.CategoryEvent
 import com.fredy.mysavings.ui.Screens.Account.AccountAddDialog
-import com.fredy.mysavings.ui.Screens.AddSingle.AccountBottomSheet
-import com.fredy.mysavings.ui.Screens.AddSingle.CategoryBottomSheet
+import com.fredy.mysavings.ui.Screens.AddSingle.AddBottomSheet
 import com.fredy.mysavings.ui.Screens.AddSingle.TextBox
 import com.fredy.mysavings.ui.Screens.Category.CategoryAddDialog
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleButton
@@ -67,7 +61,8 @@ import com.google.accompanist.permissions.rememberPermissionState
 import kotlinx.coroutines.launch
 
 
-@OptIn(ExperimentalPermissionsApi::class,
+@OptIn(
+    ExperimentalPermissionsApi::class,
     ExperimentalMaterial3Api::class
 )
 @Composable
@@ -103,7 +98,7 @@ fun BulkAddScreen(
     )
     val imageCropLauncher = rememberLauncherForActivityResult(
         CropImageContract()
-    ) {result ->
+    ) { result ->
         if (result.isSuccessful) {
             capturedImageUri = result.uriContent!!
             detectTextFromImage(context,
@@ -118,8 +113,7 @@ fun BulkAddScreen(
                         Toast.LENGTH_SHORT
                     ).show()
                 })
-        }
-        else {
+        } else {
             val exception = result.error
         }
     }
@@ -130,7 +124,8 @@ fun BulkAddScreen(
                 val cropOption = CropImageContractOptions(it, CropImageOptions())
                 imageCropLauncher.launch(cropOption)
             }
-        },)
+        },
+    )
     val cameraLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.TakePicture()
     ) { success ->
@@ -170,85 +165,32 @@ fun BulkAddScreen(
         )
     }
     if (isSheetOpen) {
-        ModalBottomSheet(
+        AddBottomSheet(
             sheetState = sheetState,
-            dragHandle = {},
-            onDismissRequest = {
-                isSheetOpen = false
+            onDismissModal = { scope.launch {
+                isSheetOpen = it
+            } },
+            isLeading = isLeading,
+            recordType = state.recordType,
+            accountState = accountState,
+            categoryState = categoryState,
+            onEventAccount = accountViewModel::onEvent,
+            onEventCategory = categoryViewModel::onEvent,
+            onSelectAccount = {
+                viewModel.onEvent(
+                    AddRecordEvent.AccountIdFromFk(
+                        it
+                    )
+                )
             },
-        ) {
-            if (isLeading) {
-                AccountBottomSheet(
-                    accounts = accountState.accounts,
-                    onSelectAccount = {
-                        viewModel.onEvent(
-                            AddRecordEvent.AccountIdFromFk(
-                                it
-                            )
-                        )
-                        scope.launch {
-                            isSheetOpen = false
-                        }
-                    },
-                    onAddAccount = {
-                        accountViewModel.onEvent(
-                            AccountEvent.ShowDialog(
-                                Account(
-                                    accountName = ""
-                                )
-                            )
-                        )
-                    },
-                )
-            } else if (isTransfer(state.recordType)) {
-                AccountBottomSheet(
-                    accounts = accountState.accounts,
-                    onSelectAccount = {
-                        viewModel.onEvent(
-                            AddRecordEvent.AccountIdToFk(
-                                it
-                            )
-                        )
-                        scope.launch {
-                            isSheetOpen = false
-                        }
-                    },
-                    onAddAccount = {
-                        accountViewModel.onEvent(
-                            AccountEvent.ShowDialog(
-                                Account(
-                                    accountName = ""
-                                )
-                            )
-                        )
-                    },
-                )
-            } else {
-                CategoryBottomSheet(
-                    categoryMaps = categoryState.categoryMaps,
-                    recordType = state.recordType,
-                    onSelectCategory = {
-                        viewModel.onEvent(
-                            AddRecordEvent.CategoryIdFk(
-                                it
-                            )
-                        )
-                        scope.launch {
-                            isSheetOpen = false
-                        }
-                    },
-                    onAddCategory = {
-                        categoryViewModel.onEvent(
-                            CategoryEvent.ShowDialog(
-                                Category(
-                                    categoryName = ""
-                                )
-                            )
-                        )
-                    },
+            onSelectCategory = {
+                viewModel.onEvent(
+                    AddRecordEvent.CategoryIdFk(
+                        it
+                    )
                 )
             }
-        }
+        )
     }
 
     if (accountState.isAddingAccount) {
@@ -332,7 +274,8 @@ fun BulkAddScreen(
                 Text(
                     text = if (isTransfer(
                             state.recordType
-                        )) "From" else "Account",
+                        )
+                    ) "From" else "Account",
                     color = onBackground,
                 )
                 SimpleButton(
@@ -373,7 +316,8 @@ fun BulkAddScreen(
                 Text(
                     text = if (isTransfer(
                             state.recordType
-                        )) "To" else "Category",
+                        )
+                    ) "To" else "Category",
                     color = onBackground
                 )
                 SimpleButton(
@@ -392,14 +336,17 @@ fun BulkAddScreen(
                         ),
                     image = if (isTransfer(
                             state.recordType
-                        )) state.toAccount.accountIcon else state.toCategory.categoryIcon,
+                        )
+                    ) state.toAccount.accountIcon else state.toCategory.categoryIcon,
                     imageColor = if (state.toCategory.categoryIconDescription != "" && !isTransfer(
                             state.recordType
-                        )) {
+                        )
+                    ) {
                         Color.Unspecified
                     } else if (state.toAccount.accountIconDescription != "" && isTransfer(
                             state.recordType
-                        )) {
+                        )
+                    ) {
                         Color.Unspecified
                     } else {
                         onBackground
@@ -412,7 +359,8 @@ fun BulkAddScreen(
                     },
                     title = if (isTransfer(
                             state.recordType
-                        )) state.toAccount.accountName else state.toCategory.categoryName,
+                        )
+                    ) state.toAccount.accountName else state.toCategory.categoryName,
                     titleStyle = MaterialTheme.typography.headlineSmall.copy(
                         onBackground
                     )

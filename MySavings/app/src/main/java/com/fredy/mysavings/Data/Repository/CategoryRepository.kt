@@ -1,10 +1,13 @@
 package com.fredy.mysavings.Data.Repository
 
+import android.util.Log
 import co.yml.charts.common.extensions.isNotNull
 import com.fredy.mysavings.Data.Database.Dao.CategoryDao
 import com.fredy.mysavings.Data.Database.FirebaseDataSource.CategoryDataSource
 import com.fredy.mysavings.Data.Database.Model.Category
 import com.fredy.mysavings.Data.Enum.RecordType
+import com.fredy.mysavings.Util.Resource
+import com.fredy.mysavings.Util.TAG
 import com.fredy.mysavings.ViewModels.CategoryMap
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -12,6 +15,7 @@ import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
@@ -20,7 +24,7 @@ interface CategoryRepository {
     suspend fun deleteCategory(category: Category)
     fun getCategory(categoryId: String): Flow<Category>
     fun getUserCategoriesOrderedByName(): Flow<List<Category>>
-    fun getCategoryMapOrderedByName(): Flow<List<CategoryMap>>
+    fun getCategoryMapOrderedByName(): Flow<Resource<List<CategoryMap>>>
 }
 
 class CategoryRepositoryImpl @Inject constructor(
@@ -85,8 +89,9 @@ class CategoryRepositoryImpl @Inject constructor(
     }
 
     override fun getCategoryMapOrderedByName(
-    ) : Flow<List<CategoryMap>> {
+    ) : Flow<Resource<List<CategoryMap>>> {
         return flow {
+            emit(Resource.Loading())
             val currentUser = firebaseAuth.currentUser!!
             val userId = if (currentUser.isNotNull()) currentUser.uid else ""
 
@@ -101,7 +106,13 @@ class CategoryRepositoryImpl @Inject constructor(
                     categories = it.value
                 )
             }
-            emit(data)
+            emit(Resource.Success(data))
+        }.catch { e ->
+            Log.i(
+                TAG,
+                "getCategoryMapOrderedByName.Error: $e"
+            )
+            emit(Resource.Error(e.message.toString()))
         }
     }
 }

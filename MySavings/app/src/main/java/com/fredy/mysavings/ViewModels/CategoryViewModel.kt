@@ -31,10 +31,10 @@ class CategoryViewModel @Inject constructor(
         SortType.ASCENDING
     )
 
-    private val _categoryMap = categoryRepository.getCategoryMapOrderedByName().stateIn(
+    private val _categoryResource = categoryRepository.getCategoryMapOrderedByName().stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(),
-        emptyList()
+        Resource.Success(emptyList())
     )
 
     private val _state = MutableStateFlow(
@@ -52,21 +52,21 @@ class CategoryViewModel @Inject constructor(
         Resource.Success(emptyList())
     )
 
-    private val categoryMaps = _state.onEach {
+    private val categoryResource = _state.onEach {
         _state.update {
             it.copy(
                 isSearching = true
             )
         }
-    }.combine(_categoryMap) { state, categoryMaps ->
+    }.combine(_categoryResource) { state, categoryResource ->
         if (state.searchQuery.isBlank()) {
-            categoryMaps
+            categoryResource
         } else {
-            categoryMaps.map { categoryMap ->
+            Resource.Success(categoryResource.data!!.map { categoryMap ->
                 categoryMap.copy(categories = categoryMap.categories.filter {
                     it.doesMatchSearchQuery(state.searchQuery)
                 })
-            }
+            })
         }
     }.onEach {
         _state.update {
@@ -77,14 +77,14 @@ class CategoryViewModel @Inject constructor(
     }.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(),
-        emptyList()
+        Resource.Success(emptyList())
     )
 
     val state = combine(
-        _state, _sortType, categoryMaps, _records
-    ) { state, sortType, categoryMaps, records ->
+        _state, _sortType, categoryResource, _records
+    ) { state, sortType, categoryResource, records ->
         state.copy(
-            categoryMaps = categoryMaps,
+            categoryResource = categoryResource,
             recordMapsResource = records,
             sortType = sortType,
         )
@@ -211,7 +211,7 @@ class CategoryViewModel @Inject constructor(
 }
 
 data class CategoryState(
-    val categoryMaps: List<CategoryMap> = emptyList(),
+    val categoryResource: Resource<List<CategoryMap>> = Resource.Loading(),
     val recordMapsResource: Resource<List<RecordMap>> = Resource.Loading(),
     val category: Category = Category(),
     val categoryId: String = "",

@@ -126,12 +126,30 @@ fun CategoriesScreen(
                 MaterialTheme.colorScheme.onBackground
             )
         )
-            CategoryBody(
-                categoryMaps = state.categoryMaps,
-                onEvent = onEvent,
-                onEntityClick = {
-                    isSheetOpen = true
+        state.categoryResource.let { resource ->
+            ResourceHandler(
+                resource = resource,
+                nullOrEmptyMessage = "You Didn't Have Any Account Yet",
+                isNullOrEmpty = { it.isNullOrEmpty() },
+                errorMessage = resource.message ?: "",
+                onMessageClick = {
+                    onEvent(
+                        CategoryEvent.ShowDialog(
+                            Category(
+                                categoryName = ""
+                            )
+                        )
+                    )
                 },
-            )
+            ) { data ->
+                CategoryBody(
+                    categoryMaps = data,
+                    onEvent = onEvent,
+                    onEntityClick = {
+                        isSheetOpen = true
+                    },
+                )
+            }
+        }
     }
 }

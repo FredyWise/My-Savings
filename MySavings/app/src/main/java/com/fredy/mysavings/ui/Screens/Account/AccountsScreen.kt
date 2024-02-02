@@ -26,6 +26,8 @@ import com.fredy.mysavings.R
 import com.fredy.mysavings.Util.formatBalanceAmount
 import com.fredy.mysavings.ViewModels.AccountState
 import com.fredy.mysavings.ViewModels.Event.AccountEvent
+import com.fredy.mysavings.ui.NavigationComponent.Navigation.NavigationRoute
+import com.fredy.mysavings.ui.Screens.Record.RecordBody
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.ResourceHandler
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SearchBar
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleButton
@@ -148,13 +150,30 @@ fun AccountsScreen(
                 MaterialTheme.colorScheme.onBackground
             )
         )
-        AccountBody(
-            accounts = state.accounts,
-            onEvent = onEvent,
-            onEntityClick = {
-                isSheetOpen = true
-            },
-        )
+
+        state.accountResource.let { resource ->
+            ResourceHandler(
+                resource = resource,
+                nullOrEmptyMessage = "You Didn't Have Any Account Yet",
+                isNullOrEmpty = { it.isNullOrEmpty() },
+                errorMessage = resource.message ?: "",
+                onMessageClick = {
+                    onEvent(
+                        AccountEvent.ShowDialog(
+                            Account(accountName = "")
+                        )
+                    )
+                },
+            ) { data ->
+                AccountBody(
+                    accounts = data,
+                    onEvent = onEvent,
+                    onEntityClick = {
+                        isSheetOpen = true
+                    },
+                )
+            }
+        }
 
     }
 }

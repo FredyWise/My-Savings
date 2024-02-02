@@ -5,7 +5,9 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -13,8 +15,11 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -31,9 +36,131 @@ import com.fredy.mysavings.Data.Enum.RecordType
 import com.fredy.mysavings.R
 import com.fredy.mysavings.Util.BalanceColor
 import com.fredy.mysavings.Util.formatBalanceAmount
+import com.fredy.mysavings.Util.isTransfer
+import com.fredy.mysavings.ViewModels.AccountState
 import com.fredy.mysavings.ViewModels.CategoryMap
+import com.fredy.mysavings.ViewModels.CategoryState
+import com.fredy.mysavings.ViewModels.Event.AccountEvent
+import com.fredy.mysavings.ViewModels.Event.CategoryEvent
+import com.fredy.mysavings.ui.Screens.ZCommonComponent.ResourceHandler
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleButton
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleEntityItem
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AddBottomSheet(
+    modifier: Modifier = Modifier,
+    sheetState: SheetState,
+    onDismissModal: (Boolean) -> Unit,
+    isLeading: Boolean,
+    recordType: RecordType,
+    accountState: AccountState,
+    categoryState: CategoryState,
+    onEventAccount: (AccountEvent) -> Unit,
+    onEventCategory: (CategoryEvent) -> Unit,
+    onSelectAccount: (Account) -> Unit,
+    onSelectCategory: (Category) -> Unit,
+) {
+    ModalBottomSheet(
+        modifier = modifier,
+        sheetState = sheetState,
+        dragHandle = {},
+        onDismissRequest = {
+            onDismissModal(false)
+        },
+    ) {
+        accountState.accountResource.let { resource ->
+            ResourceHandler(
+                resource = resource,
+                nullOrEmptyMessage = "You Didn't Have Any Account Yet",
+                isNullOrEmpty = { it.isNullOrEmpty() },
+                errorMessage = resource.message ?: "",
+                onMessageClick = {
+                    onEventAccount(
+                        AccountEvent.ShowDialog(
+                            Account(
+                                accountName = ""
+                            )
+                        )
+                    )
+                },
+            ) { data ->
+                if (isLeading) {
+                    AccountBottomSheet(
+                        accounts = data,
+                        onSelectAccount = {
+                            onSelectAccount(it)
+                        },
+                        onAddAccount = {
+                            onEventAccount(
+                                AccountEvent.ShowDialog(
+                                    Account(
+                                        accountName = ""
+                                    )
+                                )
+                            )
+                        },
+                    )
+                } else if (isTransfer(recordType)) {
+                    AccountBottomSheet(
+                        accounts = data,
+                        onSelectAccount = {
+                            onSelectAccount(it)
+                            onDismissModal(false)
+                        },
+                        onAddAccount = {
+                            onEventAccount(
+                                AccountEvent.ShowDialog(
+                                    Account(
+                                        accountName = ""
+                                    )
+                                )
+                            )
+                        },
+                    )
+                }
+            }
+            categoryState.categoryResource.let { resource ->
+                ResourceHandler(
+                    resource = resource,
+                    nullOrEmptyMessage = "You Didn't Have Any Account Yet",
+                    isNullOrEmpty = { it.isNullOrEmpty() },
+                    errorMessage = resource.message ?: "",
+                    onMessageClick = {
+                        onEventAccount(
+                            AccountEvent.ShowDialog(
+                                Account(
+                                    accountName = ""
+                                )
+                            )
+                        )
+                    },
+                ) { data ->
+                    if (!isTransfer(recordType) && !isLeading) {
+                        CategoryBottomSheet(
+                            categoryMaps = data,
+                            recordType = recordType,
+                            onSelectCategory = {
+                                onSelectCategory(it)
+                                onDismissModal(false)
+                            },
+                            onAddCategory = {
+                                onEventCategory(
+                                    CategoryEvent.ShowDialog(
+                                        Category(
+                                            categoryName = ""
+                                        )
+                                    )
+                                )
+                            },
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
 
 @Composable
 fun AccountBottomSheet(
@@ -61,7 +188,7 @@ fun AccountBottomSheet(
                 horizontal = 8.dp
             )
         ) {
-            items(accounts,key = {it.accountId}) { account ->
+            items(accounts, key = { it.accountId }) { account ->
                 SimpleEntityItem(
                     modifier = Modifier
                         .clickable {
@@ -127,6 +254,7 @@ fun AccountBottomSheet(
                     title = "Add Account",
                     titleColor = textColor
                 )
+                Spacer(modifier = Modifier.height(25.dp))
             }
         }
     }
@@ -232,7 +360,7 @@ fun CategoryBottomSheet(
                 }
             }
         }
-
+        Spacer(modifier = Modifier.height(25.dp))
     }
 
 }

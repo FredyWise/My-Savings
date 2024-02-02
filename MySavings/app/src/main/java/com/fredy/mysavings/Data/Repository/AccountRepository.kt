@@ -6,6 +6,7 @@ import com.fredy.mysavings.Data.Database.Dao.AccountDao
 import com.fredy.mysavings.Data.Database.FirebaseDataSource.AccountDataSource
 import com.fredy.mysavings.Data.Database.Model.Account
 import com.fredy.mysavings.Util.BalanceItem
+import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.TAG
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -18,7 +19,7 @@ interface AccountRepository {
     suspend fun upsertAccount(account: Account)
     suspend fun deleteAccount(account: Account)
     fun getAccount(accountId: String): Flow<Account>
-    fun getUserAccountOrderedByName(): Flow<List<Account>>
+    fun getUserAccountOrderedByName(): Flow<Resource<List<Account>>>
     fun getUserAccountTotalBalance(): Flow<BalanceItem>
     fun getUserAvailableCurrency(): Flow<List<String>>
 }
@@ -73,22 +74,21 @@ class AccountRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getUserAccountOrderedByName(): Flow<List<Account>> {
+    override fun getUserAccountOrderedByName(): Flow<Resource<List<Account>>> {
         return flow {
-//            emit(Resource.Loading())
+            emit(Resource.Loading())
             val currentUser = firebaseAuth.currentUser!!
             val userId = if (currentUser.isNotNull()) currentUser.uid else ""
             val data = accountDataSource.getUserAccounts(
                 userId
             )
-            emit(data)
-//            emit(Resource.Success(data))
+            emit(Resource.Success(data))
         }.catch { e ->
             Log.i(
                 TAG,
-                "getUserTrueRecordMapsFromSpecificTimeError: $e"
+                "getUserAccountOrderedByName.Error: $e"
             )
-//            emit(Resource.Error(e.message.toString()))
+            emit(Resource.Error(e.message.toString()))
         }
     }
 

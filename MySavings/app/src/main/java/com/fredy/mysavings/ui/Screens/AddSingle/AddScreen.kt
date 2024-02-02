@@ -130,85 +130,32 @@ fun AddScreen(
         mutableStateOf(false)
     }
     if (isSheetOpen) {
-        ModalBottomSheet(
+        AddBottomSheet(
             sheetState = sheetState,
-            dragHandle = {},
-            onDismissRequest = {
-                isSheetOpen = false
+            onDismissModal = { scope.launch {
+                isSheetOpen = it
+            } },
+            isLeading = isLeading,
+            recordType = state.recordType,
+            accountState = accountState,
+            categoryState = categoryState,
+            onEventAccount = accountViewModel::onEvent,
+            onEventCategory = categoryViewModel::onEvent,
+            onSelectAccount = {
+                viewModel.onEvent(
+                    AddRecordEvent.AccountIdFromFk(
+                        it
+                    )
+                )
             },
-        ) {
-            if (isLeading) {
-                AccountBottomSheet(
-                    accounts = accountState.accounts,
-                    onSelectAccount = {
-                        viewModel.onEvent(
-                            AddRecordEvent.AccountIdFromFk(
-                                it
-                            )
-                        )
-                        scope.launch {
-                            isSheetOpen = false
-                        }
-                    },
-                    onAddAccount = {
-                        accountViewModel.onEvent(
-                            AccountEvent.ShowDialog(
-                                Account(
-                                    accountName = ""
-                                )
-                            )
-                        )
-                    },
-                )
-            } else if (isTransfer(state.recordType)) {
-                AccountBottomSheet(
-                    accounts = accountState.accounts,
-                    onSelectAccount = {
-                        viewModel.onEvent(
-                            AddRecordEvent.AccountIdToFk(
-                                it
-                            )
-                        )
-                        scope.launch {
-                            isSheetOpen = false
-                        }
-                    },
-                    onAddAccount = {
-                        accountViewModel.onEvent(
-                            AccountEvent.ShowDialog(
-                                Account(
-                                    accountName = ""
-                                )
-                            )
-                        )
-                    },
-                )
-            } else {
-                CategoryBottomSheet(
-                    categoryMaps = categoryState.categoryMaps,
-                    recordType = state.recordType,
-                    onSelectCategory = {
-                        viewModel.onEvent(
-                            AddRecordEvent.CategoryIdFk(
-                                it
-                            )
-                        )
-                        scope.launch {
-                            isSheetOpen = false
-                        }
-                    },
-                    onAddCategory = {
-                        categoryViewModel.onEvent(
-                            CategoryEvent.ShowDialog(
-                                Category(
-                                    categoryName = ""
-                                )
-                            )
-                        )
-                    },
+            onSelectCategory = {
+                viewModel.onEvent(
+                    AddRecordEvent.CategoryIdFk(
+                        it
+                    )
                 )
             }
-        }
+        )
     }
 
     if (accountState.isAddingAccount) {

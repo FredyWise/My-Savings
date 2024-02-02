@@ -93,10 +93,10 @@ class AccountViewModel @Inject constructor(
         BalanceBar()
     )
 
-    private val _accounts = accountRepository.getUserAccountOrderedByName().stateIn(
+    private val _accountResource = accountRepository.getUserAccountOrderedByName().stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(),
-        emptyList()
+        Resource.Success(emptyList())
     )
 
     private val _state = MutableStateFlow(
@@ -113,19 +113,19 @@ class AccountViewModel @Inject constructor(
         Resource.Success(emptyList())
     )
 
-    private val accounts = _state.onEach {
+    private val accountResource = _state.onEach {
         _state.update {
             it.copy(
                 isSearching = true
             )
         }
-    }.combine(_accounts) { state, accounts ->
+    }.combine(_accountResource) { state, accountResource ->
         if (state.searchQuery.isBlank()) {
-            accounts
+            accountResource
         } else {
-            accounts.filter {
+            Resource.Success(accountResource.data!!.filter {
                 it.doesMatchSearchQuery(state.searchQuery)
-            }
+            })
         }
     }.onEach {
         _state.update {
@@ -136,18 +136,18 @@ class AccountViewModel @Inject constructor(
     }.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(),
-        emptyList()
+        Resource.Success(emptyList())
     )
 
     val state = combine(
         _state,
         _sortType,
-        accounts,
+        accountResource,
         balanceBar,
         _records
-    ) { state, sortType, accounts, balanceBar, records ->
+    ) { state, sortType, accountResource, balanceBar, records ->
         state.copy(
-            accounts = accounts,
+            accountResource = accountResource,
             recordMapsResource = records,
             balanceBar = balanceBar,
             sortType = sortType
@@ -290,7 +290,7 @@ class AccountViewModel @Inject constructor(
 
 data class AccountState(
     val currentUser: UserData = UserData(),
-    val accounts: List<Account> = emptyList(),
+    val accountResource: Resource<List<Account>> = Resource.Loading(),
     val recordMapsResource: Resource<List<RecordMap>> = Resource.Loading(),
     val account: Account = Account(),
     val balanceBar: BalanceBar = BalanceBar(),

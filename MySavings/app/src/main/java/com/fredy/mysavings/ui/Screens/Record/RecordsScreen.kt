@@ -142,7 +142,7 @@ fun RecordsScreen(
                         rootNavController.navigate(
                             NavigationRoute.Add.route + "/-1"
                         )
-//                        isVisible.targetState = false
+                        isVisible.targetState = false
                     },
                 ) { data ->
                     RecordBody(

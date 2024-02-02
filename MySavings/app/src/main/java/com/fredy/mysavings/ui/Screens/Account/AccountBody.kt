@@ -102,7 +102,8 @@ fun AccountBody(
                 Text(
                     text = "Balance: " + formatBalanceAmount(
                         amount = account.accountAmount,
-                        currency = account.accountCurrency
+                        currency = account.accountCurrency,
+                        true
                     ),
                     style = MaterialTheme.typography.titleLarge.copy(
                         fontWeight = FontWeight.SemiBold
