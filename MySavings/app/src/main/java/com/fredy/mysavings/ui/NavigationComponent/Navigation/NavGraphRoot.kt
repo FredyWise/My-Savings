@@ -26,6 +26,7 @@ import com.fredy.mysavings.ViewModels.AuthViewModel
 import com.fredy.mysavings.ViewModels.Event.AuthEvent
 import com.fredy.mysavings.ViewModels.RecordViewModel
 import com.fredy.mysavings.ViewModels.SearchViewModel
+import com.fredy.mysavings.ViewModels.SettingViewModel
 import com.fredy.mysavings.ui.NavigationComponent.MainScreen
 import com.fredy.mysavings.ui.Screens.AddBulk.BulkAddScreen
 import com.fredy.mysavings.ui.Screens.AddSingle.AddScreen
@@ -38,6 +39,7 @@ import com.fredy.mysavings.ui.Search.SearchScreen
 @Composable
 fun NavGraphRoot(
     navController: NavHostController,
+    settingViewModel: SettingViewModel,
     authViewModel: AuthViewModel = hiltViewModel()
 ) {
     NavHost(
@@ -126,25 +128,34 @@ fun NavGraphRoot(
             composable(
                 route = NavigationRoute.Preferences.route
             ) {
+                val state by settingViewModel.state.collectAsStateWithLifecycle()
                 PreferencesScreen(
                     title = NavigationRoute.Preferences.title,
-                    rootNavController = navController
+                    rootNavController = navController,
+                    state = state,
+                    onEvent = settingViewModel::onEvent
                 )
             }
             composable(
                 route = NavigationRoute.Export.route
             ) {
+                val state by settingViewModel.state.collectAsStateWithLifecycle()
                 ExportScreen(
                     title = NavigationRoute.Export.title,
-                    rootNavController = navController
+                    rootNavController = navController,
+                    state = state,
+                    onEvent = settingViewModel::onEvent
                 )
             }
             composable(
                 route = NavigationRoute.Restore.route
             ) {
+                val state by settingViewModel.state.collectAsStateWithLifecycle()
                 BackupScreen(
                     title = NavigationRoute.Restore.title,
-                    rootNavController = navController
+                    rootNavController = navController,
+                    state = state,
+                    onEvent = settingViewModel::onEvent
                 )
             }
             composable(

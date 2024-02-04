@@ -125,6 +125,7 @@ fun DefaultAppBar(
 ) {
     Column(
         modifier = modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         TopAppBar(
             modifier = Modifier,

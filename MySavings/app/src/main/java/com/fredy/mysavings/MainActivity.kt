@@ -6,7 +6,12 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.runtime.getValue
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
+import com.fredy.mysavings.Data.Enum.DisplayState
+import com.fredy.mysavings.ViewModels.SettingViewModel
 import com.fredy.mysavings.ui.NavigationComponent.Navigation.NavGraphRoot
 import com.fredy.mysavings.ui.theme.MySavingsTheme
 import com.google.firebase.FirebaseException
@@ -22,9 +27,10 @@ class MainActivity: ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MySavingsTheme {
+            val viewModel: SettingViewModel = hiltViewModel()
+            MySavingsTheme(viewModel = viewModel) {
                 val navController = rememberNavController()
-                NavGraphRoot(navController)
+                NavGraphRoot(navController, viewModel)
             }
         }
     }

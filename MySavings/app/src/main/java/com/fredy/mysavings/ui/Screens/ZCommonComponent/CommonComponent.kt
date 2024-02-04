@@ -224,7 +224,7 @@ fun AdvancedEntityItem(
             Icon(
                 modifier = Modifier
                     .clip(
-                        MaterialTheme.shapes.large
+                        CircleShape
                     )
                     .clickable {
                         isShowMenu = true

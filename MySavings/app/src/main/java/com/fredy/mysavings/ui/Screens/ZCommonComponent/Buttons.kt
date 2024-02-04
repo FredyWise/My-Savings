@@ -52,7 +52,35 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.Util.ToggleableInfo
 import com.fredy.mysavings.Util.currencyCodes
+import com.fredy.mysavings.ViewModels.Event.SettingEvent
 
+@Composable
+fun SettingButton(
+    modifier: Modifier = Modifier,
+    text:String,
+    onClick: () -> Unit,
+) {
+    SimpleButton(
+        modifier = modifier
+            .padding(top = 16.dp)
+            .clip(
+                MaterialTheme.shapes.medium
+            )
+            .border(
+                width = 2.dp,
+                color = MaterialTheme.colorScheme.secondary,
+                shape = MaterialTheme.shapes.medium
+            )
+            .padding(8.dp),
+        onClick = {
+            onClick()
+        },
+        title = text,
+        titleStyle = MaterialTheme.typography.titleLarge.copy(
+            MaterialTheme.colorScheme.onBackground
+        )
+    )
+}
 
 @Composable
 fun CheckBoxes(
