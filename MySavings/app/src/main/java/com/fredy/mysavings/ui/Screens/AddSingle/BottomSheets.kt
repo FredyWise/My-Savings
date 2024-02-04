@@ -59,7 +59,8 @@ fun AddBottomSheet(
     categoryState: CategoryState,
     onEventAccount: (AccountEvent) -> Unit,
     onEventCategory: (CategoryEvent) -> Unit,
-    onSelectAccount: (Account) -> Unit,
+    onSelectFromAccount: (Account) -> Unit,
+    onSelectToAccount: (Account) -> Unit,
     onSelectCategory: (Category) -> Unit,
 ) {
     ModalBottomSheet(
@@ -90,7 +91,8 @@ fun AddBottomSheet(
                     AccountBottomSheet(
                         accounts = data,
                         onSelectAccount = {
-                            onSelectAccount(it)
+                            onSelectFromAccount(it)
+                            onDismissModal(false)
                         },
                         onAddAccount = {
                             onEventAccount(
@@ -106,7 +108,7 @@ fun AddBottomSheet(
                     AccountBottomSheet(
                         accounts = data,
                         onSelectAccount = {
-                            onSelectAccount(it)
+                            onSelectToAccount(it)
                             onDismissModal(false)
                         },
                         onAddAccount = {

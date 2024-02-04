@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -13,11 +14,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Edit
-import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,14 +36,16 @@ import com.fredy.mysavings.Util.formatDateTime
 import com.fredy.mysavings.Util.isTransfer
 import com.fredy.mysavings.ViewModels.Event.RecordsEvent
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.BalanceItem
+import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleDialog
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleEntityItem
+import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleWarningDialog
 
 @Composable
 fun RecordDialog(
     modifier: Modifier = Modifier,
     onSurface: Color = MaterialTheme.colorScheme.onBackground,
-    surface:Color = MaterialTheme.colorScheme.surface.copy(alpha = 0.8f),
-    background :Color = MaterialTheme.colorScheme.background,
+    surface: Color = MaterialTheme.colorScheme.surface.copy(alpha = 0.8f),
+    background: Color = MaterialTheme.colorScheme.background,
     onAmountBox: Color = MaterialTheme.colorScheme.onSecondary,
     onEdit: () -> Unit,
     trueRecord: TrueRecord,
@@ -51,6 +57,22 @@ fun RecordDialog(
     ).copy(alpha = 0.9f),
     onEvent: (RecordsEvent) -> Unit,
 ) {
+    var isShowWarning by remember { mutableStateOf(false) }
+    SimpleWarningDialog(
+        isShowWarning = isShowWarning,
+        onDismissRequest = { isShowWarning = false },
+        onSaveClicked = {
+            onEvent(
+                RecordsEvent.DeleteRecord(
+                    trueRecord.record
+                )
+            )
+            onEvent(
+                RecordsEvent.HideDialog
+            )
+        },
+        warningText = "Are You Sure Want to Delete This Record?"
+    )
     Dialog(onDismissRequest = {
         onEvent(
             RecordsEvent.HideDialog
@@ -65,7 +87,7 @@ fun RecordDialog(
                 .clip(MaterialTheme.shapes.medium)
                 .border(
                     width = 2.dp,
-                    color =balanceColor,
+                    color = balanceColor,
                     shape = MaterialTheme.shapes.medium
                 ),
         ) {
@@ -93,11 +115,10 @@ fun RecordDialog(
                             contentDescription = "",
                             tint = onAmountBox,
                         )
-                        Divider(
+                        Spacer(
                             modifier = Modifier.weight(
                                 1f
                             ),
-                            color = Color.Unspecified
                         )
                         Icon(
                             modifier = Modifier
@@ -105,14 +126,7 @@ fun RecordDialog(
                                     MaterialTheme.shapes.large
                                 )
                                 .clickable {
-                                    onEvent(
-                                        RecordsEvent.DeleteRecord(
-                                            trueRecord.record
-                                        )
-                                    )
-                                    onEvent(
-                                        RecordsEvent.HideDialog
-                                    )
+                                    isShowWarning = true
                                 }
                                 .padding(4.dp),
                             imageVector = Icons.Outlined.Delete,
@@ -191,7 +205,7 @@ fun RecordDialog(
                                 )
                                 .border(
                                     width = 2.dp,
-                                    color =balanceColor,
+                                    color = balanceColor,
                                     shape = MaterialTheme.shapes.medium
                                 )
                                 .background(
@@ -235,7 +249,7 @@ fun RecordDialog(
                                 )
                                 .border(
                                     width = 2.dp,
-                                    color =balanceColor,
+                                    color = balanceColor,
                                     shape = MaterialTheme.shapes.medium
                                 )
                                 .background(

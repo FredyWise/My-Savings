@@ -176,9 +176,16 @@ fun BulkAddScreen(
             categoryState = categoryState,
             onEventAccount = accountViewModel::onEvent,
             onEventCategory = categoryViewModel::onEvent,
-            onSelectAccount = {
+            onSelectFromAccount = {
                 viewModel.onEvent(
                     AddRecordEvent.AccountIdFromFk(
+                        it
+                    )
+                )
+            },
+            onSelectToAccount = {
+                viewModel.onEvent(
+                    AddRecordEvent.AccountIdToFk(
                         it
                     )
                 )

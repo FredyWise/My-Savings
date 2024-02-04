@@ -1,17 +1,11 @@
 package com.fredy.mysavings.ui.Screens.Other
 
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
-import com.fredy.mysavings.ViewModels.CurrencyViewModel
-import com.fredy.mysavings.ui.Screens.ZCommonComponent.CurrencyDropdown
+import com.fredy.mysavings.ui.Screens.ZCommonComponent.CustomStickyHeader
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.DefaultAppBar
 
 @Composable
@@ -19,26 +13,36 @@ fun PreferencesScreen(
     modifier: Modifier = Modifier,
     rootNavController: NavController,
     title: String,
-    viewModel: CurrencyViewModel = hiltViewModel()
+    headerColor: Color = MaterialTheme.colorScheme.primary.copy(0.8f)
 ) {
-    var amount by remember { mutableStateOf(0.0) }
-    var resource = viewModel.resource
     DefaultAppBar(
         modifier = modifier,
         title = title,
         onNavigationIconClick = { rootNavController.navigateUp() },
     ) {
-        OutlinedTextField(value = amount.toString(),
-            onValueChange = { amount = it.toDouble() })
-        CurrencyDropdown(selectedText = "",
-            onClick = {
-                viewModel.convertTo(
-                    amount.toString(),
-                    it
-                )
-            })
-        resource.value.success?.let {
-            Text(text = it)
-        }
+        CustomStickyHeader(
+            textStyle = MaterialTheme.typography.titleLarge,
+            title = "Appearance",
+            textColor = headerColor,
+            useDivider = false
+        )
+        CustomStickyHeader(
+            textStyle = MaterialTheme.typography.titleLarge,
+            title = "Security",
+            textColor = headerColor,
+            useDivider = false
+        )
+        CustomStickyHeader(
+            textStyle = MaterialTheme.typography.titleLarge,
+            title = "Notification",
+            textColor = headerColor,
+            useDivider = false
+        )
+        CustomStickyHeader(
+            textStyle = MaterialTheme.typography.titleLarge,
+            title = "About",
+            textColor = headerColor,
+            useDivider = false
+        )
     }
 }

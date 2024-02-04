@@ -11,6 +11,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
@@ -23,6 +27,7 @@ import com.fredy.mysavings.Util.formatBalanceAmount
 import com.fredy.mysavings.ViewModels.Event.AccountEvent
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.AdvancedEntityItem
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.CustomStickyHeader
+import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleWarningDialog
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -32,6 +37,20 @@ fun AccountBody(
     onEvent: (AccountEvent) -> Unit,
     onEntityClick: () -> Unit,
 ) {
+    var isShowWarning by remember { mutableStateOf(false) }
+    var tempAccount by remember { mutableStateOf(Account()) }
+    SimpleWarningDialog(
+        isShowWarning = isShowWarning,
+        onDismissRequest = { isShowWarning = false },
+        onSaveClicked = {
+            onEvent(
+                AccountEvent.DeleteAccount(
+                    tempAccount
+                )
+            )
+        },
+        warningText = "Are You Sure Want to Delete This Account?"
+    )
     LazyColumn(modifier = modifier) {
         stickyHeader {
             CustomStickyHeader(
@@ -42,7 +61,7 @@ fun AccountBody(
                 textStyle = MaterialTheme.typography.titleLarge
             )
         }
-        items(accounts,key = {it.accountId}) { account ->
+        items(accounts, key = { it.accountId }) { account ->
             AdvancedEntityItem(
                 modifier = Modifier
                     .padding(
@@ -72,11 +91,8 @@ fun AccountBody(
                     ActionWithName(
                         name = "Delete Account",
                         action = {
-                            onEvent(
-                                AccountEvent.DeleteAccount(
-                                    account
-                                )
-                            )
+                            isShowWarning = true
+                            tempAccount = account
                         },
                     ), ActionWithName(
                         name = "Edit Account",

@@ -91,6 +91,7 @@ fun CustomTextField(
                 color = MaterialTheme.colorScheme.onSecondary
             )
         },
+        textStyle = MaterialTheme.typography.titleLarge,
         singleLine = singleLine,
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(8.dp),

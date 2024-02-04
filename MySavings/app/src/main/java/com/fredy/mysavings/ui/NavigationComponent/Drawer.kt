@@ -83,7 +83,6 @@ fun DrawerBody(
             }
         }
         item {
-            Spacer(modifier = Modifier.fillMaxHeight())
             additionalItem()
         }
     }

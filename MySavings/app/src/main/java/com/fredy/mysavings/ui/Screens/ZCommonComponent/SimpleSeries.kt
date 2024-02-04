@@ -31,6 +31,34 @@ import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.Util.ActionWithName
 
 @Composable
+fun SimpleWarningDialog(
+    isShowWarning: Boolean = false,
+    onDismissRequest: () -> Unit,
+    onSaveClicked: () -> Unit,
+    warningText: String
+) {
+    if (isShowWarning) {
+        SimpleDialog(
+            title = "Warning!!",
+            cancelName = "No",
+            saveName = "Yes",
+            onDismissRequest = {
+                onDismissRequest()
+            },
+            onSaveClicked = {
+                onSaveClicked()
+                onDismissRequest()
+            },
+        ) {
+            Text(
+                text = warningText,
+                style = MaterialTheme.typography.titleLarge
+            )
+        }
+    }
+}
+
+@Composable
 fun SimpleAlertDialog(
     modifier: Modifier = Modifier,
     title: String,
@@ -118,9 +146,11 @@ fun SimpleDialog(
                         text = cancelName
                     )
                 }
-                Spacer(modifier = Modifier.weight(
-                    0.03f
-                ))
+                Spacer(
+                    modifier = Modifier.weight(
+                        0.03f
+                    )
+                )
                 Row(horizontalArrangement = Arrangement.Center,
                     modifier = Modifier
                         .weight(0.5f)

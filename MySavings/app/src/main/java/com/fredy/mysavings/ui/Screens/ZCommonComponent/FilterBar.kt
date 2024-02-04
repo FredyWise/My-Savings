@@ -52,7 +52,7 @@ fun DisplayBar(
                 MaterialTheme.colorScheme.surface
             )
             .padding(
-                horizontal = 4.dp, vertical = 8.dp
+                horizontal = 4.dp
             ),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically,

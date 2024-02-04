@@ -44,10 +44,12 @@ import com.fredy.mysavings.ViewModels.CategoryViewModel
 import com.fredy.mysavings.ViewModels.Event.AccountEvent
 import com.fredy.mysavings.ViewModels.Event.AddRecordEvent
 import com.fredy.mysavings.ViewModels.Event.CategoryEvent
+import com.fredy.mysavings.ViewModels.Event.RecordsEvent
 import com.fredy.mysavings.ui.Screens.Account.AccountAddDialog
 import com.fredy.mysavings.ui.Screens.Category.CategoryAddDialog
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleButton
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleDialog
+import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleWarningDialog
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.TypeRadioButton
 import kotlinx.coroutines.launch
 
@@ -106,24 +108,14 @@ fun AddScreen(
             }
         }
     }
-    if (state.isShowWarning) {
-        SimpleDialog(
-            title = "Warning!!",
-            cancelName = "No",
-            saveName = "Yes",
-            onDismissRequest = {
-                viewModel.onEvent(AddRecordEvent.ShowWarning)
-            },
-            onSaveClicked = {
-                viewModel.onEvent(AddRecordEvent.ConvertCurrency)
-            },
-        ) {
-            Text(
-                text = resource.message.toString(),
-                style = MaterialTheme.typography.titleLarge
-            )
-        }
-    }
+    SimpleWarningDialog(
+        isShowWarning = state.isShowWarning,
+        onDismissRequest = { viewModel.onEvent(AddRecordEvent.ShowWarning) },
+        onSaveClicked = {
+            viewModel.onEvent(AddRecordEvent.ConvertCurrency)
+        },
+        warningText =  resource.message.toString()
+    )
 
     val sheetState = rememberModalBottomSheetState()
     var isSheetOpen by rememberSaveable {
@@ -141,9 +133,16 @@ fun AddScreen(
             categoryState = categoryState,
             onEventAccount = accountViewModel::onEvent,
             onEventCategory = categoryViewModel::onEvent,
-            onSelectAccount = {
+            onSelectFromAccount = {
                 viewModel.onEvent(
                     AddRecordEvent.AccountIdFromFk(
+                        it
+                    )
+                )
+            },
+            onSelectToAccount = {
+                viewModel.onEvent(
+                    AddRecordEvent.AccountIdToFk(
                         it
                     )
                 )

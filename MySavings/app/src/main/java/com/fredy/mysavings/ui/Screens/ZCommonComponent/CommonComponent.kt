@@ -97,11 +97,14 @@ fun <T> ResourceHandler(
                     ) {
                         Text(
                             text = nullOrEmptyMessage,
-                            modifier = Modifier.clip(
+                            modifier = Modifier
+                                .clip(
                                     MaterialTheme.shapes.medium
-                                ).clickable {
+                                )
+                                .clickable {
                                     onMessageClick()
-                                }.padding(
+                                }
+                                .padding(
                                     20.dp
                                 ),
                             style = MaterialTheme.typography.titleLarge,
@@ -243,9 +246,11 @@ fun AdvancedEntityItem(
 @Composable
 fun CustomStickyHeader(
     modifier: Modifier = Modifier,
+    textStyle: TextStyle,
+    textColor: Color = MaterialTheme.colorScheme.onBackground,
     topPadding: Dp = 28.dp,
-    title: String,
-    textStyle: TextStyle
+    useDivider: Boolean = true,
+    title: String
 ) {
     Column(
         modifier = modifier
@@ -254,7 +259,7 @@ fun CustomStickyHeader(
             text = title,
             style = textStyle,
             fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onBackground,
+            color = textColor,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(
@@ -263,16 +268,19 @@ fun CustomStickyHeader(
                     bottom = 4.dp
                 ),
         )
-        Divider(
-            modifier = Modifier
-                .padding(start = 4.dp)
-                .height(
-                    2.dp
-                ),
-            color = MaterialTheme.colorScheme.onBackground
-        )
+        if (useDivider) {
+            Divider(
+                modifier = Modifier
+                    .padding(start = 4.dp)
+                    .height(
+                        2.dp
+                    ),
+                color = textColor
+            )
+        }
     }
 }
+
 
 @Composable
 fun TypeRadioButton(

@@ -11,17 +11,24 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.fredy.mysavings.Data.Database.Model.Category
 import com.fredy.mysavings.Util.ActionWithName
 import com.fredy.mysavings.Util.isTransfer
 import com.fredy.mysavings.ViewModels.CategoryMap
 import com.fredy.mysavings.ViewModels.Event.CategoryEvent
+import com.fredy.mysavings.ViewModels.Event.RecordsEvent
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.AdvancedEntityItem
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.CustomStickyHeader
+import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleWarningDialog
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -31,6 +38,20 @@ fun CategoryBody(
     onEvent: (CategoryEvent) -> Unit,
     onEntityClick: () -> Unit,
 ) {
+    var isShowWarning by remember { mutableStateOf(false) }
+    var tempCategory by remember { mutableStateOf(Category()) }
+    SimpleWarningDialog(
+        isShowWarning = isShowWarning,
+        onDismissRequest = { isShowWarning = false },
+        onSaveClicked = {
+            onEvent(
+                CategoryEvent.DeleteCategory(
+                    tempCategory
+                )
+            )
+        },
+        warningText = "Are You Sure Want to Delete This Category?"
+    )
     LazyColumn(modifier = modifier) {
         categoryMaps.forEach { categoryMap ->
             if (!isTransfer(categoryMap.categoryType)) {
@@ -79,11 +100,8 @@ fun CategoryBody(
                             ActionWithName(
                                 name = "Delete Category",
                                 action = {
-                                    onEvent(
-                                        CategoryEvent.DeleteCategory(
-                                            category
-                                        )
-                                    )
+                                    isShowWarning = true
+                                    tempCategory = category
                                 },
                             ), ActionWithName(
                                 name = "Edit Category",
