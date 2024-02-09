@@ -63,7 +63,7 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
     // Additional UI
-    implementation ("androidx.compose.foundation:foundation:1.5.4")
+    implementation("androidx.compose.foundation:foundation:1.5.4")
     // Firebase
     implementation("com.google.android.gms:play-services-vision:20.1.3")//add this to remove duplicate class error
     implementation("com.google.firebase:firebase-auth:22.3.1")
@@ -79,7 +79,13 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
-    // Premission
+    // Color Picker Compose
+    implementation ("com.github.skydoves:colorpicker-compose:1.0.0")
+
+    // Worker
+    implementation("androidx.work:work-runtime-ktx:2.9.0")
+
+    // Permission
     implementation("com.google.accompanist:accompanist-permissions:0.33.2-alpha")
 
     // Image Cropper
@@ -103,6 +109,9 @@ dependencies {
     // Room works with plugin kapt
     implementation("androidx.room:room-ktx:2.6.1")
     kapt("androidx.room:room-compiler:2.6.1")
+
+    // Data Store Preferences
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
 
     // Chart
     implementation("co.yml:ycharts:2.1.0")

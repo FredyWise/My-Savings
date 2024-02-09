@@ -1,6 +1,7 @@
 package com.fredy.mysavings.ui.Screens.AuthScreen
 
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
@@ -10,17 +11,23 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Fingerprint
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
@@ -43,6 +50,7 @@ import com.fredy.mysavings.Data.Enum.AuthMethod
 import com.fredy.mysavings.R
 import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.TAG
+import com.fredy.mysavings.Util.isValidEmail
 import com.fredy.mysavings.Util.isValidLogin
 import com.fredy.mysavings.Util.isValidPhoneNumber
 import com.fredy.mysavings.ViewModels.AuthState
@@ -61,6 +69,7 @@ fun SignIn(
     primaryColor: Color = MaterialTheme.colorScheme.primary,
     onPrimaryColor: Color = MaterialTheme.colorScheme.onPrimary,
     onBackgroundColor: Color = MaterialTheme.colorScheme.onBackground,
+    isUsingBioAuth: Boolean = false,
     state: AuthState,
     onEvent: (AuthEvent) -> Unit
 ) {
@@ -195,53 +204,73 @@ fun SignIn(
             )
         }
         Spacer(modifier = Modifier.height(16.dp))
-        Button(
-            onClick = {
-                if (switchState) {
-                    onEvent(
-                        AuthEvent.LoginUser(
-                            emailOrPhone, password
-                        )
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            Button(
+                onClick = {
+                    if (switchState) {
+                        if (isValidLogin(emailOrPhone,password)) {
+                            onEvent(
+                                AuthEvent.LoginUser(
+                                    emailOrPhone, password
+                                )
+                            )
+                        } else {
+                            Toast.makeText(context, "Email or Password is Invalid", Toast.LENGTH_SHORT).show()
+                        }
+                    } else {
+                        if (isValidPhoneNumber(emailOrPhone)) {
+                            onEvent(
+                                AuthEvent.SendOtp(
+                                    context,
+                                    emailOrPhone,
+                                    onCodeSent = {
+                                        isSheetOpen = true
+                                    },
+                                )
+                            )
+                        } else {
+                            Toast.makeText(context, "Phone Number is Invalid", Toast.LENGTH_SHORT)
+                                .show()
+                        }
+                    }
+                },
+                colors = ButtonDefaults.buttonColors(
+                    disabledContainerColor = primaryColor.copy(
+                        0.7f
+                    )
+                ),
+                modifier = Modifier.weight(0.8f),
+                shape = RoundedCornerShape(15.dp)
+            ) {
+                if (state.authResource is Resource.Loading && (state.authType == AuthMethod.Email || state.authType == AuthMethod.SendOTP)) {
+                    CircularProgressIndicator(
+                        color = onPrimaryColor
                     )
                 } else {
-                    onEvent(
-                        AuthEvent.SendOtp(
-                            context,
-                            emailOrPhone,
-                            onCodeSent = {
-                                isSheetOpen = true
-                            },
-                        )
+                    Text(
+                        text = if (switchState) "Sign In" else "Get OTP",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = onPrimaryColor,
+                        modifier = Modifier.padding(10.dp)
                     )
                 }
-            },
-            enabled = if (switchState) isValidLogin(
-                emailOrPhone,
-                password
-            ) else isValidPhoneNumber(emailOrPhone),
-            colors = ButtonDefaults.buttonColors(
-                disabledContainerColor = primaryColor.copy(
-                    0.7f
-                )
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    horizontal = 30.dp
-                ),
-            shape = RoundedCornerShape(15.dp)
-        ) {
-            if (state.authResource is Resource.Loading && (state.authType == AuthMethod.Email || state.authType == AuthMethod.SendOTP)) {
-                CircularProgressIndicator(
-                    color = onPrimaryColor
-                )
-            } else {
-                Text(
-                    text = if (switchState) "Sign In" else "Get OTP",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = onPrimaryColor,
-                    modifier = Modifier.padding(10.dp)
-                )
+            }
+            if (isUsingBioAuth) {
+                Spacer(modifier = Modifier.weight(0.02f))
+                Button(
+                    onClick = {
+                        onEvent(AuthEvent.BioAuth)
+                    },
+                    modifier = Modifier.weight(0.2f),
+                    contentPadding = PaddingValues(10.dp),
+                    shape = RoundedCornerShape(15.dp),
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Fingerprint,
+                        contentDescription = "fingerprint",
+                        modifier = Modifier.size(35.dp)
+                    )
+                }
             }
         }
         Spacer(modifier = Modifier.height(8.dp))

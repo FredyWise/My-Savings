@@ -49,25 +49,30 @@ fun NavGraphRoot(
         navController = navController,
         startDestination = Graph.FirstNav,
         route = Graph.Root,
-        enterTransition = {
-            fadeIn(animationSpec = tween(300))
-        },
-        exitTransition = {
-            fadeOut(animationSpec = tween(300))
-        },
     ) {
         composable(
             route = Graph.FirstNav,
+            enterTransition = {
+                fadeIn(animationSpec = tween(300))
+            },
+            exitTransition = {
+                fadeOut(animationSpec = tween(300))
+            },
         ) {
-            Box(modifier = Modifier.fillMaxSize())
-            Log.d(TAG, "NavGraphRoot: ")
-            val state by authViewModel.state.collectAsStateWithLifecycle()
-            val startDestination = if (state.signedInUser != null) Graph.MainNav else Graph.Auth
-            navController.navigateSingleTopTo(
-                startDestination
-            )
+            val setting by settingViewModel.state.collectAsStateWithLifecycle()
+            Box(modifier = Modifier.fillMaxSize()) {
+                Log.d(TAG, "NavGraphRoot: ")
+                val state by authViewModel.state.collectAsStateWithLifecycle()
+                val startDestination =
+                    if (state.signedInUser != null && setting.autoLogin) Graph.MainNav else Graph.Auth
+                navController.navigateSingleTopTo(
+                    startDestination
+                )
+
+            }
         }
         authenticationNavGraph(
+            settingViewModel,
             authViewModel,
             rootNavController = navController
         )
@@ -77,6 +82,12 @@ fun NavGraphRoot(
         ) {
             composable(
                 route = Graph.HomeNav,
+                enterTransition = {
+                    fadeIn(animationSpec = tween(300))
+                },
+                exitTransition = {
+                    fadeOut(animationSpec = tween(300))
+                },
             ) {
                 authViewModel.onEvent(
                     AuthEvent.GetCurrentUser

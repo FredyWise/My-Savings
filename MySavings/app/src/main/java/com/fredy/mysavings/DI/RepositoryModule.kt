@@ -1,5 +1,6 @@
 package com.fredy.mysavings.DI
 
+import android.content.Context
 import com.fredy.mysavings.Data.APIs.CurrencyModels.CurrencyApi
 import com.fredy.mysavings.Data.Database.Dao.AccountDao
 import com.fredy.mysavings.Data.Database.Dao.CategoryDao
@@ -19,6 +20,8 @@ import com.fredy.mysavings.Data.Repository.CurrencyRepository
 import com.fredy.mysavings.Data.Repository.CurrencyRepositoryImpl
 import com.fredy.mysavings.Data.Repository.RecordRepository
 import com.fredy.mysavings.Data.Repository.RecordRepositoryImpl
+import com.fredy.mysavings.Data.Repository.SettingsRepository
+import com.fredy.mysavings.Data.Repository.SettingsRepositoryImpl
 import com.fredy.mysavings.Data.Repository.UserRepository
 import com.fredy.mysavings.Data.Repository.UserRepositoryImpl
 import com.google.android.gms.auth.api.identity.SignInClient
@@ -27,6 +30,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -112,5 +116,13 @@ object RepositoryModule {
         firebaseAuth: FirebaseAuth
     ): UserRepository = UserRepositoryImpl(
         firestore, firebaseAuth,
+    )
+
+    @Provides
+    @Singleton
+    fun provideSettingsRepository(
+        @ApplicationContext appContext: Context
+    ): SettingsRepository = SettingsRepositoryImpl(
+        appContext
     )
 }

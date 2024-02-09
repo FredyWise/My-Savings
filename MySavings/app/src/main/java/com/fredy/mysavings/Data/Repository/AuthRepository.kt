@@ -26,7 +26,7 @@ import java.util.concurrent.CancellationException
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-interface AuthRepository {
+interface AuthRepository {// this is should be a service that will need user repo
     fun loginUser(
         email: String, password: String
     ): Flow<Resource<AuthResult>>

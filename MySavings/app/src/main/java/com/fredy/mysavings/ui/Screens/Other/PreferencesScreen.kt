@@ -1,25 +1,47 @@
 package com.fredy.mysavings.ui.Screens.Other
 
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
+import android.provider.Settings
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.fredy.mysavings.Data.Enum.DisplayState
 import com.fredy.mysavings.Util.ActionWithName
+import com.fredy.mysavings.Util.formatTime
 import com.fredy.mysavings.ViewModels.Event.SettingEvent
 import com.fredy.mysavings.ViewModels.SettingState
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.CustomStickyHeader
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.DefaultAppBar
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleItem
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
+import com.vanpra.composematerialdialogs.MaterialDialog
+import com.vanpra.composematerialdialogs.datetime.time.TimePickerDefaults
+import com.vanpra.composematerialdialogs.datetime.time.timepicker
+import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun PreferencesScreen(
     modifier: Modifier = Modifier,
@@ -31,6 +53,32 @@ fun PreferencesScreen(
     state: SettingState,
     onEvent: (SettingEvent) -> Unit
 ) {
+    val context = LocalContext.current
+    val timeDialogState = rememberMaterialDialogState()
+    val permissionsState = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        rememberPermissionState(
+            android.Manifest.permission.POST_NOTIFICATIONS
+        ).status.isGranted
+    } else {
+        true
+    }
+    val permissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            Toast.makeText(
+                context,
+                "Permission Granted",
+                Toast.LENGTH_SHORT
+            ).show()
+        } else {
+            Toast.makeText(
+                context,
+                "Permission Denied",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
     DefaultAppBar(
         modifier = modifier,
         title = title,
@@ -103,14 +151,30 @@ fun PreferencesScreen(
         Spacer(modifier = Modifier.height(spacer))
         SimpleItem(
             onClick = {
-                onEvent(SettingEvent.ToggleDailyNotification)
+                if (permissionsState) {
+                    onEvent(SettingEvent.ToggleDailyNotification)
+                } else {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        permissionLauncher.launch(
+                            android.Manifest.permission.POST_NOTIFICATIONS
+                        )
+                    }
+                }
             },
             endContent = {
                 Switch(
                     modifier = Modifier.height(10.dp),
                     checked = state.dailyNotification,
                     onCheckedChange = {
-                        onEvent(SettingEvent.ToggleDailyNotification)
+                        if (permissionsState) {
+                            onEvent(SettingEvent.ToggleDailyNotification)
+                        } else {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                permissionLauncher.launch(
+                                    android.Manifest.permission.POST_NOTIFICATIONS
+                                )
+                            }
+                        }
                     },
                 )
             }
@@ -121,10 +185,47 @@ fun PreferencesScreen(
                 style = MaterialTheme.typography.titleLarge.copy(fontSize = 20.sp)
             )
         }
+        AnimatedVisibility(visible = state.dailyNotification) {
+            Spacer(modifier = Modifier.height(spacer))
+            SimpleItem(
+                onClick = {
+                    timeDialogState.show()
+                },
+                endContent = {
+                    Text(
+                        text = formatTime(state.dailyNotificationTime), color = optionColor
+                    )
+                    Icon(
+                        modifier = Modifier,
+                        imageVector = Icons.Default.KeyboardArrowRight,
+                        contentDescription = "",
+                        tint = MaterialTheme.colorScheme.onSurface,
+                    )
+                }
+            ) {
+                Text(
+                    text = "Reminder Time",
+                    color = optionColor,
+                    style = MaterialTheme.typography.titleLarge.copy(fontSize = 20.sp)
+                )
+            }
+        }
         Spacer(modifier = Modifier.height(spacer))
         SimpleItem(
             onClick = {
-
+                val intent = Intent().apply {
+                    action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+                    data = Uri.fromParts("package", context.packageName, null)
+                }
+                if (intent.resolveActivity(context.packageManager) != null) {
+                    context.startActivity(intent)
+                } else {
+                    Toast.makeText(
+                        context,
+                        "Notification settings not available",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             },
         ) {
             Text(
@@ -162,14 +263,30 @@ fun PreferencesScreen(
         Spacer(modifier = Modifier.height(spacer))
         SimpleItem(
             onClick = {
-                onEvent(SettingEvent.ToggleBioAuth)
+                if (state.isBioAuthPossible) {
+                    onEvent(SettingEvent.ToggleBioAuth)
+                } else {
+                    Toast.makeText(
+                        context,
+                        "Bio authentication is not available on your device",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
             },
             endContent = {
                 Switch(
                     modifier = Modifier.height(10.dp),
                     checked = state.bioAuth,
                     onCheckedChange = {
-                        onEvent(SettingEvent.ToggleBioAuth)
+                        if (state.isBioAuthPossible) {
+                            onEvent(SettingEvent.ToggleBioAuth)
+                        } else {
+                            Toast.makeText(
+                                context,
+                                "Bio authentication is not available on your device",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
                     },
                 )
             }
@@ -181,4 +298,57 @@ fun PreferencesScreen(
             )
         }
     }
+
+
+    MaterialDialog(
+        dialogState = timeDialogState,
+        backgroundColor = MaterialTheme.colorScheme.surface,
+        buttons = {
+            positiveButton(
+                text = "Ok",
+                textStyle = TextStyle(
+                    MaterialTheme.colorScheme.onSurface
+                ),
+            ) {
+                Toast.makeText(
+                    context,
+                    "Time Changed",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+            negativeButton(
+                text = "Cancel",
+                textStyle = TextStyle(
+                    MaterialTheme.colorScheme.onSurface
+                ),
+            )
+        },
+    ) {
+        timepicker(
+            initialTime = state.dailyNotificationTime,
+            colors = TimePickerDefaults.colors(
+                activeBackgroundColor = MaterialTheme.colorScheme.primary,
+                inactiveBackgroundColor = MaterialTheme.colorScheme.secondary.copy(
+                    0.6f
+                ),
+                activeTextColor = MaterialTheme.colorScheme.onPrimary,
+                inactiveTextColor = MaterialTheme.colorScheme.onSurface.copy(
+                    0.9f
+                ),
+                inactivePeriodBackground = MaterialTheme.colorScheme.secondary.copy(
+                    0.6f
+                ),
+                selectorColor = MaterialTheme.colorScheme.primary,
+                selectorTextColor = MaterialTheme.colorScheme.onPrimary,
+                headerTextColor = MaterialTheme.colorScheme.onBackground,
+                borderColor = MaterialTheme.colorScheme.onBackground
+            ),
+            onTimeChange = {
+                onEvent(SettingEvent.SetDailyNotificationTime(it))
+            },
+        )
+    }
+
 }
+
+

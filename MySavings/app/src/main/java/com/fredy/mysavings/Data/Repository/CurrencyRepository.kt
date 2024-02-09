@@ -39,7 +39,7 @@ class CurrencyRepositoryImpl @Inject constructor(
     private val api: CurrencyApi,
     private val currencyDataSource: CurrencyDataSource,
     private val currencyCacheDao: CurrencyCacheDao,
-): CurrencyRepository {
+): CurrencyRepository {// this should be separated by service and repository
     private val _cachedRates = MutableLiveData<CurrencyResponse>()
     override fun convertCurrency(
         amount: Double,
@@ -143,7 +143,7 @@ class CurrencyRepositoryImpl @Inject constructor(
     }
 
 
-    private suspend fun getRates(base: String): CurrencyResponse {
+    private suspend fun getRates(base: String): CurrencyResponse {//we can use worker for this and maybe also for sincronizing data on room
         Log.i(TAG, "getRates: start")
 
         val result = try {
