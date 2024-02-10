@@ -21,7 +21,7 @@ class MainActivity : ComponentActivity() {
             val viewModel: SettingViewModel = hiltViewModel()
             val setting by viewModel.state.collectAsStateWithLifecycle()
             if (setting.updated) {
-                MySavingsTheme(viewModel = viewModel) {
+                MySavingsTheme(state = setting) {
                     val navController = rememberNavController()
                     NavGraphRoot(navController, viewModel)
                 }

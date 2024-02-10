@@ -1,6 +1,5 @@
 package com.fredy.mysavings.ui.Screens.Analysis
 
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.core.tween
@@ -38,7 +37,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.R
 import com.fredy.mysavings.Util.BalanceColor
-import com.fredy.mysavings.Util.TAG
 import com.fredy.mysavings.Util.defaultColors
 import com.fredy.mysavings.Util.formatAmount
 import com.fredy.mysavings.Util.formatBalanceAmount
@@ -78,10 +76,6 @@ fun AnalysisOverview(
         ) + fadeOut()
     ) {
         state.analysisData.categoriesWithAmountResource.let { resource ->
-            Log.e(
-                TAG,
-                "AnalysisOverview: " + resource,
-            )
             ResourceHandler(
                 resource = resource,
                 nullOrEmptyMessage = "There is no ${state.filterState.recordType.name} on this date yet",

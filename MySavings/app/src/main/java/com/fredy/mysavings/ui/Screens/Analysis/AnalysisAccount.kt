@@ -14,12 +14,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Text
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
@@ -44,6 +47,8 @@ fun AnalysisAccount(
     state: AnalysisState,
     onEvent: (AnalysisEvent) -> Unit,
 ) {
+    var expenseColor by remember { mutableStateOf(BalanceColor.Expense) }
+    var incomeColor by remember { mutableStateOf(BalanceColor.Income) }
 
     val key = state.analysisData.categoriesWithAmountResource.hashCode()
     val isVisible = remember(key) {
@@ -119,7 +124,7 @@ fun AnalysisAccount(
                             currency = data.first().account.accountCurrency,
                         )
                     }
-                    itemsIndexed(data) { index, item ->
+                    items(data, key = {it.account.accountId}) {  item ->
                         Divider(
                             modifier = Modifier.height(
                                 0.3.dp
@@ -174,7 +179,7 @@ fun AnalysisAccount(
                                         style = MaterialTheme.typography.titleMedium.copy(
                                             fontWeight = FontWeight.SemiBold
                                         ),
-                                        color = MaterialTheme.colorScheme.primary,
+                                        color = expenseColor,
                                         textAlign = TextAlign.Center,
                                         modifier = Modifier.weight(
                                             0.50f
@@ -189,9 +194,7 @@ fun AnalysisAccount(
                                         style = MaterialTheme.typography.titleMedium.copy(
                                             fontWeight = FontWeight.SemiBold
                                         ),
-                                        color = BalanceColor(
-                                            amount = item.incomeAmount
-                                        ),
+                                        color = incomeColor,
                                         textAlign = TextAlign.Center,
                                         modifier = Modifier.weight(
                                             0.50f

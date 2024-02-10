@@ -22,10 +22,10 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -89,7 +89,7 @@ fun <T> ResourceHandler(
         }
 
         is Resource.Success -> {
-            resource.data.let{
+            resource.data.let {
                 if (isNullOrEmpty(it)) {
                     Box(
                         modifier = Modifier.fillMaxSize(),
@@ -125,6 +125,7 @@ fun <T> ResourceHandler(
 @Composable
 fun SearchBar(
     modifier: Modifier = Modifier,
+    backgroundColor: Color = MaterialTheme.colorScheme.surface,
     searchText: String,
     onValueChange: (String) -> Unit,
     placeholder: String = "Search",
@@ -148,7 +149,9 @@ fun SearchBar(
                 placeholder = { Text(text = placeholder) },
                 colors = TextFieldDefaults.colors(
                     focusedIndicatorColor = Color.Unspecified,
-                    unfocusedIndicatorColor = Color.Unspecified
+                    unfocusedIndicatorColor = Color.Unspecified,
+                    focusedContainerColor = backgroundColor,
+                    unfocusedContainerColor = backgroundColor
                 ),
                 leadingIcon = leadingIcon,
                 trailingIcon = trailingIcon,
@@ -247,7 +250,7 @@ fun AdvancedEntityItem(
 fun CustomStickyHeader(
     modifier: Modifier = Modifier,
     textStyle: TextStyle,
-    textColor: Color = MaterialTheme.colorScheme.onBackground,
+    textColor: Color = MaterialTheme.colorScheme.primary,
     topPadding: Dp = 28.dp,
     useDivider: Boolean = true,
     title: String
@@ -358,9 +361,8 @@ fun ChooseIcon(
                 MaterialTheme.colorScheme.background
             ),
         rows = GridCells.Fixed(2),
-
-        ) {
-        items(icons) { icon ->
+    ) {
+        items(icons, key = { it.image }) { icon ->
             Box(
                 modifier = Modifier
                     .clip(

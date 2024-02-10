@@ -2,6 +2,7 @@ package com.fredy.mysavings.ui.Screens.Category
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -23,7 +24,6 @@ import com.fredy.mysavings.ui.Screens.ZCommonComponent.ChooseIcon
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleDialog
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.TypeRadioButton
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategoryAddDialog(
     modifier: Modifier = Modifier,
@@ -98,7 +98,7 @@ fun CategoryAddDialog(
                     )
                 )
             }, iconModifier = Modifier.clip(
-                shape = MaterialTheme.shapes.extraLarge
+                shape = CircleShape
             ), selectedIcon = state.categoryIcon
         )
     }

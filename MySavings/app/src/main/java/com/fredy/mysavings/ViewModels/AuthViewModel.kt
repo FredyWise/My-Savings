@@ -17,6 +17,7 @@ import co.yml.charts.common.extensions.isNotNull
 import com.fredy.mysavings.Data.Database.Model.UserData
 import com.fredy.mysavings.Data.Enum.AuthMethod
 import com.fredy.mysavings.Data.Repository.AuthRepository
+import com.fredy.mysavings.Data.Repository.SettingsRepository
 import com.fredy.mysavings.Data.Repository.UserRepository
 import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.TAG
@@ -38,6 +39,7 @@ import javax.inject.Inject
 class AuthViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val repository: AuthRepository,
+    private val settingsRepository: SettingsRepository,
     private val userRepository: UserRepository,
     private val currentUserData: UserData?,
 ) : ViewModel() {
@@ -218,7 +220,7 @@ class AuthViewModel @Inject constructor(
             }
 
             AuthEvent.BioAuth -> {
-                if (bioAuthStatus() && currentUserData.isNotNull()) {
+                if (settingsRepository.bioAuthStatus() && currentUserData.isNotNull()) {
                     val title = "Login"
                     val subtitle = "Login into your account"
                     val description =
@@ -327,22 +329,7 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    private fun bioAuthStatus(): Boolean {
-        val keyGuardManager = context.getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
 
-        if (!keyGuardManager.isDeviceSecure) {
-            return true
-        }
-        if (ActivityCompat.checkSelfPermission(
-                context,
-                Manifest.permission.USE_BIOMETRIC
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            return false
-        }
-
-        return context.packageManager.hasSystemFeature(PackageManager.FEATURE_FINGERPRINT)
-    }
 }
 
 data class AuthState(

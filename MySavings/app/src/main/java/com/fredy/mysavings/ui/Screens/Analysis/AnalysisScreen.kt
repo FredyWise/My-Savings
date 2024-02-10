@@ -1,6 +1,7 @@
 package com.fredy.mysavings.ui.Screens.Analysis
 
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -149,7 +150,10 @@ fun AnalysisScreen(
                     colors = TextFieldDefaults.colors(
                         disabledIndicatorColor = Color.Unspecified,
                         disabledTextColor = MaterialTheme.colorScheme.onSurface,
-                        disabledTrailingIconColor = MaterialTheme.colorScheme.onSurface
+                        disabledTrailingIconColor = MaterialTheme.colorScheme.onSurface,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                        focusedContainerColor = MaterialTheme.colorScheme.surface,
+                        disabledContainerColor = MaterialTheme.colorScheme.surface,
                     ),
                     trailingIcon = {
                         Icon(

@@ -4,8 +4,9 @@ import android.Manifest
 import android.app.KeyguardManager
 import android.content.Context
 import android.content.pm.PackageManager
+import android.util.Log
+import androidx.compose.ui.graphics.Color
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.work.ExistingPeriodicWorkPolicy
@@ -15,13 +16,18 @@ import com.fredy.mysavings.Data.Enum.DisplayState
 import com.fredy.mysavings.Data.Notification.NotificationCredentials
 import com.fredy.mysavings.Data.Notification.NotificationWorker
 import com.fredy.mysavings.Data.Repository.SettingsRepository
+import com.fredy.mysavings.Util.BalanceColor
+import com.fredy.mysavings.Util.TAG
+import com.fredy.mysavings.Util.defaultExpenseColor
+import com.fredy.mysavings.Util.defaultIncomeColor
+import com.fredy.mysavings.Util.initialDarkThemeDefaultColor
 import com.fredy.mysavings.ViewModels.Event.SettingEvent
+import com.fredy.mysavings.ui.theme.md_theme_dark_primary
+import com.fredy.mysavings.ui.theme.md_theme_dark_tertiary
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -40,24 +46,12 @@ class SettingViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            combine(
-                settingsRepository.getDisplayMode(),
-                settingsRepository.getAutoLogin(),
-                settingsRepository.getBioAuth(),
-                settingsRepository.getDailyNotification(),
-                settingsRepository.getDailyNotificationTime(),
-            ) { displayMode, autoLogin, bioAuth, dailyNotification, notificationTime ->
-                SettingState(
-                    displayMode = displayMode,
-                    autoLogin = autoLogin,
-                    bioAuth = bioAuth,
-                    dailyNotification = dailyNotification,
-                    dailyNotificationTime = notificationTime,
-                    updated = true,
-                    isBioAuthPossible = bioAuthStatus()
-                )
-            }.collectLatest { savedState ->
-                _state.update { savedState }
+            settingsRepository.getAll().collect { savedState ->
+                BalanceColor.Expense = savedState.selectedExpenseColor
+                BalanceColor.Income = savedState.selectedIncomeColor
+                _state.update {
+                    savedState
+                }
             }
         }
     }
@@ -155,6 +149,47 @@ class SettingViewModel @Inject constructor(
             SettingEvent.OnRestore -> {
 
             }
+
+            SettingEvent.HideColorPallet -> {
+                _state.update {
+                    it.copy(isShowColorPallet = false)
+                }
+            }
+
+            SettingEvent.ShowColorPallet -> {
+                _state.update {
+                    it.copy(isShowColorPallet = true)
+                }
+            }
+
+            is SettingEvent.ChangeExpenseColor -> {
+                viewModelScope.launch {
+                    settingsRepository.saveExpenseColor(event.color)
+                }
+                BalanceColor.Expense = event.color
+                _state.update {
+                    it.copy(selectedExpenseColor = event.color)
+                }
+            }
+
+            is SettingEvent.ChangeIncomeColor -> {
+                viewModelScope.launch {
+                    settingsRepository.saveIncomeColor(event.color)
+                }
+                BalanceColor.Income = event.color
+                _state.update {
+                    it.copy(selectedIncomeColor = event.color)
+                }
+            }
+
+            is SettingEvent.ChangeThemeColor -> {
+                viewModelScope.launch {
+                    settingsRepository.saveThemeColor(event.color)
+                }
+                _state.update {
+                    it.copy(selectedThemeColor = event.color)
+                }
+            }
         }
     }
 
@@ -192,22 +227,6 @@ class SettingViewModel @Inject constructor(
         return nextTime - now
     }
 
-    private fun bioAuthStatus(): Boolean {
-        val keyGuardManager = context.getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
-
-        if (!keyGuardManager.isDeviceSecure) {
-            return true
-        }
-        if (ActivityCompat.checkSelfPermission(
-                context,
-                Manifest.permission.USE_BIOMETRIC
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            return false
-        }
-
-        return context.packageManager.hasSystemFeature(PackageManager.FEATURE_FINGERPRINT)
-    }
 }
 
 data class SettingState(
@@ -217,7 +236,11 @@ data class SettingState(
     val autoLogin: Boolean = true,
     val bioAuth: Boolean = false,
     val isBioAuthPossible: Boolean = false,
+    val isShowColorPallet: Boolean = false,
+    val selectedThemeColor: Color = initialDarkThemeDefaultColor,
+    val selectedExpenseColor: Color = defaultExpenseColor,
+    val selectedIncomeColor: Color = defaultIncomeColor,
     val dailyNotification: Boolean = false,
     val dailyNotificationTime: LocalTime = LocalTime.now(),
-    val updated: Boolean = false
+    val updated: Boolean = false,
 )

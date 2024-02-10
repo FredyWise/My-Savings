@@ -1,7 +1,10 @@
 package com.fredy.mysavings.Util
 
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import co.yml.charts.common.extensions.isNotNull
 import com.fredy.mysavings.Data.Enum.RecordType
@@ -37,11 +40,21 @@ fun BalanceColor(
     amount: Double,
     isTransfer: Boolean = false
 ): Color {
+    val expenseColor by remember { mutableStateOf(BalanceColor.Expense) }
+    val transferColor by remember { mutableStateOf(BalanceColor.Transfer) }
+    val incomeColor by remember { mutableStateOf(BalanceColor.Income) }
+
     return when {
-        amount < 0.0 -> MaterialTheme.colorScheme.primary
-        isTransfer -> MaterialTheme.colorScheme.secondary
-        else -> MaterialTheme.colorScheme.tertiary
+        amount < 0.0 -> expenseColor
+        isTransfer -> transferColor
+        else -> incomeColor
     }
+}
+
+object BalanceColor {
+    var Expense = defaultExpenseColor
+    var Transfer = defaultTransferColor
+    var Income = defaultIncomeColor
 }
 
 fun formatBalanceAmount(

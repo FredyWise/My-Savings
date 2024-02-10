@@ -200,7 +200,7 @@ class RecordRepositoryImpl @Inject constructor(
 
             Log.i(
                 TAG,
-                "getUserTrueRecordMapsFromSpecificTime: $data"
+                "getUserTrueRecordMapsFromSpecificTime.data: $data"
             )
             emit(Resource.Success(data))
 
@@ -242,7 +242,7 @@ class RecordRepositoryImpl @Inject constructor(
             }
             Log.i(
                 TAG,
-                "getUserCategoryRecordsOrderedByDateTimeData: $data"
+                "getUserCategoryRecordsOrderedByDateTime.Data: $data"
             )
             emit(Resource.Success(data))
         }.catch { e ->
@@ -283,7 +283,7 @@ class RecordRepositoryImpl @Inject constructor(
             }
             Log.i(
                 TAG,
-                "getUserAccountRecordsOrderedByDateTime.0: $data"
+                "getUserAccountRecordsOrderedByDateTime.data: $data"
             )
             emit(Resource.Success(data))
         }.catch { e ->

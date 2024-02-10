@@ -1,7 +1,12 @@
 package com.fredy.mysavings.Data.Repository
 
+import android.Manifest
+import android.app.KeyguardManager
 import android.content.Context
-import androidx.compose.material3.DisplayMode
+import android.content.pm.PackageManager
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import androidx.core.app.ActivityCompat
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
@@ -11,7 +16,13 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.fredy.mysavings.Data.Database.Converter.LocalTimeConverter
 import com.fredy.mysavings.Data.Enum.DisplayState
+import com.fredy.mysavings.Util.defaultExpenseColor
+import com.fredy.mysavings.Util.defaultIncomeColor
+import com.fredy.mysavings.Util.initialDarkThemeDefaultColor
+import com.fredy.mysavings.ViewModels.SettingState
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import java.time.LocalTime
 
@@ -20,6 +31,12 @@ interface SettingsRepository {
     // Display mode
     fun getDisplayMode(): Flow<DisplayState>
     suspend fun saveDisplayMode(displayMode: DisplayState)
+    fun getThemeColor(): Flow<Color>
+    suspend fun saveThemeColor(color: Color)
+    fun getIncomeColor(): Flow<Color>
+    suspend fun saveIncomeColor(color: Color)
+    fun getExpenseColor(): Flow<Color>
+    suspend fun saveExpenseColor(color: Color)
 
     // Notifications
     fun getDailyNotification(): Flow<Boolean>
@@ -33,7 +50,10 @@ interface SettingsRepository {
     fun getBioAuth(): Flow<Boolean>
     suspend fun saveBioAuth(enableBioAuth: Boolean)
     fun getDailyNotificationTime(): Flow<LocalTime>
-    suspend fun saveDailyNotificationTime(enableBioAuth: LocalTime)
+    suspend fun saveDailyNotificationTime(dailyNotificationTime: LocalTime)
+    fun bioAuthStatus():Boolean
+
+    fun getAll(): Flow<SettingState>
 }
 
 class SettingsRepositoryImpl(private val context: Context) : SettingsRepository {
@@ -45,6 +65,9 @@ class SettingsRepositoryImpl(private val context: Context) : SettingsRepository 
         val BIO_AUTH = booleanPreferencesKey("bio_auth")
         val DAILY_NOTIFICATION = booleanPreferencesKey("daily_notification")
         val DAILY_NOTIFICATION_TIME = intPreferencesKey("daily_notification_time")
+        val THEME_COLOR = intPreferencesKey("theme_color")
+        val EXPENSE_COLOR = intPreferencesKey("expense_color")
+        val INCOME_COLOR = intPreferencesKey("income_color")
     }
 
     override fun getDisplayMode(): Flow<DisplayState> = context.dataStore.data
@@ -55,6 +78,39 @@ class SettingsRepositoryImpl(private val context: Context) : SettingsRepository 
     override suspend fun saveDisplayMode(displayMode: DisplayState) {
         context.dataStore.edit { preferences ->
             preferences[DISPLAY_MODE] = displayMode.name
+        }
+    }
+
+    override fun getThemeColor(): Flow<Color> = context.dataStore.data
+        .map { preferences ->
+            Color(preferences[THEME_COLOR] ?: initialDarkThemeDefaultColor.toArgb())
+        }
+
+    override suspend fun saveThemeColor(color: Color) {
+        context.dataStore.edit { preferences ->
+            preferences[THEME_COLOR] = color.toArgb()
+        }
+    }
+
+    override fun getIncomeColor(): Flow<Color> = context.dataStore.data
+        .map { preferences ->
+            Color(preferences[INCOME_COLOR] ?: defaultIncomeColor.toArgb())
+        }
+
+    override suspend fun saveIncomeColor(color: Color) {
+        context.dataStore.edit { preferences ->
+            preferences[INCOME_COLOR] = color.toArgb()
+        }
+    }
+
+    override fun getExpenseColor(): Flow<Color> = context.dataStore.data
+        .map { preferences ->
+            Color(preferences[EXPENSE_COLOR] ?: defaultExpenseColor.toArgb())
+        }
+
+    override suspend fun saveExpenseColor(color: Color) {
+        context.dataStore.edit { preferences ->
+            preferences[EXPENSE_COLOR] = color.toArgb()
         }
     }
 
@@ -91,14 +147,51 @@ class SettingsRepositoryImpl(private val context: Context) : SettingsRepository 
         }
     }
 
+
     override fun getDailyNotificationTime(): Flow<LocalTime> = context.dataStore.data
         .map { preferences ->
             LocalTimeConverter.intToLocalTime(preferences[DAILY_NOTIFICATION_TIME] ?: -1)
         }
 
-    override suspend fun saveDailyNotificationTime(enableDailyNotificationTime: LocalTime) {
+    override suspend fun saveDailyNotificationTime(dailyNotificationTime: LocalTime) {
         context.dataStore.edit { preferences ->
-            preferences[DAILY_NOTIFICATION_TIME] = LocalTimeConverter.localTimeToInt(enableDailyNotificationTime)
+            preferences[DAILY_NOTIFICATION_TIME] =
+                LocalTimeConverter.localTimeToInt(dailyNotificationTime)
         }
     }
+
+    override fun bioAuthStatus(): Boolean {
+        val keyGuardManager = context.getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
+
+        if (!keyGuardManager.isDeviceSecure) {
+            return true
+        }
+        if (ActivityCompat.checkSelfPermission(
+                context,
+                Manifest.permission.USE_BIOMETRIC
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            return false
+        }
+
+        return context.packageManager.hasSystemFeature(PackageManager.FEATURE_FINGERPRINT)
+    }
+
+    override fun getAll(): Flow<SettingState> = flow {
+
+        val result = SettingState(
+            displayMode = getDisplayMode().first(),
+            autoLogin = getAutoLogin().first(),
+            bioAuth = getBioAuth().first(),
+            dailyNotification = getDailyNotification().first(),
+            dailyNotificationTime = getDailyNotificationTime().first(),
+            selectedThemeColor = getThemeColor().first(),
+            selectedExpenseColor = getExpenseColor().first(),
+            selectedIncomeColor = getIncomeColor().first(),
+            isBioAuthPossible = bioAuthStatus(),
+            updated = true
+        )
+        emit(result)
+    }
+
 }

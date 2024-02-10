@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
@@ -17,6 +18,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -25,13 +30,22 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.fredy.mysavings.Data.Enum.ChangeColorType
 import com.fredy.mysavings.Data.Enum.DisplayState
 import com.fredy.mysavings.Util.ActionWithName
+import com.fredy.mysavings.Util.defaultExpenseColor
+import com.fredy.mysavings.Util.defaultIncomeColor
+import com.fredy.mysavings.Util.formatBalanceAmount
 import com.fredy.mysavings.Util.formatTime
+import com.fredy.mysavings.Util.initialDarkThemeDefaultColor
+import com.fredy.mysavings.Util.initialLightThemeDefaultColor
 import com.fredy.mysavings.ViewModels.Event.SettingEvent
 import com.fredy.mysavings.ViewModels.SettingState
+import com.fredy.mysavings.ui.Screens.ZCommonComponent.ColorPicker
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.CustomStickyHeader
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.DefaultAppBar
+import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleButton
+import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleDialog
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleItem
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
@@ -47,6 +61,7 @@ fun PreferencesScreen(
     modifier: Modifier = Modifier,
     headerColor: Color = MaterialTheme.colorScheme.primary.copy(0.8f),
     optionColor: Color = MaterialTheme.colorScheme.onBackground,
+    isSystemDarkTheme: Boolean = isSystemInDarkTheme(),
     spacer: Dp = 5.dp,
     rootNavController: NavController,
     title: String,
@@ -79,6 +94,54 @@ fun PreferencesScreen(
             ).show()
         }
     }
+    var selectedColorType by remember {
+        mutableStateOf(ChangeColorType.Surface)
+    }
+    var selectedColor by remember {
+        mutableStateOf(
+            when (selectedColorType) {
+                ChangeColorType.Surface -> state.selectedThemeColor
+                ChangeColorType.Income -> state.selectedIncomeColor
+                ChangeColorType.Expense -> state.selectedExpenseColor
+            }
+        )
+    }
+
+    if (state.isShowColorPallet) {
+        val initialColor = when (selectedColorType) {
+            ChangeColorType.Surface -> state.selectedThemeColor
+            ChangeColorType.Income -> state.selectedIncomeColor
+            ChangeColorType.Expense -> state.selectedExpenseColor
+        }
+        SimpleDialog(
+            title = "Color Picker",
+            onDismissRequest = { onEvent(SettingEvent.HideColorPallet) },
+            onSaveClicked = {
+                when (selectedColorType) {
+                    ChangeColorType.Surface -> onEvent(SettingEvent.ChangeThemeColor(selectedColor))
+                    ChangeColorType.Income -> onEvent(SettingEvent.ChangeIncomeColor(selectedColor))
+                    ChangeColorType.Expense -> onEvent(SettingEvent.ChangeExpenseColor(selectedColor))
+                }
+            },
+        ) {
+            ColorPicker(onColorChange = { selectedColor = it }, initialColor = initialColor)
+            SimpleButton(onClick = {
+                selectedColor = when (selectedColorType) {
+                    ChangeColorType.Surface -> when (state.displayMode) {
+                        DisplayState.Light -> initialLightThemeDefaultColor
+                        DisplayState.Dark -> initialDarkThemeDefaultColor
+                        DisplayState.System -> {
+                            if (isSystemDarkTheme) initialDarkThemeDefaultColor else initialLightThemeDefaultColor
+                        }
+                    }
+
+                    ChangeColorType.Income -> defaultIncomeColor
+                    ChangeColorType.Expense -> defaultExpenseColor
+                }
+            }, title = "Set Back To Initial Color")
+        }
+    }
+
     DefaultAppBar(
         modifier = modifier,
         title = title,
@@ -120,7 +183,8 @@ fun PreferencesScreen(
         Spacer(modifier = Modifier.height(spacer))
         SimpleItem(
             onClick = {
-
+                selectedColorType = ChangeColorType.Surface
+                onEvent(SettingEvent.ShowColorPallet)
             },
         ) {
             Text(
@@ -132,11 +196,39 @@ fun PreferencesScreen(
         Spacer(modifier = Modifier.height(spacer))
         SimpleItem(
             onClick = {
-
+                selectedColorType = ChangeColorType.Expense
+                onEvent(SettingEvent.ShowColorPallet)
             },
+            endContent = {
+                Text(
+                    text = formatBalanceAmount(3.33,"USD"),
+                    color = state.selectedExpenseColor,
+                    style = MaterialTheme.typography.titleLarge
+                )
+            }
         ) {
             Text(
-                text = "Expense & Income Color",
+                text = "Expense Color",
+                color = optionColor,
+                style = MaterialTheme.typography.titleLarge.copy(fontSize = 20.sp)
+            )
+        }
+        Spacer(modifier = Modifier.height(spacer))
+        SimpleItem(
+            onClick = {
+                selectedColorType = ChangeColorType.Income
+                onEvent(SettingEvent.ShowColorPallet)
+            },
+            endContent = {
+                Text(
+                    text = formatBalanceAmount(3.33,"USD"),
+                    color = state.selectedIncomeColor,
+                    style = MaterialTheme.typography.titleLarge
+                )
+            }
+        ) {
+            Text(
+                text = "Income Color",
                 color = optionColor,
                 style = MaterialTheme.typography.titleLarge.copy(fontSize = 20.sp)
             )

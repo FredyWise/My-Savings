@@ -80,7 +80,7 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
     // Color Picker Compose
-    implementation ("com.github.skydoves:colorpicker-compose:1.0.0")
+    implementation("com.github.skydoves:colorpicker-compose:1.0.7")
 
     // Worker
     implementation("androidx.work:work-runtime-ktx:2.9.0")

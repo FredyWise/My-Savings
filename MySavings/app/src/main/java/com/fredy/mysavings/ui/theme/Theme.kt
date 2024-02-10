@@ -2,6 +2,7 @@ package com.fredy.mysavings.ui.theme
 
 import android.app.Activity
 import android.os.Build
+import android.util.Log
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Shapes
@@ -19,6 +20,8 @@ import androidx.core.view.WindowCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.fredy.mysavings.Data.Enum.DisplayState
+import com.fredy.mysavings.Util.TAG
+import com.fredy.mysavings.ViewModels.SettingState
 import com.fredy.mysavings.ViewModels.SettingViewModel
 
 private val LightColorScheme = lightColorScheme(
@@ -91,15 +94,16 @@ fun MySavingsTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
-    viewModel: SettingViewModel,
+    state: SettingState,
     content: @Composable () -> Unit
 ) {
-    val state by viewModel.state.collectAsStateWithLifecycle()
+    val darkColorTheme = DarkColorScheme.copy(surface = state.selectedThemeColor)
+    val lightColorTheme = LightColorScheme.copy(surface = state.selectedThemeColor)
     val colorScheme = when(state.displayMode) {
-        DisplayState.Light -> LightColorScheme
-        DisplayState.Dark -> DarkColorScheme
+        DisplayState.Light -> lightColorTheme
+        DisplayState.Dark -> darkColorTheme
         DisplayState.System -> {
-            if (darkTheme) DarkColorScheme else LightColorScheme
+            if (darkTheme) darkColorTheme else LightColorScheme
         }
     }
     val view = LocalView.current
@@ -110,7 +114,12 @@ fun MySavingsTheme(
             WindowCompat.getInsetsController(
                 window,
                 view
-            ).isAppearanceLightStatusBars = !darkTheme
+            ).isAppearanceLightStatusBars = when(state.displayMode) {
+                DisplayState.Light -> true
+                DisplayState.Dark -> false
+                DisplayState.System -> !darkTheme
+
+            }
         }
     }
 

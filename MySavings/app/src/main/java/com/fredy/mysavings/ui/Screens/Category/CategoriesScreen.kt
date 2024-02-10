@@ -129,7 +129,7 @@ fun CategoriesScreen(
         state.categoryResource.let { resource ->
             ResourceHandler(
                 resource = resource,
-                nullOrEmptyMessage = "You Didn't Have Any Account Yet",
+                nullOrEmptyMessage = "You Didn't Have Any Category Yet",
                 isNullOrEmpty = { it.isNullOrEmpty() },
                 errorMessage = resource.message ?: "",
                 onMessageClick = {
