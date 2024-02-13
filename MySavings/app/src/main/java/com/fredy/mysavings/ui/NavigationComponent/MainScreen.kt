@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
@@ -51,7 +50,6 @@ import com.fredy.mysavings.ui.NavigationComponent.Navigation.drawerScreens
 import com.fredy.mysavings.ui.NavigationComponent.Navigation.navigateSingleTopTo
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MainScreen(
     modifier: Modifier = Modifier,
@@ -77,10 +75,10 @@ fun MainScreen(
         )
     }
     val scope = rememberCoroutineScope()
-    val context = LocalContext.current
     val currentBackStack by navController.currentBackStackEntryAsState()
     val currentDestination = currentBackStack?.destination
-    val currentScreen = bottomBarScreens.find { it.route == currentDestination?.route } ?: NavigationRoute.Records
+    val currentScreen =
+        bottomBarScreens.find { it.route == currentDestination?.route } ?: NavigationRoute.Records
     Scaffold(
         modifier = modifier,
         backgroundColor = backgroundColor,
@@ -93,7 +91,7 @@ fun MainScreen(
             DrawerBody(
                 items = drawerScreens,
                 onItemClick = { newScreen ->
-                    rootNavController.navigateSingleTopTo(
+                    rootNavController.navigate(
                         newScreen.route
                     )
                 },
@@ -103,16 +101,6 @@ fun MainScreen(
                             .fillMaxWidth()
                             .clickable {
                                 signOut()
-                                Toast
-                                    .makeText(
-                                        context,
-                                        "Signed out",
-                                        Toast.LENGTH_SHORT
-                                    )
-                                    .show()
-                                rootNavController.navigateSingleTopTo(
-                                    Graph.FirstNav
-                                )
                             }
                             .padding(16.dp),
                     ) {

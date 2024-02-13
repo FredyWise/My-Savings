@@ -18,6 +18,7 @@ import com.fredy.mysavings.Data.Database.Model.UserData
 import com.fredy.mysavings.Data.Enum.AuthMethod
 import com.fredy.mysavings.Data.Repository.AuthRepository
 import com.fredy.mysavings.Data.Repository.SettingsRepository
+import com.fredy.mysavings.Data.Repository.SyncRepository
 import com.fredy.mysavings.Data.Repository.UserRepository
 import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.TAG
@@ -34,6 +35,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
+import javax.inject.Singleton
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
@@ -52,6 +54,7 @@ class AuthViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
+            onEvent(AuthEvent.GetCurrentUser)
             _state.update {
                 AuthState(
                     signedInUser = currentUserData
@@ -210,7 +213,7 @@ class AuthViewModel @Inject constructor(
                 }
             }
 
-            AuthEvent.SignOut -> {
+            is AuthEvent.SignOut -> {
                 _state.update {
                     AuthState()
                 }

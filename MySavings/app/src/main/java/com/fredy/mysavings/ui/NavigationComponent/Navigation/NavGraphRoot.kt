@@ -1,6 +1,7 @@
 package com.fredy.mysavings.ui.NavigationComponent.Navigation
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -10,8 +11,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -19,8 +22,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
-import androidx.navigation.navigation
 import com.fredy.mysavings.Util.TAG
 import com.fredy.mysavings.ViewModels.AuthViewModel
 import com.fredy.mysavings.ViewModels.Event.AuthEvent
@@ -30,7 +33,6 @@ import com.fredy.mysavings.ViewModels.SettingViewModel
 import com.fredy.mysavings.ui.NavigationComponent.MainScreen
 import com.fredy.mysavings.ui.Screens.AddBulk.BulkAddScreen
 import com.fredy.mysavings.ui.Screens.AddSingle.AddScreen
-import com.fredy.mysavings.ui.Screens.Other.BackupScreen
 import com.fredy.mysavings.ui.Screens.Other.ExportScreen
 import com.fredy.mysavings.ui.Screens.Other.PreferencesScreen
 import com.fredy.mysavings.ui.Screens.Other.ProfileScreen
@@ -40,37 +42,17 @@ import com.fredy.mysavings.ui.Search.SearchScreen
 fun NavGraphRoot(
     navController: NavHostController,
     settingViewModel: SettingViewModel,
-    authViewModel: AuthViewModel = hiltViewModel()
+    authViewModel: AuthViewModel,
+    startDestination: String
 ) {
     NavHost(
         modifier = Modifier.background(
             MaterialTheme.colorScheme.background
         ),
         navController = navController,
-        startDestination = Graph.FirstNav,
-        route = Graph.Root,
+        route = Graph.RootNav,
+        startDestination = startDestination,
     ) {
-        composable(
-            route = Graph.FirstNav,
-            enterTransition = {
-                fadeIn(animationSpec = tween(300))
-            },
-            exitTransition = {
-                fadeOut(animationSpec = tween(300))
-            },
-        ) {
-            val setting by settingViewModel.state.collectAsStateWithLifecycle()
-            Box(modifier = Modifier.fillMaxSize()) {
-                Log.d(TAG, "NavGraphRoot: ")
-                val state by authViewModel.state.collectAsStateWithLifecycle()
-                val startDestination =
-                    if (state.signedInUser != null && setting.autoLogin) Graph.MainNav else Graph.Auth
-                navController.navigateSingleTopTo(
-                    startDestination
-                )
-
-            }
-        }
         authenticationNavGraph(
             settingViewModel,
             authViewModel,
@@ -79,6 +61,12 @@ fun NavGraphRoot(
         navigation(
             route = Graph.MainNav,
             startDestination = Graph.HomeNav,
+            enterTransition = {
+                fadeIn(animationSpec = tween(300))
+            },
+            exitTransition = {
+                fadeOut(animationSpec = tween(300))
+            },
         ) {
             composable(
                 route = Graph.HomeNav,
@@ -89,15 +77,21 @@ fun NavGraphRoot(
                     fadeOut(animationSpec = tween(300))
                 },
             ) {
-                authViewModel.onEvent(
-                    AuthEvent.GetCurrentUser
-                )
                 val state by authViewModel.state.collectAsStateWithLifecycle()
+                val context = LocalContext.current
                 MainScreen(
                     rootNavController = navController,
                     signOut = {
                         authViewModel.onEvent(
                             AuthEvent.SignOut
+                        )
+                        Toast.makeText(
+                            context,
+                            "Signed out",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        navController.navigate(
+                            Graph.AuthNav
                         )
                     },
                     currentUser = state.signedInUser
@@ -153,17 +147,6 @@ fun NavGraphRoot(
                 val state by settingViewModel.state.collectAsStateWithLifecycle()
                 ExportScreen(
                     title = NavigationRoute.Export.title,
-                    rootNavController = navController,
-                    state = state,
-                    onEvent = settingViewModel::onEvent
-                )
-            }
-            composable(
-                route = NavigationRoute.Restore.route
-            ) {
-                val state by settingViewModel.state.collectAsStateWithLifecycle()
-                BackupScreen(
-                    title = NavigationRoute.Restore.title,
                     rootNavController = navController,
                     state = state,
                     onEvent = settingViewModel::onEvent

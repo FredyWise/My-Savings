@@ -108,7 +108,7 @@ class AccountRepositoryImpl @Inject constructor(
             val totalAccountBalance = accounts.sumOf { account ->
                 Log.e(
                     TAG,
-                    "getUserAccountTotalBalance2: tests2" + account,
+                    "getUserAccountTotalBalance2:" + account,
                 )
                 currencyConverter(
                     account.accountAmount,
@@ -124,7 +124,7 @@ class AccountRepositoryImpl @Inject constructor(
             )
             Log.i(
                 TAG,
-                "getUserAccountTotalBalance: $data"
+                "getUserAccountTotalBalance.data: $data"
             )
             emit(data)
         }
@@ -145,10 +145,6 @@ class AccountRepositoryImpl @Inject constructor(
     private suspend fun currencyConverter(
         amount: Double, from: String, to: String
     ): Double {
-        Log.e(
-            TAG,
-            "currencyConverter: test" + amount + from + to
-        )
         return currencyRepository.convertCurrencyData(
             amount, from, to
         ).amount

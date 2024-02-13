@@ -34,7 +34,11 @@ interface RecordRepository {
     suspend fun upsertRecordItem(record: Record)
     suspend fun deleteRecordItem(record: Record)
     fun getRecordById(recordId: String): Flow<TrueRecord>
-    fun getAllRecords():Flow<Resource<List<RecordMap>>>
+    fun getAllRecords(): Flow<Resource<List<RecordMap>>>
+    fun getAllTrueRecordsWithinSpecificTime(
+        startDate: LocalDateTime,
+        endDate: LocalDateTime,
+    ): Flow<Resource<List<TrueRecord>>>
 
     fun getUserTrueRecordMapsFromSpecificTime(
         startDate: LocalDateTime,
@@ -92,7 +96,7 @@ class RecordRepositoryImpl @Inject constructor(
     private val recordDao: RecordDao,
     private val firestore: FirebaseFirestore,
     private val firebaseAuth: FirebaseAuth
-): RecordRepository {
+) : RecordRepository {
     private val recordCollection = firestore.collection(
         "record"
     )
@@ -139,6 +143,29 @@ class RecordRepositoryImpl @Inject constructor(
                 record
             )
 
+        }
+    }
+
+    override fun getAllTrueRecordsWithinSpecificTime(
+        startDate: LocalDateTime,
+        endDate: LocalDateTime,
+    ): Flow<Resource<List<TrueRecord>>> {
+        return flow {
+            emit(Resource.Loading())
+            val currentUser = firebaseAuth.currentUser!!
+            val userId = if (currentUser.isNotNull()) currentUser.uid else ""
+            val data = recordDataSource.getAllUserTrueRecordsBySpesificTime(userId,startDate,endDate)
+            Log.i(
+                TAG,
+                "getAllTrueRecordsWithinSpecificTime.Data: $data"
+            )
+            emit(Resource.Success(data))
+        }.catch { e ->
+            Log.i(
+                TAG,
+                "getAllTrueRecordsWithinSpecificTime.Error: $e"
+            )
+            emit(Resource.Error(e.message.toString()))
         }
     }
 
@@ -476,10 +503,12 @@ class RecordRepositoryImpl @Inject constructor(
                 if (!isTransfer(record.recordType)) {
                     val incomeAmount = if (isIncome(
                             record.recordType
-                        )) record.recordAmount else 0.0
+                        )
+                    ) record.recordAmount else 0.0
                     val expenseAmount = if (isExpense(
                             record.recordType
-                        )) record.recordAmount else 0.0
+                        )
+                    ) record.recordAmount else 0.0
                     if (existingAccount != null) {
                         accountWithAmountMap[key] = existingAccount.copy(
                             incomeAmount = existingAccount.incomeAmount + incomeAmount,

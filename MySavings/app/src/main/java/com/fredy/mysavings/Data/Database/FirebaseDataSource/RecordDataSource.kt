@@ -28,6 +28,11 @@ interface RecordDataSource {
     suspend fun getAllUserTrueRecords(
         userId: String,
     ): List<TrueRecord>
+    suspend fun getAllUserTrueRecordsBySpesificTime(
+        userId: String,
+        startDate: LocalDateTime,
+        endDate: LocalDateTime,
+    ): List<TrueRecord>
 
     suspend fun getUserTrueRecordByCurrencyFromSpecificTime(
         userId: String,
@@ -129,6 +134,50 @@ class RecordDataSourceImpl @Inject constructor(
 
         return try {
             val querySnapshot = recordCollection.whereEqualTo(
+                "userIdFk", userId
+            ).orderBy(
+                "recordTimestamp",
+                Query.Direction.DESCENDING
+            ).get().await()
+
+            val records = querySnapshot.toObjects<Record>()
+            records.map { record ->
+                TrueRecord(
+                    record = record,
+                    fromAccount = trueRecordComponentResult.fromAccount.single { it.accountId == record.accountIdFromFk },
+                    toAccount = trueRecordComponentResult.toAccount.single { it.accountId == record.accountIdToFk },
+                    toCategory = trueRecordComponentResult.toCategory.single { it.categoryId == record.categoryIdFk },
+                )
+            }
+        } catch (e: Exception) {
+            Log.e(
+                TAG,
+                "getUserTrueRecordFromSpecificTimeError: ${e.message}"
+            )
+            throw e
+        }
+    }
+    override suspend fun getAllUserTrueRecordsBySpesificTime(
+        userId: String,
+        startDate: LocalDateTime,
+        endDate: LocalDateTime,
+    ): List<TrueRecord> {
+        val trueRecordComponentResult = getTrueRecordsComponent(
+            userId
+        )
+
+        return try {
+            val querySnapshot = recordCollection.whereGreaterThanOrEqualTo(
+                "recordTimestamp",
+                TimestampConverter.fromDateTime(
+                    startDate
+                )
+            ).whereLessThanOrEqualTo(
+                "recordTimestamp",
+                TimestampConverter.fromDateTime(
+                    endDate
+                )
+            ).whereEqualTo(
                 "userIdFk", userId
             ).orderBy(
                 "recordTimestamp",

@@ -1,6 +1,10 @@
 package com.fredy.mysavings.ui.Screens.Other
 
+import android.Manifest
+import android.os.Build
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -12,6 +16,10 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,17 +27,22 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.darkrockstudios.libraries.mpfilepicker.DirectoryPicker
 import com.fredy.mysavings.Util.formatDate
 import com.fredy.mysavings.ViewModels.Event.SettingEvent
 import com.fredy.mysavings.ViewModels.SettingState
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.DefaultAppBar
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SettingButton
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleButton
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
 import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.datetime.date.DatePickerDefaults
 import com.vanpra.composematerialdialogs.datetime.date.datepicker
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun ExportScreen(
     modifier: Modifier = Modifier,
@@ -42,6 +55,42 @@ fun ExportScreen(
     val context = LocalContext.current
     val startDateDialogState = rememberMaterialDialogState()
     val endDateDialogState = rememberMaterialDialogState()
+    val permissionState = if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
+        rememberPermissionState(
+            permission = Manifest.permission.WRITE_EXTERNAL_STORAGE
+        ).status.isGranted
+    } else {
+        true
+    }
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            Toast.makeText(
+                context,
+                "Permission Granted",
+                Toast.LENGTH_SHORT
+            ).show()
+        } else {
+            Toast.makeText(
+                context,
+                "Permission Denied",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+
+    var showDirPicker  by remember { mutableStateOf(false) }
+    DirectoryPicker(
+        show = showDirPicker,
+        onFileSelected = {
+            it?.let {
+                onEvent(SettingEvent.OnExport(it))
+            }
+            showDirPicker = false
+        }
+    )
     DefaultAppBar(
         modifier = modifier, title = title,
         onNavigationIconClick = { rootNavController.navigateUp() },
@@ -67,7 +116,7 @@ fun ExportScreen(
                 )
                 SimpleButton(
                     onClick = { startDateDialogState.show() },
-                    title = formatDate(state.startDate),
+                    title = formatDate(state.startDate.toLocalDate()),
                     titleStyle = MaterialTheme.typography.titleLarge.copy(
                         onBackground
                     )
@@ -95,7 +144,7 @@ fun ExportScreen(
                 )
                 SimpleButton(
                     onClick = { endDateDialogState.show() },
-                    title = formatDate(state.endDate),
+                    title = formatDate(state.endDate.toLocalDate()),
                     titleStyle = MaterialTheme.typography.titleLarge.copy(
                         onBackground
                     )
@@ -104,7 +153,15 @@ fun ExportScreen(
         }
         SettingButton(modifier = Modifier
             .fillMaxWidth(0.7f), text = "Export Now", onClick = {
-            onEvent(SettingEvent.OnExport)
+            if (permissionState) {
+                showDirPicker = true
+            } else {
+                if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
+                    permissionLauncher.launch(
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    )
+                }
+            }
         })
     }
 
@@ -133,7 +190,7 @@ fun ExportScreen(
         },
     ) {
         datepicker(
-            initialDate = state.startDate,
+            initialDate = state.startDate.toLocalDate(),
             colors = DatePickerDefaults.colors(
                 headerBackgroundColor = MaterialTheme.colorScheme.primary,
                 headerTextColor = MaterialTheme.colorScheme.onPrimary,
@@ -173,7 +230,7 @@ fun ExportScreen(
         },
     ) {
         datepicker(
-            initialDate = state.endDate,
+            initialDate = state.endDate.toLocalDate(),
             colors = DatePickerDefaults.colors(
                 headerBackgroundColor = MaterialTheme.colorScheme.primary,
                 headerTextColor = MaterialTheme.colorScheme.onPrimary,

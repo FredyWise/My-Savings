@@ -50,7 +50,8 @@ object DataModule {
 
     @Provides
     @Singleton
-    fun provideCategoryDao(savingsDatabase: SavingsDatabase): CategoryDao = savingsDatabase.categoryDao
+    fun provideCategoryDao(savingsDatabase: SavingsDatabase): CategoryDao =
+        savingsDatabase.categoryDao
 
     @Provides
     @Singleton
@@ -58,25 +59,30 @@ object DataModule {
 
     @Provides
     @Singleton
-    fun provideCurrencyCacheDao(savingsDatabase: SavingsDatabase): CurrencyCacheDao = savingsDatabase.currencyCache
+    fun provideCurrencyCacheDao(savingsDatabase: SavingsDatabase): CurrencyCacheDao =
+        savingsDatabase.currencyCache
 
     @Provides
     @Singleton
-    fun provideRecordDataSource(firestore: FirebaseFirestore): RecordDataSource = RecordDataSourceImpl(firestore)
+    fun provideRecordDataSource(firestore: FirebaseFirestore): RecordDataSource =
+        RecordDataSourceImpl(firestore)
 
     @Provides
     @Singleton
-    fun provideAccountDataSource(firestore: FirebaseFirestore): AccountDataSource = AccountDataSourceImpl(firestore)
+    fun provideAccountDataSource(firestore: FirebaseFirestore): AccountDataSource =
+        AccountDataSourceImpl(firestore)
 
     @Provides
     @Singleton
-    fun provideCategoryDataSource(firestore: FirebaseFirestore): CategoryDataSource = CategoryDataSourceImpl(firestore)
+    fun provideCategoryDataSource(firestore: FirebaseFirestore): CategoryDataSource =
+        CategoryDataSourceImpl(firestore)
 
     @Provides
     @Singleton
-    fun provideCurrencyCacheDataSource(firestore: FirebaseFirestore): CurrencyDataSource = CurrencyDataSourceImpl(firestore)
+    fun provideCurrencyCacheDataSource(firestore: FirebaseFirestore): CurrencyDataSource =
+        CurrencyDataSourceImpl(firestore)
 
     @Provides
     @Singleton
-    fun provideCSVDao(): CSVDao = CSVDaoImpl()
+    fun provideCSVDao(@ApplicationContext context: Context): CSVDao = CSVDaoImpl(context)
 }

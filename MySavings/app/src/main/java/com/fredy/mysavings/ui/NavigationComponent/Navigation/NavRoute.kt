@@ -2,44 +2,36 @@ package com.fredy.mysavings.ui.NavigationComponent.Navigation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBalanceWallet
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddBox
 import androidx.compose.material.icons.filled.AddToPhotos
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.HowToReg
 import androidx.compose.material.icons.filled.Label
 import androidx.compose.material.icons.filled.Login
 import androidx.compose.material.icons.filled.Password
 import androidx.compose.material.icons.filled.PieChart
 import androidx.compose.material.icons.filled.Receipt
-import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.UploadFile
 import androidx.compose.material.icons.outlined.AccountBalanceWallet
-import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.AddBox
 import androidx.compose.material.icons.outlined.AddToPhotos
-import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.HowToReg
 import androidx.compose.material.icons.outlined.Label
 import androidx.compose.material.icons.outlined.Login
 import androidx.compose.material.icons.outlined.Password
 import androidx.compose.material.icons.outlined.PieChart
 import androidx.compose.material.icons.outlined.Receipt
-import androidx.compose.material.icons.outlined.Save
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.UploadFile
 import androidx.compose.ui.graphics.vector.ImageVector
 
 object Graph {
-    const val Root = "root_nav"
-    const val Auth = "auth_nav"
+    const val RootNav = "root_nav"
+    const val AuthNav = "auth_nav"
     const val HomeNav = "home_nav"
     const val MainNav = "main_nav"
-    const val FirstNav = "first_nav"
-    const val AdditionalAppBar = "additional_app_bar_nav"
     const val AnalysisNav = "analysis_nav"
 }
 
@@ -52,8 +44,6 @@ val analysisScreens = listOf(
 val drawerScreens = listOf(
     NavigationRoute.Preferences,
     NavigationRoute.Export,
-    NavigationRoute.Restore,
-    NavigationRoute.Reset
 )
 
 val bottomBarScreens = listOf(
@@ -120,21 +110,6 @@ sealed class NavigationRoute(
         iconNot = Icons.Outlined.UploadFile
     )
 
-    object Restore: NavigationRoute(
-        route = "restore",
-        title = "Backup & Restore",
-        contentDescription = "Go to restore screen",
-        icon = Icons.Default.Save,
-        iconNot = Icons.Outlined.Save
-    )
-
-    object Reset: NavigationRoute(
-        route = "reset",
-        title = "Reset All Data",
-        contentDescription = "Go to reset screen",
-        icon = Icons.Default.Delete,
-        iconNot = Icons.Outlined.Delete
-    )
 
     //bottom bar
     object Records: NavigationRoute(

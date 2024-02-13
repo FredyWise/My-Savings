@@ -1,47 +1,48 @@
 package com.fredy.mysavings.ViewModels
 
-import android.Manifest
-import android.app.KeyguardManager
 import android.content.Context
-import android.content.pm.PackageManager
-import android.util.Log
 import androidx.compose.ui.graphics.Color
-import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import com.fredy.mysavings.Data.CSV.CSVDao
 import com.fredy.mysavings.Data.Enum.DisplayState
 import com.fredy.mysavings.Data.Notification.NotificationCredentials
 import com.fredy.mysavings.Data.Notification.NotificationWorker
+import com.fredy.mysavings.Data.Repository.RecordRepository
 import com.fredy.mysavings.Data.Repository.SettingsRepository
+import com.fredy.mysavings.Data.Repository.SyncRepository
 import com.fredy.mysavings.Util.BalanceColor
-import com.fredy.mysavings.Util.TAG
+import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.defaultExpenseColor
 import com.fredy.mysavings.Util.defaultIncomeColor
+import com.fredy.mysavings.Util.formatDate
 import com.fredy.mysavings.Util.initialDarkThemeDefaultColor
 import com.fredy.mysavings.ViewModels.Event.SettingEvent
-import com.fredy.mysavings.ui.theme.md_theme_dark_primary
-import com.fredy.mysavings.ui.theme.md_theme_dark_tertiary
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.LocalTime
 import java.util.Calendar
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
-
+import javax.inject.Singleton
 
 @HiltViewModel
 class SettingViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val settingsRepository: SettingsRepository
+    private val settingsRepository: SettingsRepository,
+    private val recordRepository: RecordRepository,
+    private val syncRepository: SyncRepository,
+    private val csvDao: CSVDao,
 ) : ViewModel() {
 
     init {
@@ -81,13 +82,13 @@ class SettingViewModel @Inject constructor(
 
             is SettingEvent.SelectEndExportDate -> {
                 _state.update {
-                    it.copy(endDate = event.endDate)
+                    it.copy(endDate = LocalDateTime.of(event.endDate, LocalTime.MAX))
                 }
             }
 
             is SettingEvent.SelectStartExportDate -> {
                 _state.update {
-                    it.copy(startDate = event.startDate)
+                    it.copy(startDate = LocalDateTime.of(event.startDate, LocalTime.MIN))
                 }
             }
 
@@ -138,16 +139,31 @@ class SettingViewModel @Inject constructor(
                 }
             }
 
-            SettingEvent.OnExport -> {
+            is SettingEvent.OnExport -> {
+                viewModelScope.launch {
+                    val startDate = state.value.startDate
+                    val endDate = state.value.endDate
+                    recordRepository.getAllTrueRecordsWithinSpecificTime(startDate, endDate)
+                        .collectLatest { recordsResource ->
+                            when (recordsResource) {
+                                is Resource.Error -> {}
+                                is Resource.Loading -> {}
+                                is Resource.Success -> {
+                                    csvDao.outputToCSV(
+                                        event.uri,
+                                        formatDate(startDate.toLocalDate()) + "- " + formatDate(
+                                            endDate.toLocalDate()
+                                        ),
+                                        recordsResource.data!!
+                                    )
 
-            }
-
-            SettingEvent.OnBackup -> {
-
-            }
-
-            SettingEvent.OnRestore -> {
-
+                                }
+                            }
+                        }
+                    syncRepository.syncRecords()
+                    syncRepository.syncAccounts()
+                    syncRepository.syncCategory()
+                }
             }
 
             SettingEvent.HideColorPallet -> {
@@ -230,8 +246,8 @@ class SettingViewModel @Inject constructor(
 }
 
 data class SettingState(
-    val startDate: LocalDate = LocalDate.now(),
-    val endDate: LocalDate = LocalDate.now(),
+    val startDate: LocalDateTime = LocalDateTime.now(),
+    val endDate: LocalDateTime = LocalDateTime.now(),
     val displayMode: DisplayState = DisplayState.System,
     val autoLogin: Boolean = true,
     val bioAuth: Boolean = false,

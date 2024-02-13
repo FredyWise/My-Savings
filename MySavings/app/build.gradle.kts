@@ -63,7 +63,7 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
     // Additional UI
-    implementation("androidx.compose.foundation:foundation:1.5.4")
+    implementation("androidx.compose.foundation:foundation:1.6.1")
     // Firebase
     implementation("com.google.android.gms:play-services-vision:20.1.3")//add this to remove duplicate class error
     implementation("com.google.firebase:firebase-auth:22.3.1")
@@ -120,7 +120,7 @@ dependencies {
     implementation("io.github.vanpra.compose-material-dialogs:datetime:0.9.0")
 
     //    Navigation
-    implementation("androidx.navigation:navigation-compose:2.7.6")
+    implementation("androidx.navigation:navigation-compose:2.7.7")
 
     var compose_version = "1.6.0"
     // Compose Material Design
@@ -142,7 +142,9 @@ dependencies {
     kapt("androidx.hilt:hilt-compiler:1.1.0")
     implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
 
-    //Biometric Auth
-//    implementation ("androidx.biometric:biometric-ktx:1.2.0-alpha05")
+    //dir and file picker
+    implementation("com.darkrockstudios:mpfilepicker:3.1.0")
 
+    // splash screen
+    implementation("androidx.core:core-splashscreen:1.0.1")
 }

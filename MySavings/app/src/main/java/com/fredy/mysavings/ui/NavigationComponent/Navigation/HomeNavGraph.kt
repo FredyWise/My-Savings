@@ -42,6 +42,12 @@ fun HomeNavGraph(
     ) {
         composable(
             route = NavigationRoute.Records.route,
+            enterTransition = {
+                fadeIn(animationSpec = tween(300))
+            },
+            exitTransition = {
+                fadeOut(animationSpec = tween(300))
+            },
         ) {
             val viewModel: RecordViewModel = hiltViewModel()
             val state by viewModel.state.collectAsStateWithLifecycle()

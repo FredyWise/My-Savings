@@ -1,10 +1,13 @@
 package com.fredy.mysavings.ViewModels.Event
 
+import android.content.Context
+import android.net.Uri
 import androidx.compose.ui.graphics.Color
 import com.fredy.mysavings.Data.Database.Model.Record
 import com.fredy.mysavings.Data.Database.Model.TrueRecord
 import com.fredy.mysavings.Data.Enum.DisplayState
 import com.fredy.mysavings.Data.Enum.FilterType
+import java.net.URI
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -13,9 +16,7 @@ sealed interface SettingEvent{
     object ToggleDailyNotification: SettingEvent
     object ToggleBioAuth: SettingEvent
     object ToggleAutoLogin: SettingEvent
-    object OnExport: SettingEvent
-    object OnBackup: SettingEvent
-    object OnRestore: SettingEvent
+    data class OnExport(val uri: String): SettingEvent
     object ShowColorPallet:SettingEvent
     object HideColorPallet:SettingEvent
     data class ChangeThemeColor(val color: Color): SettingEvent

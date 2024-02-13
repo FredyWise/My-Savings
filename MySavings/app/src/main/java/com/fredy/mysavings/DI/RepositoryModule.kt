@@ -22,6 +22,8 @@ import com.fredy.mysavings.Data.Repository.RecordRepository
 import com.fredy.mysavings.Data.Repository.RecordRepositoryImpl
 import com.fredy.mysavings.Data.Repository.SettingsRepository
 import com.fredy.mysavings.Data.Repository.SettingsRepositoryImpl
+import com.fredy.mysavings.Data.Repository.SyncRepository
+import com.fredy.mysavings.Data.Repository.SyncRepositoryImpl
 import com.fredy.mysavings.Data.Repository.UserRepository
 import com.fredy.mysavings.Data.Repository.UserRepositoryImpl
 import com.google.android.gms.auth.api.identity.SignInClient
@@ -124,5 +126,25 @@ object RepositoryModule {
         @ApplicationContext appContext: Context
     ): SettingsRepository = SettingsRepositoryImpl(
         appContext
+    )
+
+    @Provides
+    @Singleton
+    fun provideSyncRepository(
+        accountDataSource: AccountDataSource,
+        accountDao: AccountDao,
+        categoryDataSource: CategoryDataSource,
+        categoryDao: CategoryDao,
+        recordDataSource: RecordDataSource,
+        recordDao: RecordDao,
+        firebaseAuth: FirebaseAuth
+    ): SyncRepository = SyncRepositoryImpl(
+        accountDataSource,
+        accountDao,
+        categoryDataSource,
+        categoryDao,
+        recordDataSource,
+        recordDao,
+        firebaseAuth,
     )
 }
