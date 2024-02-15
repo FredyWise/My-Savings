@@ -10,7 +10,6 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FilterList
-import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -35,7 +34,7 @@ fun RecordsScreen(
     state: RecordState,
     onEvent: (RecordsEvent) -> Unit,
 ) {
-    val key = state.recordMapsResource.hashCode()
+    val key = state.resourceData.recordMapsResource.hashCode()
     val isVisible = remember(key) {
         MutableTransitionState(
             false
@@ -44,7 +43,18 @@ fun RecordsScreen(
     state.trueRecord?.let {
         RecordDialog(
             trueRecord = it,
-            onEvent = onEvent,
+            onSaveClicked = { record ->
+                onEvent(
+                    RecordsEvent.DeleteRecord(
+                        record
+                    )
+                )
+            },
+            onDismissDialog = {
+                onEvent(
+                    RecordsEvent.HideDialog
+                )
+            },
             onEdit = {
                 rootNavController.navigate(
                     NavigationRoute.Add.route + "/" + it.record.recordId
@@ -132,7 +142,7 @@ fun RecordsScreen(
                 targetOffsetY = { fullHeight -> fullHeight },
             ) + fadeOut()
         ) {
-            state.recordMapsResource.let { resource ->
+            state.resourceData.recordMapsResource.let { resource ->
                 ResourceHandler(
                     resource = resource,
                     nullOrEmptyMessage = "There is no record on this date yet",

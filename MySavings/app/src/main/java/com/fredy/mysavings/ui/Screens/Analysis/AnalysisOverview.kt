@@ -41,8 +41,8 @@ import com.fredy.mysavings.Util.defaultColors
 import com.fredy.mysavings.Util.formatAmount
 import com.fredy.mysavings.Util.formatBalanceAmount
 import com.fredy.mysavings.Util.isExpense
-import com.fredy.mysavings.ViewModels.AnalysisState
-import com.fredy.mysavings.ViewModels.Event.AnalysisEvent
+import com.fredy.mysavings.ViewModels.Event.RecordsEvent
+import com.fredy.mysavings.ViewModels.RecordState
 import com.fredy.mysavings.ui.Screens.Analysis.Charts.ChartSlimDonutWithTitle
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.ResourceHandler
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleEntityItem
@@ -50,10 +50,10 @@ import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleEntityItem
 @Composable
 fun AnalysisOverview(
     modifier: Modifier = Modifier,
-    state: AnalysisState,
-    onEvent: (AnalysisEvent) -> Unit,
+    state: RecordState,
+    onEvent: (RecordsEvent) -> Unit,
 ) {
-    val key = state.analysisData.categoriesWithAmountResource.hashCode()
+    val key = state.resourceData.categoriesWithAmountResource.hashCode()
     val isVisible = remember(key) {
         MutableTransitionState(
             false
@@ -75,7 +75,7 @@ fun AnalysisOverview(
             targetOffsetY = { fullHeight -> fullHeight },
         ) + fadeOut()
     ) {
-        state.analysisData.categoriesWithAmountResource.let { resource ->
+        state.resourceData.categoriesWithAmountResource.let { resource ->
             ResourceHandler(
                 resource = resource,
                 nullOrEmptyMessage = "There is no ${state.filterState.recordType.name} on this date yet",
@@ -84,18 +84,20 @@ fun AnalysisOverview(
                 onMessageClick = {
                     isVisible.targetState = false
                     onEvent(
-                        AnalysisEvent.ToggleRecordType
+                        RecordsEvent.ToggleRecordType
                     )
                 },
             ) { data ->                // this to bellow should be able to be simplified
-                val items = if (isExpense(data.first().category.categoryType)) data else data.reversed()
-                val colors = if (isExpense(items.first().category.categoryType)) defaultColors.subList(
-                    0,
-                    items.size,
-                ) else defaultColors.reversed().subList(
-                    0,
-                    items.size,
-                )
+                val items =
+                    if (isExpense(data.first().category.categoryType)) data else data.reversed()
+                val colors =
+                    if (isExpense(items.first().category.categoryType)) defaultColors.subList(
+                        0,
+                        items.size,
+                    ) else defaultColors.reversed().subList(
+                        0,
+                        items.size,
+                    )
 
                 val itemsProportion = items.extractProportions { proportion ->
                     proportion.amount.toFloat()
@@ -119,7 +121,7 @@ fun AnalysisOverview(
                                     amountsTotal = items.sumOf { it.amount },
                                     onClickLabel = {
                                         onEvent(
-                                            AnalysisEvent.ToggleRecordType
+                                            RecordsEvent.ToggleRecordType
                                         )
                                         isVisible.targetState = false
                                     },

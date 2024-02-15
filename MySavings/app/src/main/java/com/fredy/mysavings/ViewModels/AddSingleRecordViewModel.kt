@@ -91,7 +91,7 @@ class AddSingleRecordViewModel @Inject constructor(
                 }
 
                 state = AddRecordState()
-                event.navigateUp()
+                event.sideEffect()
             }
 
             is AddRecordEvent.AccountIdFromFk -> {
@@ -153,7 +153,7 @@ class AddSingleRecordViewModel @Inject constructor(
                 )
             }
 
-            is AddRecordEvent.ShowWarning -> {
+            is AddRecordEvent.DismissWarning -> {
                 state = state.copy(
                     isShowWarning = false
                 )

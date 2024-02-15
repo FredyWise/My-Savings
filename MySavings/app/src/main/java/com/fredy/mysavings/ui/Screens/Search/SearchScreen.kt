@@ -43,16 +43,28 @@ fun SearchScreen(
     recordState.trueRecord?.let {
         RecordDialog(
             trueRecord = it,
-            onEvent = onEvent,
+            onSaveClicked = { record ->
+                onEvent(
+                    RecordsEvent.DeleteRecord(
+                        record
+                    )
+                )
+            },
+            onDismissDialog = {
+                onEvent(
+                    RecordsEvent.HideDialog
+                )
+            },
             onEdit = {
                 rootNavController.navigate(
                     NavigationRoute.Add.route + "/" + it.record.recordId
                 )
             },
         )
+
     }
     DefaultAppBar(
-        modifier = modifier, title = title,
+        modifier = modifier, title = title, scrollable = false,
         onNavigationIconClick = { rootNavController.navigateUp() },
     ) {
         SearchBar(
@@ -87,14 +99,13 @@ fun SearchScreen(
                 state.trueRecordsResource.let { resource ->
                     ResourceHandler(
                         resource = resource,
-                        nullOrEmptyMessage = "There is no record on this date yet",
+                        nullOrEmptyMessage = "You didn't have any records yet",
                         isNullOrEmpty = { it.isNullOrEmpty() },
                         errorMessage = resource.message ?: "",
                         onMessageClick = {
                             rootNavController.navigate(
                                 NavigationRoute.Add.route + "/-1"
                             )
-//                        isVisible.targetState = false
                         },
                     ) { data ->
                         RecordBody(

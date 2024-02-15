@@ -5,8 +5,8 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.fredy.mysavings.ViewModels.AnalysisState
-import com.fredy.mysavings.ViewModels.Event.AnalysisEvent
+import com.fredy.mysavings.ViewModels.Event.RecordsEvent
+import com.fredy.mysavings.ViewModels.RecordState
 import com.fredy.mysavings.ui.Screens.Analysis.AnalysisAccount
 import com.fredy.mysavings.ui.Screens.Analysis.AnalysisFlow
 import com.fredy.mysavings.ui.Screens.Analysis.AnalysisOverview
@@ -16,8 +16,8 @@ import com.fredy.mysavings.ui.Screens.Analysis.AnalysisOverview
 fun AnalysisNavGraph(
     rootNavController: NavHostController,
     navController: NavHostController,
-    state: AnalysisState,
-    onEvent: (AnalysisEvent) -> Unit,
+    state: RecordState,
+    onEvent: (RecordsEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     NavHost(

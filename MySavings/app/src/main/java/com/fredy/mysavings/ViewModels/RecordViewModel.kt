@@ -3,10 +3,14 @@ package com.fredy.mysavings.ViewModels
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.fredy.mysavings.Data.Database.Model.Record
 import com.fredy.mysavings.Data.Database.Model.TrueRecord
+import com.fredy.mysavings.Data.Enum.GraphType
 import com.fredy.mysavings.Data.Enum.RecordType
 import com.fredy.mysavings.Data.Enum.SortType
 import com.fredy.mysavings.Data.Repository.AccountRepository
+import com.fredy.mysavings.Data.Repository.AccountWithAmountType
+import com.fredy.mysavings.Data.Repository.CategoryWithAmount
 import com.fredy.mysavings.Data.Repository.RecordRepository
 import com.fredy.mysavings.Util.BalanceBar
 import com.fredy.mysavings.Util.BalanceItem
@@ -25,7 +29,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -42,9 +45,15 @@ class RecordViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             accountRepository.getUserAvailableCurrency().collectLatest { currency ->
+                _state.update {
+                    it.copy(selectedCheckbox = currency)
+                }
                 _filterState.update {
                     it.copy(currencies = currency)
                 }
+            }
+            _filterState.update {
+                it.copy(updating = !it.updating)
             }
         }
     }
@@ -60,6 +69,52 @@ class RecordViewModel @Inject constructor(
     )
 
 
+    private val _categoriesWithAmount = _filterState.flatMapLatest { filterState ->
+        filterState.map { start, end, recordType, sortType, currencies ->
+            recordRepository.getUserCategoriesWithAmountFromSpecificTime(
+                recordType,
+                sortType,
+                start,
+                end,
+                currencies,
+            )
+        }
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(),
+        Resource.Success(emptyList())
+    )
+
+    private val _accountsWithAmount = _filterState.flatMapLatest { filterState ->
+        filterState.map { start, end, _, sortType, _ ->
+            recordRepository.getUserAccountsWithAmountFromSpecificTime(
+                sortType,
+                start,
+                end,
+            )
+        }
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(),
+        Resource.Success(emptyList())
+    )
+
+    private val _recordsWithinSpecificTime = _filterState.flatMapLatest { filterState ->
+        filterState.map { start, end, recordType, sortType, currencies ->
+            recordRepository.getUserRecordsFromSpecificTime(
+                recordType,
+                sortType,
+                start,
+                end,
+                currencies,
+            )
+        }
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(),
+        Resource.Success(emptyList())
+    )
+
     private val _recordResource = _filterState.flatMapLatest { filterState ->
         filterState.map { start, end, _, sortType, currencies ->
             recordRepository.getUserTrueRecordMapsFromSpecificTime(
@@ -72,7 +127,7 @@ class RecordViewModel @Inject constructor(
         Resource.Success(emptyList())
     )
 
-    private val _totalBalance = recordRepository.getUserTotalRecordBalance().stateIn(
+    private val _totalBalance = _filterState.flatMapLatest {recordRepository.getUserTotalRecordBalance()}.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(),
         BalanceItem()
@@ -128,26 +183,50 @@ class RecordViewModel @Inject constructor(
         BalanceBar()
     )
 
+
+    private val _resourceData = MutableStateFlow(
+        ResourceData()
+    )
+
+    private val resourceData = combine(
+        _resourceData,
+        _categoriesWithAmount,
+        _recordsWithinSpecificTime,
+        _accountsWithAmount,
+        _recordResource,
+    ) { resourceData, categoriesWithAmount, recordsWithinSpecificTime, accountsWithAmount,recordResource ->
+        resourceData.copy(
+            categoriesWithAmountResource = categoriesWithAmount,
+            accountsWithAmountResource = accountsWithAmount,
+            recordsWithinTimeResource = recordsWithinSpecificTime,
+            recordMapsResource = recordResource
+        )
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(),
+        ResourceData()
+    )
+
     private val _state = MutableStateFlow(
         RecordState()
     )
 
     val state = combine(
         _state,
-        _recordResource,
+        resourceData,
         _availableCurrency,
         balanceBar,
         _filterState,
-    ) { state, recordResource, availableCurrency, balanceBar, filterState ->
+    ) { state, resourceData, availableCurrency, balanceBar, filterState ->
         state.copy(
-            recordMapsResource = recordResource,
+            resourceData = resourceData,
             availableCurrency = availableCurrency,
             balanceBar = balanceBar,
             filterState = filterState
         )
     }.stateIn(
         viewModelScope,
-        SharingStarted.WhileSubscribed(3000),
+        SharingStarted.WhileSubscribed(5000),
         RecordState()
     )
 
@@ -182,6 +261,18 @@ class RecordViewModel @Inject constructor(
                 _state.update {
                     it.copy(
                         isChoosingFilter = false,
+                    )
+                }
+            }
+
+            is RecordsEvent.ToggleRecordType -> {
+                _filterState.update {
+                    it.copy(
+                        recordType = when(it.recordType){
+                            RecordType.Expense -> RecordType.Income
+                            RecordType.Income -> RecordType.Expense
+                            RecordType.Transfer -> RecordType.Expense
+                        }
                     )
                 }
             }
@@ -264,7 +355,8 @@ class RecordViewModel @Inject constructor(
 }
 
 data class RecordState(
-    val recordMapsResource: Resource<List<RecordMap>> = Resource.Loading(),
+    val resourceData: ResourceData = ResourceData(),
+    val graphType: GraphType = GraphType.SlimDonut,
     val trueRecord: TrueRecord? = null,
     val availableCurrency: List<String> = listOf(),
     val selectedCheckbox: List<String> = listOf(),
@@ -278,6 +370,13 @@ data class RecordState(
 data class RecordMap(
     val recordDate: LocalDate,
     val records: List<TrueRecord>
+)
+
+data class ResourceData(
+    val categoriesWithAmountResource: Resource<List<CategoryWithAmount>> = Resource.Loading(),
+    val accountsWithAmountResource: Resource<List<AccountWithAmountType>> = Resource.Loading(),
+    val recordsWithinTimeResource: Resource<List<Record>> = Resource.Loading(),
+    val recordMapsResource: Resource<List<RecordMap>> = Resource.Loading(),
 )
 
 

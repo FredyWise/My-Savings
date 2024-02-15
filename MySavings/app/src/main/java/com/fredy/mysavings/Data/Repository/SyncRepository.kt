@@ -26,33 +26,39 @@ class SyncRepositoryImpl(
     private val firebaseAuth: FirebaseAuth
 ) : SyncRepository {
     override suspend fun syncAccounts(withDelete: Boolean) {
-        val currentUser = firebaseAuth.currentUser!!
-        val userId = if (currentUser.isNotNull()) currentUser.uid else ""
-        val accounts = accountDataSource.getUserAccounts(userId)
-        if (withDelete) {
-            accountDao.deleteAllAccounts()
+        val currentUser = firebaseAuth.currentUser
+        currentUser?.let {
+            val userId = if (currentUser.isNotNull()) currentUser.uid else ""
+            val accounts = accountDataSource.getUserAccounts(userId)
+            if (withDelete) {
+                accountDao.deleteAllAccounts()
+            }
+            accountDao.upsertAllAccountItem(accounts)
         }
-        accountDao.upsertAllAccountItem(accounts)
     }
 
     override suspend fun syncRecords(withDelete: Boolean) {
-        val currentUser = firebaseAuth.currentUser!!
-        val userId = if (currentUser.isNotNull()) currentUser.uid else ""
-        val records = recordDataSource.getUserRecords(userId)
-        if (withDelete) {
-            recordDao.deleteAllRecords()
+        val currentUser = firebaseAuth.currentUser
+        currentUser?.let {
+            val userId = if (currentUser.isNotNull()) currentUser.uid else ""
+            val records = recordDataSource.getUserRecords(userId)
+            if (withDelete) {
+                recordDao.deleteAllRecords()
+            }
+            recordDao.upsertAllRecordItem(records)
         }
-        recordDao.upsertAllRecordItem(records)
     }
 
     override suspend fun syncCategory(withDelete: Boolean) {
-        val currentUser = firebaseAuth.currentUser!!
-        val userId = if (currentUser.isNotNull()) currentUser.uid else ""
-        val categories = categoryDataSource.getUserCategoriesOrderedByName(userId)
-        if (withDelete) {
-            categoryDao.deleteAllCategories()
+        val currentUser = firebaseAuth.currentUser
+        currentUser?.let {
+            val userId = if (currentUser.isNotNull()) currentUser.uid else ""
+            val categories = categoryDataSource.getUserCategoriesOrderedByName(userId)
+            if (withDelete) {
+                categoryDao.deleteAllCategories()
+            }
+            categoryDao.upsertAllCategoryItem(categories)
         }
-        categoryDao.upsertAllCategoryItem(categories)
     }
 
     override suspend fun syncAll(withDelete: Boolean) {

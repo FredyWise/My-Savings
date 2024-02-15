@@ -7,7 +7,7 @@ import java.time.LocalDate
 import java.time.LocalTime
 
 sealed interface AddRecordEvent {
-    data class SaveRecord(val navigateUp: () -> Unit): AddRecordEvent
+    data class SaveRecord(val sideEffect: () -> Unit): AddRecordEvent
     data class AccountIdFromFk(val fromAccount: Account): AddRecordEvent
     data class AccountIdToFk(val toAccount: Account): AddRecordEvent
     data class CategoryIdFk(val toCategory: Category): AddRecordEvent
@@ -18,7 +18,7 @@ sealed interface AddRecordEvent {
     data class RecordTypes(val recordType: RecordType): AddRecordEvent
     data class RecordNotes(val notes: String): AddRecordEvent
     data class SetId(val id: String): AddRecordEvent
-    object ShowWarning: AddRecordEvent
+    object DismissWarning: AddRecordEvent
     object ConvertCurrency: AddRecordEvent
 
 }

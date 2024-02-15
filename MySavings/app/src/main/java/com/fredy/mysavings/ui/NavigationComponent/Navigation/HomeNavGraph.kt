@@ -14,7 +14,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.fredy.mysavings.ViewModels.AccountViewModel
-import com.fredy.mysavings.ViewModels.AnalysisViewModel
 import com.fredy.mysavings.ViewModels.CategoryViewModel
 import com.fredy.mysavings.ViewModels.RecordViewModel
 import com.fredy.mysavings.ui.Screens.Account.AccountsScreen
@@ -29,7 +28,6 @@ fun HomeNavGraph(
     navController: NavHostController,
     modifier: Modifier = Modifier,
     recordViewModel: RecordViewModel = hiltViewModel(),
-    analysisViewModel: AnalysisViewModel = hiltViewModel(),
     accountViewModel: AccountViewModel = hiltViewModel(),
     categoryViewModel: CategoryViewModel = hiltViewModel(),
 ) {
@@ -64,34 +62,42 @@ fun HomeNavGraph(
         composable(
             route = NavigationRoute.Analysis.route,
         ) {
-            val state by analysisViewModel.state.collectAsStateWithLifecycle()
+            val state by recordViewModel.state.collectAsStateWithLifecycle()
 
             AnalysisScreen(
                 rootNavController = rootNavController,
                 state = state,
-                onEvent = analysisViewModel::onEvent,
+                onEvent = recordViewModel::onEvent,
             )
         }
         composable(
             route = NavigationRoute.Account.route,
         ) {
             val state by accountViewModel.state.collectAsStateWithLifecycle()
+            val recordState by recordViewModel.state.collectAsStateWithLifecycle()
 
             AccountsScreen(
                 modifier = Modifier.padding(8.dp),
+                rootNavController = rootNavController,
                 state = state,
                 onEvent = accountViewModel::onEvent,
+                recordState = recordState,
+                recordEvent = recordViewModel::onEvent,
             )
         }
         composable(
             route = NavigationRoute.Categories.route,
         ) {
             val state by categoryViewModel.state.collectAsStateWithLifecycle()
+            val recordState by recordViewModel.state.collectAsStateWithLifecycle()
 
             CategoriesScreen(
                 modifier = Modifier.padding(8.dp),
+                rootNavController = rootNavController,
                 state = state,
                 onEvent = categoryViewModel::onEvent,
+                recordState = recordState,
+                recordEvent = recordViewModel::onEvent,
             )
         }
     }

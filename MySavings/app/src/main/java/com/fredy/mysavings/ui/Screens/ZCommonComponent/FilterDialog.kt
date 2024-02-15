@@ -48,7 +48,7 @@ fun FilterDialog(
         onDismissRequest = {
             onDismissRequest()
         },
-        dismissButton = {
+        leftButton = {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center

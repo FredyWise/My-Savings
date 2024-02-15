@@ -11,7 +11,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.KeyboardArrowRight
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -79,9 +78,10 @@ fun DisplayBar(
             tint = tint,
         )
         SimpleButton(
+            modifier = Modifier.weight(1f),
             onClick = { dateDialogState.show() },
             title = selectedTitle,
-            titleStyle = MaterialTheme.typography.titleLarge.copy(
+            titleStyle = MaterialTheme.typography.titleMedium.copy(
                 tint
             )
         )

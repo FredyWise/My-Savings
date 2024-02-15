@@ -1,6 +1,11 @@
 package com.fredy.mysavings.ui.Screens.AddSingle
 
+import android.Manifest
+import android.net.Uri
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -31,6 +36,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.canhub.cropper.CropImageContract
+import com.canhub.cropper.CropImageContractOptions
+import com.canhub.cropper.CropImageOptions
 import com.fredy.mysavings.Data.Enum.RecordType
 import com.fredy.mysavings.R
 import com.fredy.mysavings.Util.ActionWithName
@@ -43,14 +51,19 @@ import com.fredy.mysavings.ViewModels.Event.AccountEvent
 import com.fredy.mysavings.ViewModels.Event.AddRecordEvent
 import com.fredy.mysavings.ViewModels.Event.CategoryEvent
 import com.fredy.mysavings.ui.Screens.Account.AccountAddDialog
+import com.fredy.mysavings.ui.Screens.AddBulk.createImageUri
+import com.fredy.mysavings.ui.Screens.AddBulk.detectTextFromImage
 import com.fredy.mysavings.ui.Screens.Category.CategoryAddDialog
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleButton
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleWarningDialog
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.TypeRadioButton
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
 import kotlinx.coroutines.launch
 
 @OptIn(
-    ExperimentalMaterial3Api::class,
+    ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class,
 )
 @Composable
 fun AddScreen(
@@ -74,9 +87,115 @@ fun AddScreen(
             true
         )
     }
-    viewModel.onEvent(
-        AddRecordEvent.SetId(id)
+    val uri = createImageUri(
+        context
     )
+    var capturedImageUri by remember {
+        mutableStateOf<Uri>(
+            Uri.EMPTY
+        )
+    }
+    val permissionsState = rememberPermissionState(
+        Manifest.permission.CAMERA
+    )
+    var isChoosingLauncher by rememberSaveable {
+        mutableStateOf(false)
+    }
+    val imageCropLauncher = rememberLauncherForActivityResult(
+        CropImageContract()
+    ) { result ->
+        if (result.isSuccessful) {
+            capturedImageUri = result.uriContent!!
+            detectTextFromImage(context,
+                capturedImageUri,
+                { text ->
+                    viewModel.onEvent(
+                        AddRecordEvent.RecordNotes(
+                            text
+                        )
+                    )
+                },
+                { error ->
+                    Toast.makeText(
+                        context,
+                        error,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                })
+        } else {
+            Toast.makeText(
+                context,
+                result.error?.message,
+                Toast.LENGTH_LONG
+            ).show()
+        }
+    }
+    val imagePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia(),
+        onResult = { uri ->
+            uri?.let {
+                isChoosingLauncher = false
+                val cropOption = CropImageContractOptions(it, CropImageOptions())
+                imageCropLauncher.launch(cropOption)
+            }
+        },
+    )
+    val cameraLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.TakePicture()
+    ) { success ->
+        if (success) {
+            isChoosingLauncher = false
+            val cropOption = CropImageContractOptions(uri, CropImageOptions())
+            imageCropLauncher.launch(cropOption)
+
+        }
+    }
+    val permissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            Toast.makeText(
+                context,
+                "Permission Granted",
+                Toast.LENGTH_SHORT
+            ).show()
+            cameraLauncher.launch(uri)
+        } else {
+            Toast.makeText(
+                context,
+                "Permission Denied",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+    if (isChoosingLauncher) {
+        LauncherChooserDialog(
+            onDismissRequest = { isChoosingLauncher = false },
+            onChooseCamera = {
+                if (permissionsState.status.isGranted) {
+                    cameraLauncher.launch(
+                        uri
+                    )
+                } else {
+                    permissionLauncher.launch(
+                        Manifest.permission.CAMERA
+                    )
+                }
+            },
+            onChooseGallery = {
+                imagePickerLauncher.launch(
+                    PickVisualMediaRequest(
+                        ActivityResultContracts.PickVisualMedia.ImageOnly
+                    )
+                )
+            },
+        )
+    }
+    LaunchedEffect(key1 = id) {
+        viewModel.onEvent(
+            AddRecordEvent.SetId(id)
+        )
+    }
     LaunchedEffect(
         key1 = resource,
     ) {
@@ -106,7 +225,7 @@ fun AddScreen(
     }
     SimpleWarningDialog(
         isShowWarning = state.isShowWarning,
-        onDismissRequest = { viewModel.onEvent(AddRecordEvent.ShowWarning) },
+        onDismissRequest = { viewModel.onEvent(AddRecordEvent.DismissWarning) },
         onSaveClicked = {
             viewModel.onEvent(AddRecordEvent.ConvertCurrency)
         },
@@ -154,7 +273,6 @@ fun AddScreen(
             }
         )
     }
-
     if (accountState.isAddingAccount) {
         AccountAddDialog(
             state = accountState,
@@ -223,7 +341,7 @@ fun AddScreen(
                 ),
             )
         }
-        TextBox(
+        AddTextBox(
             value = state.recordNotes,
             onValueChanged = {
                 viewModel.onEvent(
@@ -233,6 +351,9 @@ fun AddScreen(
                 )
             },
             hintText = "Add Note",
+            onButtonClick = {
+                isChoosingLauncher = true
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(
@@ -313,6 +434,7 @@ fun AddScreen(
                             shape = MaterialTheme.shapes.small
                         ),
                     image = state.fromAccount.accountIcon,
+                    imageDescription = state.fromAccount.accountIconDescription,
                     imageColor = if (state.fromAccount.accountIconDescription == "") onBackground else Color.Unspecified,
                     onClick = {
                         isLeading = true
@@ -358,6 +480,10 @@ fun AddScreen(
                             state.recordType
                         )
                     ) state.toAccount.accountIcon else state.toCategory.categoryIcon,
+                    imageDescription = if (isTransfer(
+                            state.recordType
+                        )
+                    ) state.toAccount.accountIconDescription else state.toCategory.categoryIconDescription,
                     imageColor = if (state.toCategory.categoryIconDescription != "" && !isTransfer(
                             state.recordType
                         )

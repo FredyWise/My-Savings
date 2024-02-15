@@ -35,8 +35,10 @@ import com.fredy.mysavings.Data.Database.Model.Category
 import com.fredy.mysavings.Data.Enum.RecordType
 import com.fredy.mysavings.R
 import com.fredy.mysavings.Util.BalanceColor
+import com.fredy.mysavings.Util.categoryIcons
 import com.fredy.mysavings.Util.formatBalanceAmount
 import com.fredy.mysavings.Util.isTransfer
+import com.fredy.mysavings.Util.savingsIcons
 import com.fredy.mysavings.ViewModels.AccountState
 import com.fredy.mysavings.ViewModels.CategoryMap
 import com.fredy.mysavings.ViewModels.CategoryState
@@ -294,17 +296,19 @@ fun CategoryBottomSheet(
         ) {
 
             items(categoryMap.categories) { category ->
-                Column(modifier = Modifier
-                    .clickable {
-                        onSelectCategory(
-                            category
-                        )
-                    }
-                    .padding(
-                        vertical = 4.dp
-                    ),
+                Column(
+                    modifier = Modifier
+                        .clickable {
+                            onSelectCategory(
+                                category
+                            )
+                        }
+                        .padding(
+                            vertical = 4.dp
+                        ),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center) {
+                    verticalArrangement = Arrangement.Center,
+                ) {
                     Icon(
                         modifier = Modifier
                             .size(
@@ -314,7 +318,7 @@ fun CategoryBottomSheet(
                                 shape = MaterialTheme.shapes.extraLarge
                             ),
                         painter = painterResource(
-                            category.categoryIcon
+                            id = savingsIcons[category.categoryIconDescription]?.image ?: category.categoryIcon
                         ),
                         contentDescription = category.categoryIconDescription,
                         tint = Color.Unspecified

@@ -176,7 +176,6 @@ class RecordDataSourceImpl @Inject constructor(
         val trueRecordComponentResult = getTrueRecordsComponent(
             userId
         )
-
         return try {
             val querySnapshot = recordCollection.whereGreaterThanOrEqualTo(
                 "recordTimestamp",
@@ -245,7 +244,6 @@ class RecordDataSourceImpl @Inject constructor(
                     it.recordCurrency
                 ) || currency.isEmpty()
             }
-
             records.map { record ->
                 TrueRecord(
                     record = record,

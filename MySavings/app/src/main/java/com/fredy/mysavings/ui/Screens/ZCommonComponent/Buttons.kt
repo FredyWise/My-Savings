@@ -322,6 +322,7 @@ fun ThemeSwitcher(
 @Composable
 fun CurrencyDropdown(
     modifier: Modifier = Modifier,
+    menuModifier: Modifier = Modifier,
     textFieldColors: TextFieldColors = TextFieldDefaults.colors(),
     selectedText: String,
     onClick: (String) -> Unit
@@ -370,7 +371,7 @@ fun CurrencyDropdown(
             },
         )
         ExposedDropdownMenu(
-            modifier = Modifier,
+            modifier = menuModifier,
             expanded = expanded,
             onDismissRequest = { expanded = false },
         ) {

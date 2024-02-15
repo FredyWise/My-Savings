@@ -1,10 +1,11 @@
 package com.fredy.mysavings.ui.NavigationComponent
 
-import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -33,8 +34,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -42,7 +41,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.fredy.mysavings.Data.Database.Model.UserData
-import com.fredy.mysavings.ui.NavigationComponent.Navigation.Graph
 import com.fredy.mysavings.ui.NavigationComponent.Navigation.HomeNavGraph
 import com.fredy.mysavings.ui.NavigationComponent.Navigation.NavigationRoute
 import com.fredy.mysavings.ui.NavigationComponent.Navigation.bottomBarScreens
@@ -62,13 +60,13 @@ fun MainScreen(
 ) {
     val navController = rememberNavController()
     val scaffoldState = rememberScaffoldState()
-    var offsetX by remember { mutableStateOf(0f) }
+    var offsetX by remember { mutableStateOf(0f) }/*
     var offsetY by remember { mutableStateOf(0f) }
     var isFabVisible by remember {
         mutableStateOf(
             true
         )
-    }
+    }*/
     var isShowingAdd by remember {
         mutableStateOf(
             false
@@ -145,117 +143,121 @@ fun MainScreen(
             )
         },
         floatingActionButton = {
-            AnimatedVisibility(visible = isFabVisible) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
+//            AnimatedVisibility(visible = isFabVisible) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                AnimatedVisibility(
+                    visible = isShowingAdd,
+                    enter = fadeIn(animationSpec = tween(300)),
+                    exit = fadeOut(animationSpec = tween(300)),
                 ) {
-                    AnimatedVisibility(visible = isShowingAdd) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        FloatingActionButton(
+                            onClick = {
+                                rootNavController.navigate(
+                                    NavigationRoute.Add.route + "/-1"
+                                )
+                            },
+                            backgroundColor = contentColor,
+                            modifier = Modifier.border(
+                                1.dp,
+                                MaterialTheme.colorScheme.secondary.copy(
+                                    0.3f
+                                ),
+                                CircleShape
+                            ),
                         ) {
-                            FloatingActionButton(
-                                onClick = {
-                                    rootNavController.navigate(
-                                        NavigationRoute.Add.route + "/-1"
-                                    )
-                                },
-                                backgroundColor = contentColor,
-                                modifier = Modifier.border(
-                                    1.dp,
-                                    MaterialTheme.colorScheme.secondary.copy(
-                                        0.3f
-                                    ),
-                                    CircleShape
+                            Icon(
+                                NavigationRoute.Add.icon,
+                                modifier = Modifier.size(
+                                    30.dp
                                 ),
-                            ) {
-                                Icon(
-                                    NavigationRoute.Add.icon,
-                                    modifier = Modifier.size(
-                                        30.dp
-                                    ),
-                                    tint = onContentColor,
-                                    contentDescription = ""
-                                )
-                            }
-                            Spacer(
-                                modifier = Modifier.height(
-                                    8.dp
-                                )
-                            )
-                            FloatingActionButton(
-                                onClick = {
-                                    rootNavController.navigate(
-                                        NavigationRoute.BulkAdd.route
-                                    )
-                                },
-                                backgroundColor = contentColor,
-                                modifier = Modifier.border(
-                                    1.dp,
-                                    MaterialTheme.colorScheme.secondary.copy(
-                                        0.3f
-                                    ),
-                                    CircleShape
-                                ),
-                            ) {
-                                Icon(
-                                    NavigationRoute.BulkAdd.icon,
-                                    modifier = Modifier.size(
-                                        30.dp
-                                    ),
-                                    tint = onContentColor,
-                                    contentDescription = ""
-                                )
-                            }
-                            Spacer(
-                                modifier = Modifier.height(
-                                    8.dp
-                                )
+                                tint = onContentColor,
+                                contentDescription = ""
                             )
                         }
-                    }
-                    FloatingActionButton(
-                        onClick = {
-                            isShowingAdd = !isShowingAdd
-                        },
-                        backgroundColor = contentColor,
-                        modifier = Modifier.border(
-                            1.dp,
-                            MaterialTheme.colorScheme.secondary.copy(
-                                0.3f
+                        Spacer(
+                            modifier = Modifier.height(
+                                8.dp
+                            )
+                        )
+                        FloatingActionButton(
+                            onClick = {
+                                rootNavController.navigate(
+                                    NavigationRoute.BulkAdd.route
+                                )
+                            },
+                            backgroundColor = contentColor,
+                            modifier = Modifier.border(
+                                1.dp,
+                                MaterialTheme.colorScheme.secondary.copy(
+                                    0.3f
+                                ),
+                                CircleShape
                             ),
-                            CircleShape
-                        ),
-                    ) {
-                        Icon(
-                            Icons.Default.Add,
-                            modifier = Modifier.size(
-                                35.dp
-                            ),
-                            tint = onContentColor,
-                            contentDescription = ""
+                        ) {
+                            Icon(
+                                NavigationRoute.BulkAdd.icon,
+                                modifier = Modifier.size(
+                                    30.dp
+                                ),
+                                tint = onContentColor,
+                                contentDescription = ""
+                            )
+                        }
+                        Spacer(
+                            modifier = Modifier.height(
+                                8.dp
+                            )
                         )
                     }
                 }
+                FloatingActionButton(
+                    onClick = {
+                        isShowingAdd = !isShowingAdd
+                    },
+                    backgroundColor = contentColor,
+                    modifier = Modifier.border(
+                        1.dp,
+                        MaterialTheme.colorScheme.secondary.copy(
+                            0.3f
+                        ),
+                        CircleShape
+                    ),
+                ) {
+                    Icon(
+                        Icons.Default.Add,
+                        modifier = Modifier.size(
+                            35.dp
+                        ),
+                        tint = onContentColor,
+                        contentDescription = ""
+                    )
+                }
             }
+//            }
         },
 
         ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .pointerInput(
-                    Unit
-                ) {
-                    detectTransformGestures { _, panGesture, _, _ ->
-                        offsetX += panGesture.x
-                        offsetY += panGesture.y
-                        if (panGesture.y < -size.height / 30) {
-                            isFabVisible = false
-                        } else if (panGesture.y > size.height / 30) {
-                            isFabVisible = true
-                        }
-                    }
-                },
+//                .pointerInput(
+//                    Unit
+//                ) {
+//                    detectTransformGestures { _, panGesture, _, _ ->
+//                        offsetX += panGesture.x
+//                        offsetY += panGesture.y
+//                        if (panGesture.y < -size.height / 30) {
+//                            isFabVisible = false
+//                        } else if (panGesture.y > size.height / 30) {
+//                            isFabVisible = true
+//                        }
+//                    }
+//                },
         ) {
             AppBar(
                 backgroundColor = contentColor,

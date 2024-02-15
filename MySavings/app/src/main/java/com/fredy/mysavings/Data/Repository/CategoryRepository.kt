@@ -71,7 +71,7 @@ class CategoryRepositoryImpl @Inject constructor(
 
     override fun getCategory(categoryId: String): Flow<Category> {
         return flow {
-            val category = categoryDataSource.getCategory(
+            val category = categoryDao.getCategory(
                 categoryId
             )
             emit(category)
@@ -83,7 +83,7 @@ class CategoryRepositoryImpl @Inject constructor(
             val currentUser = firebaseAuth.currentUser!!
             val userId = if (currentUser.isNotNull()) currentUser.uid else ""
 
-            val data = categoryDataSource.getUserCategoriesOrderedByName(
+            val data = categoryDao.getUserCategoriesOrderedByName(
                 userId
             )
             emit(data)
@@ -97,7 +97,7 @@ class CategoryRepositoryImpl @Inject constructor(
             val currentUser = firebaseAuth.currentUser!!
             val userId = if (currentUser.isNotNull()) currentUser.uid else ""
 
-            val categories = categoryDataSource.getUserCategoriesOrderedByName(
+            val categories = categoryDao.getUserCategoriesOrderedByName(
                 userId
             )
             val data = categories.groupBy {

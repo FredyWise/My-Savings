@@ -26,7 +26,7 @@ interface CategoryDao {
         "SELECT * FROM category " +
                 "WHERE categoryId=:categoryId"
     )
-    suspend fun getCategory(categoryId: Int):Category
+    suspend fun getCategory(categoryId: String):Category
 
     @Query(
         "SELECT * FROM category " +

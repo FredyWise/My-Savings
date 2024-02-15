@@ -68,7 +68,7 @@ class AccountRepositoryImpl @Inject constructor(
 
     override fun getAccount(accountId: String): Flow<Account> {
         return flow {
-            val account = accountDataSource.getAccount(
+            val account = accountDao.getAccount(
                 accountId
             )
             emit(account)
@@ -80,7 +80,7 @@ class AccountRepositoryImpl @Inject constructor(
             emit(Resource.Loading())
             val currentUser = firebaseAuth.currentUser!!
             val userId = if (currentUser.isNotNull()) currentUser.uid else ""
-            val data = accountDataSource.getUserAccounts(
+            val data = accountDao.getUserAccounts(
                 userId
             ).filter { it.accountName != deletedAccount.accountName }
             emit(Resource.Success(data))
@@ -103,7 +103,7 @@ class AccountRepositoryImpl @Inject constructor(
                 TAG,
                 "getUserAccountTotalBalance: $currentUser"
             )
-            val accounts = accountDataSource.getUserAccounts(
+            val accounts = accountDao.getUserAccounts(
                 userId
             )
             val totalAccountBalance = accounts.sumOf { account ->
@@ -136,7 +136,7 @@ class AccountRepositoryImpl @Inject constructor(
             val currentUser = firebaseAuth.currentUser
             val userId = if (currentUser.isNotNull()) currentUser!!.uid else ""
 
-            val data = accountDataSource.getUserAvailableCurrency(
+            val data = accountDao.getUserAvailableCurrency(
                 userId
             )
             emit(data)

@@ -321,7 +321,7 @@ class RecordRepositoryImpl @Inject constructor(
         }.catch { e ->
             Log.i(
                 TAG,
-                "getUserCategoryRecordsOrderedByDateTimeData.Error: $e"
+                "getUserCategoryRecordsOrderedByDateTime.Error: $e"
             )
             emit(Resource.Error(e.message.toString()))
         }
@@ -423,14 +423,14 @@ class RecordRepositoryImpl @Inject constructor(
 
             Log.i(
                 TAG,
-                "getUserRecordsFromSpecificTimeData: $data",
+                "getUserRecordsFromSpecificTime.Data: $data",
 
                 )
             emit(Resource.Success(data))
         }.catch { e ->
             Log.i(
                 TAG,
-                "getUserRecordsFromSpecificTimeData.Error: $e"
+                "getUserRecordsFromSpecificTime.Error: $e"
             )
             emit(Resource.Error(e.message.toString()))
         }
@@ -495,14 +495,14 @@ class RecordRepositoryImpl @Inject constructor(
             }
             Log.i(
                 TAG,
-                "getUserCategoriesWithAmountFromSpecificTimeData: $data",
+                "getUserCategoriesWithAmountFromSpecificTime.Data: $data",
 
                 )
             emit(Resource.Success(data))
         }.catch { e ->
             Log.i(
                 TAG,
-                "getUserCategoriesWithAmountFromSpecificTimeData.Error: $e"
+                "getUserCategoriesWithAmountFromSpecificTime.Error: $e"
             )
             emit(Resource.Error(e.message.toString()))
         }
@@ -524,7 +524,7 @@ class RecordRepositoryImpl @Inject constructor(
             )
             val userAccounts = getUserAccount(
                 userId
-            ).filter { it.accountName != deletedAccount.accountName }
+            )
             val records = recordDao.getUserRecordsFromSpecificTime(
                 userId, startDate, endDate
             )

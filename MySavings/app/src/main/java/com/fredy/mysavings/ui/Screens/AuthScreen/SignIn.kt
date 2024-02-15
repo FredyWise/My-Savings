@@ -316,7 +316,7 @@ fun SignIn(
         Text(
             text = "New User? Sign Up ",
             modifier = Modifier.clickable {
-                navController.navigateSingleTopTo(
+                navController.navigate(
                     NavigationRoute.SignUp.route
                 )
             },
@@ -325,13 +325,3 @@ fun SignIn(
         )
     }
 }
-
-//Switch(
-//switchState = switchState,
-//leftIcon = Icons.Default.Email,
-//rightIcon = Icons.Default.Phone,
-//size = 50.dp,
-//padding = 5.dp,
-//) {
-//    switchState = !switchState
-//}

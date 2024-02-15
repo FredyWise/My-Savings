@@ -1,6 +1,5 @@
 package com.fredy.mysavings.ui.Screens.ZCommonComponent
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,6 +14,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -35,7 +35,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import com.fredy.mysavings.R
 import com.fredy.mysavings.Util.ActionWithName
 import com.fredy.mysavings.Util.savingsIcons
 
@@ -72,8 +71,8 @@ fun SimpleAlertDialog(
     modifier: Modifier = Modifier,
     title: String,
     onDismissRequest: () -> Unit,
-    dismissButton: @Composable (() -> Unit)? = null,
-    confirmButton: @Composable () -> Unit = { },
+    leftButton: @Composable (() -> Unit)? = null,
+    rightButton: @Composable () -> Unit = { },
     content: @Composable () -> Unit,
 ) {
     AlertDialog(
@@ -96,8 +95,8 @@ fun SimpleAlertDialog(
             }
         },
         onDismissRequest = onDismissRequest,
-        dismissButton = dismissButton,
-        confirmButton = confirmButton,
+        dismissButton = leftButton,
+        confirmButton = rightButton,
     )
 }
 
@@ -133,21 +132,18 @@ fun SimpleDialog(
         onDismissRequest = onDismissRequest,
         confirmButton = {
             Row(horizontalArrangement = Arrangement.SpaceBetween) {
-                Row(
-                    horizontalArrangement = Arrangement.Center,
+                Button(
                     modifier = Modifier
-                        .weight(0.5f)
+                        .weight(0.4f)
                         .clip(
                             MaterialTheme.shapes.small
-                        )
-                        .border(
-                            width = 2.dp,
-                            color = MaterialTheme.colorScheme.secondary,
-                            shape = MaterialTheme.shapes.small
-                        )
-                        .clickable {
-                            onDismissRequest()
-                        },
+//                        )
+//                        .border(
+//                            width = 2.dp,
+//                            color = MaterialTheme.colorScheme.secondary,
+//                            shape = MaterialTheme.shapes.small
+                        ),
+                    onClick = onDismissRequest,
                 ) {
                     Text(
                         modifier = Modifier.padding(8.dp),
@@ -157,24 +153,25 @@ fun SimpleDialog(
                 }
                 Spacer(
                     modifier = Modifier.weight(
-                        0.03f
+                        0.05f
                     )
                 )
-                Row(horizontalArrangement = Arrangement.Center,
+                Button(
                     modifier = Modifier
-                        .weight(0.5f)
+                        .weight(0.4f)
                         .clip(
                             MaterialTheme.shapes.small
-                        )
-                        .border(
-                            width = 2.dp,
-                            color = MaterialTheme.colorScheme.secondary,
-                            shape = MaterialTheme.shapes.small
-                        )
-                        .clickable {
-                            onSaveClicked()
-                            onDismissRequest()
-                        }) {
+//                        )
+//                        .border(
+//                            width = 2.dp,
+//                            color = MaterialTheme.colorScheme.secondary,
+//                            shape = MaterialTheme.shapes.small
+                        ),
+                    onClick = {
+                        onSaveClicked()
+                        onDismissRequest()
+                    },
+                ) {
                     Text(
                         modifier = Modifier.padding(8.dp),
                         style = MaterialTheme.typography.titleMedium,
@@ -190,9 +187,11 @@ fun SimpleDialog(
 @Composable
 fun SimpleEntityItem(
     modifier: Modifier = Modifier,
-    icon: Int,
+    contentModifier: Modifier = Modifier,
+    icon: Int? = null,
     iconModifier: Modifier = Modifier,
     iconDescription: String,
+    iconColor: Color = Color.Unspecified,
     contentWeight: Float = 1f,
     endContent: @Composable () -> Unit = {},
     content: @Composable () -> Unit,
@@ -201,20 +200,24 @@ fun SimpleEntityItem(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Icon(
-            modifier = iconModifier,
-            painter = painterResource(id = savingsIcons[iconDescription]?.image ?: R.drawable.ic_close_foreground),
-            contentDescription = iconDescription,
-            tint = Color.Unspecified
-        )
-        Column(
-            modifier = Modifier
-                .weight(
-                    contentWeight
-                )
-                .padding(
-                    horizontal = 8.dp
+        icon?.let {
+            Icon(
+                modifier = iconModifier,
+                painter = painterResource(
+                    id = savingsIcons[iconDescription]?.image ?: icon
                 ),
+                contentDescription = iconDescription,
+                tint = iconColor
+            )
+        }
+        Column(
+            modifier = if (contentWeight != 0f) {
+                contentModifier.weight(contentWeight)
+            } else {
+                contentModifier
+            }.padding(
+                horizontal = 8.dp
+            ),
             horizontalAlignment = Alignment.Start,
         ) {
             content()
@@ -286,6 +289,7 @@ fun SimpleButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
     image: Int? = null,
+    imageDescription: String = "",
     imageColor: Color = Color.Unspecified,
     title: String,
     titleStyle: TextStyle = MaterialTheme.typography.titleLarge,
@@ -296,27 +300,26 @@ fun SimpleButton(
             .clip(CircleShape)
             .clickable {
                 onClick()
-            }, contentAlignment = Alignment.Center
+            },
+        contentAlignment = Alignment.Center
     ) {
-        Row(
+        SimpleEntityItem(
             modifier = Modifier.padding(
                 8.dp
             ),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically
+            iconModifier = Modifier
+                .size(40.dp)
+                .padding(end = 4.dp),
+            icon = image,
+            iconDescription = imageDescription,
+            iconColor = imageColor,
+            contentWeight = 0f
         ) {
-            image?.let {
-                Icon(
-                    modifier = Modifier.size(40.dp),
-                    painter = painterResource(id = it),
-                    contentDescription = "",
-                    tint = imageColor,
-                )
-            }
             Text(
                 text = title,
                 style = titleStyle,
-                color = titleColor
+                color = titleColor,
+                maxLines = 1
             )
         }
     }

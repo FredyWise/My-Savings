@@ -1,14 +1,12 @@
 package com.fredy.mysavings.ui.Screens.Analysis
 
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -33,9 +31,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.fredy.mysavings.Data.Enum.SortType
 import com.fredy.mysavings.Util.formatRangeOfDate
-import com.fredy.mysavings.ViewModels.AnalysisState
-import com.fredy.mysavings.ViewModels.Event.AnalysisEvent
 import com.fredy.mysavings.ViewModels.Event.RecordsEvent
+import com.fredy.mysavings.ViewModels.RecordState
 import com.fredy.mysavings.ui.NavigationComponent.MainFilterAppBar
 import com.fredy.mysavings.ui.NavigationComponent.Navigation.AnalysisNavGraph
 import com.fredy.mysavings.ui.NavigationComponent.Navigation.NavigationRoute
@@ -47,8 +44,8 @@ import com.fredy.mysavings.ui.NavigationComponent.Navigation.navigateSingleTopTo
 fun AnalysisScreen(
     modifier: Modifier = Modifier,
     rootNavController: NavHostController,
-    state: AnalysisState,
-    onEvent: (AnalysisEvent) -> Unit,
+    state: RecordState,
+    onEvent: (RecordsEvent) -> Unit,
 ) {
     val navController = rememberNavController()
     val currentBackStack by navController.currentBackStackEntryAsState()
@@ -61,35 +58,33 @@ fun AnalysisScreen(
     }
     val icon = if (expanded) Icons.Filled.KeyboardArrowUp
     else Icons.Filled.KeyboardArrowDown
-
     MainFilterAppBar(
         modifier = modifier,
         selectedDate = state.filterState.selectedDate,
         onDateChange = {
             onEvent(
-                AnalysisEvent.ChangeDate(it)
+                RecordsEvent.ChangeDate(it)
             )
         },
         selectedDateFormat = formatRangeOfDate(
-            state.filterState.selectedDate, state.filterState.filterType
+            state.filterState.selectedDate,
+            state.filterState.filterType
         ),
         isChoosingFilter = state.isChoosingFilter,
         selectedFilter = state.filterState.filterType.name,
         checkboxesFilter = state.availableCurrency,
         selectedCheckbox = state.selectedCheckbox,
         onDismissFilterDialog = {
-            onEvent(AnalysisEvent.HideFilterDialog)
+            onEvent(RecordsEvent.HideFilterDialog)
         },
         onSelectFilter = {
             onEvent(
-                AnalysisEvent.FilterRecord(it)
+                RecordsEvent.FilterRecord(it)
             )
         },
         onSelectCheckboxFilter = {
             onEvent(
-                AnalysisEvent.SelectedCurrencies(
-                    it
-                )
+                RecordsEvent.SelectedCurrencies(it)
             )
         },
         balanceBar = state.balanceBar,
@@ -107,24 +102,24 @@ fun AnalysisScreen(
                 tint = MaterialTheme.colorScheme.onSurface,
             )
         },
-        sortType = when(state.filterState.sortType){
+        sortType = when (state.filterState.sortType) {
             SortType.ASCENDING -> true
             SortType.DESCENDING -> false
         },
         showTotal = state.filterState.showTotal,
         carryOn = state.filterState.carryOn,
-        onShowTotalChange = {onEvent(AnalysisEvent.ToggleShowTotal)},
-        onCarryOnChange = {onEvent(AnalysisEvent.ToggleCarryOn)},
-        onShortChange = {onEvent(AnalysisEvent.ToggleSortType)},
-        onPrevious = { onEvent(AnalysisEvent.ShowPreviousList) },
-        onNext = { onEvent(AnalysisEvent.ShowNextList) },
+        onShowTotalChange = { onEvent(RecordsEvent.ToggleShowTotal) },
+        onCarryOnChange = { onEvent(RecordsEvent.ToggleCarryOn) },
+        onShortChange = { onEvent(RecordsEvent.ToggleSortType) },
+        onPrevious = { onEvent(RecordsEvent.ShowPreviousList) },
+        onNext = { onEvent(RecordsEvent.ShowNextList) },
         onLeadingIconClick = {
             rootNavController.navigate(
                 NavigationRoute.Search.route
             )
         },
         onTrailingIconClick = {
-            onEvent(AnalysisEvent.ShowFilterDialog)
+            onEvent(RecordsEvent.ShowFilterDialog)
         },
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {

@@ -3,6 +3,7 @@ package com.fredy.mysavings.ui.Screens.Record
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,6 +11,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Delete
@@ -29,6 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.fredy.mysavings.Data.Database.Model.Record
 import com.fredy.mysavings.Data.Database.Model.TrueRecord
 import com.fredy.mysavings.Util.BalanceColor
 import com.fredy.mysavings.Util.formatDateTime
@@ -53,29 +57,20 @@ fun RecordDialog(
             trueRecord.record.recordType
         )
     ).copy(alpha = 0.9f),
-    onEvent: (RecordsEvent) -> Unit,
+    onDismissDialog: () -> Unit,
+    onSaveClicked: (record: Record) -> Unit,
 ) {
     var isShowWarning by remember { mutableStateOf(false) }
     SimpleWarningDialog(
         isShowWarning = isShowWarning,
         onDismissRequest = { isShowWarning = false },
         onSaveClicked = {
-            onEvent(
-                RecordsEvent.DeleteRecord(
-                    trueRecord.record
-                )
-            )
-            onEvent(
-                RecordsEvent.HideDialog
-            )
+            onSaveClicked(trueRecord.record)
+            onDismissDialog()
         },
         warningText = "Are You Sure Want to Delete This Record?"
     )
-    Dialog(onDismissRequest = {
-        onEvent(
-            RecordsEvent.HideDialog
-        )
-    }) {
+    Dialog(onDismissRequest = onDismissDialog) {
         Column(
             modifier = modifier
                 .background(background)
@@ -104,9 +99,7 @@ fun RecordDialog(
                                     MaterialTheme.shapes.large
                                 )
                                 .clickable {
-                                    onEvent(
-                                        RecordsEvent.HideDialog
-                                    )
+                                    onDismissDialog()
                                 }
                                 .padding(4.dp),
                             imageVector = Icons.Outlined.Close,
@@ -137,9 +130,7 @@ fun RecordDialog(
                                     MaterialTheme.shapes.large
                                 )
                                 .clickable {
-                                    onEvent(
-                                        RecordsEvent.HideDialog
-                                    )
+                                    onDismissDialog()
                                     onEdit()
                                 }
                                 .padding(4.dp),
@@ -271,6 +262,7 @@ fun RecordDialog(
                     }
                     Text(
                         modifier = Modifier
+                            .verticalScroll(rememberScrollState())
                             .fillMaxWidth()
                             .padding(
                                 vertical = 8.dp

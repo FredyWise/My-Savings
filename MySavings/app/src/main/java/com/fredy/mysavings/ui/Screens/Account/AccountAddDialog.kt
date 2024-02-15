@@ -1,6 +1,7 @@
 package com.fredy.mysavings.ui.Screens.Account
 
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -25,6 +26,7 @@ import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleDialog
 fun AccountAddDialog(
     state: AccountState,
     onEvent: (AccountEvent) -> Unit,
+    onSaveEffect: ()->Unit = {},
     modifier: Modifier = Modifier
 ) {
     SimpleDialog(
@@ -67,6 +69,7 @@ fun AccountAddDialog(
             },
         )
         CurrencyDropdown(
+            menuModifier = Modifier.height(250.dp),
             selectedText = state.accountCurrency,
             onClick = {
                 onEvent(

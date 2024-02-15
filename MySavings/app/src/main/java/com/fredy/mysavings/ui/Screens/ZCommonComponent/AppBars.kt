@@ -33,10 +33,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.fredy.mysavings.Data.Database.Model.TrueRecord
 import com.fredy.mysavings.Util.Resource
-import com.fredy.mysavings.Util.formatBalanceAmount
 import com.fredy.mysavings.Util.formatDay
-import com.fredy.mysavings.Util.formatTime
 import com.fredy.mysavings.ViewModels.RecordMap
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -53,7 +52,7 @@ fun DetailAppBar(
     resource: Resource<List<RecordMap>>,
     onEmptyMessageClick: () -> Unit = {},
     onNavigationIconClick: () -> Unit,
-    content: @Composable () -> Unit = {},
+    content: @Composable (item: TrueRecord, itemColor: Color) -> Unit,
 ) {
     Column(
         modifier = modifier
@@ -137,7 +136,6 @@ fun DetailAppBar(
             Row(modifier = Modifier.padding(bottom = 8.dp)) {
                 Text(text = "Total of: " + recordMaps.sumOf { it.records.size } + " records")
             }
-            content()
             LazyColumn(
                 modifier = modifier
                     .fillMaxHeight()
@@ -168,47 +166,7 @@ fun DetailAppBar(
                                 alpha = 0.4f
                             )
                         )
-                        SimpleEntityItem(
-                            modifier = Modifier.padding(
-                                vertical = 4.dp
-                            ),
-                            iconModifier = Modifier
-                                .size(
-                                    40.dp
-                                )
-                                .clip(
-                                    shape = CircleShape
-                                ),
-                            icon = item.toCategory.categoryIcon,
-                            iconDescription = item.fromAccount.accountIconDescription,
-                            endContent = {
-                                Text(
-                                    text = formatTime(
-                                        item.record.recordDateTime.toLocalTime()
-                                    ),
-                                    color = onBackgroundColor,
-                                    style = MaterialTheme.typography.titleLarge
-                                )
-                            },
-                        ) {
-                            Text(
-                                text = item.toCategory.categoryName,
-                                color = onBackgroundColor,
-                                style = MaterialTheme.typography.titleLarge,
-                                maxLines = 1
-                            )
-                            Text(
-                                text = formatBalanceAmount(
-                                    item.record.recordAmount,
-                                    item.record.recordCurrency,
-                                    true
-                                ),
-                                color = onBackgroundColor,
-                                style = MaterialTheme.typography.titleLarge,
-                                maxLines = 1
-                            )
-                        }
-
+                        content(item, onBackgroundColor)
                     }
                 }
             }
@@ -222,15 +180,18 @@ fun DetailAppBar(
 fun DefaultAppBar(
     modifier: Modifier = Modifier,
     iconColor: Color = MaterialTheme.colorScheme.onSurface,
+    scrollable: Boolean = true,
     title: String,
     onNavigationIconClick: () -> Unit,
     actionButton: @Composable () -> Unit = {},
     content: @Composable () -> Unit,
 ) {
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState()),
+        modifier = if (scrollable) {
+            modifier.verticalScroll(rememberScrollState())
+        } else {
+            modifier
+        }.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         TopAppBar(

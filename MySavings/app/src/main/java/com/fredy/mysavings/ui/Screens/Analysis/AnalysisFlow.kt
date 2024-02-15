@@ -25,8 +25,8 @@ import androidx.compose.ui.unit.dp
 import co.yml.charts.common.model.Point
 import com.fredy.mysavings.Util.formatRangeOfDate
 import com.fredy.mysavings.Util.isExpense
-import com.fredy.mysavings.ViewModels.AnalysisState
-import com.fredy.mysavings.ViewModels.Event.AnalysisEvent
+import com.fredy.mysavings.ViewModels.Event.RecordsEvent
+import com.fredy.mysavings.ViewModels.RecordState
 import com.fredy.mysavings.ui.Screens.Analysis.Charts.ChartLine
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.Calendar
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.ResourceHandler
@@ -36,10 +36,10 @@ import kotlin.math.absoluteValue
 fun AnalysisFlow(
     modifier: Modifier = Modifier,
     onBackgroundColor: Color = MaterialTheme.colorScheme.onBackground,
-    state: AnalysisState,
-    onEvent: (AnalysisEvent) -> Unit,
+    state: RecordState,
+    onEvent: (RecordsEvent) -> Unit,
 ) {
-    val key = state.analysisData.recordsWithinTimeResource.hashCode()
+    val key = state.resourceData.recordsWithinTimeResource.hashCode()
     val isVisible = remember(key) {
         MutableTransitionState(
             false
@@ -61,7 +61,7 @@ fun AnalysisFlow(
             targetOffsetY = { fullHeight -> fullHeight },
         ) + fadeOut()
     ) {
-        state.analysisData.recordsWithinTimeResource.let { resource ->
+        state.resourceData.recordsWithinTimeResource.let { resource ->
             ResourceHandler(
                 resource = resource,
                 nullOrEmptyMessage = "There is no ${state.filterState.recordType.name} on this date yet",
@@ -69,7 +69,7 @@ fun AnalysisFlow(
                 isNullOrEmpty = { it.isNullOrEmpty() },
                 onMessageClick = {
                     onEvent(
-                        AnalysisEvent.ToggleRecordType
+                        RecordsEvent.ToggleRecordType
                     )
                     isVisible.targetState = false
                 },
@@ -109,7 +109,7 @@ fun AnalysisFlow(
                                 ),
                                 modifier = Modifier.clickable {
                                     onEvent(
-                                        AnalysisEvent.ToggleRecordType
+                                        RecordsEvent.ToggleRecordType
                                     )
                                 },
                                 color = onBackgroundColor,

@@ -22,7 +22,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
@@ -34,8 +33,8 @@ import co.yml.charts.ui.barchart.models.BarData
 import co.yml.charts.ui.barchart.models.GroupBar
 import com.fredy.mysavings.Util.BalanceColor
 import com.fredy.mysavings.Util.formatBalanceAmount
-import com.fredy.mysavings.ViewModels.AnalysisState
-import com.fredy.mysavings.ViewModels.Event.AnalysisEvent
+import com.fredy.mysavings.ViewModels.Event.RecordsEvent
+import com.fredy.mysavings.ViewModels.RecordState
 import com.fredy.mysavings.ui.Screens.Analysis.Charts.ChartGroupedBar
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.ResourceHandler
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleEntityItem
@@ -44,13 +43,13 @@ import kotlin.math.absoluteValue
 @Composable
 fun AnalysisAccount(
     modifier: Modifier = Modifier,
-    state: AnalysisState,
-    onEvent: (AnalysisEvent) -> Unit,
+    state: RecordState,
+    onEvent: (RecordsEvent) -> Unit,
 ) {
     val expenseColor by remember { mutableStateOf(BalanceColor.Expense) }
     val incomeColor by remember { mutableStateOf(BalanceColor.Income) }
 
-    val key = state.analysisData.accountsWithAmountResource.hashCode()
+    val key = state.resourceData.accountsWithAmountResource.hashCode()
     val isVisible = remember(key) {
         MutableTransitionState(
             false
@@ -72,7 +71,7 @@ fun AnalysisAccount(
             targetOffsetY = { fullHeight -> fullHeight },
         ) + fadeOut()
     ) {
-        state.analysisData.accountsWithAmountResource.let { resource ->
+        state.resourceData.accountsWithAmountResource.let { resource ->
             ResourceHandler(
                 resource = resource,
                 nullOrEmptyMessage = "There is no ${state.filterState.recordType.name} on this date yet",
@@ -80,7 +79,7 @@ fun AnalysisAccount(
                 isNullOrEmpty = { it.isNullOrEmpty() },
                 onMessageClick = {
                     onEvent(
-                        AnalysisEvent.ToggleRecordType
+                        RecordsEvent.ToggleRecordType
                     )
                     isVisible.targetState = false
                 },
@@ -94,11 +93,11 @@ fun AnalysisAccount(
                                     barList = listOf(
                                         BarData(
                                             Point(
-                                                (index+1).toFloat(),
+                                                (index + 1).toFloat(),
                                                 item.expenseAmount.absoluteValue.toFloat()
                                             ),
                                             label = "B1",
-                                            description = "Bar at ${(index+1)} with label B1 has value ${
+                                            description = "Bar at ${(index + 1)} with label B1 has value ${
                                                 String.format(
                                                     "%.2f",
                                                     item.expenseAmount
@@ -107,11 +106,11 @@ fun AnalysisAccount(
                                         ),
                                         BarData(
                                             Point(
-                                                (index+1).toFloat(),
+                                                (index + 1).toFloat(),
                                                 item.incomeAmount.absoluteValue.toFloat()
                                             ),
                                             label = "B2",
-                                            description = "Bar at ${(index+1)} with label B2 has value ${
+                                            description = "Bar at ${(index + 1)} with label B2 has value ${
                                                 String.format(
                                                     "%.2f",
                                                     item.incomeAmount
@@ -124,7 +123,7 @@ fun AnalysisAccount(
                             currency = data.first().account.accountCurrency,
                         )
                     }
-                    items(data, key = {it.account.accountId}) {  item ->
+                    items(data, key = { it.account.accountId }) { item ->
                         Divider(
                             modifier = Modifier.height(
                                 0.3.dp

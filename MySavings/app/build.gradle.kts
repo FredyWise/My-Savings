@@ -97,7 +97,7 @@ dependencies {
     implementation("com.github.CanHub:Android-Image-Cropper:4.0.0")
     // Color Picker Compose
     implementation("com.github.skydoves:colorpicker-compose:1.0.7")
-    //dir and file picker
+    // dir and file picker
     implementation("com.darkrockstudios:mpfilepicker:3.1.0")
     // splash screen
     implementation("androidx.core:core-splashscreen:1.0.1")
