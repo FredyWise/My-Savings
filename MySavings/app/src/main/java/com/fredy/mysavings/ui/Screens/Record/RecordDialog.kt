@@ -30,7 +30,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.fredy.mysavings.Data.Database.Model.TrueRecord
-import com.fredy.mysavings.Data.Enum.RecordType
 import com.fredy.mysavings.Util.BalanceColor
 import com.fredy.mysavings.Util.formatDateTime
 import com.fredy.mysavings.Util.isTransfer
@@ -191,14 +190,13 @@ fun RecordDialog(
                             text = if (isTransfer(
                                     trueRecord.record.recordType
                                 )
-                            ) "From: " else "Account: ",
-                            color = onSurface
+                            ) "From:    " else "Account:    ",
+                            color = onSurface,
+                            style = MaterialTheme.typography.titleLarge,
                         )
                         SimpleEntityItem(
                             modifier = Modifier
-                                .padding(
-                                    vertical = 4.dp
-                                )
+                                .padding(4.dp)
                                 .clip(
                                     MaterialTheme.shapes.medium
                                 )
@@ -235,14 +233,13 @@ fun RecordDialog(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = if (trueRecord.record.recordType == RecordType.Transfer) "To: " else "Category: ",
-                            color = onSurface
+                            text = if (isTransfer(trueRecord.record.recordType)) "To:   " else "Category:   ",
+                            color = onSurface,
+                            style = MaterialTheme.typography.titleLarge,
                         )
                         SimpleEntityItem(
                             modifier = Modifier
-                                .padding(
-                                    vertical = 4.dp
-                                )
+                                .padding(4.dp)
                                 .clip(
                                     MaterialTheme.shapes.medium
                                 )

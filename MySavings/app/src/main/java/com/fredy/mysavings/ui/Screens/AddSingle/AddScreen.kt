@@ -1,6 +1,7 @@
 package com.fredy.mysavings.ui.Screens.AddSingle
 
 import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,7 +11,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -31,8 +31,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.fredy.mysavings.Data.Database.Model.Account
-import com.fredy.mysavings.Data.Database.Model.Category
 import com.fredy.mysavings.Data.Enum.RecordType
 import com.fredy.mysavings.R
 import com.fredy.mysavings.Util.ActionWithName
@@ -44,11 +42,9 @@ import com.fredy.mysavings.ViewModels.CategoryViewModel
 import com.fredy.mysavings.ViewModels.Event.AccountEvent
 import com.fredy.mysavings.ViewModels.Event.AddRecordEvent
 import com.fredy.mysavings.ViewModels.Event.CategoryEvent
-import com.fredy.mysavings.ViewModels.Event.RecordsEvent
 import com.fredy.mysavings.ui.Screens.Account.AccountAddDialog
 import com.fredy.mysavings.ui.Screens.Category.CategoryAddDialog
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleButton
-import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleDialog
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleWarningDialog
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.TypeRadioButton
 import kotlinx.coroutines.launch
@@ -114,7 +110,7 @@ fun AddScreen(
         onSaveClicked = {
             viewModel.onEvent(AddRecordEvent.ConvertCurrency)
         },
-        warningText =  resource.message.toString()
+        warningText = resource.message.toString()
     )
 
     val sheetState = rememberModalBottomSheetState()
@@ -124,9 +120,11 @@ fun AddScreen(
     if (isSheetOpen) {
         AddBottomSheet(
             sheetState = sheetState,
-            onDismissModal = { scope.launch {
-                isSheetOpen = it
-            } },
+            onDismissModal = {
+                scope.launch {
+                    isSheetOpen = it
+                }
+            },
             isLeading = isLeading,
             recordType = state.recordType,
             accountState = accountState,
@@ -205,7 +203,8 @@ fun AddScreen(
                             )
                             if (isTransfer(
                                     state.recordType
-                                )) {
+                                )
+                            ) {
                                 accountViewModel.onEvent(
                                     AccountEvent.UpdateAccountBalance(
                                         state.toAccount
@@ -295,7 +294,8 @@ fun AddScreen(
                 Text(
                     text = if (isTransfer(
                             state.recordType
-                        )) "From" else "Account",
+                        )
+                    ) "From" else "Account",
                     color = onBackground,
                 )
                 SimpleButton(
@@ -336,7 +336,8 @@ fun AddScreen(
                 Text(
                     text = if (isTransfer(
                             state.recordType
-                        )) "To" else "Category",
+                        )
+                    ) "To" else "Category",
                     color = onBackground
                 )
                 SimpleButton(
@@ -355,14 +356,17 @@ fun AddScreen(
                         ),
                     image = if (isTransfer(
                             state.recordType
-                        )) state.toAccount.accountIcon else state.toCategory.categoryIcon,
+                        )
+                    ) state.toAccount.accountIcon else state.toCategory.categoryIcon,
                     imageColor = if (state.toCategory.categoryIconDescription != "" && !isTransfer(
                             state.recordType
-                        )) {
+                        )
+                    ) {
                         Color.Unspecified
                     } else if (state.toAccount.accountIconDescription != "" && isTransfer(
                             state.recordType
-                        )) {
+                        )
+                    ) {
                         Color.Unspecified
                     } else {
                         onBackground
@@ -375,7 +379,8 @@ fun AddScreen(
                     },
                     title = if (isTransfer(
                             state.recordType
-                        )) state.toAccount.accountName else state.toCategory.categoryName,
+                        )
+                    ) state.toAccount.accountName else state.toCategory.categoryName,
                     titleStyle = MaterialTheme.typography.headlineSmall.copy(
                         onBackground
                     )
@@ -383,7 +388,12 @@ fun AddScreen(
             }
         }
         Calculator(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp)
+                .clip(MaterialTheme.shapes.medium)
+                .background(MaterialTheme.colorScheme.surface)
+                .padding(8.dp),
             state = calculatorState,
             onAction = viewModel::onAction,
             textStyle = MaterialTheme.typography.displayMedium,

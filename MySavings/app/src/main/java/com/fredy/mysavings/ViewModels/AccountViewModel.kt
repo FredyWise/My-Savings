@@ -12,6 +12,7 @@ import com.fredy.mysavings.Data.Repository.UserRepository
 import com.fredy.mysavings.Util.BalanceBar
 import com.fredy.mysavings.Util.BalanceItem
 import com.fredy.mysavings.Util.Resource
+import com.fredy.mysavings.Util.deletedAccount
 import com.fredy.mysavings.ViewModels.Event.AccountEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,11 +31,11 @@ class AccountViewModel @Inject constructor(
     private val accountRepository: AccountRepository,
     private val recordRepository: RecordRepository,
     private val userRepository: UserRepository,
-): ViewModel() {
+) : ViewModel() {
     init {
         viewModelScope.launch {
             userRepository.getCurrentUser().collectLatest { currentUser ->
-                when(currentUser){
+                when (currentUser) {
                     is Resource.Success -> {
                         currentUser.data?.let { user ->
                             _state.update {
@@ -45,33 +46,48 @@ class AccountViewModel @Inject constructor(
                             }
                         }
                     }
+
                     else -> {}
                 }
             }
         }
     }
 
+
+    private val _updating = MutableStateFlow(
+        false
+    )
+
+    private fun toggleUpdating() {
+        _updating.update { it.not() }
+    }
+
     private val _sortType = MutableStateFlow(
         SortType.ASCENDING
     )
 
-    private val _totalAccountBalance = accountRepository.getUserAccountTotalBalance().stateIn(
+    private val _totalAccountBalance =
+        _updating.flatMapLatest { accountRepository.getUserAccountTotalBalance() }.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(),
+            BalanceItem()
+        )
+
+    private val _totalExpense = _updating.flatMapLatest {
+        recordRepository.getUserTotalAmountByType(
+            RecordType.Expense
+        )
+    }.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(),
         BalanceItem()
     )
 
-    private val _totalExpense = recordRepository.getUserTotalAmountByType(
-        RecordType.Expense
-    ).stateIn(
-        viewModelScope,
-        SharingStarted.WhileSubscribed(),
-        BalanceItem()
-    )
-
-    private val _totalIncome = recordRepository.getUserTotalAmountByType(
-        RecordType.Income
-    ).stateIn(
+    private val _totalIncome = _updating.flatMapLatest {
+        recordRepository.getUserTotalAmountByType(
+            RecordType.Income
+        )
+    }.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(),
         BalanceItem()
@@ -98,15 +114,16 @@ class AccountViewModel @Inject constructor(
         BalanceBar()
     )
 
-    private val _accountResource = accountRepository.getUserAccountOrderedByName().stateIn(
-        viewModelScope,
-        SharingStarted.WhileSubscribed(),
-        Resource.Success(emptyList())
-    )
-
     private val _state = MutableStateFlow(
         AccountState()
     )
+
+    private val _accountResource =
+        _updating.flatMapLatest { accountRepository.getUserAccountOrderedByName() }.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(),
+            Resource.Success(emptyList())
+        )
 
     private val _records = _state.flatMapLatest {
         recordRepository.getUserAccountRecordsOrderedByDateTime(
@@ -159,7 +176,7 @@ class AccountViewModel @Inject constructor(
         )
     }.stateIn(
         viewModelScope,
-        SharingStarted.WhileSubscribed(),
+        SharingStarted.WhileSubscribed(10000),
         AccountState()
     )
 
@@ -192,6 +209,8 @@ class AccountViewModel @Inject constructor(
                     accountRepository.deleteAccount(
                         event.account
                     )
+                    toggleUpdating()
+                    recordRepository.updateRecordItemWithDeletedAccount(event.account)
                 }
             }
 
@@ -218,6 +237,10 @@ class AccountViewModel @Inject constructor(
                 viewModelScope.launch {
                     accountRepository.upsertAccount(
                         account
+                    )
+                    toggleUpdating()
+                    accountRepository.upsertAccount(
+                        deletedAccount
                     )
                 }
                 _state.update {
@@ -266,6 +289,7 @@ class AccountViewModel @Inject constructor(
                     accountRepository.upsertAccount(
                         event.account
                     )
+                    toggleUpdating()
                 }
             }
 

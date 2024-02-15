@@ -47,10 +47,10 @@ fun AnalysisAccount(
     state: AnalysisState,
     onEvent: (AnalysisEvent) -> Unit,
 ) {
-    var expenseColor by remember { mutableStateOf(BalanceColor.Expense) }
-    var incomeColor by remember { mutableStateOf(BalanceColor.Income) }
+    val expenseColor by remember { mutableStateOf(BalanceColor.Expense) }
+    val incomeColor by remember { mutableStateOf(BalanceColor.Income) }
 
-    val key = state.analysisData.categoriesWithAmountResource.hashCode()
+    val key = state.analysisData.accountsWithAmountResource.hashCode()
     val isVisible = remember(key) {
         MutableTransitionState(
             false

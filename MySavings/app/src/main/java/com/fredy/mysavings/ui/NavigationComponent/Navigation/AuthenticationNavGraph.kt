@@ -1,6 +1,5 @@
 package com.fredy.mysavings.ui.NavigationComponent.Navigation
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -14,7 +13,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.fredy.mysavings.Util.Resource
-import com.fredy.mysavings.Util.TAG
 import com.fredy.mysavings.ViewModels.AuthViewModel
 import com.fredy.mysavings.ViewModels.Event.AuthEvent
 import com.fredy.mysavings.ViewModels.SettingViewModel
@@ -53,9 +51,6 @@ fun NavGraphBuilder.authenticationNavGraph(
             ) {
                 when (state.bioAuthResource) {
                     is Resource.Error -> {
-                        viewModel.onEvent(
-                            AuthEvent.SignOut
-                        )
                         val error = state.bioAuthResource.message
                         Toast.makeText(
                             context,

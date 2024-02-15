@@ -10,9 +10,10 @@ import com.fredy.mysavings.Data.Database.FirebaseDataSource.RecordDataSource
 import com.google.firebase.auth.FirebaseAuth
 
 interface SyncRepository {
-    suspend fun syncAccounts()
-    suspend fun syncRecords()
-    suspend fun syncCategory()
+    suspend fun syncAccounts(withDelete: Boolean = true)
+    suspend fun syncRecords(withDelete: Boolean = true)
+    suspend fun syncCategory(withDelete: Boolean = true)
+    suspend fun syncAll(withDelete: Boolean = true)
 }
 
 class SyncRepositoryImpl(
@@ -23,32 +24,41 @@ class SyncRepositoryImpl(
     private val recordDataSource: RecordDataSource,
     private val recordDao: RecordDao,
     private val firebaseAuth: FirebaseAuth
-):SyncRepository{
-    override suspend fun syncAccounts() {
+) : SyncRepository {
+    override suspend fun syncAccounts(withDelete: Boolean) {
         val currentUser = firebaseAuth.currentUser!!
         val userId = if (currentUser.isNotNull()) currentUser.uid else ""
         val accounts = accountDataSource.getUserAccounts(userId)
-        accounts.forEach {
-            accountDao.upsertAccountItem(it)
+        if (withDelete) {
+            accountDao.deleteAllAccounts()
         }
+        accountDao.upsertAllAccountItem(accounts)
     }
 
-    override suspend fun syncRecords() {
+    override suspend fun syncRecords(withDelete: Boolean) {
         val currentUser = firebaseAuth.currentUser!!
         val userId = if (currentUser.isNotNull()) currentUser.uid else ""
         val records = recordDataSource.getUserRecords(userId)
-        records.forEach {
-            recordDao.upsertRecordItem(it)
+        if (withDelete) {
+            recordDao.deleteAllRecords()
         }
+        recordDao.upsertAllRecordItem(records)
     }
 
-    override suspend fun syncCategory() {
+    override suspend fun syncCategory(withDelete: Boolean) {
         val currentUser = firebaseAuth.currentUser!!
         val userId = if (currentUser.isNotNull()) currentUser.uid else ""
         val categories = categoryDataSource.getUserCategoriesOrderedByName(userId)
-        categories.forEach {
-            categoryDao.upsertCategoryItem(it)
+        if (withDelete) {
+            categoryDao.deleteAllCategories()
         }
+        categoryDao.upsertAllCategoryItem(categories)
+    }
+
+    override suspend fun syncAll(withDelete: Boolean) {
+        syncRecords(withDelete)
+        syncAccounts(withDelete)
+        syncCategory(withDelete)
     }
 
 }

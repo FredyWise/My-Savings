@@ -124,7 +124,7 @@ class RecordViewModel @Inject constructor(
         )
     }.stateIn(
         viewModelScope,
-        SharingStarted.WhileSubscribed(5000),
+        SharingStarted.WhileSubscribed(),
         BalanceBar()
     )
 
@@ -147,7 +147,7 @@ class RecordViewModel @Inject constructor(
         )
     }.stateIn(
         viewModelScope,
-        SharingStarted.WhileSubscribed(5000),
+        SharingStarted.WhileSubscribed(3000),
         RecordState()
     )
 
@@ -191,6 +191,9 @@ class RecordViewModel @Inject constructor(
                     recordRepository.deleteRecordItem(
                         event.record
                     )
+                    _filterState.update {
+                        it.copy(updating = !it.updating)
+                    }
                 }
             }
 

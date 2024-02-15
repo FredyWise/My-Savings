@@ -26,8 +26,7 @@ import com.fredy.mysavings.R
 import com.fredy.mysavings.Util.formatBalanceAmount
 import com.fredy.mysavings.ViewModels.AccountState
 import com.fredy.mysavings.ViewModels.Event.AccountEvent
-import com.fredy.mysavings.ui.NavigationComponent.Navigation.NavigationRoute
-import com.fredy.mysavings.ui.Screens.Record.RecordBody
+import com.fredy.mysavings.ui.Screens.ZCommonComponent.DetailAppBar
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.ResourceHandler
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SearchBar
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleButton
@@ -47,6 +46,7 @@ fun AccountsScreen(
     }
     if (isSheetOpen) {
         ModalBottomSheet(
+            modifier = Modifier.padding(top = 24.dp),
             sheetState = sheetState,
             containerColor = MaterialTheme.colorScheme.surface,
             onDismissRequest = {
@@ -55,30 +55,20 @@ fun AccountsScreen(
             dragHandle = {},
         ) {
             state.recordMapsResource.let { resource ->
-                ResourceHandler(
+                DetailAppBar(
+                    title = "Account details",
                     resource = resource,
-                    nullOrEmptyMessage = "You haven't made any Record using this account yet",
-                    errorMessage = resource.message ?: "",
-                    isNullOrEmpty = { it.isNullOrEmpty() },
-                    onMessageClick = {
+                    icon = state.account.accountIcon,
+                    iconDescription = state.account.accountIconDescription,
+                    itemName = state.account.accountName,
+                    itemInfo = formatBalanceAmount(
+                        state.account.accountAmount,
+                        state.accountCurrency,
+                    ),
+                    onNavigationIconClick = {
                         isSheetOpen = false
                     },
-                ) { data ->
-                    AccountDetailSheet(
-                        recordMaps = data,
-                        icon = state.account.accountIcon,
-                        iconDescription = state.account.accountIconDescription,
-                        itemName = state.account.accountName,
-                        itemInfo = formatBalanceAmount(
-                            state.account.accountAmount,
-                            state.accountCurrency,
-                            true
-                        ),
-                        onBackIconClick = {
-                            isSheetOpen = false
-                        },
-                    )
-                }
+                )
             }
         }
     }

@@ -3,19 +3,24 @@ package com.fredy.mysavings.Util
 import android.graphics.Color
 import com.fredy.mysavings.Data.Database.Model.Account
 import com.fredy.mysavings.Data.Database.Model.Category
+import com.fredy.mysavings.Data.Enum.RecordType
+import com.fredy.mysavings.R
 import com.fredy.mysavings.ui.theme.md_theme_dark_primary
 import com.fredy.mysavings.ui.theme.md_theme_dark_secondary
 import com.fredy.mysavings.ui.theme.md_theme_dark_surface
 import com.fredy.mysavings.ui.theme.md_theme_dark_tertiary
 import com.fredy.mysavings.ui.theme.md_theme_light_surface
 import androidx.compose.ui.graphics.Color as toColor
-import com.fredy.mysavings.R
 
 //icon
 data class SavingsIcon(
     val image: Int,
     val description: String,
 )
+
+val transferIcon = SavingsIcon(R.drawable.ic_exchange, "Transfer")
+val categoryInitIcon = SavingsIcon(R.drawable.ic_category_foreground, "Category")
+val accountInitIcon = SavingsIcon(R.drawable.ic_wallet_foreground, "Account")
 
 val accountIcons = listOf(
     SavingsIcon(R.drawable.ic_mastercard, "Master Card"),
@@ -33,7 +38,6 @@ val accountIcons = listOf(
     SavingsIcon(R.drawable.ic_wallet, "Big Wallet"),
     SavingsIcon(R.drawable.ic_paypal, "Pay Pal"),
     SavingsIcon(R.drawable.ic_withdrawal, "Withdrawal"),
-
     )
 
 val categoryIcons = listOf(
@@ -52,16 +56,26 @@ val categoryIcons = listOf(
 )
 
 
-val transferIcon = SavingsIcon(R.drawable.ic_exchange, "Transfer")
-val categoryInitIcon = SavingsIcon(R.drawable.ic_category_foreground, "Category")
-val accountInitIcon = SavingsIcon(R.drawable.ic_wallet_foreground, "Account")
+val accountIconsMap = accountIcons.plus(accountInitIcon).associateBy { it.description }
+val categoryIconsMap = categoryIcons.plus(categoryInitIcon).plus(transferIcon).associateBy { it.description }
+val savingsIcons = accountIconsMap.plus(categoryIconsMap)
+
+
 
 val appIcon = SavingsIcon(R.drawable.ic_wallet_foreground, "Application Icon")
 val TAG = "BABI"
 val WebClientId = "895326687881-e2kh5jh12kjvpf9se1cehbeias0iuvmq.apps.googleusercontent.com"
 
-val deletedCategory = Category(categoryName = "Deleted Category")
-val deletedAccount = Account(accountName = "Deleted Account")
+
+val transferCategory = Category(
+    categoryId = "transferCategory",
+    categoryName = RecordType.Transfer.name,
+    categoryType = RecordType.Transfer,
+    categoryIcon = transferIcon.image,
+    categoryIconDescription = transferIcon.description,
+)
+val deletedCategory = Category(categoryId = "deletedCategory", categoryName = "Deleted Category", categoryType = RecordType.Transfer)
+val deletedAccount = Account(accountId = "deletedAccount", accountName = "Deleted Account", accountCurrency = "USD")
 
 
 //color

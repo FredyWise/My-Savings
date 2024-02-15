@@ -28,6 +28,10 @@ fun HomeNavGraph(
     rootNavController: NavHostController,
     navController: NavHostController,
     modifier: Modifier = Modifier,
+    recordViewModel: RecordViewModel = hiltViewModel(),
+    analysisViewModel: AnalysisViewModel = hiltViewModel(),
+    accountViewModel: AccountViewModel = hiltViewModel(),
+    categoryViewModel: CategoryViewModel = hiltViewModel(),
 ) {
     NavHost(
         navController = navController,
@@ -49,49 +53,45 @@ fun HomeNavGraph(
                 fadeOut(animationSpec = tween(300))
             },
         ) {
-            val viewModel: RecordViewModel = hiltViewModel()
-            val state by viewModel.state.collectAsStateWithLifecycle()
+            val state by recordViewModel.state.collectAsStateWithLifecycle()
 
             RecordsScreen(
                 rootNavController = rootNavController,
                 state = state,
-                onEvent = viewModel::onEvent,
+                onEvent = recordViewModel::onEvent,
             )
         }
         composable(
             route = NavigationRoute.Analysis.route,
         ) {
-            val viewModel: AnalysisViewModel = hiltViewModel()
-            val state by viewModel.state.collectAsStateWithLifecycle()
+            val state by analysisViewModel.state.collectAsStateWithLifecycle()
 
             AnalysisScreen(
                 rootNavController = rootNavController,
                 state = state,
-                onEvent = viewModel::onEvent,
+                onEvent = analysisViewModel::onEvent,
             )
         }
         composable(
             route = NavigationRoute.Account.route,
         ) {
-            val viewModel: AccountViewModel = hiltViewModel()
-            val state by viewModel.state.collectAsStateWithLifecycle()
+            val state by accountViewModel.state.collectAsStateWithLifecycle()
 
             AccountsScreen(
                 modifier = Modifier.padding(8.dp),
                 state = state,
-                onEvent = viewModel::onEvent,
+                onEvent = accountViewModel::onEvent,
             )
         }
         composable(
             route = NavigationRoute.Categories.route,
         ) {
-            val viewModel: CategoryViewModel = hiltViewModel()
-            val state by viewModel.state.collectAsStateWithLifecycle()
+            val state by categoryViewModel.state.collectAsStateWithLifecycle()
 
             CategoriesScreen(
                 modifier = Modifier.padding(8.dp),
                 state = state,
-                onEvent = viewModel::onEvent,
+                onEvent = categoryViewModel::onEvent,
             )
         }
     }

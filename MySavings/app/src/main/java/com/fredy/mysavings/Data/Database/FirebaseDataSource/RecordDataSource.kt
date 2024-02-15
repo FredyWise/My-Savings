@@ -24,11 +24,13 @@ import javax.inject.Inject
 interface RecordDataSource {
     suspend fun upsertRecordItem(record: Record)
     suspend fun deleteRecordItem(record: Record)
+    suspend fun upsertAllRecordItem(records: List<Record>)
     suspend fun getRecordById(recordId: String): TrueRecord
-    suspend fun getAllUserTrueRecords(
+    suspend fun getUserTrueRecords(
         userId: String,
     ): List<TrueRecord>
-    suspend fun getAllUserTrueRecordsBySpesificTime(
+
+    suspend fun getUserTrueRecordsFromSpecificTime(
         userId: String,
         startDate: LocalDateTime,
         endDate: LocalDateTime,
@@ -88,7 +90,7 @@ class RecordDataSourceImpl @Inject constructor(
         "record"
     )
 
-    override suspend fun upsertRecordItem(//make sure the record already have uid // make sure to create the record id outside instead
+    override suspend fun upsertRecordItem(
         record: Record
     ) {
         recordCollection.document(
@@ -96,6 +98,15 @@ class RecordDataSourceImpl @Inject constructor(
         ).set(
             record
         )
+    }
+
+
+    override suspend fun upsertAllRecordItem(records: List<Record>) {
+        val batch = firestore.batch()
+        for (record in records) {
+            batch.set(recordCollection.document(record.recordId), record)
+        }
+        batch.commit()
     }
 
     override suspend fun deleteRecordItem(
@@ -125,7 +136,7 @@ class RecordDataSourceImpl @Inject constructor(
             throw e
         }
     }
-    override suspend fun getAllUserTrueRecords(
+    override suspend fun getUserTrueRecords(
         userId: String,
     ): List<TrueRecord> {
         val trueRecordComponentResult = getTrueRecordsComponent(
@@ -157,7 +168,7 @@ class RecordDataSourceImpl @Inject constructor(
             throw e
         }
     }
-    override suspend fun getAllUserTrueRecordsBySpesificTime(
+    override suspend fun getUserTrueRecordsFromSpecificTime(
         userId: String,
         startDate: LocalDateTime,
         endDate: LocalDateTime,

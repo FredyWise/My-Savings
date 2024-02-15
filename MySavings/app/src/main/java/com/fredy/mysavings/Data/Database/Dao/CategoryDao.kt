@@ -12,20 +12,36 @@ import kotlinx.coroutines.flow.Flow
 interface CategoryDao {
     @Upsert
     suspend fun upsertCategoryItem(category: Category)
+
+    @Upsert
+    suspend fun upsertAllCategoryItem(categorys: List<Category>)
+
     @Delete
     suspend fun deleteCategoryItem(category: Category)
 
-    @Query("SELECT * FROM category " +
-            "WHERE categoryId=:categoryId")
-    fun getCategory(categoryId:Int): Flow<Category>
+    @Query("DELETE FROM category")
+    suspend fun deleteAllCategories()
 
-    @Query("SELECT * FROM category " +
-            "ORDER BY categoryName ASC")
-    fun getUserCategoriesOrderedByName(): Flow<List<Category>>
-    @Query("SELECT * FROM category " +
-            "WHERE categoryType =:type " +
-            "ORDER BY categoryName ASC")
-    fun getCategoriesUsingTypeOrderedByName(type: RecordType = RecordType.Expense): Flow<List<Category>>
+    @Query(
+        "SELECT * FROM category " +
+                "WHERE categoryId=:categoryId"
+    )
+    suspend fun getCategory(categoryId: Int):Category
+
+    @Query(
+        "SELECT * FROM category " +
+                "WHERE userIdFk = :userId " +
+                "ORDER BY categoryName ASC"
+    )
+    suspend fun getUserCategoriesOrderedByName(userId: String):List<Category>
+
+    @Query(
+        "SELECT * FROM category " +
+                "WHERE categoryType =:type AND userIdFk = :userId " +
+                "ORDER BY categoryName ASC"
+    )
+    suspend fun getCategoriesUsingTypeOrderedByName(
+        userId: String,
+        type: RecordType = RecordType.Expense
+    ):List<Category>
 }
-
-//remember to change the query bro

@@ -21,8 +21,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.Data.Database.Model.Category
 import com.fredy.mysavings.R
+import com.fredy.mysavings.Util.formatBalanceAmount
 import com.fredy.mysavings.ViewModels.CategoryState
 import com.fredy.mysavings.ViewModels.Event.CategoryEvent
+import com.fredy.mysavings.ui.Screens.ZCommonComponent.DetailAppBar
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.ResourceHandler
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SearchBar
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleButton
@@ -42,6 +44,7 @@ fun CategoriesScreen(
     }
     if (isSheetOpen) {
         ModalBottomSheet(
+            modifier = Modifier.padding(top = 24.dp),
             sheetState = sheetState,
             containerColor = MaterialTheme.colorScheme.surface,
             onDismissRequest = {
@@ -50,26 +53,17 @@ fun CategoriesScreen(
             dragHandle = {},
         ) {
             state.recordMapsResource.let { resource ->
-                ResourceHandler(
+                DetailAppBar(
+                    title = "Category details",
                     resource = resource,
-                    nullOrEmptyMessage = "You haven't made any Record using this category yet",
-                    isNullOrEmpty = { it.isNullOrEmpty() },
-                    errorMessage = resource.message ?: "",
-                    onMessageClick = {
+                    icon = state.category.categoryIcon,
+                    iconDescription = state.category.categoryIconDescription,
+                    itemName = state.category.categoryName,
+                    itemInfo = "Category Type: " + state.category.categoryType.name,
+                    onNavigationIconClick = {
                         isSheetOpen = false
                     },
-                ) { data ->
-                    CategoryDetailSheet(
-                        recordMaps = data,
-                        icon = state.category.categoryIcon,
-                        iconDescription = state.category.categoryIconDescription,
-                        itemName = state.category.categoryName,
-                        itemInfo = "Category Type: " + state.category.categoryType.name,
-                        onBackIconClick = {
-                            isSheetOpen = false
-                        },
-                    )
-                }
+                )
             }
         }
     }

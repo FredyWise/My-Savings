@@ -2,10 +2,10 @@
 <resources>
 
     <style name="Theme.MySavings" parent="android:Theme.Material.Light.NoActionBar" />
+
     <style name="Theme.SavingsSplashScreen" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">@color/background</item>
         <item name="postSplashScreenTheme">@style/Theme.MySavings</item>
-        <item name="android:windowSplashScreenAnimatedIcon">@drawable/animated_logo</item>
     </style>
 
 </resources>

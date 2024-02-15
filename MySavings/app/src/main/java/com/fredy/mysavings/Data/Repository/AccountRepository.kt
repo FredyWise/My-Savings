@@ -8,6 +8,7 @@ import com.fredy.mysavings.Data.Database.Model.Account
 import com.fredy.mysavings.Util.BalanceItem
 import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.TAG
+import com.fredy.mysavings.Util.deletedAccount
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.Flow
@@ -81,7 +82,7 @@ class AccountRepositoryImpl @Inject constructor(
             val userId = if (currentUser.isNotNull()) currentUser.uid else ""
             val data = accountDataSource.getUserAccounts(
                 userId
-            )
+            ).filter { it.accountName != deletedAccount.accountName }
             emit(Resource.Success(data))
         }.catch { e ->
             Log.i(
@@ -106,9 +107,9 @@ class AccountRepositoryImpl @Inject constructor(
                 userId
             )
             val totalAccountBalance = accounts.sumOf { account ->
-                Log.e(
+                Log.i(
                     TAG,
-                    "getUserAccountTotalBalance2:" + account,
+                    "getUserAccountTotalBalance.foreach:$account",
                 )
                 currencyConverter(
                     account.accountAmount,

@@ -53,10 +53,11 @@ android {
 }
 
 dependencies {
-
+    // Essential libraries for app core functionality
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
     implementation("androidx.activity:activity-compose:1.8.2")
+    // Jetpack Compose UI libraries
     implementation(platform("androidx.compose:compose-bom:2023.10.01"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
@@ -64,13 +65,18 @@ dependencies {
     implementation("androidx.compose.material3:material3")
     // Additional UI
     implementation("androidx.compose.foundation:foundation:1.6.1")
-    // Firebase
+    // More UI elements
+    implementation("com.google.android.material:material:1.11.0")
+    implementation("androidx.compose.material:material-icons-extended")
+    // Firebase integration and features
     implementation("com.google.android.gms:play-services-vision:20.1.3")//add this to remove duplicate class error
     implementation("com.google.firebase:firebase-auth:22.3.1")
     implementation("com.google.firebase:firebase-firestore:24.10.1")
     implementation("com.google.firebase:firebase-storage:20.3.0")
     implementation("com.google.firebase:firebase-ml-vision:24.1.0")
-
+    implementation("com.google.firebase:firebase-auth-ktx:22.3.1")
+    implementation("com.google.android.gms:play-services-auth:20.7.0")
+    // Unit and UI testing libraries
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
@@ -79,72 +85,60 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
-    // Color Picker Compose
-    implementation("com.github.skydoves:colorpicker-compose:1.0.7")
 
+    // Additional functionalities like permissions, workers, image cropping
     // Worker
     implementation("androidx.work:work-runtime-ktx:2.9.0")
-
     // Permission
     implementation("com.google.accompanist:accompanist-permissions:0.33.2-alpha")
-
-    // Image Cropper
-    implementation("com.github.CanHub:Android-Image-Cropper:4.0.0")
-
-    // Fire Base
-    implementation("com.google.firebase:firebase-auth-ktx:22.3.1")
-    implementation("com.google.android.gms:play-services-auth:20.7.0")
-
     // Coil
     implementation("io.coil-kt:coil-compose:2.4.0")
+    // Image Cropper
+    implementation("com.github.CanHub:Android-Image-Cropper:4.0.0")
+    // Color Picker Compose
+    implementation("com.github.skydoves:colorpicker-compose:1.0.7")
+    //dir and file picker
+    implementation("com.darkrockstudios:mpfilepicker:3.1.0")
+    // splash screen
+    implementation("androidx.core:core-splashscreen:1.0.1")
 
-    //    More Icons
-    implementation("com.google.android.material:material:1.11.0")
-    implementation("androidx.compose.material:material-icons-extended")
-
-    //    View Model lifecycle
+    // View Model lifecycle
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
 
-    // Room works with plugin kapt
+    // Room database
     implementation("androidx.room:room-ktx:2.6.1")
     kapt("androidx.room:room-compiler:2.6.1")
 
-    // Data Store Preferences
+    // DataStore Preferences
     implementation("androidx.datastore:datastore-preferences:1.0.0")
 
-    // Chart
+    // Charts
     implementation("co.yml:ycharts:2.1.0")
 
-    //    Date And Time Dialog
+    // Date and Time dialogs
     implementation("io.github.vanpra.compose-material-dialogs:datetime:0.9.0")
 
-    //    Navigation
+    // Navigation
     implementation("androidx.navigation:navigation-compose:2.7.7")
 
-    var compose_version = "1.6.0"
-    // Compose Material Design
-    implementation("androidx.compose.material:material:$compose_version")
+    // Custom compose versions (if needed)
+    val composeVersion = "1.6.1"
     // Compose UI
-    implementation("androidx.compose.ui:ui:$compose_version")
+    implementation("androidx.compose.ui:ui:$composeVersion")
     // Compose UI Tooling
-    implementation("androidx.compose.ui:ui-tooling:$compose_version")
+    implementation("androidx.compose.ui:ui-tooling:$composeVersion")
 
-    // Retrofit
+    // Retrofit networking
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.squareup.okhttp3:okhttp:4.11.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
 
-    //Dagger - Hilt
+    // Dagger-Hilt dependency injection
     implementation("com.google.dagger:hilt-android:2.50")
     kapt("com.google.dagger:hilt-android-compiler:2.50")
     kapt("androidx.hilt:hilt-compiler:1.1.0")
     implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
 
-    //dir and file picker
-    implementation("com.darkrockstudios:mpfilepicker:3.1.0")
-
-    // splash screen
-    implementation("androidx.core:core-splashscreen:1.0.1")
 }

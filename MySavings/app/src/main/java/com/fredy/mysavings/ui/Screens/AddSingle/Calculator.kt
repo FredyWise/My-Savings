@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.TextStyle
@@ -32,13 +33,13 @@ fun Calculator(
     btnSpacing: Dp = 10.dp,
     onAction: (CalcEvent) -> Unit,
     leadingObject: @Composable () -> Unit = {},
-    calculatorShape: Shape = MaterialTheme.shapes.small,
+    calculatorShape: Shape = MaterialTheme.shapes.medium,
     textStyle: TextStyle = MaterialTheme.typography.displaySmall,
     textColor: Color = MaterialTheme.colorScheme.onSecondary,
-    textBackgroundColor: Color = MaterialTheme.colorScheme.secondary,
+    textBackgroundColor: Color = MaterialTheme.colorScheme.onSurface.copy(0.6f),
     buttonTextColor: Color = MaterialTheme.colorScheme.onSecondary,
-    numberButtonBackgroundColor: Color = MaterialTheme.colorScheme.secondary,
-    operandButtonBackgroundColor: Color = MaterialTheme.colorScheme.primary,
+    numberButtonBackgroundColor: Color = MaterialTheme.colorScheme.onSurface.copy(0.6f),
+    operandButtonBackgroundColor: Color = MaterialTheme.colorScheme.onSurface.copy(0.4f),
     borderColor: Color = Color.Transparent,
     buttonAspectRatio: Float = 1f,
 
@@ -67,12 +68,13 @@ fun Calculator(
                         calculatorShape
                     )
                     .fillMaxWidth()
-                    .padding(5.dp ),
+                    .padding(5.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 leadingObject()
                 Text(
-                    modifier = Modifier.weight(0.75f)
+                    modifier = Modifier
+                        .weight(0.75f)
                         .padding(end = 20.dp, start = 8.dp),
                     text = state.number1 + (state.operation?.symbol ?: "") + state.number2,
                     textAlign = TextAlign.End,
@@ -95,18 +97,19 @@ fun Calculator(
                             operandButtonBackgroundColor,
                             calculatorShape
                         )
+                        .clip(calculatorShape)
                         .border(
-                            2.dp,
+                            1.dp,
                             color = borderColor,
                             calculatorShape
                         )
+                        .clickable {
+                            onAction(CalcEvent.Clear)
+                        }
                         .aspectRatio(
                             buttonAspectRatio
                         )
-                        .weight(1f),
-                    onClick = {
-                        onAction(CalcEvent.Clear)
-                    })
+                        .weight(1f))
                 CalcButton(calcSymbol = "%",
                     textColor = buttonTextColor,
                     modifier = Modifier
@@ -114,18 +117,19 @@ fun Calculator(
                             operandButtonBackgroundColor,
                             calculatorShape
                         )
+                        .clip(calculatorShape)
                         .border(
                             1.dp,
                             color = borderColor,
                             calculatorShape
                         )
+                        .clickable {
+                            onAction(CalcEvent.Percent)
+                        }
                         .aspectRatio(
                             buttonAspectRatio
                         )
-                        .weight(1f),
-                    onClick = {
-                        onAction(CalcEvent.Percent)
-                    })
+                        .weight(1f))
                 CalcButton(calcSymbol = "Del",
                     textColor = buttonTextColor,
                     modifier = Modifier
@@ -133,18 +137,19 @@ fun Calculator(
                             operandButtonBackgroundColor,
                             calculatorShape
                         )
+                        .clip(calculatorShape)
                         .border(
                             1.dp,
                             color = borderColor,
                             calculatorShape
                         )
+                        .clickable {
+                            onAction(CalcEvent.Delete)
+                        }
                         .aspectRatio(
                             buttonAspectRatio
                         )
-                        .weight(1f),
-                    onClick = {
-                        onAction(CalcEvent.Delete)
-                    })
+                        .weight(1f))
                 CalcButton(calcSymbol = "/",
                     textColor = buttonTextColor,
                     modifier = Modifier
@@ -152,22 +157,19 @@ fun Calculator(
                             operandButtonBackgroundColor,
                             calculatorShape
                         )
+                        .clip(calculatorShape)
                         .border(
                             1.dp,
                             color = borderColor,
                             calculatorShape
                         )
+                        .clickable {
+                            onAction(CalcEvent.Operation(CalcOperation.Divide))
+                        }
                         .aspectRatio(
                             buttonAspectRatio
                         )
-                        .weight(1f),
-                    onClick = {
-                        onAction(
-                            CalcEvent.Operation(
-                                CalcOperation.Divide
-                            )
-                        )
-                    })
+                        .weight(1f))
             }
             // Second row (7, 8, 9, x)
             Row(
@@ -183,22 +185,19 @@ fun Calculator(
                             numberButtonBackgroundColor,
                             calculatorShape
                         )
+                        .clip(calculatorShape)
                         .border(
                             1.dp,
                             color = borderColor,
                             calculatorShape
                         )
+                        .clickable {
+                            onAction(CalcEvent.Number("7"))
+                        }
                         .aspectRatio(
                             buttonAspectRatio
                         )
-                        .weight(1f),
-                    onClick = {
-                        onAction(
-                            CalcEvent.Number(
-                                "7"
-                            )
-                        )
-                    })
+                        .weight(1f))
                 CalcButton(calcSymbol = "8",
                     textColor = buttonTextColor,
                     modifier = Modifier
@@ -206,22 +205,19 @@ fun Calculator(
                             numberButtonBackgroundColor,
                             calculatorShape
                         )
+                        .clip(calculatorShape)
                         .border(
                             1.dp,
                             color = borderColor,
                             calculatorShape
                         )
+                        .clickable {
+                            onAction(CalcEvent.Number("8"))
+                        }
                         .aspectRatio(
                             buttonAspectRatio
                         )
-                        .weight(1f),
-                    onClick = {
-                        onAction(
-                            CalcEvent.Number(
-                                "8"
-                            )
-                        )
-                    })
+                        .weight(1f))
                 CalcButton(calcSymbol = "9",
                     textColor = buttonTextColor,
                     modifier = Modifier
@@ -229,22 +225,19 @@ fun Calculator(
                             numberButtonBackgroundColor,
                             calculatorShape
                         )
+                        .clip(calculatorShape)
                         .border(
                             1.dp,
                             color = borderColor,
                             calculatorShape
                         )
+                        .clickable {
+                            onAction(CalcEvent.Number("9"))
+                        }
                         .aspectRatio(
                             buttonAspectRatio
                         )
-                        .weight(1f),
-                    onClick = {
-                        onAction(
-                            CalcEvent.Number(
-                                "9"
-                            )
-                        )
-                    })
+                        .weight(1f))
                 CalcButton(calcSymbol = "x",
                     textColor = buttonTextColor,
                     modifier = Modifier
@@ -252,22 +245,19 @@ fun Calculator(
                             operandButtonBackgroundColor,
                             calculatorShape
                         )
+                        .clip(calculatorShape)
                         .border(
                             1.dp,
                             color = borderColor,
                             calculatorShape
                         )
+                        .clickable {
+                            onAction(CalcEvent.Operation(CalcOperation.Multiply))
+                        }
                         .aspectRatio(
                             buttonAspectRatio
                         )
-                        .weight(1f),
-                    onClick = {
-                        onAction(
-                            CalcEvent.Operation(
-                                CalcOperation.Multiply
-                            )
-                        )
-                    })
+                        .weight(1f))
             }
             // Third row (4, 5, 6, -)
             Row(
@@ -283,22 +273,19 @@ fun Calculator(
                             numberButtonBackgroundColor,
                             calculatorShape
                         )
+                        .clip(calculatorShape)
                         .border(
                             1.dp,
                             color = borderColor,
                             calculatorShape
                         )
+                        .clickable {
+                            onAction(CalcEvent.Number("4"))
+                        }
                         .aspectRatio(
                             buttonAspectRatio
                         )
-                        .weight(1f),
-                    onClick = {
-                        onAction(
-                            CalcEvent.Number(
-                                "4"
-                            )
-                        )
-                    })
+                        .weight(1f))
                 CalcButton(calcSymbol = "5",
                     textColor = buttonTextColor,
                     modifier = Modifier
@@ -306,22 +293,19 @@ fun Calculator(
                             numberButtonBackgroundColor,
                             calculatorShape
                         )
+                        .clip(calculatorShape)
                         .border(
                             1.dp,
                             color = borderColor,
                             calculatorShape
                         )
+                        .clickable {
+                            onAction(CalcEvent.Number("5"))
+                        }
                         .aspectRatio(
                             buttonAspectRatio
                         )
-                        .weight(1f),
-                    onClick = {
-                        onAction(
-                            CalcEvent.Number(
-                                "5"
-                            )
-                        )
-                    })
+                        .weight(1f))
                 CalcButton(calcSymbol = "6",
                     textColor = buttonTextColor,
                     modifier = Modifier
@@ -329,22 +313,19 @@ fun Calculator(
                             numberButtonBackgroundColor,
                             calculatorShape
                         )
+                        .clip(calculatorShape)
                         .border(
                             1.dp,
                             color = borderColor,
                             calculatorShape
                         )
+                        .clickable {
+                            onAction(CalcEvent.Number("6"))
+                        }
                         .aspectRatio(
                             buttonAspectRatio
                         )
-                        .weight(1f),
-                    onClick = {
-                        onAction(
-                            CalcEvent.Number(
-                                "6"
-                            )
-                        )
-                    })
+                        .weight(1f))
                 CalcButton(calcSymbol = "-",
                     textColor = buttonTextColor,
                     modifier = Modifier
@@ -352,22 +333,19 @@ fun Calculator(
                             operandButtonBackgroundColor,
                             calculatorShape
                         )
+                        .clip(calculatorShape)
                         .border(
                             1.dp,
                             color = borderColor,
                             calculatorShape
                         )
+                        .clickable {
+                            onAction(CalcEvent.Operation(CalcOperation.Substract))
+                        }
                         .aspectRatio(
                             buttonAspectRatio
                         )
-                        .weight(1f),
-                    onClick = {
-                        onAction(
-                            CalcEvent.Operation(
-                                CalcOperation.Substract
-                            )
-                        )
-                    })
+                        .weight(1f))
             }
             // Fourth row (1, 2, 3, +)
             Row(
@@ -383,22 +361,19 @@ fun Calculator(
                             numberButtonBackgroundColor,
                             calculatorShape
                         )
+                        .clip(calculatorShape)
                         .border(
                             1.dp,
                             color = borderColor,
                             calculatorShape
                         )
+                        .clickable {
+                            onAction(CalcEvent.Number("1"))
+                        }
                         .aspectRatio(
                             buttonAspectRatio
                         )
-                        .weight(1f),
-                    onClick = {
-                        onAction(
-                            CalcEvent.Number(
-                                "1"
-                            )
-                        )
-                    })
+                        .weight(1f))
                 CalcButton(calcSymbol = "2",
                     textColor = buttonTextColor,
                     modifier = Modifier
@@ -406,22 +381,19 @@ fun Calculator(
                             numberButtonBackgroundColor,
                             calculatorShape
                         )
+                        .clip(calculatorShape)
                         .border(
                             1.dp,
                             color = borderColor,
                             calculatorShape
                         )
+                        .clickable {
+                            onAction(CalcEvent.Number("2"))
+                        }
                         .aspectRatio(
                             buttonAspectRatio
                         )
-                        .weight(1f),
-                    onClick = {
-                        onAction(
-                            CalcEvent.Number(
-                                "2"
-                            )
-                        )
-                    })
+                        .weight(1f))
                 CalcButton(calcSymbol = "3",
                     textColor = buttonTextColor,
                     modifier = Modifier
@@ -429,22 +401,19 @@ fun Calculator(
                             numberButtonBackgroundColor,
                             calculatorShape
                         )
+                        .clip(calculatorShape)
                         .border(
                             1.dp,
                             color = borderColor,
                             calculatorShape
                         )
+                        .clickable {
+                            onAction(CalcEvent.Number("3"))
+                        }
                         .aspectRatio(
                             buttonAspectRatio
                         )
-                        .weight(1f),
-                    onClick = {
-                        onAction(
-                            CalcEvent.Number(
-                                "3"
-                            )
-                        )
-                    })
+                        .weight(1f))
                 CalcButton(calcSymbol = "+",
                     textColor = buttonTextColor,
                     modifier = Modifier
@@ -452,22 +421,19 @@ fun Calculator(
                             operandButtonBackgroundColor,
                             calculatorShape
                         )
+                        .clip(calculatorShape)
                         .border(
                             1.dp,
                             color = borderColor,
                             calculatorShape
                         )
+                        .clickable {
+                            onAction(CalcEvent.Operation(CalcOperation.Add))
+                        }
                         .aspectRatio(
                             buttonAspectRatio
                         )
-                        .weight(1f),
-                    onClick = {
-                        onAction(
-                            CalcEvent.Operation(
-                                CalcOperation.Add
-                            )
-                        )
-                    })
+                        .weight(1f))
             }
             // Fifth row (0, decimal, equals)
             Row(
@@ -483,22 +449,19 @@ fun Calculator(
                             numberButtonBackgroundColor,
                             calculatorShape
                         )
+                        .clip(calculatorShape)
                         .border(
                             1.dp,
                             color = borderColor,
                             calculatorShape
                         )
+                        .clickable {
+                            onAction(CalcEvent.Number("0"))
+                        }
                         .aspectRatio(
                             buttonAspectRatio
                         )
-                        .weight(1f),
-                    onClick = {
-                        onAction(
-                            CalcEvent.Number(
-                                "0"
-                            )
-                        )
-                    })
+                        .weight(1f))
                 CalcButton(calcSymbol = "00",
                     textColor = buttonTextColor,
                     modifier = Modifier
@@ -506,22 +469,19 @@ fun Calculator(
                             numberButtonBackgroundColor,
                             calculatorShape
                         )
+                        .clip(calculatorShape)
                         .border(
                             1.dp,
                             color = borderColor,
                             calculatorShape
                         )
+                        .clickable {
+                            onAction(CalcEvent.Number("00"))
+                        }
                         .aspectRatio(
                             buttonAspectRatio
                         )
-                        .weight(1f),
-                    onClick = {
-                        onAction(
-                            CalcEvent.Number(
-                                "00"
-                            )
-                        )
-                    })
+                        .weight(1f))
                 CalcButton(calcSymbol = ".",
                     textColor = buttonTextColor,
                     modifier = Modifier
@@ -529,18 +489,19 @@ fun Calculator(
                             numberButtonBackgroundColor,
                             calculatorShape
                         )
+                        .clip(calculatorShape)
                         .border(
                             1.dp,
                             color = borderColor,
                             calculatorShape
                         )
+                        .clickable {
+                            onAction(CalcEvent.DecimalPoint)
+                        }
                         .aspectRatio(
                             buttonAspectRatio
                         )
-                        .weight(1f),
-                    onClick = {
-                        onAction(CalcEvent.DecimalPoint)
-                    })
+                        .weight(1f))
                 CalcButton(calcSymbol = "=",
                     textColor = buttonTextColor,
                     modifier = Modifier
@@ -548,18 +509,19 @@ fun Calculator(
                             operandButtonBackgroundColor,
                             calculatorShape
                         )
+                        .clip(calculatorShape)
                         .border(
                             1.dp,
                             color = borderColor,
                             calculatorShape
                         )
+                        .clickable {
+                            onAction(CalcEvent.Calculate)
+                        }
                         .aspectRatio(
                             buttonAspectRatio
                         )
-                        .weight(1f),
-                    onClick = {
-                        onAction(CalcEvent.Calculate)
-                    })
+                        .weight(1f))
             }
         }
     }
@@ -570,15 +532,12 @@ fun Calculator(
 fun CalcButton(
     calcSymbol: String,
     modifier: Modifier,
-    onClick: () -> Unit,
     textColor: Color = MaterialTheme.colorScheme.onBackground,
 ) {
-    Box(contentAlignment = Alignment.Center,
-        modifier = Modifier
-            .clickable {
-                onClick()
-            }
-            .then(modifier)) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = modifier
+    ) {
         Text(
             text = calcSymbol,
             style = MaterialTheme.typography.headlineSmall,

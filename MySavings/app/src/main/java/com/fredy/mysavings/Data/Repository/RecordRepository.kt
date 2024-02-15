@@ -13,6 +13,8 @@ import com.fredy.mysavings.Data.Enum.SortType
 import com.fredy.mysavings.Util.BalanceItem
 import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.TAG
+import com.fredy.mysavings.Util.deletedAccount
+import com.fredy.mysavings.Util.deletedCategory
 import com.fredy.mysavings.Util.isExpense
 import com.fredy.mysavings.Util.isIncome
 import com.fredy.mysavings.Util.isTransfer
@@ -33,6 +35,8 @@ import javax.inject.Inject
 interface RecordRepository {
     suspend fun upsertRecordItem(record: Record)
     suspend fun deleteRecordItem(record: Record)
+    suspend fun updateRecordItemWithDeletedAccount(account: Account)
+    suspend fun updateRecordItemWithDeletedCategory(category: Category)
     fun getRecordById(recordId: String): Flow<TrueRecord>
     fun getAllRecords(): Flow<Resource<List<RecordMap>>>
     fun getAllTrueRecordsWithinSpecificTime(
@@ -133,14 +137,55 @@ class RecordRepositoryImpl @Inject constructor(
         recordDao.deleteRecordItem(record)
     }
 
+    override suspend fun updateRecordItemWithDeletedAccount(account: Account) {
+        val currentUser = firebaseAuth.currentUser!!
+        val userId = if (currentUser.isNotNull()) currentUser.uid else ""
+        val records = recordDao.getUserRecords(userId)
+        val tempRecords = records.filter {
+            it.accountIdFromFk == account.accountId || it.accountIdToFk == account.accountId
+        }.map {
+            var record = it
+            if (it.accountIdFromFk == account.accountId) {
+                record = record.copy(accountIdFromFk = deletedAccount.accountId)
+            }
+            if (it.accountIdToFk == account.accountId) {
+                record = record.copy(accountIdToFk = deletedAccount.accountId)
+            }
+            record
+        }
+        recordDataSource.upsertAllRecordItem(tempRecords)
+        recordDao.upsertAllRecordItem(tempRecords)
+    }
+
+    override suspend fun updateRecordItemWithDeletedCategory(category: Category) {
+        val currentUser = firebaseAuth.currentUser!!
+        val userId = if (currentUser.isNotNull()) currentUser.uid else ""
+        val records = recordDao.getUserRecords(userId)
+        val tempRecords = records.filter {
+            it.categoryIdFk == category.categoryId
+        }.map {
+            it.copy(categoryIdFk = deletedCategory.categoryId)
+        }
+        recordDataSource.upsertAllRecordItem(tempRecords)
+        recordDao.upsertAllRecordItem(tempRecords)
+    }
+
     override fun getRecordById(recordId: String): Flow<TrueRecord> {
         Log.i(TAG, "getRecordById: $recordId")
         return flow {
-            val record = recordDataSource.getRecordById(
+            val record = recordDao.getRecordById(
                 recordId
             )
             emit(
-                record
+                record.copy(
+                    record = record.record.copy(
+                        recordAmount = currencyConverter(
+                            record.record.recordAmount,
+                            record.toAccount.accountCurrency,
+                            record.fromAccount.accountCurrency
+                        )
+                    )
+                )
             )
 
         }
@@ -154,7 +199,8 @@ class RecordRepositoryImpl @Inject constructor(
             emit(Resource.Loading())
             val currentUser = firebaseAuth.currentUser!!
             val userId = if (currentUser.isNotNull()) currentUser.uid else ""
-            val data = recordDataSource.getAllUserTrueRecordsBySpesificTime(userId,startDate,endDate)
+            val data =
+                recordDao.getUserTrueRecordsFromSpecificTime(userId, startDate, endDate)
             Log.i(
                 TAG,
                 "getAllTrueRecordsWithinSpecificTime.Data: $data"
@@ -174,7 +220,7 @@ class RecordRepositoryImpl @Inject constructor(
             emit(Resource.Loading())
             val currentUser = firebaseAuth.currentUser!!
             val userId = if (currentUser.isNotNull()) currentUser.uid else ""
-            val data = recordDataSource.getAllUserTrueRecords(userId).groupBy {
+            val data = recordDao.getUserTrueRecords(userId).groupBy {
                 it.record.recordDateTime.toLocalDate()
             }.map {
                 RecordMap(
@@ -207,7 +253,7 @@ class RecordRepositoryImpl @Inject constructor(
                 "getUserTrueRecordMapsFromSpecificTime: $startDate\n:\n$endDate,\ncurrency: $currency"
             )
 
-            val data = recordDataSource.getUserTrueRecordByCurrencyFromSpecificTime(
+            val data = recordDao.getUserTrueRecordByCurrencyFromSpecificTime(
                 userId,
                 startDate,
                 endDate,
@@ -253,7 +299,7 @@ class RecordRepositoryImpl @Inject constructor(
                 "getUserCategoryRecordsOrderedByDateTime: $categoryId",
 
                 )
-            val data = recordDataSource.getUserCategoryRecordsOrderedByDateTime(
+            val data = recordDao.getUserCategoryRecordsOrderedByDateTime(
                 userId, categoryId
             ).groupBy {
                 it.record.recordDateTime.toLocalDate()
@@ -294,7 +340,7 @@ class RecordRepositoryImpl @Inject constructor(
                 "getUserAccountRecordsOrderedByDateTime: $accountId",
 
                 )
-            val data = recordDataSource.getUserAccountRecordsOrderedByDateTime(
+            val data = recordDao.getUserAccountRecordsOrderedByDateTime(
                 userId, accountId
             ).groupBy {
                 it.record.recordDateTime.toLocalDate()
@@ -338,7 +384,7 @@ class RecordRepositoryImpl @Inject constructor(
                 TAG,
                 "getUserRecordsFromSpecificTime: $startDate\n:\n$endDate"
             )
-            val records = recordDataSource.getUserRecordsByTypeAndCurrencyFromSpecificTime(
+            val records = recordDao.getUserRecordsByTypeAndCurrencyFromSpecificTime(
                 userId,
                 recordType,
                 startDate,
@@ -408,7 +454,7 @@ class RecordRepositoryImpl @Inject constructor(
             val userCategories = getUserCategory(
                 userId
             )
-            val records = recordDataSource.getUserRecordsByTypeAndCurrencyFromSpecificTime(
+            val records = recordDao.getUserRecordsByTypeAndCurrencyFromSpecificTime(
                 userId,
                 categoryType,
                 startDate,
@@ -478,8 +524,8 @@ class RecordRepositoryImpl @Inject constructor(
             )
             val userAccounts = getUserAccount(
                 userId
-            )
-            val records = recordDataSource.getUserRecordsFromSpecificTime(
+            ).filter { it.accountName != deletedAccount.accountName }
+            val records = recordDao.getUserRecordsFromSpecificTime(
                 userId, startDate, endDate
             )
             val accountWithAmountMap = mutableMapOf<String, AccountWithAmountType>()
@@ -561,7 +607,7 @@ class RecordRepositoryImpl @Inject constructor(
                 "getUserTotalAmountByType: $recordType",
 
                 )
-            val records = recordDataSource.getUserRecordsByType(
+            val records = recordDao.getUserRecordsByType(
                 userId, recordType
             )
             val recordTotalAmount = records.sumOf { record ->
@@ -605,7 +651,7 @@ class RecordRepositoryImpl @Inject constructor(
                 "getUserTotalAmountByTypeFromSpecificTime: $recordType",
 
                 )
-            val recordTotalAmount = recordDataSource.getUserRecordsByTypeFromSpecificTime(
+            val recordTotalAmount = recordDao.getUserRecordsByTypeFromSpecificTime(
                 userId,
                 recordType,
                 startDate,
@@ -646,7 +692,7 @@ class RecordRepositoryImpl @Inject constructor(
                 "getUserTotalRecordBalance: ",
 
                 )
-            val recordTotalAmount = recordDataSource.getUserRecordsByType(
+            val recordTotalAmount = recordDao.getUserRecordsByType(
                 userId, RecordType.Expense
             ).sumOf { record ->
                 currencyConverter(
@@ -654,7 +700,7 @@ class RecordRepositoryImpl @Inject constructor(
                     record.recordCurrency,
                     userCurrency
                 )
-            } + recordDataSource.getUserRecordsByType(
+            } + recordDao.getUserRecordsByType(
                 userId, RecordType.Income
             ).sumOf { record ->
                 currencyConverter(

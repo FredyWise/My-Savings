@@ -35,7 +35,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import com.fredy.mysavings.R
 import com.fredy.mysavings.Util.ActionWithName
+import com.fredy.mysavings.Util.savingsIcons
 
 @Composable
 fun SimpleWarningDialog(
@@ -201,9 +203,7 @@ fun SimpleEntityItem(
     ) {
         Icon(
             modifier = iconModifier,
-            painter = painterResource(
-                icon
-            ),
+            painter = painterResource(id = savingsIcons[iconDescription]?.image ?: R.drawable.ic_close_foreground),
             contentDescription = iconDescription,
             tint = Color.Unspecified
         )
@@ -302,12 +302,12 @@ fun SimpleButton(
             modifier = Modifier.padding(
                 8.dp
             ),
-            horizontalArrangement = Arrangement.Center,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             image?.let {
                 Icon(
-                    modifier = Modifier.size(35.dp),
+                    modifier = Modifier.size(40.dp),
                     painter = painterResource(id = it),
                     contentDescription = "",
                     tint = imageColor,

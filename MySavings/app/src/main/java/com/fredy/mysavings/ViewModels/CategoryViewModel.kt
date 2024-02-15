@@ -8,6 +8,8 @@ import com.fredy.mysavings.Data.Enum.SortType
 import com.fredy.mysavings.Data.Repository.CategoryRepository
 import com.fredy.mysavings.Data.Repository.RecordRepository
 import com.fredy.mysavings.Util.Resource
+import com.fredy.mysavings.Util.deletedCategory
+import com.fredy.mysavings.Util.transferCategory
 import com.fredy.mysavings.Util.transferIcon
 import com.fredy.mysavings.ViewModels.Event.CategoryEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -31,14 +33,21 @@ class CategoryViewModel @Inject constructor(
         SortType.ASCENDING
     )
 
-    private val _categoryResource = categoryRepository.getCategoryMapOrderedByName().stateIn(
-        viewModelScope,
-        SharingStarted.WhileSubscribed(),
-        Resource.Success(emptyList())
+    private val _updating = MutableStateFlow(
+        false
     )
+    private fun toggleUpdating(){
+        _updating.update { it.not() }
+    }
 
     private val _state = MutableStateFlow(
         CategoryState()
+    )
+
+    private val _categoryResource = _updating.flatMapLatest { categoryRepository.getCategoryMapOrderedByName()}.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(),
+        Resource.Success(emptyList())
     )
 
     private val _records = _state.flatMapLatest {
@@ -90,7 +99,7 @@ class CategoryViewModel @Inject constructor(
         )
     }.stateIn(
         viewModelScope,
-        SharingStarted.WhileSubscribed(5000),
+        SharingStarted.WhileSubscribed(10000),
         CategoryState()
     )
 
@@ -123,6 +132,8 @@ class CategoryViewModel @Inject constructor(
                     categoryRepository.deleteCategory(
                         event.category
                     )
+                    toggleUpdating()
+                    recordRepository.updateRecordItemWithDeletedCategory(event.category)
                 }
             }
 
@@ -146,16 +157,14 @@ class CategoryViewModel @Inject constructor(
                 )
                 viewModelScope.launch {
                     categoryRepository.upsertCategory(
-                        Category(
-                            categoryId = "1",
-                            categoryName = RecordType.Transfer.name,
-                            categoryType = RecordType.Transfer,
-                            categoryIcon = transferIcon.image,
-                            categoryIconDescription = transferIcon.description,
-                        )
+                        category
+                    )
+                    toggleUpdating()
+                    categoryRepository.upsertCategory(
+                        transferCategory
                     )
                     categoryRepository.upsertCategory(
-                        category
+                        deletedCategory
                     )
                 }
                 _state.update { CategoryState() }

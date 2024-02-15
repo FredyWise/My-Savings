@@ -40,10 +40,6 @@ fun ChartLine(
     val points = pointsData.sortedBy { it.x }.toMutableList()
     points.add(0, Point(0f, 0f))
 
-    Log.e(
-        TAG,
-        "ChartLine: " + points + " length:" + points.size
-    )
     val steps = 5
 
     val xAxisData = AxisData.Builder().axisStepSize(
@@ -61,7 +57,6 @@ fun ChartLine(
     ).backgroundColor(backgroundColor).axisLabelColor(
         contentColor
     ).axisLineColor(contentColor).labelData { i ->
-        Log.e(TAG, "ChartLine: i=" + i)
 //        val yMin = points.minOf { it.y }
         val yMax = points.maxOf { it.y }.nextUp()
 //        val yScale = (yMax - yMin) / steps

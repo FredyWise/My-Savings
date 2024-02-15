@@ -13,7 +13,6 @@ import com.fredy.mysavings.Data.Repository.CurrencyRepository
 import com.fredy.mysavings.Data.Repository.RecordRepository
 import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.isExpense
-import com.fredy.mysavings.Util.isIncome
 import com.fredy.mysavings.Util.isTransfer
 import com.fredy.mysavings.ViewModels.Event.AddRecordEvent
 import com.fredy.mysavings.ViewModels.Event.CalcEvent
@@ -33,7 +32,7 @@ import kotlin.math.absoluteValue
 class AddSingleRecordViewModel @Inject constructor(
     private val recordRepository: RecordRepository,
     private val currencyRepository: CurrencyRepository,
-): ViewModel() {
+) : ViewModel() {
     var state by mutableStateOf(AddRecordState())
     var calcState by mutableStateOf(CalcState())
 
@@ -77,113 +76,15 @@ class AddSingleRecordViewModel @Inject constructor(
                 resource.update {
                     Resource.Loading()
                 }
-                performCalculation()
-                val recordId = state.recordId
-                val accountIdFromFk = state.accountIdFromFk
-                var accountIdToFk = state.accountIdToFk
-                var categoryIdToFk = state.categoryIdFk
-                val recordDateTime = state.recordDate.atTime(
-                    state.recordTime
-                )
-                var recordAmount = calcState.number1.toDouble().absoluteValue
-                val recordCurrency = state.recordCurrency
-                val fromAccountCurrency = state.fromAccount.accountCurrency
-                val toAccountCurrency = state.toAccount.accountCurrency
-                val recordType = state.recordType
-                val recordNotes = state.recordNotes
-                var difference = state.recordAmount.absoluteValue
-                if (recordId == "") {
-                    difference += recordAmount
-                } else {
-                    difference -= recordAmount
-                    difference = -difference
-                }
+                val record = performRecordCalculation()
 
-                if (isTransfer(recordType)) {
-                    categoryIdToFk = "1"
-                } else {
-                    accountIdToFk = accountIdFromFk
-                }
-
-                if (recordDateTime == null || recordAmount == 0.0 || recordCurrency.isBlank() || accountIdFromFk == null || accountIdToFk == null || categoryIdToFk == null) {
-                    resource.update {
-                        Resource.Error(
-                            "You must fill all required information"
+                record?.let {
+                    viewModelScope.launch {
+                        recordRepository.upsertRecordItem(
+                            record
                         )
                     }
-                    return
-                }
-                if ((state.fromAccount.accountAmount < difference && !isIncome(
-                        recordType
-                    ))) {
-                    resource.update {
-                        Resource.Error(
-                            "Account balance is not enough"
-                        )
-                    }
-                    return
-                }
-                if ((recordType != state.toCategory.categoryType && !isTransfer(
-                        recordType
-                    ))) {
-                    resource.update {
-                        Resource.Error(
-                            "Record Type is not the same with category type"
-                        )
-                    }
-                    return
-                }
-                if (isTransfer(recordType)) {
-                    if (state.fromAccount == state.toAccount) {
-                        resource.update {
-                            Resource.Error(
-                                "You Can't transfer into the same account"
-                            )
-                        }
-                        return
-                    }
-                    if (!state.isAgreeToConvert && fromAccountCurrency != toAccountCurrency) {
-                        resource.update {
-                            Resource.Error(
-                                "Account Currencies Are not The same!!!, " + "Are you sure want to Transfer from $fromAccountCurrency Currency to ${toAccountCurrency} Currency? \n(Result Will be Converted)"
-                            )
-                        }
-                        state = state.copy(
-                            isShowWarning = true
-                        )
-                        return
-                    }
-                }
-
-                if (isExpense(recordType)) {
-                    state.fromAccount.accountAmount -= difference
-                    recordAmount = -recordAmount
-                } else if (isTransfer(
-                        recordType
-                    )) {
-                    state.fromAccount.accountAmount -= difference
-                    state.toAccount.accountAmount += difference
-                } else {
-                    state.fromAccount.accountAmount += difference
-                }
-
-                val record = Record(
-                    recordId = recordId,
-                    accountIdFromFk = accountIdFromFk,
-                    accountIdToFk = accountIdToFk,
-                    categoryIdFk = categoryIdToFk,
-                    recordDateTime = recordDateTime,
-                    recordAmount = recordAmount,
-                    recordCurrency = recordCurrency,
-                    recordType = recordType,
-                    recordNotes = recordNotes,
-                )
-
-                viewModelScope.launch {
-                    recordRepository.upsertRecordItem(
-                        record
-                    )
-                }
+                }?:return
 
                 resource.update {
                     Resource.Success("Record Data Successfully Added")
@@ -277,6 +178,120 @@ class AddSingleRecordViewModel @Inject constructor(
         }
     }
 
+    private fun performRecordCalculation(): Record?{
+        performCalculation()
+        val recordId = state.recordId
+        val accountIdFromFk = state.accountIdFromFk
+        var accountIdToFk = state.accountIdToFk
+        var categoryIdToFk = state.categoryIdFk
+        val recordDateTime = state.recordDate.atTime(
+            state.recordTime
+        )
+        var calculationResult = calcState.number1.toDouble().absoluteValue
+        val recordCurrency = state.recordCurrency
+        val fromAccountCurrency = state.fromAccount.accountCurrency
+        val toAccountCurrency = state.toAccount.accountCurrency
+        val recordType = state.recordType
+        val recordNotes = state.recordNotes
+        val previousAmount = state.previousAmount.absoluteValue
+        var difference = state.recordAmount.absoluteValue
+        if (recordId == "") {
+            difference = calculationResult
+        } else {
+            difference -= calculationResult
+            difference = -difference
+        }
+
+        if (isTransfer(recordType)) {
+            categoryIdToFk = "1"
+        } else {
+            accountIdToFk = accountIdFromFk
+        }
+
+        if (recordDateTime == null || calculationResult == 0.0 || recordCurrency.isBlank() || accountIdFromFk == null || accountIdToFk == null || categoryIdToFk == null) {
+            resource.update {
+                Resource.Error(
+                    "You must fill all required information"
+                )
+            }
+            return null
+        }
+        if ((state.fromAccount.accountAmount < difference && isExpense(recordType)) || (state.fromAccount.accountAmount < difference && isTransfer(recordType) && fromAccountCurrency == toAccountCurrency)) {
+            resource.update {
+                Resource.Error(
+                    "Account balance is not enough"
+                )
+            }
+            return null
+        }
+        if ((recordType != state.toCategory.categoryType && !isTransfer(
+                recordType
+            ))
+        ) {
+            resource.update {
+                Resource.Error(
+                    "Record Type is not the same with category type"
+                )
+            }
+            return null
+        }
+        if (isTransfer(recordType)) {
+            if (state.fromAccount == state.toAccount) {
+                resource.update {
+                    Resource.Error(
+                        "You Can't transfer into the same account"
+                    )
+                }
+                return null
+            }
+            if (!state.isAgreeToConvert && fromAccountCurrency != toAccountCurrency) {
+                resource.update {
+                    Resource.Error(
+                        "Account Currencies Are not The same!!!, " + "Are you sure want to Transfer from $fromAccountCurrency Currency to ${toAccountCurrency} Currency? \n(Result Will be Converted)"
+                    )
+                }
+                state = state.copy(
+                    isShowWarning = true,
+                    previousAmount = calculationResult
+                )
+                return null
+            }
+            if (state.fromAccount.accountAmount < previousAmount && fromAccountCurrency != toAccountCurrency) {
+                resource.update {
+                    Resource.Error(
+                        "Account balance is not enough"
+                    )
+                }
+                return null
+            }
+        }
+
+        if (isExpense(recordType)) {
+            state.fromAccount.accountAmount -= difference
+            calculationResult = -calculationResult
+        } else if (isTransfer(recordType) && fromAccountCurrency == toAccountCurrency) {
+            state.fromAccount.accountAmount -= difference
+            state.toAccount.accountAmount += difference
+        } else if (isTransfer(recordType) && fromAccountCurrency != toAccountCurrency) {
+            state.fromAccount.accountAmount -= previousAmount
+            state.toAccount.accountAmount += difference
+        } else {
+            state.fromAccount.accountAmount += difference
+        }
+
+        return Record(
+            recordId = recordId,
+            accountIdFromFk = accountIdFromFk,
+            accountIdToFk = accountIdToFk,
+            categoryIdFk = categoryIdToFk,
+            recordDateTime = recordDateTime,
+            recordAmount = calculationResult,
+            recordCurrency = recordCurrency,
+            recordType = recordType,
+            recordNotes = recordNotes,
+        )
+    }
+
     fun onAction(event: CalcEvent) {
         when (event) {
             is CalcEvent.Number -> enterNumber(
@@ -312,11 +327,12 @@ class AddSingleRecordViewModel @Inject constructor(
                 number1 = "0"
             )
 
-            calcState.number1.isNotBlank() && calcState.number1 != "0" -> calcState = calcState.copy(
-                number1 = calcState.number1.dropLast(
-                    1
+            calcState.number1.isNotBlank() && calcState.number1 != "0" -> calcState =
+                calcState.copy(
+                    number1 = calcState.number1.dropLast(
+                        1
+                    )
                 )
-            )
         }
     }
 
@@ -352,7 +368,8 @@ class AddSingleRecordViewModel @Inject constructor(
     private fun enterDecimal() {
         if (calcState.operation == null && !calcState.number1.contains(
                 "."
-            ) && calcState.number1.isNotBlank()) {
+            ) && calcState.number1.isNotBlank()
+        ) {
             calcState = calcState.copy(
                 number1 = calcState.number1 + "."
             )
@@ -368,7 +385,8 @@ class AddSingleRecordViewModel @Inject constructor(
     private fun performPercent() {
         if (calcState.operation == null && !calcState.number1.contains(
                 "%"
-            ) && calcState.number1.isNotBlank()) {
+            ) && calcState.number1.isNotBlank()
+        ) {
             calcState = calcState.copy(
                 number1 = (calcState.number1.toDouble() / 100).toString()
             )
@@ -386,7 +404,8 @@ class AddSingleRecordViewModel @Inject constructor(
     private fun prettier() {
         if (calcState.operation == null && calcState.number1.endsWith(
                 ".0"
-            ) && calcState.number1.isNotBlank()) {
+            ) && calcState.number1.isNotBlank()
+        ) {
             calcState = calcState.copy(
                 number1 = calcState.number1.dropLast(
                     2
@@ -436,13 +455,6 @@ class AddSingleRecordViewModel @Inject constructor(
     }
 }
 
-//@Suppress("UNCHECKED_CAST")
-//class AddRecordViewModelFactory(private val id: Int): ViewModelProvider.Factory {
-//    override fun <T: ViewModel> create(modelClass: Class<T>): T {
-//        return AddRecordViewModel(itemId = id) as T
-//    }
-//}
-
 
 data class AddRecordState(
     val recordId: String = "",
@@ -455,6 +467,7 @@ data class AddRecordState(
     val recordDate: LocalDate = LocalDate.now(),
     val recordTime: LocalTime = LocalTime.now(),
     val recordAmount: Double = 0.0,
+    val previousAmount: Double = 0.0,
     val recordCurrency: String = "",
     val recordNotes: String = "",
     val recordType: RecordType = RecordType.Expense,

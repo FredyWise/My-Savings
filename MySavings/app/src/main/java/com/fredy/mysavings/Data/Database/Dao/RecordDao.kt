@@ -14,8 +14,14 @@ interface RecordDao {
     @Upsert
     suspend fun upsertRecordItem(recordItem: Record)
 
+    @Upsert
+    suspend fun upsertAllRecordItem(records: List<Record>)
+
     @Delete
     suspend fun deleteRecordItem(recordItem: Record)
+
+    @Query("DELETE FROM record")
+    suspend fun deleteAllRecords()
 
     @Query(
         "SELECT * FROM record " + "WHERE recordId = :id"
@@ -56,10 +62,16 @@ interface RecordDao {
         end: LocalDateTime,
         currency: List<String>
     ): List<Record>
+
     @Query("SELECT * FROM record WHERE userIdFk = :userId")
     suspend fun getUserRecords(
         userId: String
     ): List<Record>
+
+    @Query("SELECT * FROM record WHERE userIdFk = :userId")
+    suspend fun getUserTrueRecords(
+        userId: String
+    ): List<TrueRecord>
 
     @Query(
         "SELECT * FROM record " + "WHERE userIdFk = :userId AND recordTimestamp BETWEEN :start AND :end " + "ORDER BY recordTimestamp DESC"
@@ -69,6 +81,16 @@ interface RecordDao {
         start: LocalDateTime,
         end: LocalDateTime,
     ): List<Record>
+
+    @Query(
+        "SELECT * FROM record " + "WHERE userIdFk = :userId AND recordTimestamp BETWEEN :start AND :end " + "ORDER BY recordTimestamp DESC"
+    )
+    suspend fun getUserTrueRecordsFromSpecificTime(
+        userId: String,
+        start: LocalDateTime,
+        end: LocalDateTime,
+    ): List<TrueRecord>
+
     @Query("SELECT * FROM record WHERE userIdFk = :userId AND recordType = :recordType")
     suspend fun getUserRecordsByType(
         userId: String,

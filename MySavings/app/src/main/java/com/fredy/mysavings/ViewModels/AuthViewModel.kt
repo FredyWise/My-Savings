@@ -1,15 +1,11 @@
 package com.fredy.mysavings.ViewModels
 
-import android.Manifest
-import android.app.KeyguardManager
 import android.content.Context
-import android.content.pm.PackageManager
 import android.hardware.biometrics.BiometricPrompt
 import android.hardware.biometrics.BiometricPrompt.AuthenticationCallback
 import android.net.Uri
 import android.os.CancellationSignal
 import android.util.Log
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -18,7 +14,6 @@ import com.fredy.mysavings.Data.Database.Model.UserData
 import com.fredy.mysavings.Data.Enum.AuthMethod
 import com.fredy.mysavings.Data.Repository.AuthRepository
 import com.fredy.mysavings.Data.Repository.SettingsRepository
-import com.fredy.mysavings.Data.Repository.SyncRepository
 import com.fredy.mysavings.Data.Repository.UserRepository
 import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.TAG
@@ -35,7 +30,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
-import javax.inject.Singleton
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
@@ -46,6 +40,7 @@ class AuthViewModel @Inject constructor(
     private val currentUserData: UserData?,
 ) : ViewModel() {
 
+    private val storedVerificationId = MutableStateFlow("")
 
     private val _state = MutableStateFlow(
         AuthState()
@@ -54,12 +49,10 @@ class AuthViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            onEvent(AuthEvent.GetCurrentUser)
             _state.update {
-                AuthState(
-                    signedInUser = currentUserData
-                )
+                it.copy(signedInUser = currentUserData)
             }
+            onEvent(AuthEvent.GetCurrentUser)
         }
     }
 
@@ -70,6 +63,9 @@ class AuthViewModel @Inject constructor(
                     repository.googleSignIn(event.credential).collect { result ->
                         if (result is Resource.Success) {
                             insertUser(result)
+                            _state.update {
+                                it.copy(isSignedIn = true)
+                            }
                         }
                         _state.update {
                             it.copy(
@@ -89,10 +85,10 @@ class AuthViewModel @Inject constructor(
                     ).collect { result ->
                         if (result is Resource.Success) {
                             event.onCodeSent()
+                            storedVerificationId.update { result.data!! }
                             _state.update {
                                 it.copy(
                                     sendOtpResource = result,
-                                    storedVerificationId = result.data!!,
                                     authType = AuthMethod.None
                                 )
                             }
@@ -112,11 +108,14 @@ class AuthViewModel @Inject constructor(
                 viewModelScope.launch {
                     repository.verifyPhoneNumber(
                         event.context,
-                        _state.value.storedVerificationId,
+                        storedVerificationId.value,
                         event.code
                     ).collect { result ->
                         if (result is Resource.Success) {
                             insertUser(result)
+                            _state.update {
+                                it.copy(isSignedIn = true)
+                            }
                         }
                         _state.update {
                             it.copy(
@@ -155,6 +154,9 @@ class AuthViewModel @Inject constructor(
                                 result,
                                 event.photoUrl
                             )
+                            _state.update {
+                                it.copy(isSignedIn = true)
+                            }
                         }
                         _state.update {
                             it.copy(
@@ -199,7 +201,8 @@ class AuthViewModel @Inject constructor(
                                 currentUser.data?.let { user ->
                                     _state.update {
                                         it.copy(
-                                            signedInUser = user
+                                            signedInUser = user,
+                                            isSignedIn = true
                                         )
                                     }
                                 }
@@ -223,7 +226,7 @@ class AuthViewModel @Inject constructor(
             }
 
             AuthEvent.BioAuth -> {
-                if (settingsRepository.bioAuthStatus() && currentUserData.isNotNull()) {
+                if (settingsRepository.bioAuthStatus() && currentUserData.isNotNull() && state.value.isSignedIn) {
                     val title = "Login"
                     val subtitle = "Login into your account"
                     val description =
@@ -271,7 +274,7 @@ class AuthViewModel @Inject constructor(
                                     result
                                 )
                                 _state.update {
-                                    it.copy(bioAuthResource = Resource.Success("Bio Auth Successed"))
+                                    it.copy(bioAuthResource = Resource.Success("Bio Auth Success"))
                                 }
                             }
 
@@ -342,7 +345,7 @@ data class AuthState(
     val sendOtpResource: Resource<String> = Resource.Loading(),
     val authType: AuthMethod = AuthMethod.None,
     val signedInUser: UserData? = null,
-    var storedVerificationId: String = ""
+    val isSignedIn: Boolean = false
 )
 
 

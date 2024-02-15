@@ -27,6 +27,7 @@ data class FilterState(
             TemporalAdjusters.lastDayOfMonth()
         ), LocalTime.MAX
     ),
+    val updating:Boolean = false
 )
 
 fun <T> FilterState.map(target: (start: LocalDateTime, end: LocalDateTime, RecordType, SortType, currencies: List<String>) -> T): T {

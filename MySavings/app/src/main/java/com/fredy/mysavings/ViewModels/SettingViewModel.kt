@@ -54,9 +54,9 @@ class SettingViewModel @Inject constructor(
                     savedState
                 }
             }
+            syncRepository.syncAll()
         }
     }
-
 
     private val _state = MutableStateFlow(
         SettingState()
@@ -67,9 +67,7 @@ class SettingViewModel @Inject constructor(
         SettingState()
     )
 
-
     fun onEvent(event: SettingEvent) {
-
         when (event) {
             is SettingEvent.SelectDisplayMode -> {
                 viewModelScope.launch {
@@ -160,9 +158,6 @@ class SettingViewModel @Inject constructor(
                                 }
                             }
                         }
-                    syncRepository.syncRecords()
-                    syncRepository.syncAccounts()
-                    syncRepository.syncCategory()
                 }
             }
 
