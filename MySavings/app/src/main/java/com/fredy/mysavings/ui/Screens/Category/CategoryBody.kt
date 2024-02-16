@@ -37,6 +37,7 @@ import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleWarningDialog
 fun CategoryBody(
     modifier: Modifier = Modifier,
     categoryMaps: List<CategoryMap>,
+    onDeleteCategory: () -> Unit = {},
     onEvent: (CategoryEvent) -> Unit,
     onEntityClick: () -> Unit,
 ) {
@@ -48,7 +49,8 @@ fun CategoryBody(
         onSaveClicked = {
             onEvent(
                 CategoryEvent.DeleteCategory(
-                    tempCategory
+                    tempCategory,
+                    onDeleteCategory
                 )
             )
         },

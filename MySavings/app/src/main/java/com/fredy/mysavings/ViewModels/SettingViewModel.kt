@@ -47,6 +47,7 @@ class SettingViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
+            syncRepository.syncAll()
             settingsRepository.getAll().collect { savedState ->
                 BalanceColor.Expense = savedState.selectedExpenseColor
                 BalanceColor.Income = savedState.selectedIncomeColor
@@ -54,7 +55,6 @@ class SettingViewModel @Inject constructor(
                     savedState
                 }
             }
-            syncRepository.syncAll()
         }
     }
 
@@ -63,7 +63,7 @@ class SettingViewModel @Inject constructor(
     )
     val state = _state.stateIn(
         viewModelScope,
-        SharingStarted.WhileSubscribed(5000),
+        SharingStarted.WhileSubscribed(10000),
         SettingState()
     )
 

@@ -1,5 +1,6 @@
 package com.fredy.mysavings.ui.Screens.Account
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
@@ -23,6 +24,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.fredy.mysavings.Data.Database.Model.Account
@@ -31,9 +33,7 @@ import com.fredy.mysavings.Util.formatBalanceAmount
 import com.fredy.mysavings.Util.formatTime
 import com.fredy.mysavings.Util.isTransfer
 import com.fredy.mysavings.ViewModels.AccountState
-import com.fredy.mysavings.ViewModels.CategoryState
 import com.fredy.mysavings.ViewModels.Event.AccountEvent
-import com.fredy.mysavings.ViewModels.Event.CategoryEvent
 import com.fredy.mysavings.ViewModels.Event.RecordsEvent
 import com.fredy.mysavings.ViewModels.RecordState
 import com.fredy.mysavings.ui.NavigationComponent.Navigation.NavigationRoute
@@ -105,7 +105,7 @@ fun AccountsScreen(
                 onNavigationIconClick = {
                     isSheetOpen = false
                 },
-            ){ item, onBackgroundColor ->
+            ) { item, onBackgroundColor ->
                 SimpleEntityItem(
                     modifier = Modifier.padding(
                         vertical = 4.dp
@@ -130,9 +130,9 @@ fun AccountsScreen(
                     },
                 ) {
                     Text(
-                        text =  if (isTransfer(item.record.recordType)) {
+                        text = if (isTransfer(item.record.recordType)) {
                             item.fromAccount.accountName + " -> " + item.toAccount.accountName
-                        } else item.toCategory.categoryName ,
+                        } else item.toCategory.categoryName,
                         color = onBackgroundColor,
                         style = MaterialTheme.typography.titleLarge,
                         maxLines = 1
@@ -155,7 +155,9 @@ fun AccountsScreen(
     Column(modifier = modifier) {
         if (state.isAddingAccount) {
             AccountAddDialog(
-                state = state, onEvent = onEvent
+                state = state, onEvent = onEvent, onSaveEffect = {
+                    recordEvent(RecordsEvent.UpdateRecord)
+                }
             )
         }
         AccountHeader(
@@ -241,6 +243,9 @@ fun AccountsScreen(
                     onEntityClick = {
                         isSheetOpen = true
                     },
+                    onDeleteAccount = {
+                        recordEvent(RecordsEvent.UpdateRecord)
+                    }
                 )
             }
         }

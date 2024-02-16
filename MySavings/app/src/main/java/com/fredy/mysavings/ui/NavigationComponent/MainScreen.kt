@@ -268,7 +268,7 @@ fun MainScreen(
                     }
                 },
                 onProfilePictureClick = {
-                    rootNavController.navigateSingleTopTo(
+                    rootNavController.navigate(
                         NavigationRoute.Profile.route
                     )
                 },

@@ -282,9 +282,7 @@ class RecordViewModel @Inject constructor(
                     recordRepository.deleteRecordItem(
                         event.record
                     )
-                    _filterState.update {
-                        it.copy(updating = !it.updating)
-                    }
+                    onEvent(RecordsEvent.UpdateRecord)
                 }
             }
 
@@ -347,6 +345,12 @@ class RecordViewModel @Inject constructor(
             RecordsEvent.ToggleShowTotal -> {
                 _filterState.update {
                     it.copy(showTotal = !it.showTotal)
+                }
+            }
+
+            RecordsEvent.UpdateRecord -> {
+                _filterState.update {
+                    it.copy(updating = !it.updating)
                 }
             }
         }

@@ -187,11 +187,11 @@ fun DefaultAppBar(
     content: @Composable () -> Unit,
 ) {
     Column(
-        modifier = if (scrollable) {
+        modifier = Modifier.fillMaxSize().then(if (scrollable) {
             modifier.verticalScroll(rememberScrollState())
         } else {
             modifier
-        }.fillMaxSize(),
+        }),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         TopAppBar(

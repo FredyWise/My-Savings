@@ -176,7 +176,7 @@ class AccountViewModel @Inject constructor(
         )
     }.stateIn(
         viewModelScope,
-        SharingStarted.WhileSubscribed(3000),
+        SharingStarted.WhileSubscribed(10000),
         AccountState()
     )
 
@@ -211,6 +211,7 @@ class AccountViewModel @Inject constructor(
                     )
                     toggleUpdating()
                     recordRepository.updateRecordItemWithDeletedAccount(event.account)
+                    event.onDeleteEffect()
                 }
             }
 

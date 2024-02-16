@@ -19,7 +19,7 @@ interface CategoryDataSource {
 
 class CategoryDataSourceImpl @Inject constructor(
     private val firestore: FirebaseFirestore,
-): CategoryDataSource {
+) : CategoryDataSource {
     private val categoryCollection = firestore.collection(
         "category"
     )
@@ -42,9 +42,10 @@ class CategoryDataSourceImpl @Inject constructor(
 
     override suspend fun getCategory(categoryId: String): Category {
         return try {
-            categoryCollection.document(categoryId).get().await().toObject<Category>() ?: throw Exception(
-                "Category Not Found"
-            )
+            categoryCollection.document(categoryId).get().await().toObject<Category>()
+                ?: throw Exception(
+                    "Category Not Found"
+                )
         } catch (e: Exception) {
             Log.e(
                 TAG,
@@ -57,9 +58,9 @@ class CategoryDataSourceImpl @Inject constructor(
     override suspend fun getUserCategoriesOrderedByName(userId: String): List<Category> {
         return try {
             val querySnapshot = categoryCollection.whereEqualTo(
-                    "userIdFk",
-                    userId
-                ).orderBy("categoryName").get().await()
+                "userIdFk",
+                userId
+            ).orderBy("categoryName").get().await()
 
             querySnapshot.toObjects()
         } catch (e: Exception) {

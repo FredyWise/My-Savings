@@ -10,6 +10,7 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
@@ -49,28 +50,28 @@ fun AnalysisAccount(
     val expenseColor by remember { mutableStateOf(BalanceColor.Expense) }
     val incomeColor by remember { mutableStateOf(BalanceColor.Income) }
 
-    val key = state.resourceData.accountsWithAmountResource.hashCode()
-    val isVisible = remember(key) {
-        MutableTransitionState(
-            false
-        ).apply { targetState = true }
-    }
-    AnimatedVisibility(
-        modifier = modifier,
-        visibleState = isVisible,
-        enter = slideInVertically(
-            animationSpec = tween(
-                durationMillis = 500
-            ),
-            initialOffsetY = { fullHeight -> fullHeight },
-        ) + fadeIn(),
-        exit = slideOutVertically(
-            animationSpec = tween(
-                durationMillis = 500
-            ),
-            targetOffsetY = { fullHeight -> fullHeight },
-        ) + fadeOut()
-    ) {
+//    val key = state.resourceData.accountsWithAmountResource.hashCode()
+//    val isVisible = remember(key) {
+//        MutableTransitionState(
+//            false
+//        ).apply { targetState = true }
+//    }
+//    AnimatedVisibility(
+//        modifier = modifier,
+//        visibleState = isVisible,
+//        enter = slideInVertically(
+//            animationSpec = tween(
+//                durationMillis = 300
+//            ),
+//            initialOffsetY = { fullHeight -> fullHeight },
+//        ) + fadeIn(),
+//        exit = slideOutVertically(
+//            animationSpec = tween(
+//                durationMillis = 300
+//            ),
+//            targetOffsetY = { fullHeight -> fullHeight },
+//        ) + fadeOut()
+//    ) {
         state.resourceData.accountsWithAmountResource.let { resource ->
             ResourceHandler(
                 resource = resource,
@@ -81,7 +82,7 @@ fun AnalysisAccount(
                     onEvent(
                         RecordsEvent.ToggleRecordType
                     )
-                    isVisible.targetState = false
+//                    isVisible.targetState = false
                 },
             ) { data ->
                 LazyColumn {
@@ -203,8 +204,11 @@ fun AnalysisAccount(
                             }
                         }
                     }
+                    item {
+                        Spacer(modifier = Modifier.height(75.dp))
+                    }
                 }
             }
         }
-    }
+//    }
 }

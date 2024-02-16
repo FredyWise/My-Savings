@@ -10,9 +10,13 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,28 +43,28 @@ fun AnalysisFlow(
     state: RecordState,
     onEvent: (RecordsEvent) -> Unit,
 ) {
-    val key = state.resourceData.recordsWithinTimeResource.hashCode()
-    val isVisible = remember(key) {
-        MutableTransitionState(
-            false
-        ).apply { targetState = true }
-    }
-    AnimatedVisibility(
-        modifier = modifier,
-        visibleState = isVisible,
-        enter = slideInVertically(
-            animationSpec = tween(
-                durationMillis = 500
-            ),
-            initialOffsetY = { fullHeight -> fullHeight },
-        ) + fadeIn(),
-        exit = slideOutVertically(
-            animationSpec = tween(
-                durationMillis = 500
-            ),
-            targetOffsetY = { fullHeight -> fullHeight },
-        ) + fadeOut()
-    ) {
+//    val key = state.resourceData.recordsWithinTimeResource.hashCode()
+//    val isVisible = remember(key) {
+//        MutableTransitionState(
+//            false
+//        ).apply { targetState = true }
+//    }
+//    AnimatedVisibility(
+//        modifier = modifier,
+//        visibleState = isVisible,
+//        enter = slideInVertically(
+//            animationSpec = tween(
+//                durationMillis = 300
+//            ),
+//            initialOffsetY = { fullHeight -> fullHeight },
+//        ) + fadeIn(),
+//        exit = slideOutVertically(
+//            animationSpec = tween(
+//                durationMillis = 300
+//            ),
+//            targetOffsetY = { fullHeight -> fullHeight },
+//        ) + fadeOut()
+//    ) {
         state.resourceData.recordsWithinTimeResource.let { resource ->
             ResourceHandler(
                 resource = resource,
@@ -71,17 +75,14 @@ fun AnalysisFlow(
                     onEvent(
                         RecordsEvent.ToggleRecordType
                     )
-                    isVisible.targetState = false
+//                    isVisible.targetState = false
                 },
             ) { data ->
                 val items = if (isExpense(data.first().recordType)) data else data.reversed()
 
-                Column {
+                Column (modifier = Modifier.verticalScroll(rememberScrollState())){
                     Box(
                         modifier = Modifier
-                            .weight(
-                                1f
-                            )
                             .padding(
                                 end = 20.dp
                             ),
@@ -128,8 +129,10 @@ fun AnalysisFlow(
                         calendarExpenseInputColor = MaterialTheme.colorScheme.primary,
                         calendarIncomeInputColor = MaterialTheme.colorScheme.tertiary
                     )
+                    Spacer(modifier = Modifier.height(75.dp))
+
                 }
             }
         }
-    }
+//    }
 }

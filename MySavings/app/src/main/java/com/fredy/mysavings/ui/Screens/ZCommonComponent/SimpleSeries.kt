@@ -103,6 +103,7 @@ fun SimpleAlertDialog(
 @Composable
 fun SimpleDialog(
     modifier: Modifier = Modifier,
+    dismissOnSave: Boolean = true,
     title: String,
     cancelName: String = "Cancel",
     saveName: String = "Save",
@@ -169,7 +170,9 @@ fun SimpleDialog(
                         ),
                     onClick = {
                         onSaveClicked()
-                        onDismissRequest()
+                        if (dismissOnSave) {
+                            onDismissRequest()
+                        }
                     },
                 ) {
                     Text(

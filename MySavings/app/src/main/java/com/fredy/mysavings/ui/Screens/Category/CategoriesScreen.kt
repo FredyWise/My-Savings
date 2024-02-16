@@ -1,5 +1,6 @@
 package com.fredy.mysavings.ui.Screens.Category
 
+import android.widget.Toast
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -22,6 +23,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.fredy.mysavings.Data.Database.Model.Category
@@ -154,7 +156,9 @@ fun CategoriesScreen(
 
     if (state.isAddingCategory) {
         CategoryAddDialog(
-            state = state, onEvent = onEvent
+            state = state, onEvent = onEvent, onSaveEffect = {
+                recordEvent(RecordsEvent.UpdateRecord)
+            }
         )
     }
     Column(modifier = modifier) {
@@ -226,6 +230,9 @@ fun CategoriesScreen(
                     onEntityClick = {
                         isSheetOpen = true
                     },
+                    onDeleteCategory = {
+                        recordEvent(RecordsEvent.UpdateRecord)
+                    }
                 )
             }
         }

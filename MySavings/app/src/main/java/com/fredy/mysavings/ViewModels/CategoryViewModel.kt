@@ -100,7 +100,7 @@ class CategoryViewModel @Inject constructor(
         )
     }.stateIn(
         viewModelScope,
-        SharingStarted.WhileSubscribed(3000),
+        SharingStarted.WhileSubscribed(10000),
         CategoryState()
     )
 
@@ -135,6 +135,7 @@ class CategoryViewModel @Inject constructor(
                     )
                     toggleUpdating()
                     recordRepository.updateRecordItemWithDeletedCategory(event.category)
+                    event.onDeleteEffect()
                 }
             }
 

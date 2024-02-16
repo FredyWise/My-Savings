@@ -1,17 +1,17 @@
 package com.fredy.mysavings.ui.Screens.Category
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -28,13 +28,28 @@ import com.fredy.mysavings.ui.Screens.ZCommonComponent.TypeRadioButton
 fun CategoryAddDialog(
     modifier: Modifier = Modifier,
     state: CategoryState,
+    onSaveEffect: () -> Unit = {},
     onEvent: (CategoryEvent) -> Unit
 ) {
+    val context = LocalContext.current
     SimpleDialog(
         modifier = modifier,
+        dismissOnSave = false,
         title = if (state.categoryId.isEmpty()) "Add New Category" else "Update Category",
         onDismissRequest = { onEvent(CategoryEvent.HideDialog) },
-        onSaveClicked = { onEvent(CategoryEvent.SaveCategory) },
+        onSaveClicked = {
+            if (state.categoryName.isBlank() || state.categoryIcon == 0 || state.categoryIconDescription.isBlank()) {
+                Toast.makeText(
+                    context,
+                    "Please Fill All Required Information!!",
+                    Toast.LENGTH_LONG
+                ).show()
+            }else {
+                onEvent(CategoryEvent.SaveCategory)
+                onSaveEffect()
+                onEvent(CategoryEvent.HideDialog)
+            }
+        },
     ) {
         TypeRadioButton(
             selectedName = state.categoryType.name,

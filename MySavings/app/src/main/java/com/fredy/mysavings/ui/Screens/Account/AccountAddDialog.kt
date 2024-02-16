@@ -1,17 +1,18 @@
 package com.fredy.mysavings.ui.Screens.Account
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -26,21 +27,36 @@ import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleDialog
 fun AccountAddDialog(
     state: AccountState,
     onEvent: (AccountEvent) -> Unit,
-    onSaveEffect: ()->Unit = {},
+    onSaveEffect: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
     SimpleDialog(
         modifier = modifier,
+        dismissOnSave = false,
         title = if (state.accountId.isEmpty()) "Add New Account" else "Update Account",
         onDismissRequest = { onEvent(AccountEvent.HideDialog) },
-        onSaveClicked = { onEvent(AccountEvent.SaveAccount) },
+        onSaveClicked = {
+            if (state.accountName.isBlank() || state.accountAmount.isBlank() || state.accountCurrency.isBlank() || state.accountIconDescription.isBlank()) {
+                Toast.makeText(
+                    context,
+                    "Please Fill All Required Information!!",
+                    Toast.LENGTH_LONG
+                ).show()
+            }else {
+                onEvent(AccountEvent.SaveAccount)
+                onSaveEffect()
+                onEvent(AccountEvent.HideDialog)
+            }
+        },
     ) {
         TextField(
             value = state.accountAmount,
             onValueChange = {
                 if (it.isEmpty() || it.matches(
                         Regex("^(\\d+\\.?\\d*|\\d*\\.\\d+)$")
-                    )) {
+                    )
+                ) {
                     onEvent(
                         AccountEvent.AccountAmount(
                             it

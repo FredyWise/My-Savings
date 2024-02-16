@@ -15,7 +15,7 @@ sealed interface CategoryEvent {
     data class ShowDialog(val category: Category): CategoryEvent
     object HideDialog: CategoryEvent
     data class SortCategory(val sortType: SortType): CategoryEvent
-    data class DeleteCategory(val category: Category): CategoryEvent
+    data class DeleteCategory(val category: Category, val onDeleteEffect: ()->Unit): CategoryEvent
     data class SearchCategory(val searchQuery: String): CategoryEvent
     data class GetCategoryDetail(val category: Category): CategoryEvent
 

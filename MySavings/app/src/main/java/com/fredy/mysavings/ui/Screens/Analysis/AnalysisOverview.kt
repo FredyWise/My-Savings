@@ -53,28 +53,28 @@ fun AnalysisOverview(
     state: RecordState,
     onEvent: (RecordsEvent) -> Unit,
 ) {
-    val key = state.resourceData.categoriesWithAmountResource.hashCode()
-    val isVisible = remember(key) {
-        MutableTransitionState(
-            false
-        ).apply { targetState = true }
-    }
-    AnimatedVisibility(
-        modifier = modifier,
-        visibleState = isVisible,
-        enter = slideInVertically(
-            animationSpec = tween(
-                durationMillis = 500
-            ),
-            initialOffsetY = { fullHeight -> fullHeight },
-        ) + fadeIn(),
-        exit = slideOutVertically(
-            animationSpec = tween(
-                durationMillis = 500
-            ),
-            targetOffsetY = { fullHeight -> fullHeight },
-        ) + fadeOut()
-    ) {
+//    val key = state.resourceData.categoriesWithAmountResource.hashCode()
+//    val isVisible = remember(key) {
+//        MutableTransitionState(
+//            false
+//        ).apply { targetState = true }
+//    }
+//    AnimatedVisibility(
+//        modifier = modifier,
+//        visibleState = isVisible,
+//        enter = slideInVertically(
+//            animationSpec = tween(
+//                durationMillis = 300
+//            ),
+//            initialOffsetY = { fullHeight -> fullHeight },
+//        ) + fadeIn(),
+//        exit = slideOutVertically(
+//            animationSpec = tween(
+//                durationMillis = 300
+//            ),
+//            targetOffsetY = { fullHeight -> fullHeight },
+//        ) + fadeOut()
+//    ) {
         state.resourceData.categoriesWithAmountResource.let { resource ->
             ResourceHandler(
                 resource = resource,
@@ -82,7 +82,7 @@ fun AnalysisOverview(
                 isNullOrEmpty = { it.isNullOrEmpty() },
                 errorMessage = resource.message ?: "",
                 onMessageClick = {
-                    isVisible.targetState = false
+//                    isVisible.targetState = false
                     onEvent(
                         RecordsEvent.ToggleRecordType
                     )
@@ -123,7 +123,7 @@ fun AnalysisOverview(
                                         onEvent(
                                             RecordsEvent.ToggleRecordType
                                         )
-                                        isVisible.targetState = false
+//                                        isVisible.targetState = false
                                     },
                                 )
                             }
@@ -260,10 +260,13 @@ fun AnalysisOverview(
                             )
                         }
                     }
+                    item {
+                        Spacer(modifier = Modifier.height(75.dp))
+                    }
                 }
             }
         }
-    }
+//    }
 }
 
 fun <E> List<E>.extractProportions(selector: (E) -> Float): List<Float> {

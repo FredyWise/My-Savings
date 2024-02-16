@@ -37,6 +37,7 @@ fun AccountBody(
     modifier: Modifier = Modifier,
     accounts: List<Account>,
     onEvent: (AccountEvent) -> Unit,
+    onDeleteAccount: () -> Unit,
     onEntityClick: () -> Unit,
 ) {
     var isShowWarning by remember { mutableStateOf(false) }
@@ -47,7 +48,8 @@ fun AccountBody(
         onSaveClicked = {
             onEvent(
                 AccountEvent.DeleteAccount(
-                    tempAccount
+                    tempAccount,
+                    onDeleteAccount
                 )
             )
         },

@@ -96,8 +96,8 @@ fun ChartSlimDonut(
     val angleOffset by transition.animateFloat(
         transitionSpec = {
             tween(
-                delayMillis = 500,
-                durationMillis = 900,
+                delayMillis = 100,
+                durationMillis = 1100,
                 easing = LinearOutSlowInEasing
             )
         }, label = ""
@@ -111,8 +111,8 @@ fun ChartSlimDonut(
     val shift by transition.animateFloat(
         transitionSpec = {
             tween(
-                delayMillis = 500,
-                durationMillis = 900,
+                delayMillis = 100,
+                durationMillis = 1100,
                 easing = CubicBezierEasing(
                     0f, 0.75f, 0.35f, 0.85f
                 )

@@ -131,13 +131,13 @@ fun RecordsScreen(
             visibleState = isVisible,
             enter = slideInVertically(
                 animationSpec = tween(
-                    durationMillis = 500
+                    durationMillis = 300
                 ),
                 initialOffsetY = { fullHeight -> fullHeight },
             ) + fadeIn(),
             exit = slideOutVertically(
                 animationSpec = tween(
-                    durationMillis = 500
+                    durationMillis = 300
                 ),
                 targetOffsetY = { fullHeight -> fullHeight },
             ) + fadeOut()

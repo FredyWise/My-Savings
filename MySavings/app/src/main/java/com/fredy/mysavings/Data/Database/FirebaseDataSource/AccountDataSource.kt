@@ -1,27 +1,12 @@
 package com.fredy.mysavings.Data.Database.FirebaseDataSource
 
 import android.util.Log
-import com.fredy.mysavings.Data.Database.Converter.TimestampConverter
 import com.fredy.mysavings.Data.Database.Model.Account
-import com.fredy.mysavings.Data.Database.Model.Category
-import com.fredy.mysavings.Data.Database.Model.Record
-import com.fredy.mysavings.Data.Database.Model.TrueRecord
-import com.fredy.mysavings.Data.Enum.RecordType
-import com.fredy.mysavings.Data.Repository.CurrencyRepository
-import com.fredy.mysavings.Util.BalanceItem
 import com.fredy.mysavings.Util.TAG
-import com.google.firebase.Firebase
-import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.FirebaseFirestoreException
-import com.google.firebase.firestore.Query
-import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
 import com.google.firebase.firestore.toObjects
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.tasks.await
-import java.time.LocalDateTime
 import javax.inject.Inject
 
 interface AccountDataSource {
@@ -35,11 +20,12 @@ interface AccountDataSource {
 
 class AccountDataSourceImpl @Inject constructor(
     private val firestore: FirebaseFirestore,
-): AccountDataSource {
+) : AccountDataSource {
     private val accountCollection = firestore.collection(
         "account"
     )
-    override suspend fun upsertAccountItem(//make sure the account already have uid // make sure to create the account id outside instead
+
+    override suspend fun upsertAccountItem(
         account: Account
     ) {
         accountCollection.document(
@@ -55,9 +41,10 @@ class AccountDataSourceImpl @Inject constructor(
 
     override suspend fun getAccount(accountId: String): Account {
         return try {
-            accountCollection.document(accountId).get().await().toObject<Account>()?: throw Exception(
-                "Account Not Found"
-            )
+            accountCollection.document(accountId).get().await().toObject<Account>()
+                ?: throw Exception(
+                    "Account Not Found"
+                )
         } catch (e: Exception) {
             Log.e(TAG, "Failed to get account: ${e.message}")
             throw e
@@ -71,7 +58,7 @@ class AccountDataSourceImpl @Inject constructor(
                 .get()
                 .await()
 
-           querySnapshot.toObjects()
+            querySnapshot.toObjects()
         } catch (e: Exception) {
             Log.e(TAG, "Failed to get user accounts: $e")
             throw e
