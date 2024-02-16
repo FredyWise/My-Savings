@@ -6,7 +6,9 @@ import com.fredy.mysavings.Util.TAG
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
 import com.google.firebase.firestore.toObjects
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 interface CategoryDataSource {
@@ -41,34 +43,38 @@ class CategoryDataSourceImpl @Inject constructor(
     }
 
     override suspend fun getCategory(categoryId: String): Category {
-        return try {
-            categoryCollection.document(categoryId).get().await().toObject<Category>()
-                ?: throw Exception(
-                    "Category Not Found"
+        return withContext(Dispatchers.IO) {
+            try {
+                categoryCollection.document(categoryId).get().await().toObject<Category>()
+                    ?: throw Exception(
+                        "Category Not Found"
+                    )
+            } catch (e: Exception) {
+                Log.e(
+                    TAG,
+                    "Failed to get category: ${e.message}"
                 )
-        } catch (e: Exception) {
-            Log.e(
-                TAG,
-                "Failed to get category: ${e.message}"
-            )
-            throw e
+                throw e
+            }
         }
     }
 
     override suspend fun getUserCategoriesOrderedByName(userId: String): List<Category> {
-        return try {
-            val querySnapshot = categoryCollection.whereEqualTo(
-                "userIdFk",
-                userId
-            ).orderBy("categoryName").get().await()
+        return withContext(Dispatchers.IO) {
+            try {
+                val querySnapshot = categoryCollection.whereEqualTo(
+                    "userIdFk",
+                    userId
+                ).orderBy("categoryName").get().await()
 
-            querySnapshot.toObjects()
-        } catch (e: Exception) {
-            Log.e(
-                TAG,
-                "Failed to get user categorys: $e"
-            )
-            throw e
+                querySnapshot.toObjects()
+            } catch (e: Exception) {
+                Log.e(
+                    TAG,
+                    "Failed to get user categorys: $e"
+                )
+                throw e
+            }
         }
     }
 

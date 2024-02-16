@@ -6,6 +6,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -34,6 +35,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -248,15 +250,7 @@ fun MainScreen(
 //                .pointerInput(
 //                    Unit
 //                ) {
-//                    detectTransformGestures { _, panGesture, _, _ ->
-//                        offsetX += panGesture.x
-//                        offsetY += panGesture.y
-//                        if (panGesture.y < -size.height / 30) {
-//                            isFabVisible = false
-//                        } else if (panGesture.y > size.height / 30) {
-//                            isFabVisible = true
-//                        }
-//                    }
+//                    detectVerticalDragGestures()
 //                },
         ) {
             AppBar(

@@ -24,10 +24,12 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObjects
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
 import javax.inject.Inject
 
@@ -108,74 +110,84 @@ class RecordRepositoryImpl @Inject constructor(
     override suspend fun upsertRecordItem(
         record: Record
     ) {
-        val currentUser = firebaseAuth.currentUser
-        Log.i(TAG, "upsertRecordItem: $record")
+        withContext(Dispatchers.IO) {
+            val currentUser = firebaseAuth.currentUser
+            Log.i(TAG, "upsertRecordItem: $record")
 
-        val tempRecord = if (record.recordId.isEmpty()) {
-            val newRecordRef = recordCollection.document()
-            record.copy(
-                recordId = newRecordRef.id,
-                userIdFk = currentUser!!.uid
-            )
-        } else {
-            record.copy(
-                userIdFk = currentUser!!.uid
+            val tempRecord = if (record.recordId.isEmpty()) {
+                val newRecordRef = recordCollection.document()
+                record.copy(
+                    recordId = newRecordRef.id,
+                    userIdFk = currentUser!!.uid
+                )
+            } else {
+                record.copy(
+                    userIdFk = currentUser!!.uid
+                )
+            }
+
+            recordDao.upsertRecordItem(tempRecord)
+            recordDataSource.upsertRecordItem(
+                tempRecord
             )
         }
-
-        recordDao.upsertRecordItem(tempRecord)
-        recordDataSource.upsertRecordItem(
-            tempRecord
-        )
     }
 
     override suspend fun deleteRecordItem(
         record: Record
     ) {
-        Log.i(TAG, "deleteRecordItem: $record")
-        recordDataSource.deleteRecordItem(record)
-        recordDao.deleteRecordItem(record)
+        withContext(Dispatchers.IO) {
+            Log.i(TAG, "deleteRecordItem: $record")
+            recordDataSource.deleteRecordItem(record)
+            recordDao.deleteRecordItem(record)
+        }
     }
 
     override suspend fun updateRecordItemWithDeletedAccount(account: Account) {
-        val currentUser = firebaseAuth.currentUser!!
-        val userId = if (currentUser.isNotNull()) currentUser.uid else ""
-        val records = recordDao.getUserRecords(userId)
-        val tempRecords = records.filter {
-            it.accountIdFromFk == account.accountId || it.accountIdToFk == account.accountId
-        }.map {
-            var record = it
-            if (it.accountIdFromFk == account.accountId) {
-                record = record.copy(accountIdFromFk = deletedAccount.accountId)
+        withContext(Dispatchers.IO) {
+            val currentUser = firebaseAuth.currentUser!!
+            val userId = if (currentUser.isNotNull()) currentUser.uid else ""
+            val records = recordDao.getUserRecords(userId)
+            val tempRecords = records.filter {
+                it.accountIdFromFk == account.accountId || it.accountIdToFk == account.accountId
+            }.map {
+                var record = it
+                if (it.accountIdFromFk == account.accountId) {
+                    record = record.copy(accountIdFromFk = deletedAccount.accountId)
+                }
+                if (it.accountIdToFk == account.accountId) {
+                    record = record.copy(accountIdToFk = deletedAccount.accountId)
+                }
+                record
             }
-            if (it.accountIdToFk == account.accountId) {
-                record = record.copy(accountIdToFk = deletedAccount.accountId)
-            }
-            record
+            recordDataSource.upsertAllRecordItem(tempRecords)
+            recordDao.upsertAllRecordItem(tempRecords)
         }
-        recordDataSource.upsertAllRecordItem(tempRecords)
-        recordDao.upsertAllRecordItem(tempRecords)
     }
 
     override suspend fun updateRecordItemWithDeletedCategory(category: Category) {
-        val currentUser = firebaseAuth.currentUser!!
-        val userId = if (currentUser.isNotNull()) currentUser.uid else ""
-        val records = recordDao.getUserRecords(userId)
-        val tempRecords = records.filter {
-            it.categoryIdFk == category.categoryId
-        }.map {
-            it.copy(categoryIdFk = deletedCategory.categoryId)
+        withContext(Dispatchers.IO) {
+            val currentUser = firebaseAuth.currentUser!!
+            val userId = if (currentUser.isNotNull()) currentUser.uid else ""
+            val records = recordDao.getUserRecords(userId)
+            val tempRecords = records.filter {
+                it.categoryIdFk == category.categoryId
+            }.map {
+                it.copy(categoryIdFk = deletedCategory.categoryId)
+            }
+            recordDataSource.upsertAllRecordItem(tempRecords)
+            recordDao.upsertAllRecordItem(tempRecords)
         }
-        recordDataSource.upsertAllRecordItem(tempRecords)
-        recordDao.upsertAllRecordItem(tempRecords)
     }
 
     override fun getRecordById(recordId: String): Flow<TrueRecord> {
         Log.i(TAG, "getRecordById: $recordId")
         return flow {
-            val record = recordDao.getRecordById(
-                recordId
-            )
+            val record = withContext(Dispatchers.IO) {
+                recordDao.getRecordById(
+                    recordId
+                )
+            }
             emit(
                 record.copy(
                     record = record.record.copy(
@@ -187,7 +199,11 @@ class RecordRepositoryImpl @Inject constructor(
                     )
                 )
             )
-
+        }.catch { e ->
+            Log.i(
+                TAG,
+                "getAllTrueRecordsWithinSpecificTime.Error: $e"
+            )
         }
     }
 
@@ -197,15 +213,18 @@ class RecordRepositoryImpl @Inject constructor(
     ): Flow<Resource<List<TrueRecord>>> {
         return flow {
             emit(Resource.Loading())
+
             val currentUser = firebaseAuth.currentUser!!
             val userId = if (currentUser.isNotNull()) currentUser.uid else ""
-            val data =
+            val data = withContext(Dispatchers.IO) {
                 recordDao.getUserTrueRecordsFromSpecificTime(userId, startDate, endDate)
+            }
             Log.i(
                 TAG,
                 "getAllTrueRecordsWithinSpecificTime.Data: $data"
             )
             emit(Resource.Success(data))
+
         }.catch { e ->
             Log.i(
                 TAG,
@@ -220,13 +239,15 @@ class RecordRepositoryImpl @Inject constructor(
             emit(Resource.Loading())
             val currentUser = firebaseAuth.currentUser!!
             val userId = if (currentUser.isNotNull()) currentUser.uid else ""
-            val data = recordDao.getUserTrueRecords(userId).groupBy {
-                it.record.recordDateTime.toLocalDate()
-            }.map {
-                RecordMap(
-                    recordDate = it.key,
-                    records = it.value
-                )
+            val data = withContext(Dispatchers.IO) {
+                recordDao.getUserTrueRecords(userId).groupBy {
+                    it.record.recordDateTime.toLocalDate()
+                }.map {
+                    RecordMap(
+                        recordDate = it.key,
+                        records = it.value
+                    )
+                }
             }
             emit(Resource.Success(data))
         }.catch { e ->
@@ -253,24 +274,25 @@ class RecordRepositoryImpl @Inject constructor(
                 "getUserTrueRecordMapsFromSpecificTime: $startDate\n:\n$endDate,\ncurrency: $currency"
             )
 
-            val data = recordDao.getUserTrueRecordByCurrencyFromSpecificTime(
-                userId,
-                startDate,
-                endDate,
-                currency
-            ).groupBy {
-                it.record.recordDateTime.toLocalDate()
-            }.toSortedMap(if (sortType == SortType.DESCENDING) {
-                compareByDescending { it }
-            } else {
-                compareBy { it }
-            }).map {
-                RecordMap(
-                    recordDate = it.key,
-                    records = it.value
-                )
+            val data = withContext(Dispatchers.IO) {
+                recordDao.getUserTrueRecordByCurrencyFromSpecificTime(
+                    userId,
+                    startDate,
+                    endDate,
+                    currency
+                ).groupBy {
+                    it.record.recordDateTime.toLocalDate()
+                }.toSortedMap(if (sortType == SortType.DESCENDING) {
+                    compareByDescending { it }
+                } else {
+                    compareBy { it }
+                }).map {
+                    RecordMap(
+                        recordDate = it.key,
+                        records = it.value
+                    )
+                }
             }
-
             Log.i(
                 TAG,
                 "getUserTrueRecordMapsFromSpecificTime.data: $data"
@@ -299,19 +321,21 @@ class RecordRepositoryImpl @Inject constructor(
                 "getUserCategoryRecordsOrderedByDateTime: $categoryId",
 
                 )
-            val data = recordDao.getUserCategoryRecordsOrderedByDateTime(
-                userId, categoryId
-            ).groupBy {
-                it.record.recordDateTime.toLocalDate()
-            }.toSortedMap(if (sortType == SortType.DESCENDING) {
-                compareByDescending { it }
-            } else {
-                compareBy { it }
-            }).map {
-                RecordMap(
-                    recordDate = it.key,
-                    records = it.value
-                )
+            val data = withContext(Dispatchers.IO) {
+                recordDao.getUserCategoryRecordsOrderedByDateTime(
+                    userId, categoryId
+                ).groupBy {
+                    it.record.recordDateTime.toLocalDate()
+                }.toSortedMap(if (sortType == SortType.DESCENDING) {
+                    compareByDescending { it }
+                } else {
+                    compareBy { it }
+                }).map {
+                    RecordMap(
+                        recordDate = it.key,
+                        records = it.value
+                    )
+                }
             }
             Log.i(
                 TAG,
@@ -340,19 +364,21 @@ class RecordRepositoryImpl @Inject constructor(
                 "getUserAccountRecordsOrderedByDateTime: $accountId",
 
                 )
-            val data = recordDao.getUserAccountRecordsOrderedByDateTime(
-                userId, accountId
-            ).groupBy {
-                it.record.recordDateTime.toLocalDate()
-            }.toSortedMap(if (sortType == SortType.DESCENDING) {
-                compareByDescending { it }
-            } else {
-                compareBy { it }
-            }).map {
-                RecordMap(
-                    recordDate = it.key,
-                    records = it.value
-                )
+            val data = withContext(Dispatchers.IO) {
+                recordDao.getUserAccountRecordsOrderedByDateTime(
+                    userId, accountId
+                ).groupBy {
+                    it.record.recordDateTime.toLocalDate()
+                }.toSortedMap(if (sortType == SortType.DESCENDING) {
+                    compareByDescending { it }
+                } else {
+                    compareBy { it }
+                }).map {
+                    RecordMap(
+                        recordDate = it.key,
+                        records = it.value
+                    )
+                }
             }
             Log.i(
                 TAG,
@@ -384,13 +410,15 @@ class RecordRepositoryImpl @Inject constructor(
                 TAG,
                 "getUserRecordsFromSpecificTime: $startDate\n:\n$endDate"
             )
-            val records = recordDao.getUserRecordsByTypeAndCurrencyFromSpecificTime(
-                userId,
-                recordType,
-                startDate,
-                endDate,
-                currency
-            )
+            val records = withContext(Dispatchers.IO) {
+                recordDao.getUserRecordsByTypeAndCurrencyFromSpecificTime(
+                    userId,
+                    recordType,
+                    startDate,
+                    endDate,
+                    currency
+                )
+            }
             val recordsMap = mutableMapOf<String, Record>()
             records.forEach { record ->
                 val key = record.recordDateTime.toLocalDate().toString()
@@ -454,13 +482,15 @@ class RecordRepositoryImpl @Inject constructor(
             val userCategories = getUserCategory(
                 userId
             )
-            val records = recordDao.getUserRecordsByTypeAndCurrencyFromSpecificTime(
-                userId,
-                categoryType,
-                startDate,
-                endDate,
-                currency
-            )
+            val records = withContext(Dispatchers.IO) {
+                recordDao.getUserRecordsByTypeAndCurrencyFromSpecificTime(
+                    userId,
+                    categoryType,
+                    startDate,
+                    endDate,
+                    currency
+                )
+            }
             val categoryWithAmountMap = mutableMapOf<String, CategoryWithAmount>()
             Log.i(
                 TAG,
@@ -486,11 +516,13 @@ class RecordRepositoryImpl @Inject constructor(
                 }
             }
 
-            val data = categoryWithAmountMap.values.toList().let { value ->
-                if (sortType == SortType.ASCENDING) {
-                    value.sortedBy { it.amount }
-                } else {
-                    value.sortedByDescending { it.amount }
+            val data = withContext(Dispatchers.IO) {
+                categoryWithAmountMap.values.toList().let { value ->
+                    if (sortType == SortType.ASCENDING) {
+                        value.sortedBy { it.amount }
+                    } else {
+                        value.sortedByDescending { it.amount }
+                    }
                 }
             }
             Log.i(
@@ -525,9 +557,11 @@ class RecordRepositoryImpl @Inject constructor(
             val userAccounts = getUserAccount(
                 userId
             )
-            val records = recordDao.getUserRecordsFromSpecificTime(
-                userId, startDate, endDate
-            )
+            val records = withContext(Dispatchers.IO) {
+                recordDao.getUserRecordsFromSpecificTime(
+                    userId, startDate, endDate
+                )
+            }
             val accountWithAmountMap = mutableMapOf<String, AccountWithAmountType>()
             Log.i(
                 TAG,
@@ -607,9 +641,11 @@ class RecordRepositoryImpl @Inject constructor(
                 "getUserTotalAmountByType: $recordType",
 
                 )
-            val records = recordDao.getUserRecordsByType(
-                userId, recordType
-            )
+            val records = withContext(Dispatchers.IO) {
+                recordDao.getUserRecordsByType(
+                    userId, recordType
+                )
+            }
             val recordTotalAmount = records.sumOf { record ->
                 currencyConverter(
                     record.recordAmount,
@@ -651,17 +687,19 @@ class RecordRepositoryImpl @Inject constructor(
                 "getUserTotalAmountByTypeFromSpecificTime: $recordType",
 
                 )
-            val recordTotalAmount = recordDao.getUserRecordsByTypeFromSpecificTime(
-                userId,
-                recordType,
-                startDate,
-                endDate
-            ).sumOf { record ->
-                currencyConverter(
-                    record.recordAmount,
-                    record.recordCurrency,
-                    userCurrency
-                )
+            val recordTotalAmount = withContext(Dispatchers.IO) {
+                recordDao.getUserRecordsByTypeFromSpecificTime(
+                    userId,
+                    recordType,
+                    startDate,
+                    endDate
+                ).sumOf { record ->
+                    currencyConverter(
+                        record.recordAmount,
+                        record.recordCurrency,
+                        userCurrency
+                    )
+                }
             }
             val data = BalanceItem(
                 name = "${recordType.name}: ",
@@ -692,22 +730,24 @@ class RecordRepositoryImpl @Inject constructor(
                 "getUserTotalRecordBalance: ",
 
                 )
-            val recordTotalAmount = recordDao.getUserRecordsByType(
-                userId, RecordType.Expense
-            ).sumOf { record ->
-                currencyConverter(
-                    record.recordAmount,
-                    record.recordCurrency,
-                    userCurrency
-                )
-            } + recordDao.getUserRecordsByType(
-                userId, RecordType.Income
-            ).sumOf { record ->
-                currencyConverter(
-                    record.recordAmount,
-                    record.recordCurrency,
-                    userCurrency
-                )
+            val recordTotalAmount = withContext(Dispatchers.IO) {
+                recordDao.getUserRecordsByType(
+                    userId, RecordType.Expense
+                ).sumOf { record ->
+                    currencyConverter(
+                        record.recordAmount,
+                        record.recordCurrency,
+                        userCurrency
+                    )
+                } + recordDao.getUserRecordsByType(
+                    userId, RecordType.Income
+                ).sumOf { record ->
+                    currencyConverter(
+                        record.recordAmount,
+                        record.recordCurrency,
+                        userCurrency
+                    )
+                }
             }
             val data = BalanceItem(
                 name = "Balance: ",
@@ -730,19 +770,23 @@ class RecordRepositoryImpl @Inject constructor(
 
     private suspend fun getUserAccount(
         userId: String
-    ) = Firebase.firestore.collection(
-        "account"
-    ).whereEqualTo(
-        "userIdFk", userId
-    ).get().await().toObjects<Account>()
+    ) = withContext(Dispatchers.IO) {
+        Firebase.firestore.collection(
+            "account"
+        ).whereEqualTo(
+            "userIdFk", userId
+        ).get().await().toObjects<Account>()
+    }
 
     private suspend fun getUserCategory(
         userId: String
-    ) = Firebase.firestore.collection(
-        "category"
-    ).whereEqualTo(
-        "userIdFk", userId
-    ).get().await().toObjects<Category>()
+    ) = withContext(Dispatchers.IO) {
+        Firebase.firestore.collection(
+            "category"
+        ).whereEqualTo(
+            "userIdFk", userId
+        ).get().await().toObjects<Category>()
+    }
 
     private suspend fun currencyConverter(
         amount: Double, from: String, to: String
@@ -750,6 +794,7 @@ class RecordRepositoryImpl @Inject constructor(
         return currencyRepository.convertCurrencyData(
             amount, from, to
         ).amount
+
     }
 
 }

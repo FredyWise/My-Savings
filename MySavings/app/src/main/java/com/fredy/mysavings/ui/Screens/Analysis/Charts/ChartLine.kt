@@ -1,6 +1,5 @@
 package com.fredy.mysavings.ui.Screens.Analysis.Charts
 
-import android.util.Log
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.MaterialTheme
@@ -23,7 +22,6 @@ import co.yml.charts.ui.linechart.model.LineType
 import co.yml.charts.ui.linechart.model.SelectionHighlightPoint
 import co.yml.charts.ui.linechart.model.SelectionHighlightPopUp
 import co.yml.charts.ui.linechart.model.ShadowUnderLine
-import com.fredy.mysavings.Util.TAG
 import com.fredy.mysavings.Util.formatCharAmount
 import kotlin.math.nextUp
 
@@ -61,7 +59,7 @@ fun ChartLine(
         val yMax = points.maxOf { it.y }.nextUp()
 //        val yScale = (yMax - yMin) / steps
         val yScale = yMax / steps
-        formatCharAmount((i * yScale).toDouble())+ " $currency"
+        formatCharAmount((i * yScale).toDouble()) + " $currency"
 //        formatCharAmount(((i * yScale) + yMin).toDouble())
     }.build()
 

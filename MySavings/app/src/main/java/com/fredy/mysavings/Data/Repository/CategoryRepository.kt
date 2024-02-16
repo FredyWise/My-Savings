@@ -5,20 +5,16 @@ import co.yml.charts.common.extensions.isNotNull
 import com.fredy.mysavings.Data.Database.Dao.CategoryDao
 import com.fredy.mysavings.Data.Database.FirebaseDataSource.CategoryDataSource
 import com.fredy.mysavings.Data.Database.Model.Category
-import com.fredy.mysavings.Data.Enum.RecordType
 import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.TAG
 import com.fredy.mysavings.ViewModels.CategoryMap
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.toObject
-import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
-import kotlinx.coroutines.withTimeoutOrNull
 import javax.inject.Inject
 
 interface CategoryRepository {
@@ -34,46 +30,52 @@ class CategoryRepositoryImpl @Inject constructor(
     private val categoryDao: CategoryDao,
     private val firestore: FirebaseFirestore,
     private val firebaseAuth: FirebaseAuth
-): CategoryRepository {
+) : CategoryRepository {
     private val categoryCollection = firestore.collection(
         "category"
     )
 
     override suspend fun upsertCategory(category: Category) {
-        val currentUser = firebaseAuth.currentUser
-        val tempCategory = if (category.categoryId.isEmpty()) {
-            val newCategoryRef = categoryCollection.document()
-            category.copy(
-                categoryId = newCategoryRef.id,
-                userIdFk = currentUser!!.uid
+        withContext(Dispatchers.IO) {
+            val currentUser = firebaseAuth.currentUser
+            val tempCategory = if (category.categoryId.isEmpty()) {
+                val newCategoryRef = categoryCollection.document()
+                category.copy(
+                    categoryId = newCategoryRef.id,
+                    userIdFk = currentUser!!.uid
+                )
+            } else {
+                category.copy(
+                    userIdFk = currentUser!!.uid
+                )
+            }
+
+            categoryDao.upsertCategoryItem(
+                tempCategory
             )
-        } else {
-            category.copy(
-                userIdFk = currentUser!!.uid
+            categoryDataSource.upsertCategoryItem(
+                tempCategory
             )
         }
-
-        categoryDao.upsertCategoryItem(
-            tempCategory
-        )
-        categoryDataSource.upsertCategoryItem(
-            tempCategory
-        )
     }
 
     override suspend fun deleteCategory(category: Category) {
-        categoryDataSource.deleteCategoryItem(
-            category
-        )
-        categoryDao.deleteCategoryItem(category)
+        withContext(Dispatchers.IO) {
+            categoryDataSource.deleteCategoryItem(
+                category
+            )
+            categoryDao.deleteCategoryItem(category)
+        }
     }
 
 
     override fun getCategory(categoryId: String): Flow<Category> {
         return flow {
-            val category = categoryDao.getCategory(
-                categoryId
-            )
+            val category = withContext(Dispatchers.IO) {
+                categoryDao.getCategory(
+                    categoryId
+                )
+            }
             emit(category)
         }
     }
@@ -83,23 +85,27 @@ class CategoryRepositoryImpl @Inject constructor(
             val currentUser = firebaseAuth.currentUser!!
             val userId = if (currentUser.isNotNull()) currentUser.uid else ""
 
-            val data = categoryDao.getUserCategoriesOrderedByName(
-                userId
-            )
+            val data = withContext(Dispatchers.IO) {
+                categoryDao.getUserCategoriesOrderedByName(
+                    userId
+                )
+            }
             emit(data)
         }
     }
 
     override fun getCategoryMapOrderedByName(
-    ) : Flow<Resource<List<CategoryMap>>> {
+    ): Flow<Resource<List<CategoryMap>>> {
         return flow {
             emit(Resource.Loading())
             val currentUser = firebaseAuth.currentUser!!
             val userId = if (currentUser.isNotNull()) currentUser.uid else ""
 
-            val categories = categoryDao.getUserCategoriesOrderedByName(
-                userId
-            )
+            val categories = withContext(Dispatchers.IO) {
+                categoryDao.getUserCategoriesOrderedByName(
+                    userId
+                )
+            }
             val data = categories.groupBy {
                 it.categoryType
             }.toSortedMap().map {
@@ -117,7 +123,6 @@ class CategoryRepositoryImpl @Inject constructor(
             emit(Resource.Error(e.message.toString()))
         }
     }
-
 
 
 }

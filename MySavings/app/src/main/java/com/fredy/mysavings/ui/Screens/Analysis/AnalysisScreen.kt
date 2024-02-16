@@ -50,7 +50,8 @@ fun AnalysisScreen(
     val navController = rememberNavController()
     val currentBackStack by navController.currentBackStackEntryAsState()
     val currentDestination = currentBackStack?.destination
-    val currentScreen = analysisScreens.find { it.route == currentDestination?.route } ?: NavigationRoute.Records
+    val currentScreen =
+        analysisScreens.find { it.route == currentDestination?.route } ?: NavigationRoute.Records
     var expanded by remember {
         mutableStateOf(
             false
@@ -123,62 +124,71 @@ fun AnalysisScreen(
         },
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            ExposedDropdownMenuBox(
-                modifier = Modifier.padding(
-                    vertical = 8.dp
-                ),
-                expanded = expanded,
-                onExpandedChange = { expanded = !expanded },
-            ) {
-                TextField(
-                    value = currentScreen.title,
-                    enabled = false,
-                    singleLine = true,
-                    onValueChange = {
-                        expanded = true
-                    },
-                    modifier = Modifier
-                        .menuAnchor()
-                        .clip(
-                            MaterialTheme.shapes.medium
-                        ),
-                    colors = TextFieldDefaults.colors(
-                        disabledIndicatorColor = Color.Unspecified,
-                        disabledTextColor = MaterialTheme.colorScheme.onSurface,
-                        disabledTrailingIconColor = MaterialTheme.colorScheme.onSurface,
-                        unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-                        focusedContainerColor = MaterialTheme.colorScheme.surface,
-                        disabledContainerColor = MaterialTheme.colorScheme.surface,
-                    ),
-                    trailingIcon = {
-                        Icon(
-                            icon,
-                            "contentDescription",
-                        )
-                    },
-                )
-                ExposedDropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false },
-                ) {
-                    analysisScreens.forEach { screen ->
-                        DropdownMenuItem(
-                            onClick = {
-                                expanded = false
-                                navController.navigateSingleTopTo(
-                                    screen.route
-                                )
-                            },
-                            text = {
-                                Text(
-                                    text = screen.title,
-                                    color = MaterialTheme.colorScheme.onBackground
-                                )
-                            },
-                        )
-                    }
-                }
-            }
+            AnalysisTabRow(
+                allScreens = analysisScreens,
+                onTabSelected = { screen ->
+                    navController.navigateSingleTopTo(
+                        screen.route
+                    )
+                },
+                currentScreen = currentScreen,
+            )
+//            ExposedDropdownMenuBox(
+//                modifier = Modifier.padding(
+//                    vertical = 8.dp
+//                ),
+//                expanded = expanded,
+//                onExpandedChange = { expanded = !expanded },
+//            ) {
+//                TextField(
+//                    value = currentScreen.title,
+//                    enabled = false,
+//                    singleLine = true,
+//                    onValueChange = {
+//                        expanded = true
+//                    },
+//                    modifier = Modifier
+//                        .menuAnchor()
+//                        .clip(
+//                            MaterialTheme.shapes.medium
+//                        ),
+//                    colors = TextFieldDefaults.colors(
+//                        disabledIndicatorColor = Color.Unspecified,
+//                        disabledTextColor = MaterialTheme.colorScheme.onSurface,
+//                        disabledTrailingIconColor = MaterialTheme.colorScheme.onSurface,
+//                        unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+//                        focusedContainerColor = MaterialTheme.colorScheme.surface,
+//                        disabledContainerColor = MaterialTheme.colorScheme.surface,
+//                    ),
+//                    trailingIcon = {
+//                        Icon(
+//                            icon,
+//                            "contentDescription",
+//                        )
+//                    },
+//                )
+//                ExposedDropdownMenu(
+//                    expanded = expanded,
+//                    onDismissRequest = { expanded = false },
+//                ) {
+//                    analysisScreens.forEach { screen ->
+//                        DropdownMenuItem(
+//                            onClick = {
+//                                expanded = false
+//                                navController.navigateSingleTopTo(
+//                                    screen.route
+//                                )
+//                            },
+//                            text = {
+//                                Text(
+//                                    text = screen.title,
+//                                    color = MaterialTheme.colorScheme.onBackground
+//                                )
+//                            },
+//                        )
+//                    }
+//                }
+//            }
             AnalysisNavGraph(
                 rootNavController = rootNavController,
                 navController = navController,

@@ -11,9 +11,11 @@ import com.fredy.mysavings.Util.TAG
 import com.fredy.mysavings.Util.deletedAccount
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 interface AccountRepository {
@@ -32,45 +34,51 @@ class AccountRepositoryImpl @Inject constructor(
     private val accountDao: AccountDao,
     private val firestore: FirebaseFirestore,
     private val firebaseAuth: FirebaseAuth
-): AccountRepository {
+) : AccountRepository {
     private val accountCollection = firestore.collection(
         "account"
     )
 
 
     override suspend fun upsertAccount(account: Account) {
-        val currentUser = firebaseAuth.currentUser
-        val tempAccount = if (account.accountId.isEmpty()) {
-            val newAccountRef = accountCollection.document()
-            account.copy(
-                accountId = newAccountRef.id,
-                userIdFk = currentUser!!.uid
-            )
-        } else {
-            account.copy(
-                userIdFk = currentUser!!.uid
+        withContext(Dispatchers.IO) {
+            val currentUser = firebaseAuth.currentUser
+            val tempAccount = if (account.accountId.isEmpty()) {
+                val newAccountRef = accountCollection.document()
+                account.copy(
+                    accountId = newAccountRef.id,
+                    userIdFk = currentUser!!.uid
+                )
+            } else {
+                account.copy(
+                    userIdFk = currentUser!!.uid
+                )
+            }
+
+            accountDao.upsertAccountItem(tempAccount)
+            accountDataSource.upsertAccountItem(
+                tempAccount
             )
         }
-
-        accountDao.upsertAccountItem(tempAccount)
-        accountDataSource.upsertAccountItem(
-            tempAccount
-        )
     }
 
     override suspend fun deleteAccount(account: Account) {
-        accountDataSource.deleteAccountItem(
-            account
-        )
-        accountDao.deleteAccountItem(account)
+        withContext(Dispatchers.IO) {
+            accountDataSource.deleteAccountItem(
+                account
+            )
+            accountDao.deleteAccountItem(account)
+        }
     }
 
 
     override fun getAccount(accountId: String): Flow<Account> {
         return flow {
-            val account = accountDao.getAccount(
-                accountId
-            )
+            val account = withContext(Dispatchers.IO) {
+                accountDao.getAccount(
+                    accountId
+                )
+            }
             emit(account)
         }
     }
@@ -80,9 +88,11 @@ class AccountRepositoryImpl @Inject constructor(
             emit(Resource.Loading())
             val currentUser = firebaseAuth.currentUser!!
             val userId = if (currentUser.isNotNull()) currentUser.uid else ""
-            val data = accountDao.getUserAccounts(
-                userId
-            ).filter { it.accountName != deletedAccount.accountName }
+            val data = withContext(Dispatchers.IO) {
+                accountDao.getUserAccounts(
+                    userId
+                ).filter { it.accountName != deletedAccount.accountName }
+            }
             emit(Resource.Success(data))
         }.catch { e ->
             Log.i(
@@ -103,9 +113,11 @@ class AccountRepositoryImpl @Inject constructor(
                 TAG,
                 "getUserAccountTotalBalance: $currentUser"
             )
-            val accounts = accountDao.getUserAccounts(
-                userId
-            )
+            val accounts = withContext(Dispatchers.IO) {
+                accountDao.getUserAccounts(
+                    userId
+                )
+            }
             val totalAccountBalance = accounts.sumOf { account ->
                 Log.i(
                     TAG,
@@ -136,9 +148,11 @@ class AccountRepositoryImpl @Inject constructor(
             val currentUser = firebaseAuth.currentUser
             val userId = if (currentUser.isNotNull()) currentUser!!.uid else ""
 
-            val data = accountDao.getUserAvailableCurrency(
-                userId
-            )
+            val data = withContext(Dispatchers.IO) {
+                accountDao.getUserAvailableCurrency(
+                    userId
+                )
+            }
             emit(data)
         }
     }

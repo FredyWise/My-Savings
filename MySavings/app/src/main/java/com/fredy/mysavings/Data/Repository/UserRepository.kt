@@ -9,12 +9,14 @@ import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.toObject
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 interface UserRepository {
@@ -30,36 +32,45 @@ interface UserRepository {
 class UserRepositoryImpl @Inject constructor(
     private val firestore: FirebaseFirestore,
     private val firebaseAuth: FirebaseAuth
-): UserRepository {
+) : UserRepository {
     private val userCollection = firestore.collection(
         "user"
     )
+
     override suspend fun insertUser(user: UserData) {
-        val document = userCollection.document(user.firebaseUserId)
-        val snapshot = document.get().await()
-        if (!snapshot.exists()) {
-            document.set(user)
+        withContext(Dispatchers.IO) {
+            val document = userCollection.document(user.firebaseUserId)
+            val snapshot = document.get().await()
+            if (!snapshot.exists()) {
+                document.set(user)
+            }
         }
     }
 
     override suspend fun upsertUser(user: UserData) {
-        userCollection.document(
-            user.firebaseUserId
-        ).set(user)
+        withContext(Dispatchers.IO) {
+            userCollection.document(
+                user.firebaseUserId
+            ).set(user)
+        }
     }
 
     override suspend fun deleteUser(user: UserData) {
-        userCollection.document(
-            user.firebaseUserId
-        ).delete()
+        withContext(Dispatchers.IO) {
+            userCollection.document(
+                user.firebaseUserId
+            ).delete()
+        }
     }
 
     override fun getUser(userId: String): Flow<UserData> {
         return flow {
             var data = UserData()
-            val result = userCollection.document(
-                userId
-            ).get().await()
+            val result = withContext(Dispatchers.IO) {
+                userCollection.document(
+                    userId
+                ).get().await()
+            }
             if (result.exists()) {
                 data = result.toObject<UserData>()!!
             }
@@ -71,7 +82,9 @@ class UserRepositoryImpl @Inject constructor(
         emit(Resource.Loading())
         val currentUser = firebaseAuth.currentUser
         if (currentUser != null) {
-            val userDocument = userCollection.document(currentUser.uid).get().await()
+            val userDocument = withContext(Dispatchers.IO) {
+                userCollection.document(currentUser.uid).get().await()
+            }
             emit(Resource.Success(userDocument.toObject<UserData>()))
         }
     }.catch { e ->

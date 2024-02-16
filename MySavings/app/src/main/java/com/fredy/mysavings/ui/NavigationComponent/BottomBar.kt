@@ -1,6 +1,7 @@
 package com.fredy.mysavings.ui.NavigationComponent
 
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.ContentAlpha
@@ -23,7 +24,7 @@ fun BottomBar(
     currentScreen: NavigationRoute
 ) {
     BottomNavigation(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier.selectableGroup().fillMaxWidth(),
         backgroundColor = backgroundColor
     ) {
         allScreens.forEach { screen ->
