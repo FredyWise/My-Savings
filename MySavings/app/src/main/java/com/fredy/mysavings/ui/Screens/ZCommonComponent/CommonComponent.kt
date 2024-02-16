@@ -1,6 +1,5 @@
 package com.fredy.mysavings.ui.Screens.ZCommonComponent
 
-import android.widget.RadioButton
 import android.widget.Toast
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
@@ -44,6 +43,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -61,6 +61,8 @@ import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.Util.ActionWithName
 import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.SavingsIcon
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -73,37 +75,52 @@ fun <T> ResourceHandler(
     content: @Composable (T) -> Unit,
 ) {
     val context = LocalContext.current
-    when (resource) {
-        is Resource.Error -> {
-            Toast.makeText(
-                context,
-                errorMessage,
-                Toast.LENGTH_LONG
-            ).show()
-        }
+    val scope = rememberCoroutineScope()
+    var showCircularProgressIndicator by remember {
+        mutableStateOf(false)
+    }
+    var showEmptyMessage by remember {
+        mutableStateOf(false)
+    }
 
-        is Resource.Loading -> {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(
-                        40.dp
-                    ),
-                    strokeWidth = 4.dp,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
+    fun debounce(resource: Resource<T>) {// fix if the app is too slow
+        scope.launch {
+            delay(700L)
+            showCircularProgressIndicator = resource is Resource.Loading
+            showEmptyMessage = resource is Resource.Success
+        }
+    }
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        when (resource) {
+            is Resource.Error -> {
+                Toast.makeText(
+                    context,
+                    errorMessage,
+                    Toast.LENGTH_LONG
+                ).show()
             }
-        }
 
-        is Resource.Success -> {
-            resource.data.let {
-                if (isNullOrEmpty(it)) {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
+            is Resource.Loading -> {
+                debounce(resource)
+                if (showCircularProgressIndicator) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(
+                            40.dp
+                        ),
+                        strokeWidth = 4.dp,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                }
+
+            }
+
+            is Resource.Success -> {
+                debounce(resource)
+                resource.data.let {
+                    if (isNullOrEmpty(it) && showEmptyMessage) {
                         Text(
                             text = nullOrEmptyMessage,
                             modifier = Modifier
@@ -119,10 +136,11 @@ fun <T> ResourceHandler(
                             style = MaterialTheme.typography.titleLarge,
                             color = MaterialTheme.colorScheme.onBackground,
                         )
-                    }
-                } else {
-                    it?.let {
-                        content(it)
+
+                    } else {
+                        it?.let {
+                            content(it)
+                        }
                     }
                 }
             }

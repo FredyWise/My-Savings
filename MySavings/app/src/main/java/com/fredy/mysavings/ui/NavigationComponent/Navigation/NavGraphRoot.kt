@@ -61,12 +61,6 @@ fun NavGraphRoot(
         navigation(
             route = Graph.MainNav,
             startDestination = Graph.HomeNav,
-            enterTransition = {
-                fadeIn(animationSpec = tween(300))
-            },
-            exitTransition = {
-                fadeOut(animationSpec = tween(300))
-            },
         ) {
             composable(
                 route = Graph.HomeNav,
@@ -99,6 +93,12 @@ fun NavGraphRoot(
             }
             composable(
                 route = NavigationRoute.BulkAdd.route,
+                enterTransition = {
+                    fadeIn(animationSpec = tween(300))
+                },
+                exitTransition = {
+                    fadeOut(animationSpec = tween(300))
+                },
             ) {
                 Log.d(
                     TAG,
@@ -114,6 +114,12 @@ fun NavGraphRoot(
             }
             composable(
                 route = "${NavigationRoute.Add.route}/{id}",
+                enterTransition = {
+                    fadeIn(animationSpec = tween(300))
+                },
+                exitTransition = {
+                    fadeOut(animationSpec = tween(300))
+                },
                 arguments = listOf(navArgument("id") {
                     type = NavType.StringType
                     defaultValue = "-1"
@@ -131,7 +137,13 @@ fun NavGraphRoot(
                 )
             }
             composable(
-                route = NavigationRoute.Preferences.route
+                route = NavigationRoute.Preferences.route,
+                enterTransition = {
+                    fadeIn(animationSpec = tween(300))
+                },
+                exitTransition = {
+                    fadeOut(animationSpec = tween(300))
+                },
             ) {
                 val state by settingViewModel.state.collectAsStateWithLifecycle()
                 PreferencesScreen(
@@ -142,7 +154,13 @@ fun NavGraphRoot(
                 )
             }
             composable(
-                route = NavigationRoute.Export.route
+                route = NavigationRoute.Export.route,
+                enterTransition = {
+                    fadeIn(animationSpec = tween(300))
+                },
+                exitTransition = {
+                    fadeOut(animationSpec = tween(300))
+                },
             ) {
                 val state by settingViewModel.state.collectAsStateWithLifecycle()
                 ExportScreen(
@@ -154,6 +172,12 @@ fun NavGraphRoot(
             }
             composable(
                 route = NavigationRoute.Profile.route,
+                enterTransition = {
+                    fadeIn(animationSpec = tween(300))
+                },
+                exitTransition = {
+                    fadeOut(animationSpec = tween(300))
+                },
             ) {
                 val state by authViewModel.state.collectAsStateWithLifecycle()
 
@@ -171,6 +195,12 @@ fun NavGraphRoot(
             }
             composable(
                 route = NavigationRoute.Search.route,
+                enterTransition = {
+                    fadeIn(animationSpec = tween(300))
+                },
+                exitTransition = {
+                    fadeOut(animationSpec = tween(300))
+                },
             ) {
                 val viewModel: SearchViewModel = hiltViewModel()
                 val state by viewModel.state.collectAsStateWithLifecycle()

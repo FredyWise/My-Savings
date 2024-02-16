@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -18,6 +19,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -39,6 +41,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
@@ -52,12 +55,13 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.Util.ToggleableInfo
 import com.fredy.mysavings.Util.currencyCodes
-import com.fredy.mysavings.ViewModels.Event.SettingEvent
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun SettingButton(
     modifier: Modifier = Modifier,
-    text:String,
+    text: String,
     onClick: () -> Unit,
 ) {
     SimpleButton(
@@ -102,7 +106,7 @@ fun CheckBoxes(
         var triState by remember {
             mutableStateOf(ToggleableState.Off)
         }
-        triState = if (checkboxes.all { it.isChecked })ToggleableState.On else ToggleableState.Off
+        triState = if (checkboxes.all { it.isChecked }) ToggleableState.On else ToggleableState.Off
         val toggleTriState = {
             triState = when (triState) {
                 ToggleableState.Indeterminate -> ToggleableState.On
@@ -153,9 +157,9 @@ fun CheckBoxes(
                 Checkbox(
                     checked = info.isChecked,
                     onCheckedChange = { isChecked ->
-                        if (isChecked){
+                        if (isChecked) {
                             ToggleableState.On
-                        }else{
+                        } else {
                             ToggleableState.Off
                         }
                         checkboxes[index] = info.copy(
@@ -172,7 +176,6 @@ fun CheckBoxes(
     }
     return checkboxes.filter { it.isChecked }.map { it.text }
 }
-
 
 
 @Composable
@@ -247,6 +250,7 @@ fun Switch(
         }
     }
 }
+
 @Composable
 fun ThemeSwitcher(
     darkTheme: Boolean = false,
@@ -340,24 +344,31 @@ fun CurrencyDropdown(
     var filteredData by remember {
         mutableStateOf(currencyCodes)
     }
+    val scope = rememberCoroutineScope()
+    fun debounce(query: String) {
+        scope.launch {
+            delay(1000L)
+            if (query == selectedText) {
+                filteredData = currencyCodes.filter { data ->
+                    data.contains(query.replace(" ", ""), ignoreCase = true)
+                }.sorted()
+                expanded = true
+            }
+        }
+    }
 
     val icon = if (expanded) Icons.Filled.KeyboardArrowUp
     else Icons.Filled.KeyboardArrowDown
 
     ExposedDropdownMenuBox(modifier = modifier,
         expanded = expanded,
-        onExpandedChange = { expanded = !expanded }) {
+        onExpandedChange = { }) {
         TextField(
             value = selectedText,
             singleLine = true,
             onValueChange = {
                 selectedText = it
-                expanded = true
-                filteredData = currencyCodes.filter { data ->
-                    data.contains(
-                        it, ignoreCase = true
-                    )
-                }.sorted()
+                debounce(it)
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -365,13 +376,17 @@ fun CurrencyDropdown(
             colors = textFieldColors,
             trailingIcon = {
                 Icon(
-                    icon,
-                    "contentDescription",
+                    modifier = Modifier.clip(CircleShape).clickable {
+                        expanded = !expanded
+                    }.padding(8.dp),
+                    imageVector = icon,
+                    contentDescription = "contentDescription",
                 )
             },
         )
         ExposedDropdownMenu(
-            modifier = menuModifier,
+            modifier = menuModifier
+                .heightIn(0.dp, 240.dp),
             expanded = expanded,
             onDismissRequest = { expanded = false },
         ) {
@@ -388,6 +403,7 @@ fun CurrencyDropdown(
                         )
                     },
                 )
+
             }
         }
     }

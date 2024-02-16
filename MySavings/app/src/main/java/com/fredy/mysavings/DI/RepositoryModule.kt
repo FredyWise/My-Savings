@@ -73,42 +73,42 @@ object RepositoryModule {
     fun provideRecordRepository(
         currencyRepository: CurrencyRepository,
         recordDataSource: RecordDataSource,
+        authRepository: AuthRepository,
         recordDao: RecordDao,
         firestore: FirebaseFirestore,
-        firebaseAuth: FirebaseAuth
     ): RecordRepository = RecordRepositoryImpl(
         currencyRepository,
+        authRepository,
         recordDataSource,
         recordDao,
         firestore,
-        firebaseAuth
     )
 
     @Provides
     @Singleton
     fun provideAccountRepository(
         currencyRepository: CurrencyRepository,
+        authRepository: AuthRepository,
         accountDataSource: AccountDataSource,
         accountDao: AccountDao,
         firestore: FirebaseFirestore,
-        firebaseAuth: FirebaseAuth
     ): AccountRepository = AccountRepositoryImpl(
         currencyRepository,
+        authRepository,
         accountDataSource,
         accountDao,
         firestore,
-        firebaseAuth
     )
 
     @Provides
     @Singleton
     fun provideCategoryRepository(
+        authRepository: AuthRepository,
         firestore: FirebaseFirestore,
         categoryDataSource: CategoryDataSource,
         categoryDao: CategoryDao,
-        firebaseAuth: FirebaseAuth
     ): CategoryRepository = CategoryRepositoryImpl(
-        categoryDataSource, categoryDao, firestore, firebaseAuth
+        authRepository, categoryDataSource, categoryDao, firestore,
     )
 
     @Provides

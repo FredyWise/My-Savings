@@ -183,6 +183,7 @@ class AuthViewModel @Inject constructor(
                             firebaseUserId = firebaseUserId,
                             username = event.username,
                             emailOrPhone = event.email,
+                            userCurrency = event.preferredCurrency,
                             profilePictureUrl = profilePictureUrl
                         )
                     }

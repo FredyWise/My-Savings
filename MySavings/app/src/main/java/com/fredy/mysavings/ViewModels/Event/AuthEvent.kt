@@ -2,7 +2,6 @@ package com.fredy.mysavings.ViewModels.Event
 
 import android.content.Context
 import android.net.Uri
-import androidx.fragment.app.FragmentActivity
 import com.google.firebase.auth.AuthCredential
 
 
@@ -34,6 +33,7 @@ sealed interface AuthEvent {
     data class UpdateUserData(
         val email: String,
         val username: String,
+        val preferredCurrency: String,
         val photoUrl: Uri,
     ): AuthEvent
 

@@ -226,7 +226,7 @@ class RecordViewModel @Inject constructor(
         )
     }.stateIn(
         viewModelScope,
-        SharingStarted.WhileSubscribed(5000),
+        SharingStarted.WhileSubscribed( 5000),
         RecordState()
     )
 

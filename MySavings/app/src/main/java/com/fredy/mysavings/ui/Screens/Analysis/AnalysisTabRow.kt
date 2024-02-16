@@ -39,14 +39,15 @@ import java.util.Locale
 @Composable
 fun AnalysisTabRow(
     modifier: Modifier = Modifier,
+    color: Color = MaterialTheme.colorScheme.onBackground,
     allScreens: List<NavigationRoute>,
     onTabSelected: (screen: NavigationRoute) -> Unit,
     currentScreen: NavigationRoute
 ) {
     Row(
         modifier
-            .padding(4.dp)
-            .border(1.dp, MaterialTheme.colorScheme.onSurface, CircleShape)
+            .padding(vertical = 4.dp, horizontal = 16.dp)
+            .border(1.dp, color, CircleShape)
             .height(IntrinsicSize.Max)
             .fillMaxWidth()
             .selectableGroup(),
@@ -54,6 +55,7 @@ fun AnalysisTabRow(
     ) {
         allScreens.forEach { screen ->
             AnalysisTab(
+                textColor = color,
                 text = screen.title,
                 icon = screen.icon,
                 onSelected = { onTabSelected(screen) },

@@ -26,10 +26,10 @@ interface CategoryRepository {
 }
 
 class CategoryRepositoryImpl @Inject constructor(
+    private val authRepository: AuthRepository,
     private val categoryDataSource: CategoryDataSource,
     private val categoryDao: CategoryDao,
     private val firestore: FirebaseFirestore,
-    private val firebaseAuth: FirebaseAuth
 ) : CategoryRepository {
     private val categoryCollection = firestore.collection(
         "category"
@@ -37,16 +37,16 @@ class CategoryRepositoryImpl @Inject constructor(
 
     override suspend fun upsertCategory(category: Category) {
         withContext(Dispatchers.IO) {
-            val currentUser = firebaseAuth.currentUser
+            val currentUserId = authRepository.getCurrentUser()!!.firebaseUserId
             val tempCategory = if (category.categoryId.isEmpty()) {
                 val newCategoryRef = categoryCollection.document()
                 category.copy(
                     categoryId = newCategoryRef.id,
-                    userIdFk = currentUser!!.uid
+                    userIdFk = currentUserId
                 )
             } else {
                 category.copy(
-                    userIdFk = currentUser!!.uid
+                    userIdFk = currentUserId
                 )
             }
 
@@ -82,8 +82,8 @@ class CategoryRepositoryImpl @Inject constructor(
 
     override fun getUserCategoriesOrderedByName(): Flow<List<Category>> {
         return flow {
-            val currentUser = firebaseAuth.currentUser!!
-            val userId = if (currentUser.isNotNull()) currentUser.uid else ""
+            val currentUser = authRepository.getCurrentUser()!!
+            val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
 
             val data = withContext(Dispatchers.IO) {
                 categoryDao.getUserCategoriesOrderedByName(
@@ -98,8 +98,8 @@ class CategoryRepositoryImpl @Inject constructor(
     ): Flow<Resource<List<CategoryMap>>> {
         return flow {
             emit(Resource.Loading())
-            val currentUser = firebaseAuth.currentUser!!
-            val userId = if (currentUser.isNotNull()) currentUser.uid else ""
+            val currentUser = authRepository.getCurrentUser()!!
+            val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
 
             val categories = withContext(Dispatchers.IO) {
                 categoryDao.getUserCategoriesOrderedByName(

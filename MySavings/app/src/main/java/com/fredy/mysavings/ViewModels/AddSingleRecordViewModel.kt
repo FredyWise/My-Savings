@@ -236,6 +236,14 @@ class AddSingleRecordViewModel @Inject constructor(
             return null
         }
         if (isTransfer(recordType)) {
+            if (state.fromAccount.accountAmount < difference && fromAccountCurrency != toAccountCurrency) {
+                resource.update {
+                    Resource.Error(
+                        "Account balance is not enough"
+                    )
+                }
+                return null
+            }
             if (state.fromAccount == state.toAccount) {
                 resource.update {
                     Resource.Error(
@@ -254,14 +262,6 @@ class AddSingleRecordViewModel @Inject constructor(
                     isShowWarning = true,
                     previousAmount = calculationResult
                 )
-                return null
-            }
-            if (state.fromAccount.accountAmount < previousAmount && fromAccountCurrency != toAccountCurrency) {
-                resource.update {
-                    Resource.Error(
-                        "Account balance is not enough"
-                    )
-                }
                 return null
             }
         }

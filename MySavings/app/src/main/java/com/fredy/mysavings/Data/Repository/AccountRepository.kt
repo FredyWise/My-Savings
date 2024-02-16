@@ -30,10 +30,10 @@ interface AccountRepository {
 
 class AccountRepositoryImpl @Inject constructor(
     private val currencyRepository: CurrencyRepository,
+    private val authRepository: AuthRepository,
     private val accountDataSource: AccountDataSource,
     private val accountDao: AccountDao,
     private val firestore: FirebaseFirestore,
-    private val firebaseAuth: FirebaseAuth
 ) : AccountRepository {
     private val accountCollection = firestore.collection(
         "account"
@@ -42,16 +42,16 @@ class AccountRepositoryImpl @Inject constructor(
 
     override suspend fun upsertAccount(account: Account) {
         withContext(Dispatchers.IO) {
-            val currentUser = firebaseAuth.currentUser
+            val currentUserId = authRepository.getCurrentUser()!!.firebaseUserId
             val tempAccount = if (account.accountId.isEmpty()) {
                 val newAccountRef = accountCollection.document()
                 account.copy(
                     accountId = newAccountRef.id,
-                    userIdFk = currentUser!!.uid
+                    userIdFk = currentUserId
                 )
             } else {
                 account.copy(
-                    userIdFk = currentUser!!.uid
+                    userIdFk = currentUserId
                 )
             }
 
@@ -86,8 +86,8 @@ class AccountRepositoryImpl @Inject constructor(
     override fun getUserAccountOrderedByName(): Flow<Resource<List<Account>>> {
         return flow {
             emit(Resource.Loading())
-            val currentUser = firebaseAuth.currentUser!!
-            val userId = if (currentUser.isNotNull()) currentUser.uid else ""
+            val currentUser = authRepository.getCurrentUser()!!
+            val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
             val data = withContext(Dispatchers.IO) {
                 accountDao.getUserAccounts(
                     userId
@@ -105,9 +105,9 @@ class AccountRepositoryImpl @Inject constructor(
 
     override fun getUserAccountTotalBalance(): Flow<BalanceItem> {
         return flow {
-            val currentUser = firebaseAuth.currentUser
-            val userId = if (currentUser.isNotNull()) currentUser!!.uid else ""
-            val userCurrency = "USD"
+            val currentUser = authRepository.getCurrentUser()!!
+            val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
+            val userCurrency = currentUser.userCurrency
 
             Log.i(
                 TAG,
@@ -145,8 +145,8 @@ class AccountRepositoryImpl @Inject constructor(
 
     override fun getUserAvailableCurrency(): Flow<List<String>> {
         return flow {
-            val currentUser = firebaseAuth.currentUser
-            val userId = if (currentUser.isNotNull()) currentUser!!.uid else ""
+            val currentUser = authRepository.getCurrentUser()!!
+            val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
 
             val data = withContext(Dispatchers.IO) {
                 accountDao.getUserAvailableCurrency(

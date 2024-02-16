@@ -85,7 +85,7 @@ fun AccountAddDialog(
             },
         )
         CurrencyDropdown(
-            menuModifier = Modifier.height(250.dp),
+            menuModifier = Modifier,
             selectedText = state.accountCurrency,
             onClick = {
                 onEvent(

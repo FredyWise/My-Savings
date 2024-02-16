@@ -44,13 +44,15 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import coil.compose.rememberImagePainter
+import coil.compose.rememberAsyncImagePainter
 import com.fredy.mysavings.Data.Database.Model.UserData
 import com.fredy.mysavings.Util.Resource
+import com.fredy.mysavings.Util.currencyCodes
 import com.fredy.mysavings.Util.isValidEmailOrPhone
 import com.fredy.mysavings.ViewModels.AuthState
 import com.fredy.mysavings.ViewModels.Event.AuthEvent
 import com.fredy.mysavings.ui.Screens.AuthScreen.CustomTextField
+import com.fredy.mysavings.ui.Screens.ZCommonComponent.CurrencyDropdown
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.DefaultAppBar
 
 @Composable
@@ -75,6 +77,11 @@ fun ProfileScreen(
         var username by remember {
             mutableStateOf(
                 currentUserData.username ?: ""
+            )
+        }
+        var preferredCurrency by remember {
+            mutableStateOf(
+                currentUserData.userCurrency
             )
         }
         var emailOrPhone by remember { mutableStateOf(currentUserData.emailOrPhone ?: "") }
@@ -105,7 +112,7 @@ fun ProfileScreen(
             Box(contentAlignment = Alignment.BottomEnd) {
                 if (profilePictureUri != Uri.EMPTY) {
                     Image(
-                        painter = rememberImagePainter(
+                        painter = rememberAsyncImagePainter(
                             profilePictureUri
                         ),
                         contentDescription = "Profile picture",
@@ -187,13 +194,23 @@ fun ProfileScreen(
                 keyboardType = KeyboardType.Email
             )
             Spacer(modifier = Modifier.height(16.dp))
+
+            CurrencyDropdown(selectedText = preferredCurrency, onClick = { preferredCurrency = it })
+            Spacer(modifier = Modifier.height(16.dp))
             Button(
                 onClick = {
-                    onEvent(AuthEvent.UpdateUserData(emailOrPhone, username, profilePictureUri))
+                    onEvent(
+                        AuthEvent.UpdateUserData(
+                            emailOrPhone,
+                            username,
+                            preferredCurrency,
+                            profilePictureUri
+                        )
+                    )
                 },
                 enabled = isValidEmailOrPhone(
                     emailOrPhone
-                ),
+                ) && currencyCodes.contains(preferredCurrency),
                 colors = ButtonDefaults.buttonColors(
                     disabledContainerColor = primaryColor.copy(
                         0.7f

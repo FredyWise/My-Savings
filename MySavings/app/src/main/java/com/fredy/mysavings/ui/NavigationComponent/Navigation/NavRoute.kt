@@ -4,8 +4,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBalanceWallet
 import androidx.compose.material.icons.filled.AddBox
 import androidx.compose.material.icons.filled.AddToPhotos
+import androidx.compose.material.icons.filled.BarChart
+import androidx.compose.material.icons.filled.DataSaverOff
 import androidx.compose.material.icons.filled.HowToReg
 import androidx.compose.material.icons.filled.Label
+import androidx.compose.material.icons.filled.LineAxis
 import androidx.compose.material.icons.filled.Login
 import androidx.compose.material.icons.filled.Password
 import androidx.compose.material.icons.filled.PieChart
@@ -16,8 +19,11 @@ import androidx.compose.material.icons.filled.UploadFile
 import androidx.compose.material.icons.outlined.AccountBalanceWallet
 import androidx.compose.material.icons.outlined.AddBox
 import androidx.compose.material.icons.outlined.AddToPhotos
+import androidx.compose.material.icons.outlined.BarChart
+import androidx.compose.material.icons.outlined.DataSaverOff
 import androidx.compose.material.icons.outlined.HowToReg
 import androidx.compose.material.icons.outlined.Label
+import androidx.compose.material.icons.outlined.LineAxis
 import androidx.compose.material.icons.outlined.Login
 import androidx.compose.material.icons.outlined.Password
 import androidx.compose.material.icons.outlined.PieChart
@@ -136,6 +142,7 @@ sealed class NavigationRoute(
         iconNot = Icons.Outlined.AccountBalanceWallet
     )
 
+    // Analysis
     object Analysis: NavigationRoute(
         route = "analytics",
         title = "Analytics",
@@ -145,26 +152,26 @@ sealed class NavigationRoute(
     )
     object AnalysisOverview: NavigationRoute(
         route = "analytics Overview",
-        title = "Analysis Overview",
-        contentDescription = "Go to Analysis Overview Screen",
-        icon = Icons.Default.PieChart,
-        iconNot = Icons.Outlined.PieChart
+        title = "Overview",
+        contentDescription = "Go to Overview Screen",
+        icon = Icons.Default.DataSaverOff,
+        iconNot = Icons.Outlined.DataSaverOff
     )
 
     object AnalysisFlow: NavigationRoute(
         route = "analytics Flow",
-        title = "Analysis Flow",
-        contentDescription = "Go to Analysis Flow Screen",
-        icon = Icons.Default.PieChart,
-        iconNot = Icons.Outlined.PieChart
+        title = "Flow",
+        contentDescription = "Go to Flow Screen",
+        icon = Icons.Default.LineAxis,
+        iconNot = Icons.Outlined.LineAxis
     )
 
     object AnalysisAccount: NavigationRoute(
         route = "analytics Account",
-        title = "Analysis Account",
-        contentDescription = "Go to Analysis Account Screen",
-        icon = Icons.Default.PieChart,
-        iconNot = Icons.Outlined.PieChart
+        title = "Account",
+        contentDescription = "Go to Account Screen",
+        icon = Icons.Default.BarChart,
+        iconNot = Icons.Outlined.BarChart
     )
 
     //other screen

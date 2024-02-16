@@ -20,6 +20,7 @@ import com.fredy.mysavings.Util.defaultExpenseColor
 import com.fredy.mysavings.Util.defaultIncomeColor
 import com.fredy.mysavings.Util.formatDate
 import com.fredy.mysavings.Util.initialDarkThemeDefaultColor
+import com.fredy.mysavings.Util.isInternetConnected
 import com.fredy.mysavings.ViewModels.Event.SettingEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -47,7 +48,9 @@ class SettingViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            syncRepository.syncAll()
+            if (isInternetConnected(context)) {
+                syncRepository.syncAll()
+            }
             settingsRepository.getAll().collect { savedState ->
                 BalanceColor.Expense = savedState.selectedExpenseColor
                 BalanceColor.Income = savedState.selectedIncomeColor

@@ -35,12 +35,6 @@ fun HomeNavGraph(
         navController = navController,
         startDestination = NavigationRoute.Records.route,
         modifier = modifier,
-        enterTransition = {
-            fadeIn(animationSpec = tween(300))
-        },
-        exitTransition = {
-            fadeOut(animationSpec = tween(300))
-        },
     ) {
         composable(
             route = NavigationRoute.Records.route,
@@ -61,6 +55,12 @@ fun HomeNavGraph(
         }
         composable(
             route = NavigationRoute.Analysis.route,
+            enterTransition = {
+                fadeIn(animationSpec = tween(300))
+            },
+            exitTransition = {
+                fadeOut(animationSpec = tween(300))
+            },
         ) {
             val state by recordViewModel.state.collectAsStateWithLifecycle()
 
@@ -72,6 +72,12 @@ fun HomeNavGraph(
         }
         composable(
             route = NavigationRoute.Account.route,
+            enterTransition = {
+                fadeIn(animationSpec = tween(300))
+            },
+            exitTransition = {
+                fadeOut(animationSpec = tween(300))
+            },
         ) {
             val state by accountViewModel.state.collectAsStateWithLifecycle()
             val recordState by recordViewModel.state.collectAsStateWithLifecycle()
@@ -87,6 +93,12 @@ fun HomeNavGraph(
         }
         composable(
             route = NavigationRoute.Categories.route,
+            enterTransition = {
+                fadeIn(animationSpec = tween(300))
+            },
+            exitTransition = {
+                fadeOut(animationSpec = tween(300))
+            },
         ) {
             val state by categoryViewModel.state.collectAsStateWithLifecycle()
             val recordState by recordViewModel.state.collectAsStateWithLifecycle()

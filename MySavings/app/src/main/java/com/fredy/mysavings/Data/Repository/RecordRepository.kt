@@ -98,10 +98,10 @@ interface RecordRepository {
 
 class RecordRepositoryImpl @Inject constructor(
     private val currencyRepository: CurrencyRepository,
+    private val authRepository: AuthRepository,
     private val recordDataSource: RecordDataSource,
     private val recordDao: RecordDao,
     private val firestore: FirebaseFirestore,
-    private val firebaseAuth: FirebaseAuth
 ) : RecordRepository {
     private val recordCollection = firestore.collection(
         "record"
@@ -111,18 +111,18 @@ class RecordRepositoryImpl @Inject constructor(
         record: Record
     ) {
         withContext(Dispatchers.IO) {
-            val currentUser = firebaseAuth.currentUser
+            val currentUserId = authRepository.getCurrentUser()!!.firebaseUserId
             Log.i(TAG, "upsertRecordItem: $record")
 
             val tempRecord = if (record.recordId.isEmpty()) {
                 val newRecordRef = recordCollection.document()
                 record.copy(
                     recordId = newRecordRef.id,
-                    userIdFk = currentUser!!.uid
+                    userIdFk = currentUserId
                 )
             } else {
                 record.copy(
-                    userIdFk = currentUser!!.uid
+                    userIdFk = currentUserId
                 )
             }
 
@@ -145,8 +145,8 @@ class RecordRepositoryImpl @Inject constructor(
 
     override suspend fun updateRecordItemWithDeletedAccount(account: Account) {
         withContext(Dispatchers.IO) {
-            val currentUser = firebaseAuth.currentUser!!
-            val userId = if (currentUser.isNotNull()) currentUser.uid else ""
+            val currentUser = authRepository.getCurrentUser()!!
+            val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
             val records = recordDao.getUserRecords(userId)
             val tempRecords = records.filter {
                 it.accountIdFromFk == account.accountId || it.accountIdToFk == account.accountId
@@ -167,8 +167,8 @@ class RecordRepositoryImpl @Inject constructor(
 
     override suspend fun updateRecordItemWithDeletedCategory(category: Category) {
         withContext(Dispatchers.IO) {
-            val currentUser = firebaseAuth.currentUser!!
-            val userId = if (currentUser.isNotNull()) currentUser.uid else ""
+            val currentUser = authRepository.getCurrentUser()!!
+            val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
             val records = recordDao.getUserRecords(userId)
             val tempRecords = records.filter {
                 it.categoryIdFk == category.categoryId
@@ -214,8 +214,8 @@ class RecordRepositoryImpl @Inject constructor(
         return flow {
             emit(Resource.Loading())
 
-            val currentUser = firebaseAuth.currentUser!!
-            val userId = if (currentUser.isNotNull()) currentUser.uid else ""
+            val currentUser = authRepository.getCurrentUser()!!
+            val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
             val data = withContext(Dispatchers.IO) {
                 recordDao.getUserTrueRecordsFromSpecificTime(userId, startDate, endDate)
             }
@@ -237,8 +237,8 @@ class RecordRepositoryImpl @Inject constructor(
     override fun getAllRecords(): Flow<Resource<List<RecordMap>>> {
         return flow {
             emit(Resource.Loading())
-            val currentUser = firebaseAuth.currentUser!!
-            val userId = if (currentUser.isNotNull()) currentUser.uid else ""
+            val currentUser = authRepository.getCurrentUser()!!
+            val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
             val data = withContext(Dispatchers.IO) {
                 recordDao.getUserTrueRecords(userId).groupBy {
                     it.record.recordDateTime.toLocalDate()
@@ -267,8 +267,8 @@ class RecordRepositoryImpl @Inject constructor(
     ): Flow<Resource<List<RecordMap>>> {
         return flow {
             emit(Resource.Loading())
-            val currentUser = firebaseAuth.currentUser!!
-            val userId = if (currentUser.isNotNull()) currentUser.uid else ""
+            val currentUser = authRepository.getCurrentUser()!!
+            val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
             Log.i(
                 TAG,
                 "getUserTrueRecordMapsFromSpecificTime: $startDate\n:\n$endDate,\ncurrency: $currency"
@@ -314,8 +314,8 @@ class RecordRepositoryImpl @Inject constructor(
     ): Flow<Resource<List<RecordMap>>> {
         return flow {
             emit(Resource.Loading())
-            val currentUser = firebaseAuth.currentUser!!
-            val userId = if (currentUser.isNotNull()) currentUser.uid else ""
+            val currentUser = authRepository.getCurrentUser()!!
+            val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
             Log.i(
                 TAG,
                 "getUserCategoryRecordsOrderedByDateTime: $categoryId",
@@ -356,8 +356,8 @@ class RecordRepositoryImpl @Inject constructor(
         sortType: SortType,
     ): Flow<Resource<List<RecordMap>>> {
         return flow {
-            val currentUser = firebaseAuth.currentUser!!
-            val userId = if (currentUser.isNotNull()) currentUser.uid else ""
+            val currentUser = authRepository.getCurrentUser()!!
+            val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
             emit(Resource.Loading())
             Log.i(
                 TAG,
@@ -404,8 +404,8 @@ class RecordRepositoryImpl @Inject constructor(
     ): Flow<Resource<List<Record>>> {
         return flow {
             emit(Resource.Loading())
-            val currentUser = firebaseAuth.currentUser!!
-            val userId = if (currentUser.isNotNull()) currentUser.uid else ""
+            val currentUser = authRepository.getCurrentUser()!!
+            val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
             Log.i(
                 TAG,
                 "getUserRecordsFromSpecificTime: $startDate\n:\n$endDate"
@@ -473,8 +473,8 @@ class RecordRepositoryImpl @Inject constructor(
     ): Flow<Resource<List<CategoryWithAmount>>> {
         return flow {
             emit(Resource.Loading())
-            val currentUser = firebaseAuth.currentUser!!
-            val userId = if (currentUser.isNotNull()) currentUser.uid else ""
+            val currentUser = authRepository.getCurrentUser()!!
+            val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
             Log.i(
                 TAG,
                 "getUserCategoriesWithAmountFromSpecificTime: $currency\n$categoryType\n$startDate\n:\n$endDate"
@@ -548,8 +548,8 @@ class RecordRepositoryImpl @Inject constructor(
     ): Flow<Resource<List<AccountWithAmountType>>> {
         return flow {
             emit(Resource.Loading())
-            val currentUser = firebaseAuth.currentUser!!
-            val userId = if (currentUser.isNotNull()) currentUser.uid else ""
+            val currentUser = authRepository.getCurrentUser()!!
+            val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
             Log.i(
                 TAG,
                 "getUserAccountsWithAmountFromSpecificTime: \n$startDate\n:\n$endDate"
@@ -633,9 +633,9 @@ class RecordRepositoryImpl @Inject constructor(
         recordType: RecordType
     ): Flow<BalanceItem> {
         return flow {
-            val currentUser = firebaseAuth.currentUser!!
-            val userId = if (currentUser.isNotNull()) currentUser.uid else ""
-            val userCurrency = "USD"
+            val currentUser = authRepository.getCurrentUser()!!
+            val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
+            val userCurrency = currentUser.userCurrency
             Log.i(
                 TAG,
                 "getUserTotalAmountByType: $recordType",
@@ -679,9 +679,9 @@ class RecordRepositoryImpl @Inject constructor(
         endDate: LocalDateTime
     ): Flow<BalanceItem> {
         return flow {
-            val currentUser = firebaseAuth.currentUser!!
-            val userId = if (currentUser.isNotNull()) currentUser.uid else ""
-            val userCurrency = "USD"
+            val currentUser = authRepository.getCurrentUser()!!
+            val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
+            val userCurrency = currentUser.userCurrency
             Log.i(
                 TAG,
                 "getUserTotalAmountByTypeFromSpecificTime: $recordType",
@@ -722,9 +722,9 @@ class RecordRepositoryImpl @Inject constructor(
 
     override fun getUserTotalRecordBalance(): Flow<BalanceItem> {
         return flow {
-            val currentUser = firebaseAuth.currentUser!!
-            val userId = if (currentUser.isNotNull()) currentUser.uid else ""
-            val userCurrency = "USD"
+            val currentUser = authRepository.getCurrentUser()!!
+            val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
+            val userCurrency = currentUser.userCurrency
             Log.i(
                 TAG,
                 "getUserTotalRecordBalance: ",
