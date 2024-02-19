@@ -296,7 +296,7 @@ fun SimpleButton(
     imageColor: Color = Color.Unspecified,
     title: String,
     titleStyle: TextStyle = MaterialTheme.typography.titleLarge,
-    titleColor: Color = MaterialTheme.colorScheme.onBackground
+    titleColor: Color = MaterialTheme.colorScheme.onBackground,
 ) {
     Box(
         modifier = modifier

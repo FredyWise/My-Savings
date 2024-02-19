@@ -30,6 +30,17 @@ data class FilterState(
     val updating:Boolean = false
 )
 
+fun FilterState.isFilterTypeMonthBelow(): Boolean{
+    return when(filterType){
+        FilterType.Yearly -> false
+        FilterType.Per6Months -> false
+        FilterType.Per3Months -> false
+        FilterType.Monthly -> true
+        FilterType.Weekly -> true
+        FilterType.Daily -> true
+    }
+}
+
 fun <T> FilterState.map(target: (start: LocalDateTime, end: LocalDateTime, RecordType, SortType, currencies: List<String>) -> T): T {
     return when (filterType) {
         FilterType.Daily -> target(

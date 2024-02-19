@@ -11,6 +11,8 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.Icon
@@ -144,6 +146,7 @@ fun PreferencesScreen(
 
     DefaultAppBar(
         modifier = modifier,
+        contentModifier = Modifier.verticalScroll(rememberScrollState()),
         title = title,
         onNavigationIconClick = { rootNavController.navigateUp() },
     ) {
@@ -201,7 +204,7 @@ fun PreferencesScreen(
             },
             endContent = {
                 Text(
-                    text = formatBalanceAmount(3.33,"USD"),
+                    text = formatBalanceAmount(3.33, "USD"),
                     color = state.selectedExpenseColor,
                     style = MaterialTheme.typography.titleLarge
                 )
@@ -221,7 +224,7 @@ fun PreferencesScreen(
             },
             endContent = {
                 Text(
-                    text = formatBalanceAmount(3.33,"USD"),
+                    text = formatBalanceAmount(3.33, "USD"),
                     color = state.selectedIncomeColor,
                     style = MaterialTheme.typography.titleLarge
                 )
@@ -390,6 +393,7 @@ fun PreferencesScreen(
             )
         }
     }
+
 
 
     MaterialDialog(

@@ -3,7 +3,6 @@ package com.fredy.mysavings.ui.Screens.Record
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -35,9 +34,8 @@ import androidx.compose.ui.window.Dialog
 import com.fredy.mysavings.Data.Database.Model.Record
 import com.fredy.mysavings.Data.Database.Model.TrueRecord
 import com.fredy.mysavings.Util.BalanceColor
-import com.fredy.mysavings.Util.formatDateTime
+import com.fredy.mysavings.Util.formatDateYearTime
 import com.fredy.mysavings.Util.isTransfer
-import com.fredy.mysavings.ViewModels.Event.RecordsEvent
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.BalanceItem
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleEntityItem
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleWarningDialog
@@ -154,7 +152,7 @@ fun RecordDialog(
                         )
                         Text(
                             modifier = Modifier.fillMaxWidth(),
-                            text = formatDateTime(
+                            text = formatDateYearTime(
                                 trueRecord.record.recordDateTime
                             ),
                             textAlign = TextAlign.End,

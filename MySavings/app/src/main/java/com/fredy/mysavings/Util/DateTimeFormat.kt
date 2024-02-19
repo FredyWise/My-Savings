@@ -8,27 +8,32 @@ import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.TemporalAdjusters
 
-fun formatDate(date: LocalDate): String {
+fun formatDateYear(date: LocalDate): String {
     return DateTimeFormatter.ofPattern(
         "MMM dd, YYYY "
     ).format(date)
 }
 
-fun formatMonth(date: LocalDate): String {
+fun formatMonthYear(date: LocalDate): String {
     return DateTimeFormatter.ofPattern(
         "MMMM, YYYY "
     ).format(date)
 }
 
-fun formatDay(date: LocalDate): String {
+fun formatDateDay(date: LocalDate): String {
     return DateTimeFormatter.ofPattern(
         "MMM dd, EEEE "
     ).format(date)
 }
 
-fun formatDayTime(dateTime: LocalDateTime): String {
+fun formatDateTime(dateTime: LocalDateTime): String {
     return DateTimeFormatter.ofPattern(
         "MMM dd, hh:mm a"
+    ).format(dateTime)
+}
+fun formatDay(dateTime: LocalDateTime): String {
+    return DateTimeFormatter.ofPattern(
+        "dd, EEEE"
     ).format(dateTime)
 }
 
@@ -38,8 +43,8 @@ fun formatTime(time: LocalTime): String {
     ).format(time)
 }
 
-fun formatDateTime(dateTime: LocalDateTime): String {
-    return formatDate(dateTime.toLocalDate()) + formatTime(
+fun formatDateYearTime(dateTime: LocalDateTime): String {
+    return formatDateYear(dateTime.toLocalDate()) + formatTime(
         dateTime.toLocalTime()
     )
 }

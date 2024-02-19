@@ -20,9 +20,8 @@ import co.yml.charts.ui.barchart.models.BarStyle
 import co.yml.charts.ui.barchart.models.GroupBar
 import co.yml.charts.ui.barchart.models.GroupBarChartData
 import co.yml.charts.ui.barchart.models.GroupSeparatorConfig
-import com.fredy.mysavings.Util.formatCharAmount
+import com.fredy.mysavings.Util.formatBalanceAmount
 import com.fredy.mysavings.Util.truncateString
-import com.fredy.mysavings.ViewModels.Event.SettingEvent
 import kotlin.math.absoluteValue
 
 
@@ -38,13 +37,16 @@ fun ChartGroupedBar(
 ) {
 
     val step = 5
+
     val xAxisData = AxisData.Builder().backgroundColor(
         backgroundColor
     ).axisLabelColor(
         contentColor
     ).axisLineColor(contentColor).axisStepSize(
         30.dp
-    ).bottomPadding(5.dp).startDrawPadding(50.dp).labelData { index -> truncateString(groupBarData[index].label,10) }.build()
+    ).bottomPadding(5.dp).startDrawPadding(50.dp)
+        .labelData { index -> truncateString(groupBarData[index].label, 10) }.build()
+
     val yAxisData = AxisData.Builder().backgroundColor(
         backgroundColor
     ).axisLabelColor(
@@ -53,7 +55,12 @@ fun ChartGroupedBar(
         step
     ).labelAndAxisLinePadding(20.dp).axisOffset(
         20.dp
-    ).labelData { index -> formatCharAmount((index * (groupBarData.maxOf { it.barList.maxOf { it.point.y.absoluteValue } } / step).toDouble())) + " $currency" }.build()
+    ).labelData { index ->
+        formatBalanceAmount(
+            (index * (groupBarData.maxOf { data -> data.barList.maxOf { it.point.y.absoluteValue } } / step).toDouble()),
+            currency, true,
+        )
+    }.build()
     val colorPaletteList = listOf(
         incomeColor,
         expenseColor

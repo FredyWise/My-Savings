@@ -27,12 +27,8 @@ import com.fredy.mysavings.ViewModels.Event.RecordsEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flatMapMerge
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -45,7 +41,7 @@ class RecordViewModel @Inject constructor(
     private val recordRepository: RecordRepository,
     private val accountRepository: AccountRepository,
     private val settingsRepository: SettingsRepository,
-): ViewModel() {
+) : ViewModel() {
     init {
         viewModelScope.launch {
             accountRepository.getUserAvailableCurrency().collect { currency ->
@@ -127,11 +123,12 @@ class RecordViewModel @Inject constructor(
         Resource.Success(emptyList())
     )
 
-    private val _totalBalance = _filterState.flatMapLatest {recordRepository.getUserTotalRecordBalance()}.stateIn(
-        viewModelScope,
-        SharingStarted.WhileSubscribed(),
-        BalanceItem()
-    )
+    private val _totalBalance =
+        _filterState.flatMapLatest { recordRepository.getUserTotalRecordBalance() }.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(),
+            BalanceItem()
+        )
 
     private val _totalExpense = _filterState.flatMapLatest { filterState ->
         filterState.map { start, end, _, _, _ ->
@@ -232,131 +229,134 @@ class RecordViewModel @Inject constructor(
 
 
     fun onEvent(event: RecordsEvent) {
-        when (event) {
-            is RecordsEvent.ShowDialog -> {
-                _state.update {
-                    it.copy(
-                        trueRecord = event.trueRecord,
+        viewModelScope.launch {
+            when (event) {
+                is RecordsEvent.ShowDialog -> {
+                    _state.update {
+                        it.copy(
+                            trueRecord = event.trueRecord,
+                        )
+                    }
+                }
+
+                is RecordsEvent.HideDialog -> {
+                    _state.update {
+                        it.copy(
+                            trueRecord = null,
+                        )
+                    }
+                }
+
+                is RecordsEvent.ShowFilterDialog -> {
+                    _state.update {
+                        it.copy(
+                            isChoosingFilter = true,
+                        )
+                    }
+                }
+
+                is RecordsEvent.HideFilterDialog -> {
+                    _state.update {
+                        it.copy(
+                            isChoosingFilter = false,
+                        )
+                    }
+                }
+
+                is RecordsEvent.ToggleRecordType -> {
+                    _filterState.update {
+                        it.copy(
+                            recordType = when (it.recordType) {
+                                RecordType.Expense -> RecordType.Income
+                                RecordType.Income -> RecordType.Transfer
+                                RecordType.Transfer -> RecordType.Expense
+                            }
+                        )
+                    }
+
+                }
+
+                is RecordsEvent.DeleteRecord -> {
+                    viewModelScope.launch {
+                        recordRepository.deleteRecordItem(
+                            event.record
+                        )
+                        onEvent(RecordsEvent.UpdateRecord)
+                    }
+                }
+
+                is RecordsEvent.FilterRecord -> {
+                    _filterState.update {
+                        it.updateType(event.filterType)
+                    }
+                }
+
+                is RecordsEvent.ShowNextList -> {
+                    _filterState.update {
+                        it.plusDate()
+                    }
+                }
+
+                is RecordsEvent.ShowPreviousList -> {
+                    _filterState.update {
+                        it.minusDate()
+                    }
+                }
+
+                is RecordsEvent.ChangeDate -> {
+                    _filterState.update {
+                        it.updateDate(event.selectedDate)
+                    }
+                }
+
+                is RecordsEvent.SelectedCurrencies -> {
+                    Log.i(
+                        TAG,
+                        "onEvent: ${state.value.availableCurrency}"
                     )
+                    _filterState.update {
+                        it.copy(
+                            currencies = event.selectedCurrencies
+                        )
+                    }
+                    _state.update {
+                        it.copy(selectedCheckbox = event.selectedCurrencies)
+                    }
                 }
-            }
 
-            is RecordsEvent.HideDialog -> {
-                _state.update {
-                    it.copy(
-                        trueRecord = null,
-                    )
+                is RecordsEvent.ToggleSortType -> {
+                    _filterState.update {
+                        it.copy(
+                            sortType = when (it.sortType) {
+                                SortType.ASCENDING -> SortType.DESCENDING
+                                SortType.DESCENDING -> SortType.ASCENDING
+                            }
+                        )
+                    }
                 }
-            }
 
-            is RecordsEvent.ShowFilterDialog -> {
-                _state.update {
-                    it.copy(
-                        isChoosingFilter = true,
-                    )
+                RecordsEvent.ToggleCarryOn -> {
+                    viewModelScope.launch {
+                        settingsRepository.saveCarryOn(!_filterState.value.carryOn)
+                    }
+                    _filterState.update {
+                        it.copy(carryOn = !it.carryOn)
+                    }
                 }
-            }
 
-            is RecordsEvent.HideFilterDialog -> {
-                _state.update {
-                    it.copy(
-                        isChoosingFilter = false,
-                    )
+                RecordsEvent.ToggleShowTotal -> {
+                    viewModelScope.launch {
+                        settingsRepository.saveShowTotal(!_filterState.value.showTotal)
+                    }
+                    _filterState.update {
+                        it.copy(showTotal = !it.showTotal)
+                    }
                 }
-            }
 
-            is RecordsEvent.ToggleRecordType -> {
-                _filterState.update {
-                    it.copy(
-                        recordType = when(it.recordType){
-                            RecordType.Expense -> RecordType.Income
-                            RecordType.Income -> RecordType.Expense
-                            RecordType.Transfer -> RecordType.Expense
-                        }
-                    )
-                }
-            }
-
-            is RecordsEvent.DeleteRecord -> {
-                viewModelScope.launch {
-                    recordRepository.deleteRecordItem(
-                        event.record
-                    )
-                    onEvent(RecordsEvent.UpdateRecord)
-                }
-            }
-
-            is RecordsEvent.FilterRecord -> {
-                _filterState.update {
-                    it.updateType(event.filterType)
-                }
-            }
-
-            is RecordsEvent.ShowNextList -> {
-                _filterState.update {
-                    it.plusDate()
-                }
-            }
-
-            is RecordsEvent.ShowPreviousList -> {
-                _filterState.update {
-                    it.minusDate()
-                }
-            }
-
-            is RecordsEvent.ChangeDate -> {
-                _filterState.update {
-                    it.updateDate(event.selectedDate)
-                }
-            }
-
-            is RecordsEvent.SelectedCurrencies -> {
-                Log.i(
-                    TAG,
-                    "onEvent: ${state.value.availableCurrency}"
-                )
-                _filterState.update {
-                    it.copy(
-                        currencies = event.selectedCurrencies
-                    )
-                }
-                _state.update {
-                    it.copy(selectedCheckbox = event.selectedCurrencies)
-                }
-            }
-
-            is RecordsEvent.ToggleSortType -> {
-                _filterState.update {
-                    it.copy(
-                        sortType = when (it.sortType) {
-                            SortType.ASCENDING -> SortType.DESCENDING
-                            SortType.DESCENDING -> SortType.ASCENDING
-                        }
-                    )
-                }
-            }
-
-            RecordsEvent.ToggleCarryOn -> {
-                viewModelScope.launch {
-                    settingsRepository.saveCarryOn(!_filterState.value.carryOn)
-                }
-                _filterState.update {
-                    it.copy(carryOn = !it.carryOn)
-                }
-            }
-
-            RecordsEvent.ToggleShowTotal -> {
-                viewModelScope.launch {
-                    settingsRepository.saveShowTotal(!_filterState.value.showTotal)
-                }
-                _filterState.update {
-                    it.copy(showTotal = !it.showTotal)
-                }
-            }
-
-            RecordsEvent.UpdateRecord -> {
-                _filterState.update {
-                    it.copy(updating = !it.updating)
+                RecordsEvent.UpdateRecord -> {
+                    _filterState.update {
+                        it.copy(updating = !it.updating)
+                    }
                 }
             }
         }

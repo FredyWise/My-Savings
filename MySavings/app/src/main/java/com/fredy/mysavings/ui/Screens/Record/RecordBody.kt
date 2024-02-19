@@ -12,7 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.fredy.mysavings.Util.formatDay
+import com.fredy.mysavings.Util.formatDateDay
 import com.fredy.mysavings.ViewModels.Event.RecordsEvent
 import com.fredy.mysavings.ViewModels.RecordMap
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.CustomStickyHeader
@@ -33,7 +33,7 @@ fun RecordBody(
                     modifier = Modifier.background(
                         MaterialTheme.colorScheme.background
                     ),
-                    title = formatDay(
+                    title = formatDateDay(
                         trueRecordMap.recordDate
                     ),
                     textStyle = MaterialTheme.typography.titleMedium

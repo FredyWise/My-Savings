@@ -8,6 +8,7 @@ import androidx.compose.ui.graphics.Color
 import co.yml.charts.common.extensions.isNotNull
 import com.fredy.mysavings.Data.Enum.RecordType
 import java.text.DecimalFormat
+import kotlin.math.abs
 import kotlin.math.absoluteValue
 
 data class BalanceBar(
@@ -65,32 +66,32 @@ fun formatBalanceAmount(
     b: Boolean = true
 ): String {
     val amountCurrency = if (currency.isNotNull()) " $currency" else ""
-    return if (isShortenToChar) formatCharAmount(amount,k, m, b) + amountCurrency else formatAmount(amount) + amountCurrency
+    val shortenChar = formatCharAmount(amount,k, m, b)
+    return if (isShortenToChar) shortenChar + amountCurrency else formatAmount(amount) + amountCurrency
 }
 
-fun formatAmount(amount: Double): String {
+private fun formatAmount(amount: Double): String {
     return amountDecimalFormat.format(amount)
 }
 
 
 private val amountDecimalFormat = DecimalFormat("#,##0.00")
 
-fun formatCharAmount(
+
+private fun formatCharAmount(
     amount: Double,
     k: Boolean = true,
     m: Boolean = true,
     b: Boolean = true
 ): String {
-    return if (amount.absoluteValue < 1000) {
-        String.format("%.2f", amount)
-    } else if (amount.absoluteValue / 1000 >= 1 && amount.absoluteValue < 1_000_000 && k) {
-        String.format("%.2fK", amount / 1000)
-    } else if (amount.absoluteValue / 1_000_000 >= 1 && amount.absoluteValue < 1_000_000_000 && m) {
-        String.format("%.2fM", amount / 1_000_000)
-    } else if (amount.absoluteValue / 1_000_000_000 >= 1 && amount.absoluteValue < 1_000_000_000_000 && b) {
-        String.format("%.2fB", amount / 1_000_000_000)
-    } else {
-        String.format("%.2fT", amount / 1_000_000_000_000)
-    }
-}
+    val thresholds = listOf<Long>(1_000_000_000_000, 1_000_000_000, 1_000_000, 1000)
+    val units = listOf("T", "B", "M", "K")
 
+    for ((threshold, unit) in thresholds.zip(units)) {
+        if (abs(amount) >= threshold && (k || unit != "K") && (m || unit != "M") && (b || unit != "B")) {
+            return String.format("%.2f$unit", amount / threshold)
+        }
+    }
+
+    return amountDecimalFormat.format(amount)
+}

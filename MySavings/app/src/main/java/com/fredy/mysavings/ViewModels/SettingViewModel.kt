@@ -18,7 +18,7 @@ import com.fredy.mysavings.Util.BalanceColor
 import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.defaultExpenseColor
 import com.fredy.mysavings.Util.defaultIncomeColor
-import com.fredy.mysavings.Util.formatDate
+import com.fredy.mysavings.Util.formatDateYear
 import com.fredy.mysavings.Util.initialDarkThemeDefaultColor
 import com.fredy.mysavings.Util.isInternetConnected
 import com.fredy.mysavings.ViewModels.Event.SettingEvent
@@ -151,7 +151,7 @@ class SettingViewModel @Inject constructor(
                                 is Resource.Success -> {
                                     csvDao.outputToCSV(
                                         event.uri,
-                                        formatDate(startDate.toLocalDate()) + "- " + formatDate(
+                                        formatDateYear(startDate.toLocalDate()) + "- " + formatDateYear(
                                             endDate.toLocalDate()
                                         ),
                                         recordsResource.data!!

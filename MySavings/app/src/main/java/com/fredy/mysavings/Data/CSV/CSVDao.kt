@@ -1,10 +1,8 @@
 package com.fredy.mysavings.Data.CSV
 
 import android.content.Context
-import android.content.Context.STORAGE_SERVICE
 import android.os.Build
 import android.os.storage.StorageManager
-import android.os.storage.StorageVolume
 import android.util.Log
 import androidx.core.content.ContextCompat.getSystemService
 import com.fredy.mysavings.Data.Database.Converter.TimestampConverter
@@ -15,7 +13,7 @@ import com.fredy.mysavings.Data.Database.Model.TrueRecord
 import com.fredy.mysavings.Data.Enum.RecordType
 import com.fredy.mysavings.Util.TAG
 import com.fredy.mysavings.Util.formatBalanceAmount
-import com.fredy.mysavings.Util.formatDateTime
+import com.fredy.mysavings.Util.formatDateYearTime
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -188,7 +186,7 @@ class CSVDaoImpl(private val context: Context): CSVDao {
         }
 
         val values = listOf(
-            formatDateTime(trueRecord.record.recordDateTime).replace(",",""),
+            formatDateYearTime(trueRecord.record.recordDateTime).replace(",",""),
             trueRecord.record.recordType.name,
             trueRecord.fromAccount.accountName,
             toCategoryName,

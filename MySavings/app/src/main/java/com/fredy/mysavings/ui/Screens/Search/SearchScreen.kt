@@ -64,7 +64,7 @@ fun SearchScreen(
 
     }
     DefaultAppBar(
-        modifier = modifier, title = title, scrollable = false,
+        modifier = modifier, title = title,
         onNavigationIconClick = { rootNavController.navigateUp() },
     ) {
         SearchBar(

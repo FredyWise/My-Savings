@@ -5,6 +5,7 @@ import android.os.Build
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -28,12 +29,11 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.darkrockstudios.libraries.mpfilepicker.DirectoryPicker
-import com.fredy.mysavings.Util.formatDate
+import com.fredy.mysavings.Util.formatDateYear
 import com.fredy.mysavings.ViewModels.Event.SettingEvent
 import com.fredy.mysavings.ViewModels.SettingState
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.DefaultAppBar
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SettingButton
-import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleButton
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
@@ -80,8 +80,7 @@ fun ExportScreen(
             ).show()
         }
     }
-
-    var showDirPicker  by remember { mutableStateOf(false) }
+    var showDirPicker by remember { mutableStateOf(false) }
     DirectoryPicker(
         show = showDirPicker,
         onFileSelected = {
@@ -105,7 +104,9 @@ fun ExportScreen(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Column(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier
+                    .weight(1f)
+                    .clickable { startDateDialogState.show() },
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
@@ -114,10 +115,9 @@ fun ExportScreen(
                         onBackground
                     ),
                 )
-                SimpleButton(
-                    onClick = { startDateDialogState.show() },
-                    title = formatDate(state.startDate.toLocalDate()),
-                    titleStyle = MaterialTheme.typography.titleLarge.copy(
+                Text(
+                    text = formatDateYear(state.startDate.toLocalDate()),
+                    style = MaterialTheme.typography.titleLarge.copy(
                         onBackground
                     )
                 )
@@ -133,7 +133,9 @@ fun ExportScreen(
                 )
             )
             Column(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier
+                    .weight(1f)
+                    .clickable { endDateDialogState.show() },
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
@@ -142,10 +144,9 @@ fun ExportScreen(
                         onBackground
                     ),
                 )
-                SimpleButton(
-                    onClick = { endDateDialogState.show() },
-                    title = formatDate(state.endDate.toLocalDate()),
-                    titleStyle = MaterialTheme.typography.titleLarge.copy(
+                Text(
+                    text = formatDateYear(state.endDate.toLocalDate()),
+                    style = MaterialTheme.typography.titleLarge.copy(
                         onBackground
                     )
                 )

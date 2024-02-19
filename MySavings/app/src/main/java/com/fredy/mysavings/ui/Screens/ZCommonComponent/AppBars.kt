@@ -8,14 +8,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -35,7 +34,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.Data.Database.Model.TrueRecord
 import com.fredy.mysavings.Util.Resource
-import com.fredy.mysavings.Util.formatDay
+import com.fredy.mysavings.Util.formatDateDay
 import com.fredy.mysavings.ViewModels.RecordMap
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -141,7 +140,9 @@ fun DetailAppBar(
                     ),
             ) {
                 item {
-                    Row(modifier = Modifier.padding(bottom = 8.dp).padding(horizontal = 8.dp)) {
+                    Row(modifier = Modifier
+                        .padding(bottom = 8.dp)
+                        .padding(horizontal = 8.dp)) {
                         Text(text = "Total of: " + recordMaps.sumOf { it.records.size } + " records")
                     }
                 }
@@ -151,7 +152,7 @@ fun DetailAppBar(
                             modifier = Modifier.background(
                                 backgroundColor
                             ),
-                            title = formatDay(
+                            title = formatDateDay(
                                 trueRecordMap.recordDate
                             ),
                             textStyle = MaterialTheme.typography.titleMedium
@@ -159,7 +160,7 @@ fun DetailAppBar(
                     }
                     items(
                         trueRecordMap.records,
-                        key = { it.record.recordId }) { item ->
+                        key = { it.record.recordId },) { item ->
                         Divider(
                             modifier = Modifier.height(
                                 0.3.dp
@@ -181,19 +182,17 @@ fun DetailAppBar(
 @Composable
 fun DefaultAppBar(
     modifier: Modifier = Modifier,
+    contentModifier: Modifier = Modifier,
     iconColor: Color = MaterialTheme.colorScheme.onSurface,
-    scrollable: Boolean = true,
     title: String,
     onNavigationIconClick: () -> Unit,
     actionButton: @Composable () -> Unit = {},
     content: @Composable () -> Unit,
 ) {
     Column(
-        modifier = Modifier.fillMaxSize().then(if (scrollable) {
-            modifier.verticalScroll(rememberScrollState())
-        } else {
-            modifier
-        }),
+        modifier = Modifier
+            .fillMaxSize()
+            .then(modifier),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         TopAppBar(
@@ -222,6 +221,9 @@ fun DefaultAppBar(
                 }
             },
         )
-        content()
+        Column(modifier = contentModifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally){
+            content()
+        }
     }
 }

@@ -27,7 +27,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.Util.BalanceColor
-import com.fredy.mysavings.Util.formatCharAmount
+import com.fredy.mysavings.Util.formatBalanceAmount
 
 @Composable
 fun ChartSlimDonutWithTitle(
@@ -35,8 +35,9 @@ fun ChartSlimDonutWithTitle(
     itemsProportion: List<Float>,
     circleColors: List<Color>,
     graphLabel: String,
-    onClickLabel: () -> Unit,
     amountsTotal: Double,
+    labelColor: Color = BalanceColor(amount = amountsTotal),
+    onClickLabel: () -> Unit,
 ) {
     Box(
         modifier = modifier
@@ -55,14 +56,14 @@ fun ChartSlimDonutWithTitle(
             Text(
                 text = graphLabel,
                 style = MaterialTheme.typography.bodyLarge,
-                color = BalanceColor(amount = amountsTotal),
+                color = labelColor,
             )
             Text(
-                text = formatCharAmount(
-                    amountsTotal
+                text = formatBalanceAmount(
+                    amountsTotal, isShortenToChar = true,
                 ),
                 style = MaterialTheme.typography.headlineMedium,
-                color = BalanceColor(amount = amountsTotal),
+                color = labelColor,
             )
         }
         ChartSlimDonut(

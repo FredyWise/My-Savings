@@ -1,6 +1,7 @@
 package com.fredy.mysavings.ui.Screens.Analysis
 
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -31,6 +32,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.fredy.mysavings.Data.Enum.SortType
 import com.fredy.mysavings.Util.formatRangeOfDate
+import com.fredy.mysavings.Util.isTransfer
 import com.fredy.mysavings.ViewModels.Event.RecordsEvent
 import com.fredy.mysavings.ViewModels.RecordState
 import com.fredy.mysavings.ui.NavigationComponent.MainFilterAppBar
@@ -39,7 +41,6 @@ import com.fredy.mysavings.ui.NavigationComponent.Navigation.NavigationRoute
 import com.fredy.mysavings.ui.NavigationComponent.Navigation.analysisScreens
 import com.fredy.mysavings.ui.NavigationComponent.Navigation.navigateSingleTopTo
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AnalysisScreen(
     modifier: Modifier = Modifier,
@@ -120,6 +121,11 @@ fun AnalysisScreen(
                     navController.navigateSingleTopTo(
                         screen.route
                     )
+                    if (currentScreen == screen && screen != NavigationRoute.AnalysisAccount){
+                        onEvent(
+                            RecordsEvent.ToggleRecordType
+                        )
+                    }
                 },
                 currentScreen = currentScreen,
             )

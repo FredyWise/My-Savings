@@ -96,7 +96,7 @@ fun <T> ResourceHandler(
         modifier = modifier,
         contentAlignment = Alignment.TopCenter
     ) {
-        LaunchedEffect(key1 = resource){
+        LaunchedEffect(key1 = resource) {
             debounce(resource)
         }
         when (resource) {
@@ -127,30 +127,34 @@ fun <T> ResourceHandler(
 
             is Resource.Success -> {
                 resource.data.let {
-                    if (isNullOrEmpty(it) && showEmptyMessage) {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = nullOrEmptyMessage,
-                                modifier = Modifier
-                                    .clip(
-                                        MaterialTheme.shapes.medium
-                                    )
-                                    .clickable {
-                                        onMessageClick()
-                                    }
-                                    .padding(
-                                        20.dp
-                                    ),
-                                style = MaterialTheme.typography.titleLarge,
-                                color = MaterialTheme.colorScheme.onBackground,
-                            )
-                        }
-                    } else {
+                    if (!isNullOrEmpty(it)) {
                         it?.let {
                             content(it)
+                        }
+                    } else {
+                        if(showEmptyMessage) {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = nullOrEmptyMessage,
+                                    modifier = Modifier
+                                        .clip(
+                                            MaterialTheme.shapes.medium
+                                        )
+                                        .clickable {
+                                            onMessageClick()
+                                        }
+                                        .padding(
+                                            20.dp
+                                        ),
+                                    style = MaterialTheme.typography.titleLarge,
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                )
+                            }
+                        } else {
+                            
                         }
                     }
                 }
@@ -290,6 +294,7 @@ fun CustomStickyHeader(
     textStyle: TextStyle,
     textColor: Color = MaterialTheme.colorScheme.primary,
     topPadding: Dp = 28.dp,
+    bottomPadding: Dp = 4.dp,
     useDivider: Boolean = true,
     title: String
 ) {
@@ -306,7 +311,7 @@ fun CustomStickyHeader(
                 .padding(
                     top = topPadding,
                     start = 8.dp,
-                    bottom = 4.dp
+                    bottom = bottomPadding,
                 ),
         )
         if (useDivider) {

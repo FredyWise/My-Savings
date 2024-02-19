@@ -22,7 +22,7 @@ import co.yml.charts.ui.linechart.model.LineType
 import co.yml.charts.ui.linechart.model.SelectionHighlightPoint
 import co.yml.charts.ui.linechart.model.SelectionHighlightPopUp
 import co.yml.charts.ui.linechart.model.ShadowUnderLine
-import com.fredy.mysavings.Util.formatCharAmount
+import com.fredy.mysavings.Util.formatBalanceAmount
 import kotlin.math.nextUp
 
 @Composable
@@ -59,8 +59,8 @@ fun ChartLine(
         val yMax = points.maxOf { it.y }.nextUp()
 //        val yScale = (yMax - yMin) / steps
         val yScale = yMax / steps
-        formatCharAmount((i * yScale).toDouble()) + " $currency"
-//        formatCharAmount(((i * yScale) + yMin).toDouble())
+        formatBalanceAmount((i * yScale).toDouble(), currency,true)
+//        formatBalanceAmount(((i * yScale) + yMin).toDouble(),currency)
     }.build()
 
     val data = LineChartData(
@@ -94,7 +94,7 @@ fun ChartLine(
                         popUpLabel = { x, y ->
                             val xLabel = "date : ${x.toInt()} "
                             val yLabel = "amount : ${
-                                formatCharAmount(
+                                formatBalanceAmount(
                                     y.toDouble()
                                 )
                             }"

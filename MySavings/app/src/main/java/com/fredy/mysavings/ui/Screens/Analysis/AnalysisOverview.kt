@@ -19,6 +19,9 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,9 +33,9 @@ import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.R
 import com.fredy.mysavings.Util.BalanceColor
 import com.fredy.mysavings.Util.defaultColors
-import com.fredy.mysavings.Util.formatAmount
 import com.fredy.mysavings.Util.formatBalanceAmount
 import com.fredy.mysavings.Util.isExpense
+import com.fredy.mysavings.Util.isIncome
 import com.fredy.mysavings.ViewModels.Event.RecordsEvent
 import com.fredy.mysavings.ViewModels.RecordState
 import com.fredy.mysavings.ui.Screens.Analysis.Charts.ChartSlimDonutWithTitle
@@ -45,6 +48,9 @@ fun AnalysisOverview(
     state: RecordState,
     onEvent: (RecordsEvent) -> Unit,
 ) {
+    val expenseColor by remember { mutableStateOf(BalanceColor.Expense) }
+    val incomeColor by remember { mutableStateOf(BalanceColor.Income) }
+    val transferColor by remember { mutableStateOf(BalanceColor.Transfer) }
     state.resourceData.categoriesWithAmountResource.let { resource ->
         ResourceHandler(
             resource = resource,
@@ -56,9 +62,13 @@ fun AnalysisOverview(
                     RecordsEvent.ToggleRecordType
                 )
             },
-        ) { data ->                // this to bellow should be able to be simplified
-            val items =
-                if (isExpense(data.first().category.categoryType)) data else data.reversed()
+        ) { data ->
+            val items = if (isExpense(data.first().category.categoryType)) data else data.reversed()
+            val contentColor =
+                if (isExpense(data.first().category.categoryType)) expenseColor else if (isIncome(
+                        data.first().category.categoryType
+                    )
+                ) incomeColor else transferColor
             val colors = (if (isExpense(items.first().category.categoryType)) defaultColors
             else defaultColors.reversed()).subList(
                 0,
@@ -68,7 +78,7 @@ fun AnalysisOverview(
             val itemsProportion = items.extractProportions { proportion ->
                 proportion.amount.toFloat()
             }
-            LazyColumn (modifier = modifier){
+            LazyColumn(modifier = modifier) {
                 item {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Box(
@@ -84,12 +94,12 @@ fun AnalysisOverview(
                                 graphLabel = stringResource(
                                     R.string.total
                                 ) + " " + items.first().category.categoryType.name,
+                                labelColor = contentColor,
                                 amountsTotal = items.sumOf { it.amount },
                                 onClickLabel = {
                                     onEvent(
                                         RecordsEvent.ToggleRecordType
                                     )
-//                                        isVisible.targetState = false
                                 },
                             )
                         }
@@ -161,7 +171,7 @@ fun AnalysisOverview(
                                     73.dp
                                 ),
                                 text = "${
-                                    formatAmount(
+                                    formatBalanceAmount(
                                         (itemsProportion[index] * 100).toDouble()
                                     )
                                 }%",
@@ -230,9 +240,9 @@ fun AnalysisOverview(
                     Spacer(modifier = Modifier.height(75.dp))
                 }
             }
+
         }
     }
-//    }
 }
 
 fun <E> List<E>.extractProportions(selector: (E) -> Float): List<Float> {

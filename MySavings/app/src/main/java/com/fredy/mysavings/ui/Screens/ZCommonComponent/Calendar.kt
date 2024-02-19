@@ -29,7 +29,7 @@ import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
-import com.fredy.mysavings.Util.formatCharAmount
+import com.fredy.mysavings.Util.formatBalanceAmount
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.YearMonth
@@ -54,7 +54,8 @@ fun Calendar(
             date.year,
             date.month,
             1
-        ).dayOfWeek.value % 7 < 5) 6 else 7
+        ).dayOfWeek.value % 7 < 5
+    ) 6 else 7
     var canvasSize by remember {
         mutableStateOf(Size.Zero)
     }
@@ -159,7 +160,7 @@ fun Calendar(
                 )
             )
 
-            for (i in 1 .. calendarRows - 1) {
+            for (i in 1..calendarRows - 1) {
                 drawLine(
                     color = borderColor,
                     start = Offset(
@@ -171,7 +172,7 @@ fun Calendar(
                     strokeWidth = strokeWidth
                 )
             }
-            for (i in 1 .. calendarColumn - 1) {
+            for (i in 1..calendarColumn - 1) {
                 drawLine(
                     color = borderColor,
                     start = Offset(
@@ -215,7 +216,7 @@ fun Calendar(
                 }
             }
 
-            for (i in 1 .. YearMonth.from(date).lengthOfMonth()) {
+            for (i in 1..YearMonth.from(date).lengthOfMonth()) {
                 val dayOfWeek = LocalDate.of(
                     date.year,
                     date.month,
@@ -249,7 +250,7 @@ fun Calendar(
                                 textAlign = Paint.Align.CENTER
                             })
                         drawText(
-                            formatCharAmount(it.toDouble()),
+                            formatBalanceAmount(it.toDouble(), isShortenToChar = true),
                             textCenterX,
                             textPositionY.toFloat() + textHeight,
                             Paint().apply {

@@ -71,7 +71,6 @@ fun ProfileScreen(
         modifier = modifier,
         title = title,
         onNavigationIconClick = { rootNavController.navigateUp() },
-        scrollable = false,
     ) {
         val context = LocalContext.current
         var username by remember {

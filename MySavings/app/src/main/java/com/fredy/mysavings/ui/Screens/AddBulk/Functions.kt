@@ -40,7 +40,7 @@ fun createImageFile(
 ): File {
     val storageDir = context.getExternalFilesDir(
         environment
-    ) // Use the cache directory to avoid using external storage
+    )
     return File.createTempFile(
         imageFileName, ".jpg", storageDir
     )
@@ -62,11 +62,9 @@ fun detectTextFromImage(
     )
 
     resultTask.addOnSuccessListener { result ->
-        // Text recognition succeeded
         val text = result.text
         onSuccess(text)
     }.addOnFailureListener { e ->
-        // Text recognition failed, handle the error
         e.printStackTrace()
         val error = "Error: ${e.message}"
         onFailure(error)

@@ -54,7 +54,7 @@ fun AnalysisAccount(
                 )
             },
         ) { data ->
-            LazyColumn (modifier = modifier){
+            LazyColumn(modifier = modifier) {
                 item {
                     ChartGroupedBar(
                         incomeColor = incomeColor,
@@ -133,7 +133,7 @@ fun AnalysisAccount(
                                 horizontalArrangement = Arrangement.Center
                             ) {
                                 Text(
-                                    text = "This Period:",
+                                    text = "Balance:",
                                     style = MaterialTheme.typography.titleMedium.copy(
                                         fontWeight = FontWeight.SemiBold
                                     ),
