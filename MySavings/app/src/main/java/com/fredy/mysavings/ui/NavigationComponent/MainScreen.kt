@@ -39,15 +39,20 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.fredy.mysavings.Data.Database.Model.UserData
+import com.fredy.mysavings.ViewModels.AccountViewModel
+import com.fredy.mysavings.ViewModels.CategoryViewModel
+import com.fredy.mysavings.ViewModels.RecordViewModel
 import com.fredy.mysavings.ui.NavigationComponent.Navigation.HomeNavGraph
 import com.fredy.mysavings.ui.NavigationComponent.Navigation.NavigationRoute
 import com.fredy.mysavings.ui.NavigationComponent.Navigation.bottomBarScreens
 import com.fredy.mysavings.ui.NavigationComponent.Navigation.drawerScreens
 import com.fredy.mysavings.ui.NavigationComponent.Navigation.navigateSingleTopTo
+import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleWarningDialog
 import kotlinx.coroutines.launch
 
 @Composable
@@ -62,13 +67,14 @@ fun MainScreen(
 ) {
     val navController = rememberNavController()
     val scaffoldState = rememberScaffoldState()
-    var offsetX by remember { mutableStateOf(0f) }/*
-    var offsetY by remember { mutableStateOf(0f) }
-    var isFabVisible by remember {
-        mutableStateOf(
-            true
-        )
-    }*/
+//    var offsetX by remember { mutableStateOf(0f) }
+//    var offsetY by remember { mutableStateOf(0f) }
+//    var isFabVisible by remember {
+//        mutableStateOf(
+//            true
+//        )
+//    }
+
     var isShowingAdd by remember {
         mutableStateOf(
             false
@@ -79,6 +85,16 @@ fun MainScreen(
     val currentDestination = currentBackStack?.destination
     val currentScreen =
         bottomBarScreens.find { it.route == currentDestination?.route } ?: NavigationRoute.Records
+
+    var isShowWarning by remember { mutableStateOf(false) }
+    SimpleWarningDialog(
+        isShowWarning = isShowWarning,
+        onDismissRequest = { isShowWarning = false },
+        onSaveClicked = {
+            signOut()
+        },
+        warningText = "Are You Sure Want to Log Out?"
+    )
     Scaffold(
         modifier = modifier,
         backgroundColor = backgroundColor,
@@ -100,7 +116,7 @@ fun MainScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
-                                signOut()
+                                isShowWarning = true
                             }
                             .padding(16.dp),
                     ) {

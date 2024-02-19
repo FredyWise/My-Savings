@@ -12,6 +12,7 @@ import com.fredy.mysavings.Data.Repository.AccountRepository
 import com.fredy.mysavings.Data.Repository.AccountWithAmountType
 import com.fredy.mysavings.Data.Repository.CategoryWithAmount
 import com.fredy.mysavings.Data.Repository.RecordRepository
+import com.fredy.mysavings.Data.Repository.SettingsRepository
 import com.fredy.mysavings.Util.BalanceBar
 import com.fredy.mysavings.Util.BalanceItem
 import com.fredy.mysavings.Util.FilterState
@@ -28,7 +29,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flatMapMerge
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -40,20 +44,17 @@ import javax.inject.Inject
 class RecordViewModel @Inject constructor(
     private val recordRepository: RecordRepository,
     private val accountRepository: AccountRepository,
+    private val settingsRepository: SettingsRepository,
 ): ViewModel() {
-
     init {
         viewModelScope.launch {
-            accountRepository.getUserAvailableCurrency().collectLatest { currency ->
+            accountRepository.getUserAvailableCurrency().collect { currency ->
                 _state.update {
                     it.copy(selectedCheckbox = currency)
                 }
                 _filterState.update {
                     it.copy(currencies = currency)
                 }
-            }
-            _filterState.update {
-                it.copy(updating = !it.updating)
             }
         }
     }
@@ -67,7 +68,6 @@ class RecordViewModel @Inject constructor(
         SharingStarted.WhileSubscribed(),
         emptyList()
     )
-
 
     private val _categoriesWithAmount = _filterState.flatMapLatest { filterState ->
         filterState.map { start, end, recordType, sortType, currencies ->
@@ -194,7 +194,7 @@ class RecordViewModel @Inject constructor(
         _recordsWithinSpecificTime,
         _accountsWithAmount,
         _recordResource,
-    ) { resourceData, categoriesWithAmount, recordsWithinSpecificTime, accountsWithAmount,recordResource ->
+    ) { resourceData, categoriesWithAmount, recordsWithinSpecificTime, accountsWithAmount, recordResource ->
         resourceData.copy(
             categoriesWithAmountResource = categoriesWithAmount,
             accountsWithAmountResource = accountsWithAmount,
@@ -226,7 +226,7 @@ class RecordViewModel @Inject constructor(
         )
     }.stateIn(
         viewModelScope,
-        SharingStarted.WhileSubscribed( 5000),
+        SharingStarted.Eagerly,
         RecordState()
     )
 
@@ -337,12 +337,18 @@ class RecordViewModel @Inject constructor(
             }
 
             RecordsEvent.ToggleCarryOn -> {
+                viewModelScope.launch {
+                    settingsRepository.saveCarryOn(!_filterState.value.carryOn)
+                }
                 _filterState.update {
                     it.copy(carryOn = !it.carryOn)
                 }
             }
 
             RecordsEvent.ToggleShowTotal -> {
+                viewModelScope.launch {
+                    settingsRepository.saveShowTotal(!_filterState.value.showTotal)
+                }
                 _filterState.update {
                     it.copy(showTotal = !it.showTotal)
                 }
@@ -355,7 +361,6 @@ class RecordViewModel @Inject constructor(
             }
         }
     }
-
 }
 
 data class RecordState(

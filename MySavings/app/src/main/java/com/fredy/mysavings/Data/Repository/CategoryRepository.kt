@@ -5,10 +5,10 @@ import co.yml.charts.common.extensions.isNotNull
 import com.fredy.mysavings.Data.Database.Dao.CategoryDao
 import com.fredy.mysavings.Data.Database.FirebaseDataSource.CategoryDataSource
 import com.fredy.mysavings.Data.Database.Model.Category
+import com.fredy.mysavings.Data.Mappers.toCategoryMaps
 import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.TAG
 import com.fredy.mysavings.ViewModels.CategoryMap
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -85,12 +85,13 @@ class CategoryRepositoryImpl @Inject constructor(
             val currentUser = authRepository.getCurrentUser()!!
             val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
 
-            val data = withContext(Dispatchers.IO) {
-                categoryDao.getUserCategoriesOrderedByName(
+            withContext(Dispatchers.IO) {
+                categoryDataSource.getUserCategoriesOrderedByName(
                     userId
                 )
+            }.collect{ data ->
+                emit(data)
             }
-            emit(data)
         }
     }
 
@@ -101,20 +102,14 @@ class CategoryRepositoryImpl @Inject constructor(
             val currentUser = authRepository.getCurrentUser()!!
             val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
 
-            val categories = withContext(Dispatchers.IO) {
-                categoryDao.getUserCategoriesOrderedByName(
+             withContext(Dispatchers.IO) {
+                categoryDataSource.getUserCategoriesOrderedByName(
                     userId
                 )
+            }.collect{ categories->
+                val data = categories.toCategoryMaps()
+                emit(Resource.Success(data))
             }
-            val data = categories.groupBy {
-                it.categoryType
-            }.toSortedMap().map {
-                CategoryMap(
-                    categoryType = it.key,
-                    categories = it.value
-                )
-            }
-            emit(Resource.Success(data))
         }.catch { e ->
             Log.i(
                 TAG,

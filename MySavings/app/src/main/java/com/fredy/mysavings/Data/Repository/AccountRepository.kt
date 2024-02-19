@@ -5,16 +5,17 @@ import co.yml.charts.common.extensions.isNotNull
 import com.fredy.mysavings.Data.Database.Dao.AccountDao
 import com.fredy.mysavings.Data.Database.FirebaseDataSource.AccountDataSource
 import com.fredy.mysavings.Data.Database.Model.Account
+import com.fredy.mysavings.Data.Mappers.getCurrencies
 import com.fredy.mysavings.Util.BalanceItem
 import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.TAG
 import com.fredy.mysavings.Util.deletedAccount
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -88,12 +89,14 @@ class AccountRepositoryImpl @Inject constructor(
             emit(Resource.Loading())
             val currentUser = authRepository.getCurrentUser()!!
             val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
-            val data = withContext(Dispatchers.IO) {
-                accountDao.getUserAccounts(
+            withContext(Dispatchers.IO) {
+                accountDataSource.getUserAccounts(
                     userId
-                ).filter { it.accountName != deletedAccount.accountName }
+                ).map { accounts -> accounts.filter { it.accountName != deletedAccount.accountName } }
+            }.collect { data ->
+
+                emit(Resource.Success(data))
             }
-            emit(Resource.Success(data))
         }.catch { e ->
             Log.i(
                 TAG,
@@ -113,33 +116,23 @@ class AccountRepositoryImpl @Inject constructor(
                 TAG,
                 "getUserAccountTotalBalance: $currentUser"
             )
-            val accounts = withContext(Dispatchers.IO) {
-                accountDao.getUserAccounts(
+            withContext(Dispatchers.IO) {
+                accountDataSource.getUserAccounts(
                     userId
                 )
-            }
-            val totalAccountBalance = accounts.sumOf { account ->
-                Log.i(
-                    TAG,
-                    "getUserAccountTotalBalance.foreach:$account",
-                )
-                currencyConverter(
-                    account.accountAmount,
-                    account.accountCurrency,
+            }.collect { accounts ->
+                val totalAccountBalance = accounts.getTotalAccountBalance(userCurrency)
+                val data = BalanceItem(
+                    "Total Balance",
+                    totalAccountBalance,
                     userCurrency
                 )
-
+                Log.i(
+                    TAG,
+                    "getUserAccountTotalBalance.data: $data"
+                )
+                emit(data)
             }
-            val data = BalanceItem(
-                "Total Balance",
-                totalAccountBalance,
-                userCurrency
-            )
-            Log.i(
-                TAG,
-                "getUserAccountTotalBalance.data: $data"
-            )
-            emit(data)
         }
     }
 
@@ -148,12 +141,13 @@ class AccountRepositoryImpl @Inject constructor(
             val currentUser = authRepository.getCurrentUser()!!
             val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
 
-            val data = withContext(Dispatchers.IO) {
-                accountDao.getUserAvailableCurrency(
+            withContext(Dispatchers.IO) {
+                accountDataSource.getUserAccounts(
                     userId
-                )
+                ).map { it.getCurrencies() }
+            }.collect { data ->
+                emit(data)
             }
-            emit(data)
         }
     }
 
@@ -163,5 +157,15 @@ class AccountRepositoryImpl @Inject constructor(
         return currencyRepository.convertCurrencyData(
             amount, from, to
         ).amount
+    }
+
+    private suspend fun List<Account>.getTotalAccountBalance(userCurrency: String): Double {
+        return this.sumOf { account ->
+            currencyConverter(
+                account.accountAmount,
+                account.accountCurrency,
+                userCurrency
+            )
+        }
     }
 }

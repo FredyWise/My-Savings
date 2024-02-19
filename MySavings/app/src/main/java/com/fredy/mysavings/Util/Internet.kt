@@ -13,7 +13,7 @@ fun isInternetConnected(context: Context): Boolean {
         ?: return false
     val result = when {
         actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
-        actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+//        actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
         actNw.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
         else -> false
     }

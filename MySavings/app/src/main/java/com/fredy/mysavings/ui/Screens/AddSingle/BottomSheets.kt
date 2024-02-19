@@ -35,7 +35,6 @@ import com.fredy.mysavings.Data.Database.Model.Category
 import com.fredy.mysavings.Data.Enum.RecordType
 import com.fredy.mysavings.R
 import com.fredy.mysavings.Util.BalanceColor
-import com.fredy.mysavings.Util.categoryIcons
 import com.fredy.mysavings.Util.formatBalanceAmount
 import com.fredy.mysavings.Util.isTransfer
 import com.fredy.mysavings.Util.savingsIcons
@@ -66,7 +65,7 @@ fun AddBottomSheet(
     onSelectCategory: (Category) -> Unit,
 ) {
     ModalBottomSheet(
-        modifier = modifier,
+        modifier = modifier.padding(top = 24.dp),
         sheetState = sheetState,
         dragHandle = {},
         onDismissRequest = {
@@ -125,46 +124,47 @@ fun AddBottomSheet(
                     )
                 }
             }
-            categoryState.categoryResource.let { resource ->
-                ResourceHandler(
-                    resource = resource,
-                    nullOrEmptyMessage = "You Didn't Have Any Account Yet",
-                    isNullOrEmpty = { it.isNullOrEmpty() },
-                    errorMessage = resource.message ?: "",
-                    onMessageClick = {
-                        onEventAccount(
-                            AccountEvent.ShowDialog(
-                                Account(
-                                    accountName = ""
-                                )
+        }
+        categoryState.categoryResource.let { resource ->
+            ResourceHandler(
+                resource = resource,
+                nullOrEmptyMessage = "You Didn't Have Any Account Yet",
+                isNullOrEmpty = { it.isNullOrEmpty() },
+                errorMessage = resource.message ?: "",
+                onMessageClick = {
+                    onEventAccount(
+                        AccountEvent.ShowDialog(
+                            Account(
+                                accountName = ""
                             )
                         )
-                    },
-                ) { data ->
-                    if (!isTransfer(recordType) && !isLeading) {
-                        CategoryBottomSheet(
-                            categoryMaps = data,
-                            recordType = recordType,
-                            onSelectCategory = {
-                                onSelectCategory(it)
-                                onDismissModal(false)
-                            },
-                            onAddCategory = {
-                                onEventCategory(
-                                    CategoryEvent.ShowDialog(
-                                        Category(
-                                            categoryName = ""
-                                        )
+                    )
+                },
+            ) { data ->
+                if (!isTransfer(recordType) && !isLeading) {
+                    CategoryBottomSheet(
+                        categoryMaps = data,
+                        recordType = recordType,
+                        onSelectCategory = {
+                            onSelectCategory(it)
+                            onDismissModal(false)
+                        },
+                        onAddCategory = {
+                            onEventCategory(
+                                CategoryEvent.ShowDialog(
+                                    Category(
+                                        categoryName = ""
                                     )
                                 )
-                            },
-                        )
-                    }
+                            )
+                        },
+                    )
                 }
             }
         }
     }
 }
+
 
 @Composable
 fun AccountBottomSheet(
@@ -258,7 +258,7 @@ fun AccountBottomSheet(
                     title = "Add Account",
                     titleColor = textColor
                 )
-                Spacer(modifier = Modifier.height(25.dp))
+                Spacer(modifier = Modifier.height(200.dp))
             }
         }
     }
@@ -318,7 +318,8 @@ fun CategoryBottomSheet(
                                 shape = MaterialTheme.shapes.extraLarge
                             ),
                         painter = painterResource(
-                            id = savingsIcons[category.categoryIconDescription]?.image ?: category.categoryIcon
+                            id = savingsIcons[category.categoryIconDescription]?.image
+                                ?: category.categoryIcon
                         ),
                         contentDescription = category.categoryIconDescription,
                         tint = Color.Unspecified
@@ -366,7 +367,7 @@ fun CategoryBottomSheet(
                 }
             }
         }
-        Spacer(modifier = Modifier.height(25.dp))
+        Spacer(modifier = Modifier.height(200.dp))
     }
 
 }

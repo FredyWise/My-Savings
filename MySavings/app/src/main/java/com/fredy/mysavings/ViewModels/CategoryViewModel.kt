@@ -100,7 +100,7 @@ class CategoryViewModel @Inject constructor(
         )
     }.stateIn(
         viewModelScope,
-        SharingStarted.WhileSubscribed(10000),
+        SharingStarted.Eagerly,
         CategoryState()
     )
 

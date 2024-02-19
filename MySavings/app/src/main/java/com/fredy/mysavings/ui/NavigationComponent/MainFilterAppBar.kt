@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.Data.Enum.FilterType
+import com.fredy.mysavings.Data.Enum.SortType
 import com.fredy.mysavings.Util.BalanceBar
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.BalanceBar
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.DisplayBar
@@ -26,7 +27,7 @@ fun MainFilterAppBar(
     checkboxesFilter: List<String> = emptyList(),
     selectedCheckbox: List<String> = emptyList(),
     onSelectCheckboxFilter: (List<String>) -> Unit,
-    sortType: Boolean = false,
+    sortType: SortType = SortType.DESCENDING,
     carryOn: Boolean = true,
     showTotal: Boolean = true,
     onShortChange: () -> Unit = {},

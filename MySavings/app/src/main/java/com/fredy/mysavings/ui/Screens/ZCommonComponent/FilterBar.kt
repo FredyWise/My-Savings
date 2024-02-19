@@ -79,7 +79,7 @@ fun DisplayBar(
         )
         SimpleButton(
             modifier = Modifier.weight(1f),
-            onClick = { dateDialogState.show() },
+            onClick = dateDialogState::show,
             title = selectedTitle,
             titleStyle = MaterialTheme.typography.titleMedium.copy(
                 tint

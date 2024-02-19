@@ -4,9 +4,12 @@ import android.util.Log
 import com.fredy.mysavings.Data.Database.Model.Category
 import com.fredy.mysavings.Util.TAG
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.snapshots
 import com.google.firebase.firestore.toObject
 import com.google.firebase.firestore.toObjects
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -15,7 +18,7 @@ interface CategoryDataSource {
     suspend fun upsertCategoryItem(category: Category)
     suspend fun deleteCategoryItem(category: Category)
     suspend fun getCategory(categoryId: String): Category
-    suspend fun getUserCategoriesOrderedByName(userId: String): List<Category>
+    suspend fun getUserCategoriesOrderedByName(userId: String): Flow<List<Category>>
 }
 
 
@@ -26,7 +29,7 @@ class CategoryDataSourceImpl @Inject constructor(
         "category"
     )
 
-    override suspend fun upsertCategoryItem(//make sure the category already have uid // make sure to create the category id outside instead
+    override suspend fun upsertCategoryItem(
         category: Category
     ) {
         categoryCollection.document(
@@ -59,15 +62,15 @@ class CategoryDataSourceImpl @Inject constructor(
         }
     }
 
-    override suspend fun getUserCategoriesOrderedByName(userId: String): List<Category> {
+    override suspend fun getUserCategoriesOrderedByName(userId: String): Flow<List<Category>> {
         return withContext(Dispatchers.IO) {
             try {
                 val querySnapshot = categoryCollection.whereEqualTo(
                     "userIdFk",
                     userId
-                ).orderBy("categoryName").get().await()
+                ).orderBy("categoryName").snapshots()
 
-                querySnapshot.toObjects()
+                querySnapshot.map { it.toObjects()}
             } catch (e: Exception) {
                 Log.e(
                     TAG,

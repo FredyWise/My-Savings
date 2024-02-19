@@ -82,7 +82,7 @@ class SearchViewModel @Inject constructor(
         )
     }.stateIn(
         viewModelScope,
-        SharingStarted.WhileSubscribed(5000),
+        SharingStarted.Eagerly,
         SearchState()
     )
 

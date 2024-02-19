@@ -22,6 +22,7 @@ import co.yml.charts.ui.barchart.models.GroupBarChartData
 import co.yml.charts.ui.barchart.models.GroupSeparatorConfig
 import com.fredy.mysavings.Util.formatCharAmount
 import com.fredy.mysavings.Util.truncateString
+import com.fredy.mysavings.ViewModels.Event.SettingEvent
 import kotlin.math.absoluteValue
 
 
@@ -30,6 +31,8 @@ fun ChartGroupedBar(
     modifier: Modifier = Modifier,
     contentColor: Color = MaterialTheme.colorScheme.primary,
     backgroundColor: Color = MaterialTheme.colorScheme.background,
+    incomeColor: Color = MaterialTheme.colorScheme.primary,
+    expenseColor: Color = MaterialTheme.colorScheme.tertiary,
     groupBarData: List<GroupBar>,
     currency: String
 ) {
@@ -52,17 +55,17 @@ fun ChartGroupedBar(
         20.dp
     ).labelData { index -> formatCharAmount((index * (groupBarData.maxOf { it.barList.maxOf { it.point.y.absoluteValue } } / step).toDouble())) + " $currency" }.build()
     val colorPaletteList = listOf(
-        MaterialTheme.colorScheme.primary,
-        MaterialTheme.colorScheme.tertiary
+        incomeColor,
+        expenseColor
     )
     val legendsConfig = LegendsConfig(
         legendLabelList = listOf(
             LegendLabel(
-                color = MaterialTheme.colorScheme.primary,
+                color = expenseColor,
                 name = "Expense"
             ),
             LegendLabel(
-                color = MaterialTheme.colorScheme.tertiary,
+                color = incomeColor,
                 name = "Income"
             ),
         ),

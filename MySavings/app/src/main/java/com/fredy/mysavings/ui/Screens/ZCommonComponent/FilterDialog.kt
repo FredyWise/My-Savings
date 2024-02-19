@@ -24,6 +24,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.Data.Enum.FilterType
+import com.fredy.mysavings.Data.Enum.SortType
 
 @Composable
 fun FilterDialog(
@@ -32,7 +33,7 @@ fun FilterDialog(
     selectedName: String,
     checkboxList: List<String> = emptyList(),
     selectedCheckbox: List<String> = emptyList(),
-    sortType: Boolean = false,
+    sortType: SortType = SortType.DESCENDING,
     carryOn: Boolean = true,
     showTotal: Boolean = true,
     onShortChange: () -> Unit,
@@ -42,6 +43,10 @@ fun FilterDialog(
     onSelectItem: (FilterType) -> Unit,
     onSelectCheckbox: (List<String>) -> Unit,
 ) {
+    val sortBy = when (sortType) {
+        SortType.ASCENDING -> true
+        SortType.DESCENDING -> false
+    }
     SimpleAlertDialog(
         modifier = modifier,
         title = title,
@@ -91,11 +96,11 @@ fun FilterDialog(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = if (sortType) "Ascending" else "Descending",
+                        text = if (sortBy) "Ascending" else "Descending",
                         style = MaterialTheme.typography.titleSmall
                     )
                     Switch(
-                        switchState = sortType,
+                        switchState = sortBy,
                         leftIcon = Icons.Default.ArrowUpward,
                         rightIcon = Icons.Default.ArrowDownward,
                         size = 28.dp,

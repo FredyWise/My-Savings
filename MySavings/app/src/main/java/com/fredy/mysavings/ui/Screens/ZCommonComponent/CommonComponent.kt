@@ -40,6 +40,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -67,6 +68,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun <T> ResourceHandler(
+    modifier: Modifier = Modifier,
     resource: Resource<T>,
     isNullOrEmpty: (T?) -> Boolean,
     errorMessage: String = "",
@@ -83,17 +85,20 @@ fun <T> ResourceHandler(
         mutableStateOf(false)
     }
 
-    fun debounce(resource: Resource<T>) {// fix if the app is too slow
+    fun debounce(resource: Resource<T>) {
         scope.launch {
-            delay(700L)
+            delay(1000L)
             showCircularProgressIndicator = resource is Resource.Loading
             showEmptyMessage = resource is Resource.Success
         }
     }
     Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
+        modifier = modifier,
+        contentAlignment = Alignment.TopCenter
     ) {
+        LaunchedEffect(key1 = resource){
+            debounce(resource)
+        }
         when (resource) {
             is Resource.Error -> {
                 Toast.makeText(
@@ -104,39 +109,45 @@ fun <T> ResourceHandler(
             }
 
             is Resource.Loading -> {
-                debounce(resource)
-                if (showCircularProgressIndicator) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(
-                            40.dp
-                        ),
-                        strokeWidth = 4.dp,
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (showCircularProgressIndicator) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(
+                                40.dp
+                            ),
+                            strokeWidth = 4.dp,
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+                    }
                 }
-
             }
 
             is Resource.Success -> {
-                debounce(resource)
                 resource.data.let {
                     if (isNullOrEmpty(it) && showEmptyMessage) {
-                        Text(
-                            text = nullOrEmptyMessage,
-                            modifier = Modifier
-                                .clip(
-                                    MaterialTheme.shapes.medium
-                                )
-                                .clickable {
-                                    onMessageClick()
-                                }
-                                .padding(
-                                    20.dp
-                                ),
-                            style = MaterialTheme.typography.titleLarge,
-                            color = MaterialTheme.colorScheme.onBackground,
-                        )
-
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = nullOrEmptyMessage,
+                                modifier = Modifier
+                                    .clip(
+                                        MaterialTheme.shapes.medium
+                                    )
+                                    .clickable {
+                                        onMessageClick()
+                                    }
+                                    .padding(
+                                        20.dp
+                                    ),
+                                style = MaterialTheme.typography.titleLarge,
+                                color = MaterialTheme.colorScheme.onBackground,
+                            )
+                        }
                     } else {
                         it?.let {
                             content(it)

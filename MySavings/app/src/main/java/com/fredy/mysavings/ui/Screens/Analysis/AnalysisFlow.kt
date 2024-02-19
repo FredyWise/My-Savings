@@ -20,6 +20,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,6 +29,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import co.yml.charts.common.model.Point
+import com.fredy.mysavings.Util.BalanceColor
 import com.fredy.mysavings.Util.formatRangeOfDate
 import com.fredy.mysavings.Util.isExpense
 import com.fredy.mysavings.ViewModels.Event.RecordsEvent
@@ -43,28 +46,8 @@ fun AnalysisFlow(
     state: RecordState,
     onEvent: (RecordsEvent) -> Unit,
 ) {
-//    val key = state.resourceData.recordsWithinTimeResource.hashCode()
-//    val isVisible = remember(key) {
-//        MutableTransitionState(
-//            false
-//        ).apply { targetState = true }
-//    }
-//    AnimatedVisibility(
-//        modifier = modifier,
-//        visibleState = isVisible,
-//        enter = slideInVertically(
-//            animationSpec = tween(
-//                durationMillis = 300
-//            ),
-//            initialOffsetY = { fullHeight -> fullHeight },
-//        ) + fadeIn(),
-//        exit = slideOutVertically(
-//            animationSpec = tween(
-//                durationMillis = 300
-//            ),
-//            targetOffsetY = { fullHeight -> fullHeight },
-//        ) + fadeOut()
-//    ) {
+    val expenseColor by remember { mutableStateOf(BalanceColor.Expense) }
+    val incomeColor by remember { mutableStateOf(BalanceColor.Income) }
         state.resourceData.recordsWithinTimeResource.let { resource ->
             ResourceHandler(
                 resource = resource,
@@ -75,12 +58,11 @@ fun AnalysisFlow(
                     onEvent(
                         RecordsEvent.ToggleRecordType
                     )
-//                    isVisible.targetState = false
                 },
             ) { data ->
                 val items = if (isExpense(data.first().recordType)) data else data.reversed()
 
-                Column (modifier = Modifier.verticalScroll(rememberScrollState())){
+                Column (modifier = modifier.verticalScroll(rememberScrollState())){
                     Box(
                         modifier = Modifier
                             .padding(
@@ -89,6 +71,7 @@ fun AnalysisFlow(
                         contentAlignment = Alignment.Center
                     ) {
                         ChartLine(
+                            contentColor = if (isExpense(data.first().recordType)) expenseColor else incomeColor,
                             pointsData = items.map { item ->
                                 Point(
                                     x = item.recordDateTime.dayOfMonth.toFloat(),
@@ -99,6 +82,7 @@ fun AnalysisFlow(
                         )
                     }
                     Calendar(
+                        inputColor = if (isExpense(data.first().recordType)) expenseColor else incomeColor,
                         calendarInput = items.associate {
                             it.recordDateTime.dayOfMonth to it.recordAmount.toString()
                         }.toMutableMap(),
@@ -126,13 +110,10 @@ fun AnalysisFlow(
                             .aspectRatio(
                                 1.3f
                             ),
-                        calendarExpenseInputColor = MaterialTheme.colorScheme.primary,
-                        calendarIncomeInputColor = MaterialTheme.colorScheme.tertiary
                     )
                     Spacer(modifier = Modifier.height(75.dp))
 
                 }
             }
         }
-//    }
 }

@@ -7,17 +7,25 @@ import com.fredy.mysavings.Data.Database.Model.Category
 import com.fredy.mysavings.Data.Database.Model.Record
 import com.fredy.mysavings.Data.Database.Model.TrueRecord
 import com.fredy.mysavings.Data.Enum.RecordType
+import com.fredy.mysavings.Data.Mappers.toTrueRecords
+import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.TAG
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.firestore
+import com.google.firebase.firestore.snapshots
 import com.google.firebase.firestore.toObject
 import com.google.firebase.firestore.toObjects
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
@@ -30,64 +38,50 @@ interface RecordDataSource {
     suspend fun getRecordById(recordId: String): TrueRecord
     suspend fun getUserTrueRecords(
         userId: String,
-    ): List<TrueRecord>
+    ): Flow<List<TrueRecord>>
 
     suspend fun getUserTrueRecordsFromSpecificTime(
         userId: String,
         startDate: LocalDateTime,
         endDate: LocalDateTime,
-    ): List<TrueRecord>
-
-    suspend fun getUserTrueRecordByCurrencyFromSpecificTime(
-        userId: String,
-        startDate: LocalDateTime,
-        endDate: LocalDateTime,
-        currency: List<String>,
-    ): List<TrueRecord>
+    ): Flow<List<TrueRecord>>
 
     suspend fun getUserCategoryRecordsOrderedByDateTime(
         userId: String,
         categoryId: String,
-    ): List<TrueRecord>
+    ): Flow<List<TrueRecord>>
 
     suspend fun getUserAccountRecordsOrderedByDateTime(
         userId: String,
         accountId: String,
-    ): List<TrueRecord>
+    ): Flow<List<TrueRecord>>
 
-    suspend fun getUserRecordsByTypeAndCurrencyFromSpecificTime(
-        userId: String,
-        recordType: RecordType,
-        startDate: LocalDateTime,
-        endDate: LocalDateTime,
-        currency: List<String>,
-    ): List<Record>
 
     suspend fun getUserRecords(
         userId: String
-    ): List<Record>
+    ): Flow<List<Record>>
 
     suspend fun getUserRecordsFromSpecificTime(
         userId: String,
         startDate: LocalDateTime,
         endDate: LocalDateTime,
-    ): List<Record>
+    ): Flow<List<Record>>
 
     suspend fun getUserRecordsByType(
         userId: String, recordType: RecordType
-    ): List<Record>
+    ): Flow<List<Record>>
 
     suspend fun getUserRecordsByTypeFromSpecificTime(
         userId: String,
         recordType: RecordType,
         startDate: LocalDateTime,
         endDate: LocalDateTime
-    ): List<Record>
+    ):Flow< List<Record>>
 }
 
 class RecordDataSourceImpl @Inject constructor(
     private val firestore: FirebaseFirestore
-): RecordDataSource {
+) : RecordDataSource {
     private val recordCollection = firestore.collection(
         "record"
     )
@@ -140,9 +134,10 @@ class RecordDataSourceImpl @Inject constructor(
             }
         }
     }
+
     override suspend fun getUserTrueRecords(
         userId: String,
-    ): List<TrueRecord> {
+    ): Flow<List<TrueRecord>> {
         val trueRecordComponentResult = getTrueRecordsComponent(
             userId
         )
@@ -154,16 +149,10 @@ class RecordDataSourceImpl @Inject constructor(
                 ).orderBy(
                     "recordTimestamp",
                     Query.Direction.DESCENDING
-                ).get().await()
-
-                val records = querySnapshot.toObjects<Record>()
-                records.map { record ->
-                    TrueRecord(
-                        record = record,
-                        fromAccount = trueRecordComponentResult.fromAccount.single { it.accountId == record.accountIdFromFk },
-                        toAccount = trueRecordComponentResult.toAccount.single { it.accountId == record.accountIdToFk },
-                        toCategory = trueRecordComponentResult.toCategory.single { it.categoryId == record.categoryIdFk },
-                    )
+                ).snapshots()
+                val recordFlow = querySnapshot.map { it.toObjects<Record>() }
+                recordFlow.map { records ->
+                    records.toTrueRecords(trueRecordComponentResult)
                 }
             } catch (e: Exception) {
                 Log.e(
@@ -174,11 +163,12 @@ class RecordDataSourceImpl @Inject constructor(
             }
         }
     }
+
     override suspend fun getUserTrueRecordsFromSpecificTime(
         userId: String,
         startDate: LocalDateTime,
         endDate: LocalDateTime,
-    ): List<TrueRecord> {
+    ): Flow<List<TrueRecord>> {
         val trueRecordComponentResult = getTrueRecordsComponent(
             userId
         )
@@ -199,67 +189,10 @@ class RecordDataSourceImpl @Inject constructor(
                 ).orderBy(
                     "recordTimestamp",
                     Query.Direction.DESCENDING
-                ).get().await()
-
-                val records = querySnapshot.toObjects<Record>()
-                records.map { record ->
-                    TrueRecord(
-                        record = record,
-                        fromAccount = trueRecordComponentResult.fromAccount.single { it.accountId == record.accountIdFromFk },
-                        toAccount = trueRecordComponentResult.toAccount.single { it.accountId == record.accountIdToFk },
-                        toCategory = trueRecordComponentResult.toCategory.single { it.categoryId == record.categoryIdFk },
-                    )
-                }
-            } catch (e: Exception) {
-                Log.e(
-                    TAG,
-                    "getUserTrueRecordFromSpecificTimeError: ${e.message}"
-                )
-                throw e
-            }
-        }
-    }
-    override suspend fun getUserTrueRecordByCurrencyFromSpecificTime(
-        userId: String,
-        startDate: LocalDateTime,
-        endDate: LocalDateTime,
-        currency: List<String>,
-    ): List<TrueRecord> {
-        val trueRecordComponentResult = getTrueRecordsComponent(
-            userId
-        )
-
-        return withContext(Dispatchers.IO) {
-            try {
-                val querySnapshot = recordCollection.whereGreaterThanOrEqualTo(
-                    "recordTimestamp",
-                    TimestampConverter.fromDateTime(
-                        startDate
-                    )
-                ).whereLessThanOrEqualTo(
-                    "recordTimestamp",
-                    TimestampConverter.fromDateTime(
-                        endDate
-                    )
-                ).whereEqualTo(
-                    "userIdFk", userId
-                ).orderBy(
-                    "recordTimestamp",
-                    Query.Direction.DESCENDING
-                ).get().await()
-
-                val records = querySnapshot.toObjects<Record>().filter {
-                    currency.contains(
-                        it.recordCurrency
-                    ) || currency.isEmpty()
-                }
-                records.map { record ->
-                    TrueRecord(
-                        record = record,
-                        fromAccount = trueRecordComponentResult.fromAccount.single { it.accountId == record.accountIdFromFk },
-                        toAccount = trueRecordComponentResult.toAccount.single { it.accountId == record.accountIdToFk },
-                        toCategory = trueRecordComponentResult.toCategory.single { it.categoryId == record.categoryIdFk },
-                    )
+                ).snapshots()
+                val recordFlow = querySnapshot.map { it.toObjects<Record>() }
+                recordFlow.map { records ->
+                    records.toTrueRecords(trueRecordComponentResult)
                 }
             } catch (e: Exception) {
                 Log.e(
@@ -275,7 +208,7 @@ class RecordDataSourceImpl @Inject constructor(
     override suspend fun getUserCategoryRecordsOrderedByDateTime(
         userId: String,
         categoryId: String,
-    ): List<TrueRecord> {
+    ): Flow<List<TrueRecord>> {
         val trueRecordComponentResult = getTrueRecordsComponent(
             userId
         )
@@ -289,16 +222,10 @@ class RecordDataSourceImpl @Inject constructor(
                 ).orderBy(
                     "recordTimestamp",
                     Query.Direction.DESCENDING
-                ).get().await()
-
-                val records = querySnapshot.toObjects<Record>()
-                records.map { record ->
-                    TrueRecord(
-                        record = record,
-                        fromAccount = trueRecordComponentResult.fromAccount.single { it.accountId == record.accountIdFromFk },
-                        toAccount = trueRecordComponentResult.toAccount.single { it.accountId == record.accountIdToFk },
-                        toCategory = trueRecordComponentResult.toCategory.single { it.categoryId == record.categoryIdFk },
-                    )
+                ).snapshots()
+                val recordFlow = querySnapshot.map { it.toObjects<Record>() }
+                recordFlow.map { records ->
+                    records.toTrueRecords(trueRecordComponentResult)
                 }
             } catch (e: Exception) {
                 Log.e(
@@ -313,7 +240,7 @@ class RecordDataSourceImpl @Inject constructor(
     override suspend fun getUserAccountRecordsOrderedByDateTime(
         userId: String,
         accountId: String,
-    ): List<TrueRecord> {
+    ): Flow<List<TrueRecord>> {
         val trueRecordComponentResult = getTrueRecordsComponent(
             userId
         )
@@ -334,16 +261,10 @@ class RecordDataSourceImpl @Inject constructor(
                 ).orderBy(
                     "recordTimestamp",
                     Query.Direction.DESCENDING
-                ).get().await()
-
-                val records = querySnapshot.toObjects<Record>()
-                records.map { record ->
-                    TrueRecord(
-                        record = record,
-                        fromAccount = trueRecordComponentResult.fromAccount.single { it.accountId == record.accountIdFromFk },
-                        toAccount = trueRecordComponentResult.toAccount.single { it.accountId == record.accountIdToFk },
-                        toCategory = trueRecordComponentResult.toCategory.single { it.categoryId == record.categoryIdFk },
-                    )
+                ).snapshots()
+                val recordFlow = querySnapshot.map { it.toObjects<Record>() }
+                recordFlow.map { records ->
+                    records.toTrueRecords(trueRecordComponentResult)
                 }
             } catch (e: Exception) {
                 Log.e(
@@ -356,59 +277,17 @@ class RecordDataSourceImpl @Inject constructor(
     }
 
 
-    override suspend fun getUserRecordsByTypeAndCurrencyFromSpecificTime(
-        userId: String,
-        recordType: RecordType,
-        startDate: LocalDateTime,
-        endDate: LocalDateTime,
-        currency: List<String>,
-    ): List<Record> {
-        return withContext(Dispatchers.IO) {
-            try {
-                val querySnapshot = recordCollection.whereGreaterThanOrEqualTo(
-                    "recordTimestamp",
-                    TimestampConverter.fromDateTime(
-                        startDate
-                    )
-                ).whereLessThanOrEqualTo(
-                    "recordTimestamp",
-                    TimestampConverter.fromDateTime(
-                        endDate
-                    )
-                ).whereEqualTo(
-                    "recordType", recordType
-                ).whereEqualTo(
-                    "userIdFk", userId
-                ).orderBy(
-                    "recordTimestamp",
-                    Query.Direction.DESCENDING
-                ).get().await()
-
-                querySnapshot.toObjects<Record>().filter {
-                    currency.contains(
-                        it.recordCurrency
-                    ) || currency.isEmpty()
-                }
-            } catch (e: Exception) {
-                Log.e(
-                    TAG,
-                    "getUserRecordsFromSpecificTimeError: ${e.message}"
-                )
-                throw e
-            }
-        }
-    }
 
     override suspend fun getUserRecords(
         userId: String
-    ): List<Record> {
+    ): Flow<List<Record>> {
         return withContext(Dispatchers.IO) {
             try {
                 val querySnapshot = recordCollection.whereEqualTo(
                     "userIdFk", userId
-                ).get().await()
+                ).snapshots()
 
-                querySnapshot.toObjects()
+                querySnapshot.map { it.toObjects()}
             } catch (e: Exception) {
                 Log.e(
                     TAG,
@@ -423,52 +302,52 @@ class RecordDataSourceImpl @Inject constructor(
         userId: String,
         startDate: LocalDateTime,
         endDate: LocalDateTime,
-    ): List<Record> {
-        return withContext(Dispatchers.IO) { try {
-            val querySnapshot = recordCollection.whereGreaterThanOrEqualTo(
-                "recordTimestamp",
-                TimestampConverter.fromDateTime(
-                    startDate
+    ): Flow<List<Record>> {
+        return withContext(Dispatchers.IO) {
+            try {
+                val querySnapshot = recordCollection.whereGreaterThanOrEqualTo(
+                    "recordTimestamp",
+                    TimestampConverter.fromDateTime(
+                        startDate
+                    )
+                ).whereLessThanOrEqualTo(
+                    "recordTimestamp",
+                    TimestampConverter.fromDateTime(
+                        endDate
+                    )
+                ).whereEqualTo(
+                    "userIdFk", userId
+                ).orderBy(
+                    "recordTimestamp",
+                    Query.Direction.DESCENDING
+                ).snapshots()
+                querySnapshot.map { it.toObjects()}
+            } catch (e: Exception) {
+                Log.e(
+                    TAG,
+                    "getUserRecordsFromSpecificTime.Error: ${e.message}"
                 )
-            ).whereLessThanOrEqualTo(
-                "recordTimestamp",
-                TimestampConverter.fromDateTime(
-                    endDate
-                )
-            ).whereEqualTo(
-                "userIdFk", userId
-            ).orderBy(
-                "recordTimestamp",
-                Query.Direction.DESCENDING
-            ).get().await()
-
-            querySnapshot.toObjects<Record>()
-        } catch (e: Exception) {
-            Log.e(
-                TAG,
-                "getUserRecordsFromSpecificTimeError: ${e.message}"
-            )
-            throw e
-        }}
+                throw e
+            }
+        }
     }
 
     override suspend fun getUserRecordsByType(
         userId: String, recordType: RecordType
-    ): List<Record> {
+    ): Flow<List<Record>> {
         return withContext(Dispatchers.IO) {
             try {
                 val querySnapshot = recordCollection.whereEqualTo(
                     "recordType", recordType
                 ).whereEqualTo(
                     "userIdFk", userId
-                ).get().await()
-
-                querySnapshot.toObjects()
+                ).snapshots()
+                querySnapshot.map { it.toObjects()}
 
             } catch (e: Exception) {
                 Log.e(
                     TAG,
-                    "getUserTotalAmountByTypeError: ${e.message}"
+                    "getUserRecordsByType.Error: ${e.message}"
                 )
                 throw e
             }
@@ -480,7 +359,7 @@ class RecordDataSourceImpl @Inject constructor(
         recordType: RecordType,
         startDate: LocalDateTime,
         endDate: LocalDateTime
-    ): List<Record> {
+    ): Flow<List<Record>> {
         return withContext(Dispatchers.IO) {
             try {
                 val querySnapshot = recordCollection.whereGreaterThanOrEqualTo(
@@ -500,13 +379,12 @@ class RecordDataSourceImpl @Inject constructor(
                 ).orderBy(
                     "recordTimestamp",
                     Query.Direction.DESCENDING
-                ).get().await()
-
-                querySnapshot.toObjects<Record>()
+                ).snapshots()
+                querySnapshot.map { it.toObjects()}
             } catch (e: Exception) {
                 Log.e(
                     TAG,
-                    "getUserTotalAmountByTypeFromSpecificTimeError: ${e.message}"
+                    "getUserRecordsByTypeFromSpecificTime.Error: ${e.message}"
                 )
                 throw e
             }

@@ -39,13 +39,12 @@ import kotlin.math.ceil
 @Composable
 fun Calendar(
     modifier: Modifier = Modifier,
+    inputColor: Color,
     borderColor: Color = MaterialTheme.colorScheme.onSecondary,
-    dayTextColor: Color = MaterialTheme.colorScheme.primary,
+    dayTextColor: Color = inputColor,
     dateTextColor: Color = MaterialTheme.colorScheme.secondary,
     calendarColumn: Int = 7,
     calendarInput: Map<Int, String>,
-    calendarExpenseInputColor: Color,
-    calendarIncomeInputColor: Color,
     date: LocalDate = LocalDate.now(),
     onDayClick: (Int) -> Unit = {},
     strokeWidth: Float = 3f,
@@ -255,7 +254,7 @@ fun Calendar(
                             textPositionY.toFloat() + textHeight,
                             Paint().apply {
                                 textSize = textHeight - 3.dp.toPx()
-                                color = (if (it.toDouble() < 0.0) calendarExpenseInputColor else calendarIncomeInputColor).toArgb()
+                                color = (inputColor).toArgb()
                                 isFakeBoldText = true
                                 textAlign = Paint.Align.CENTER
                             })

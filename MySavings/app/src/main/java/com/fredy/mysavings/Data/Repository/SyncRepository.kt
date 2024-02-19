@@ -9,6 +9,7 @@ import com.fredy.mysavings.Data.Database.FirebaseDataSource.CategoryDataSource
 import com.fredy.mysavings.Data.Database.FirebaseDataSource.RecordDataSource
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 
 interface SyncRepository {
@@ -32,7 +33,7 @@ class SyncRepositoryImpl(
             val currentUser = firebaseAuth.currentUser
             currentUser?.let {
                 val userId = if (currentUser.isNotNull()) currentUser.uid else ""
-                val accounts = accountDataSource.getUserAccounts(userId)
+                val accounts = accountDataSource.getUserAccounts(userId).first()
                 if (withDelete) {
                     accountDao.deleteAllAccounts()
                 }
@@ -46,7 +47,7 @@ class SyncRepositoryImpl(
             val currentUser = firebaseAuth.currentUser
             currentUser?.let {
                 val userId = if (currentUser.isNotNull()) currentUser.uid else ""
-                val records = recordDataSource.getUserRecords(userId)
+                val records = recordDataSource.getUserRecords(userId).first()
                 if (withDelete) {
                     recordDao.deleteAllRecords()
                 }
@@ -60,7 +61,7 @@ class SyncRepositoryImpl(
             val currentUser = firebaseAuth.currentUser
             currentUser?.let {
                 val userId = if (currentUser.isNotNull()) currentUser.uid else ""
-                val categories = categoryDataSource.getUserCategoriesOrderedByName(userId)
+                val categories = categoryDataSource.getUserCategoriesOrderedByName(userId).first()
                 if (withDelete) {
                     categoryDao.deleteAllCategories()
                 }

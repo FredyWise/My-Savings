@@ -18,6 +18,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -65,10 +66,10 @@ fun NavGraphRoot(
             composable(
                 route = Graph.HomeNav,
                 enterTransition = {
-                    fadeIn(animationSpec = tween(300))
+                    fadeIn()
                 },
                 exitTransition = {
-                    fadeOut(animationSpec = tween(300))
+                    fadeOut()
                 },
             ) {
                 val state by authViewModel.state.collectAsStateWithLifecycle()
@@ -94,10 +95,10 @@ fun NavGraphRoot(
             composable(
                 route = NavigationRoute.BulkAdd.route,
                 enterTransition = {
-                    fadeIn(animationSpec = tween(300))
+                    fadeIn()
                 },
                 exitTransition = {
-                    fadeOut(animationSpec = tween(300))
+                    fadeOut()
                 },
             ) {
                 Log.d(
@@ -115,10 +116,10 @@ fun NavGraphRoot(
             composable(
                 route = "${NavigationRoute.Add.route}/{id}",
                 enterTransition = {
-                    fadeIn(animationSpec = tween(300))
+                    fadeIn()
                 },
                 exitTransition = {
-                    fadeOut(animationSpec = tween(300))
+                    fadeOut()
                 },
                 arguments = listOf(navArgument("id") {
                     type = NavType.StringType
@@ -139,10 +140,10 @@ fun NavGraphRoot(
             composable(
                 route = NavigationRoute.Preferences.route,
                 enterTransition = {
-                    fadeIn(animationSpec = tween(300))
+                    fadeIn()
                 },
                 exitTransition = {
-                    fadeOut(animationSpec = tween(300))
+                    fadeOut()
                 },
             ) {
                 val state by settingViewModel.state.collectAsStateWithLifecycle()
@@ -156,10 +157,10 @@ fun NavGraphRoot(
             composable(
                 route = NavigationRoute.Export.route,
                 enterTransition = {
-                    fadeIn(animationSpec = tween(300))
+                    fadeIn()
                 },
                 exitTransition = {
-                    fadeOut(animationSpec = tween(300))
+                    fadeOut()
                 },
             ) {
                 val state by settingViewModel.state.collectAsStateWithLifecycle()
@@ -173,10 +174,10 @@ fun NavGraphRoot(
             composable(
                 route = NavigationRoute.Profile.route,
                 enterTransition = {
-                    fadeIn(animationSpec = tween(300))
+                    fadeIn()
                 },
                 exitTransition = {
-                    fadeOut(animationSpec = tween(300))
+                    fadeOut()
                 },
             ) {
                 val state by authViewModel.state.collectAsStateWithLifecycle()
@@ -196,10 +197,10 @@ fun NavGraphRoot(
             composable(
                 route = NavigationRoute.Search.route,
                 enterTransition = {
-                    fadeIn(animationSpec = tween(300))
+                    fadeIn()
                 },
                 exitTransition = {
-                    fadeOut(animationSpec = tween(300))
+                    fadeOut()
                 },
             ) {
                 val viewModel: SearchViewModel = hiltViewModel()
@@ -225,10 +226,9 @@ fun NavHostController.navigateSingleTopTo(route: String) = this.navigate(
     route
 ) {
     popUpTo(
-        this@navigateSingleTopTo.graph.startDestinationId
+        this@navigateSingleTopTo.graph.findStartDestination().id
     ) {
         saveState = true
-        inclusive = true
     }
     launchSingleTop = true
     restoreState = true

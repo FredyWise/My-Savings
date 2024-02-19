@@ -16,6 +16,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.fredy.mysavings.Data.Database.Converter.LocalTimeConverter
 import com.fredy.mysavings.Data.Enum.DisplayState
+import com.fredy.mysavings.Util.FilterState
 import com.fredy.mysavings.Util.defaultExpenseColor
 import com.fredy.mysavings.Util.defaultIncomeColor
 import com.fredy.mysavings.Util.initialDarkThemeDefaultColor
@@ -51,9 +52,17 @@ interface SettingsRepository {
     suspend fun saveBioAuth(enableBioAuth: Boolean)
     fun getDailyNotificationTime(): Flow<LocalTime>
     suspend fun saveDailyNotificationTime(dailyNotificationTime: LocalTime)
-    fun bioAuthStatus():Boolean
+    fun bioAuthStatus(): Boolean
 
-    fun getAll(): Flow<SettingState>
+    // View
+    fun getCarryOn(): Flow<Boolean>
+    suspend fun saveCarryOn(enableAutoLogin: Boolean)
+    fun getShowTotal(): Flow<Boolean>
+    suspend fun saveShowTotal(enableAutoLogin: Boolean)
+
+    // ALL
+    fun getAllPreferenceSettings(): Flow<SettingState>
+    fun getAllPreferenceView(): Flow<FilterState>
 }
 
 class SettingsRepositoryImpl(private val context: Context) : SettingsRepository {
@@ -68,6 +77,8 @@ class SettingsRepositoryImpl(private val context: Context) : SettingsRepository 
         val THEME_COLOR = intPreferencesKey("theme_color")
         val EXPENSE_COLOR = intPreferencesKey("expense_color")
         val INCOME_COLOR = intPreferencesKey("income_color")
+        val CARRY_ON = booleanPreferencesKey("carry_on")
+        val SHOW_TOTAL = booleanPreferencesKey("show_total")
     }
 
     override fun getDisplayMode(): Flow<DisplayState> = context.dataStore.data
@@ -148,6 +159,28 @@ class SettingsRepositoryImpl(private val context: Context) : SettingsRepository 
     }
 
 
+    override fun getCarryOn(): Flow<Boolean> = context.dataStore.data
+        .map { preferences ->
+            preferences[CARRY_ON] ?: false
+        }
+
+    override suspend fun saveCarryOn(enableCarryOn: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[CARRY_ON] = enableCarryOn
+        }
+    }
+
+    override fun getShowTotal(): Flow<Boolean> = context.dataStore.data
+        .map { preferences ->
+            preferences[SHOW_TOTAL] ?: false
+        }
+
+    override suspend fun saveShowTotal(enableShowTotal: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[SHOW_TOTAL] = enableShowTotal
+        }
+    }
+
     override fun getDailyNotificationTime(): Flow<LocalTime> = context.dataStore.data
         .map { preferences ->
             LocalTimeConverter.intToLocalTime(preferences[DAILY_NOTIFICATION_TIME] ?: -1)
@@ -177,8 +210,7 @@ class SettingsRepositoryImpl(private val context: Context) : SettingsRepository 
         return context.packageManager.hasSystemFeature(PackageManager.FEATURE_FINGERPRINT)
     }
 
-    override fun getAll(): Flow<SettingState> = flow {
-
+    override fun getAllPreferenceSettings(): Flow<SettingState> = flow {
         val result = SettingState(
             displayMode = getDisplayMode().first(),
             autoLogin = getAutoLogin().first(),
@@ -193,5 +225,14 @@ class SettingsRepositoryImpl(private val context: Context) : SettingsRepository 
         )
         emit(result)
     }
+
+    override fun getAllPreferenceView(): Flow<FilterState> = flow {
+        val result = FilterState(
+            carryOn = getCarryOn().first(),
+            showTotal = getShowTotal().first(),
+        )
+        emit(result)
+    }
+
 
 }

@@ -26,22 +26,22 @@ interface CategoryDao {
         "SELECT * FROM category " +
                 "WHERE categoryId=:categoryId"
     )
-    suspend fun getCategory(categoryId: String):Category
+    suspend fun getCategory(categoryId: String): Category
 
     @Query(
         "SELECT * FROM category " +
                 "WHERE userIdFk = :userId " +
                 "ORDER BY categoryName ASC"
     )
-    suspend fun getUserCategoriesOrderedByName(userId: String):List<Category>
+    fun getUserCategoriesOrderedByName(userId: String): Flow<List<Category>>
 
     @Query(
         "SELECT * FROM category " +
                 "WHERE categoryType =:type AND userIdFk = :userId " +
                 "ORDER BY categoryName ASC"
     )
-    suspend fun getCategoriesUsingTypeOrderedByName(
+    fun getCategoriesUsingTypeOrderedByName(
         userId: String,
         type: RecordType = RecordType.Expense
-    ):List<Category>
+    ): Flow<List<Category>>
 }

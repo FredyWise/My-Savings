@@ -76,8 +76,8 @@ class AddSingleRecordViewModel @Inject constructor(
                 resource.update {
                     Resource.Loading()
                 }
-                val record = performRecordCalculation()
 
+                val record = performRecordCalculation()
                 record?.let {
                     viewModelScope.launch {
                         recordRepository.upsertRecordItem(
@@ -211,7 +211,7 @@ class AddSingleRecordViewModel @Inject constructor(
         if (recordDateTime == null || calculationResult == 0.0 || recordCurrency.isBlank() || accountIdFromFk == null || accountIdToFk == null || categoryIdToFk == null) {
             resource.update {
                 Resource.Error(
-                    "You must fill all required information"
+                    "Please fill all required information"
                 )
             }
             return null

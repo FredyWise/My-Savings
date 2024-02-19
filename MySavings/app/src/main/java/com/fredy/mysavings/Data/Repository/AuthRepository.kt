@@ -144,6 +144,7 @@ class AuthRepositoryImpl @Inject constructor(
                 )
             }
         }
+
         val options = PhoneAuthOptions.newBuilder(
             firebaseAuth
         ).setPhoneNumber(

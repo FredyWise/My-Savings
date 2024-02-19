@@ -133,9 +133,6 @@ fun DetailAppBar(
                 onNavigationIconClick()
             },
         ) { recordMaps ->
-            Row(modifier = Modifier.padding(bottom = 8.dp)) {
-                Text(text = "Total of: " + recordMaps.sumOf { it.records.size } + " records")
-            }
             LazyColumn(
                 modifier = modifier
                     .fillMaxHeight()
@@ -143,6 +140,11 @@ fun DetailAppBar(
                         bottom = 16.dp, end = 8.dp
                     ),
             ) {
+                item {
+                    Row(modifier = Modifier.padding(bottom = 8.dp).padding(horizontal = 8.dp)) {
+                        Text(text = "Total of: " + recordMaps.sumOf { it.records.size } + " records")
+                    }
+                }
                 recordMaps.forEach { trueRecordMap ->
                     stickyHeader {
                         CustomStickyHeader(

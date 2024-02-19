@@ -17,7 +17,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
-import com.fredy.mysavings.Data.Enum.SortType
 import com.fredy.mysavings.Util.formatRangeOfDate
 import com.fredy.mysavings.ViewModels.Event.RecordsEvent
 import com.fredy.mysavings.ViewModels.RecordState
@@ -106,10 +105,7 @@ fun RecordsScreen(
                 tint = MaterialTheme.colorScheme.onSurface,
             )
         },
-        sortType = when (state.filterState.sortType) {
-            SortType.ASCENDING -> true
-            SortType.DESCENDING -> false
-        },
+        sortType = state.filterState.sortType,
         showTotal = state.filterState.showTotal,
         carryOn = state.filterState.carryOn,
         onShowTotalChange = { onEvent(RecordsEvent.ToggleShowTotal) },
@@ -130,15 +126,9 @@ fun RecordsScreen(
             modifier = modifier,
             visibleState = isVisible,
             enter = slideInVertically(
-                animationSpec = tween(
-                    durationMillis = 300
-                ),
                 initialOffsetY = { fullHeight -> fullHeight },
             ) + fadeIn(),
             exit = slideOutVertically(
-                animationSpec = tween(
-                    durationMillis = 300
-                ),
                 targetOffsetY = { fullHeight -> fullHeight },
             ) + fadeOut()
         ) {

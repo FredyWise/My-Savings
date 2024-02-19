@@ -75,12 +75,12 @@ private fun AnalysisTab(
     onSelected: () -> Unit,
     selected: Boolean
 ) {
-    val durationMillis = if (selected) 150 else 100
+    val durationMillis = if (selected) 200 else 150
     val animSpec = remember {
         tween<Color>(
             durationMillis = durationMillis,
             easing = LinearEasing,
-            delayMillis = 100
+            delayMillis = 150
         )
     }
     val tabTintColor by animateColorAsState(

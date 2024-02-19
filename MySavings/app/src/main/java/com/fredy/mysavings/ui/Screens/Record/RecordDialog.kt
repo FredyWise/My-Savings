@@ -73,11 +73,11 @@ fun RecordDialog(
     Dialog(onDismissRequest = onDismissDialog) {
         Column(
             modifier = modifier
-                .background(background)
                 .padding(
                     vertical = 4.dp
                 )
                 .clip(MaterialTheme.shapes.medium)
+                .background(background)
                 .border(
                     width = 2.dp,
                     color = balanceColor,

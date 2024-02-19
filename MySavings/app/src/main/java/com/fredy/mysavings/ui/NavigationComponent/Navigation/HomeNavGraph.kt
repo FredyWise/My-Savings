@@ -1,6 +1,5 @@
 package com.fredy.mysavings.ui.NavigationComponent.Navigation
 
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.padding
@@ -39,10 +38,10 @@ fun HomeNavGraph(
         composable(
             route = NavigationRoute.Records.route,
             enterTransition = {
-                fadeIn(animationSpec = tween(300))
+                fadeIn()
             },
             exitTransition = {
-                fadeOut(animationSpec = tween(300))
+                fadeOut()
             },
         ) {
             val state by recordViewModel.state.collectAsStateWithLifecycle()
@@ -56,10 +55,10 @@ fun HomeNavGraph(
         composable(
             route = NavigationRoute.Analysis.route,
             enterTransition = {
-                fadeIn(animationSpec = tween(300))
+                fadeIn()
             },
             exitTransition = {
-                fadeOut(animationSpec = tween(300))
+                fadeOut()
             },
         ) {
             val state by recordViewModel.state.collectAsStateWithLifecycle()
@@ -73,10 +72,10 @@ fun HomeNavGraph(
         composable(
             route = NavigationRoute.Account.route,
             enterTransition = {
-                fadeIn(animationSpec = tween(300))
+                fadeIn()
             },
             exitTransition = {
-                fadeOut(animationSpec = tween(300))
+                fadeOut()
             },
         ) {
             val state by accountViewModel.state.collectAsStateWithLifecycle()
@@ -94,10 +93,10 @@ fun HomeNavGraph(
         composable(
             route = NavigationRoute.Categories.route,
             enterTransition = {
-                fadeIn(animationSpec = tween(300))
+                fadeIn()
             },
             exitTransition = {
-                fadeOut(animationSpec = tween(300))
+                fadeOut()
             },
         ) {
             val state by categoryViewModel.state.collectAsStateWithLifecycle()

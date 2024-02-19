@@ -35,7 +35,6 @@ import java.time.LocalTime
 import java.util.Calendar
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
-import javax.inject.Singleton
 
 @HiltViewModel
 class SettingViewModel @Inject constructor(
@@ -48,15 +47,15 @@ class SettingViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            if (isInternetConnected(context)) {
-                syncRepository.syncAll()
-            }
-            settingsRepository.getAll().collect { savedState ->
+            settingsRepository.getAllPreferenceSettings().collect { savedState ->
                 BalanceColor.Expense = savedState.selectedExpenseColor
                 BalanceColor.Income = savedState.selectedIncomeColor
                 _state.update {
                     savedState
                 }
+            }
+            if (isInternetConnected(context)) {
+                syncRepository.syncAll()
             }
         }
     }

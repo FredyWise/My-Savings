@@ -4,8 +4,11 @@ import android.util.Log
 import com.fredy.mysavings.Data.Database.Model.Account
 import com.fredy.mysavings.Util.TAG
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.snapshots
 import com.google.firebase.firestore.toObject
 import com.google.firebase.firestore.toObjects
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -13,8 +16,7 @@ interface AccountDataSource {
     suspend fun upsertAccountItem(account: Account)
     suspend fun deleteAccountItem(account: Account)
     suspend fun getAccount(accountId: String): Account
-    suspend fun getUserAccounts(userId: String): List<Account>
-    suspend fun getUserAvailableCurrency(userId: String): List<String>
+    suspend fun getUserAccounts(userId: String): Flow<List<Account>>
 }
 
 
@@ -51,30 +53,15 @@ class AccountDataSourceImpl @Inject constructor(
         }
     }
 
-    override suspend fun getUserAccounts(userId: String): List<Account> {
+    override suspend fun getUserAccounts(userId: String): Flow<List<Account>> {
         return try {
             val querySnapshot = accountCollection
                 .whereEqualTo("userIdFk", userId)
-                .get()
-                .await()
+                .snapshots()
 
-            querySnapshot.toObjects()
+            querySnapshot.map { it.toObjects()}
         } catch (e: Exception) {
             Log.e(TAG, "Failed to get user accounts: $e")
-            throw e
-        }
-    }
-
-    override suspend fun getUserAvailableCurrency(userId: String): List<String> {
-        return try {
-            val querySnapshot = accountCollection
-                .whereEqualTo("userIdFk", userId)
-                .get()
-                .await()
-
-            querySnapshot.toObjects<Account>().map { it.accountCurrency }.distinct()
-        } catch (e: Exception) {
-            Log.e(TAG, "Failed to get available currencies: $e")
             throw e
         }
     }
