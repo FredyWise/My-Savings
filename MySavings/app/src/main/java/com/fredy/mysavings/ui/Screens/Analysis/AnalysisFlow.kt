@@ -69,6 +69,7 @@ fun AnalysisFlow(
             val items = if (isExpense(data.first().recordType)) data else data.reversed()
             val contentColor =
                 if (isExpense(data.first().recordType)) expenseColor else if (isIncome(data.first().recordType)) incomeColor else transferColor
+
             LazyColumn(modifier = modifier) {
                 item {
                     Box(
@@ -81,11 +82,14 @@ fun AnalysisFlow(
                         ChartLine(
                             contentColor = contentColor,
                             pointsData = items.map { item ->
+                                val date =  if (state.filterState.isFilterTypeMonthBelow()) item.recordDateTime.dayOfMonth.toFloat() else item.recordDateTime.dayOfYear.toFloat()
                                 Point(
-                                    x = item.recordDateTime.dayOfMonth.toFloat(),
+                                    x = date,
                                     y = item.recordAmount.absoluteValue.toFloat(),
                                 )
                             }.reversed(),
+                            year = state.filterState.selectedDate.year,
+                            month = state.filterState.selectedDate.monthValue,
                             currency = items.first().recordCurrency,
                         )
                     }
@@ -136,6 +140,7 @@ fun AnalysisFlow(
                             Text(
                                 text = formatBalanceAmount(
                                     item.recordAmount,
+                                    item.recordCurrency,
                                     isShortenToChar = true,
                                     k = false
                                 ),

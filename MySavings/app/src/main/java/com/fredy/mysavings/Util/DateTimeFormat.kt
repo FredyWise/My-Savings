@@ -20,6 +20,12 @@ fun formatMonthYear(date: LocalDate): String {
     ).format(date)
 }
 
+fun formatDate(date: LocalDate):String{
+    return DateTimeFormatter.ofPattern(
+        "MMM dd"
+    ).format(date)
+}
+
 fun formatDateDay(date: LocalDate): String {
     return DateTimeFormatter.ofPattern(
         "MMM dd, EEEE "

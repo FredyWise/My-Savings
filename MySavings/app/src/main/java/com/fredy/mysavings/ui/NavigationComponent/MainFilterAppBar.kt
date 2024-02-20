@@ -30,9 +30,11 @@ fun MainFilterAppBar(
     sortType: SortType = SortType.DESCENDING,
     carryOn: Boolean = true,
     showTotal: Boolean = true,
+    useUserCurrency: Boolean = true,
     onShortChange: () -> Unit = {},
     onCarryOnChange: () -> Unit = {},
     onShowTotalChange: () -> Unit = {},
+    onUserCurrencyChange: () -> Unit = {},
     onDismissFilterDialog: () -> Unit,
     balanceBar: BalanceBar,
     onPrevious: () -> Unit,
@@ -60,9 +62,11 @@ fun MainFilterAppBar(
             sortType = sortType,
             carryOn = carryOn,
             showTotal = showTotal,
+            useUserCurrency = useUserCurrency,
             onShortChange = onShortChange,
             onCarryOnChange = onCarryOnChange,
             onShowTotalChange = onShowTotalChange,
+            onUserCurrencyChange = onUserCurrencyChange,
             onDismissRequest = onDismissFilterDialog,
             onSelectItem = { item ->
                 onSelectFilter(item)

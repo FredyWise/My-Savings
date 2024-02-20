@@ -88,21 +88,23 @@ val defaultTransferColor = md_theme_dark_secondary
 
 
 val defaultColors = listOf(
-    toColor(Color.parseColor("#fff3cf")),
-    toColor(Color.parseColor("#f49acf")),
-    toColor(Color.parseColor("#ff4d7f")),
-    toColor(Color.parseColor("#ff527a")),
-    toColor(Color.parseColor("#ff5253")),
-    toColor(Color.parseColor("#cc52c3")),
-    toColor(Color.parseColor("#aa52e9")),
-    toColor(Color.parseColor("#5452f5")),
-    toColor(Color.parseColor("#5201fa")),
-    toColor(Color.parseColor("#8239fb")),
-    toColor(Color.parseColor("#5269fc")),
-    toColor(Color.parseColor("#5298fd")),
-    toColor(Color.parseColor("#52c6ff")),
-    toColor(Color.parseColor("#52fffb")),
-    toColor(Color.parseColor("#52ff8f")),
+    toColor(Color.parseColor("#ff0055")),
+    toColor(Color.parseColor("#ff9955")),
+    toColor(Color.parseColor("#ffff55")),
+    toColor(Color.parseColor("#ffcc88")),
+    toColor(Color.parseColor("#ff0088")),
+    toColor(Color.parseColor("#ff55ff")),
+    toColor(Color.parseColor("#cc55ff")),
+    toColor(Color.parseColor("#9955ff")),
+    toColor(Color.parseColor("#0055ff")),
+    toColor(Color.parseColor("#00bbff")),
+    toColor(Color.parseColor("#99bbff")),
+    toColor(Color.parseColor("#ccbbff")),
+    toColor(Color.parseColor("#ffbbff")),
+    toColor(Color.parseColor("#bbff00")),
+    toColor(Color.parseColor("#bbffff")),
+    toColor(Color.parseColor("#55ffff")),
+    toColor(Color.parseColor("#55ff00")),
 )
 // currency
 val currencyCodes = listOf(

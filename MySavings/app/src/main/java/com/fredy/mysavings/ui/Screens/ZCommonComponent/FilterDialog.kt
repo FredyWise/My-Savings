@@ -36,9 +36,11 @@ fun FilterDialog(
     sortType: SortType = SortType.DESCENDING,
     carryOn: Boolean = true,
     showTotal: Boolean = true,
+    useUserCurrency: Boolean = true,
     onShortChange: () -> Unit,
     onCarryOnChange: () -> Unit,
     onShowTotalChange: () -> Unit,
+    onUserCurrencyChange: () -> Unit,
     onDismissRequest: () -> Unit,
     onSelectItem: (FilterType) -> Unit,
     onSelectCheckbox: (List<String>) -> Unit,
@@ -111,7 +113,7 @@ fun FilterDialog(
                     )
                 }
             }
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(8.dp))
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
@@ -143,7 +145,7 @@ fun FilterDialog(
                     )
                 }
             }
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(8.dp))
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
@@ -175,7 +177,39 @@ fun FilterDialog(
                     )
                 }
             }
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    modifier = Modifier.weight(
+                        0.5f
+                    ),
+                    text = "Use User Currency: ",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Column(
+                    modifier = Modifier.weight(
+                        0.5f
+                    ),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Switch(
+                        switchState = !useUserCurrency,
+                        leftIcon = Icons.Default.Close,
+                        rightIcon = Icons.Default.Check,
+                        size = 28.dp,
+                        padding = 3.dp,
+                        onClick = {
+                            onUserCurrencyChange()
+                        },
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(8.dp))
         }
         Column(modifier = Modifier) {
             CustomStickyHeader(

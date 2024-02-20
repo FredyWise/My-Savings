@@ -64,11 +64,17 @@ fun AnalysisOverview(
             },
         ) { data ->
             val items = if (isExpense(data.first().category.categoryType)) data else data.reversed()
+            val totalAmount = if (isExpense(data.first().category.categoryType)) {
+                    state.balanceBar.expense.amount
+                } else if (isIncome(data.first().category.categoryType)) {
+                    state.balanceBar.income.amount
+                } else state.balanceBar.transfer.amount
             val contentColor =
-                if (isExpense(data.first().category.categoryType)) expenseColor else if (isIncome(
-                        data.first().category.categoryType
-                    )
-                ) incomeColor else transferColor
+                if (isExpense(data.first().category.categoryType)) {
+                    expenseColor
+                } else if (isIncome(data.first().category.categoryType)) {
+                    incomeColor
+                } else transferColor
             val colors = (if (isExpense(items.first().category.categoryType)) defaultColors
             else defaultColors.reversed()).subList(
                 0,
@@ -95,7 +101,7 @@ fun AnalysisOverview(
                                     R.string.total
                                 ) + " " + items.first().category.categoryType.name,
                                 labelColor = contentColor,
-                                amountsTotal = items.sumOf { it.amount },
+                                amountsTotal = totalAmount,
                                 onClickLabel = {
                                     onEvent(
                                         RecordsEvent.ToggleRecordType

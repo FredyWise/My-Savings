@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalCoroutinesApi::class)
+
 package com.fredy.mysavings.ViewModels
 
 import android.util.Log
@@ -25,6 +27,7 @@ import com.fredy.mysavings.Util.updateDate
 import com.fredy.mysavings.Util.updateType
 import com.fredy.mysavings.ViewModels.Event.RecordsEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
@@ -66,13 +69,14 @@ class RecordViewModel @Inject constructor(
     )
 
     private val _categoriesWithAmount = _filterState.flatMapLatest { filterState ->
-        filterState.map { start, end, recordType, sortType, currencies ->
+        filterState.map { start, end, recordType, sortType, currencies, useUserCurrency ->
             recordRepository.getUserCategoriesWithAmountFromSpecificTime(
                 recordType,
                 sortType,
                 start,
                 end,
                 currencies,
+                useUserCurrency
             )
         }
     }.stateIn(
@@ -82,11 +86,12 @@ class RecordViewModel @Inject constructor(
     )
 
     private val _accountsWithAmount = _filterState.flatMapLatest { filterState ->
-        filterState.map { start, end, _, sortType, _ ->
+        filterState.map { start, end, _, sortType, _, useUserCurrency ->
             recordRepository.getUserAccountsWithAmountFromSpecificTime(
                 sortType,
                 start,
                 end,
+                useUserCurrency
             )
         }
     }.stateIn(
@@ -96,13 +101,14 @@ class RecordViewModel @Inject constructor(
     )
 
     private val _recordsWithinSpecificTime = _filterState.flatMapLatest { filterState ->
-        filterState.map { start, end, recordType, sortType, currencies ->
+        filterState.map { start, end, recordType, sortType, currencies, useUserCurrency ->
             recordRepository.getUserRecordsFromSpecificTime(
                 recordType,
                 sortType,
                 start,
                 end,
                 currencies,
+                useUserCurrency
             )
         }
     }.stateIn(
@@ -112,9 +118,9 @@ class RecordViewModel @Inject constructor(
     )
 
     private val _recordResource = _filterState.flatMapLatest { filterState ->
-        filterState.map { start, end, _, sortType, currencies ->
+        filterState.map { start, end, _, sortType, currencies, useUserCurrency ->
             recordRepository.getUserTrueRecordMapsFromSpecificTime(
-                start, end, sortType, currencies
+                start, end, sortType, currencies, useUserCurrency
             )
         }
     }.stateIn(
@@ -124,269 +130,298 @@ class RecordViewModel @Inject constructor(
     )
 
     private val _totalBalance =
-        _filterState.flatMapLatest { recordRepository.getUserTotalRecordBalance() }.stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(),
-            BalanceItem()
-        )
-
-    private val _totalExpense = _filterState.flatMapLatest { filterState ->
-        filterState.map { start, end, _, _, _ ->
-            recordRepository.getUserTotalAmountByTypeFromSpecificTime(
-                RecordType.Expense, start, end
-            )
-        }
-    }.stateIn(
-        viewModelScope,
-        SharingStarted.WhileSubscribed(),
-        BalanceItem()
-    )
-
-    private val _totalIncome = _filterState.flatMapLatest { filterState ->
-        filterState.map { start, end, _, _, _ ->
-            recordRepository.getUserTotalAmountByTypeFromSpecificTime(
-                RecordType.Income, start, end
-            )
-        }
-    }.stateIn(
-        viewModelScope,
-        SharingStarted.WhileSubscribed(),
-        BalanceItem()
-    )
-
-    private val _balanceBar = MutableStateFlow(
-        BalanceBar()
-    )
-
-    private val balanceBar = combine(
-        _balanceBar,
-        _totalExpense,
-        _totalIncome,
-        _totalBalance,
-        _filterState,
-    ) { balanceBar, totalExpense, totalIncome, totalBalance, filterState ->
-        balanceBar.copy(
-            expense = totalExpense,
-            income = totalIncome,
-            balance = if (filterState.carryOn) totalBalance else BalanceItem(
-                name = totalBalance.name,
-                amount = totalExpense.amount + totalIncome.amount,
-                currency = totalBalance.currency
-            ),
-        )
-    }.stateIn(
-        viewModelScope,
-        SharingStarted.WhileSubscribed(),
-        BalanceBar()
-    )
-
-
-    private val _resourceData = MutableStateFlow(
-        ResourceData()
-    )
-
-    private val resourceData = combine(
-        _resourceData,
-        _categoriesWithAmount,
-        _recordsWithinSpecificTime,
-        _accountsWithAmount,
-        _recordResource,
-    ) { resourceData, categoriesWithAmount, recordsWithinSpecificTime, accountsWithAmount, recordResource ->
-        resourceData.copy(
-            categoriesWithAmountResource = categoriesWithAmount,
-            accountsWithAmountResource = accountsWithAmount,
-            recordsWithinTimeResource = recordsWithinSpecificTime,
-            recordMapsResource = recordResource
-        )
-    }.stateIn(
-        viewModelScope,
-        SharingStarted.WhileSubscribed(),
-        ResourceData()
-    )
-
-    private val _state = MutableStateFlow(
-        RecordState()
-    )
-
-    val state = combine(
-        _state,
-        resourceData,
-        _availableCurrency,
-        balanceBar,
-        _filterState,
-    ) { state, resourceData, availableCurrency, balanceBar, filterState ->
-        state.copy(
-            resourceData = resourceData,
-            availableCurrency = availableCurrency,
-            balanceBar = balanceBar,
-            filterState = filterState
-        )
-    }.stateIn(
-        viewModelScope,
-        SharingStarted.Eagerly,
-        RecordState()
-    )
-
-
-    fun onEvent(event: RecordsEvent) {
-        viewModelScope.launch {
-            when (event) {
-                is RecordsEvent.ShowDialog -> {
-                    _state.update {
-                        it.copy(
-                            trueRecord = event.trueRecord,
-                        )
-                    }
-                }
-
-                is RecordsEvent.HideDialog -> {
-                    _state.update {
-                        it.copy(
-                            trueRecord = null,
-                        )
-                    }
-                }
-
-                is RecordsEvent.ShowFilterDialog -> {
-                    _state.update {
-                        it.copy(
-                            isChoosingFilter = true,
-                        )
-                    }
-                }
-
-                is RecordsEvent.HideFilterDialog -> {
-                    _state.update {
-                        it.copy(
-                            isChoosingFilter = false,
-                        )
-                    }
-                }
-
-                is RecordsEvent.ToggleRecordType -> {
-                    _filterState.update {
-                        it.copy(
-                            recordType = when (it.recordType) {
-                                RecordType.Expense -> RecordType.Income
-                                RecordType.Income -> RecordType.Transfer
-                                RecordType.Transfer -> RecordType.Expense
-                            }
-                        )
-                    }
-
-                }
-
-                is RecordsEvent.DeleteRecord -> {
-                    viewModelScope.launch {
-                        recordRepository.deleteRecordItem(
-                            event.record
-                        )
-                        onEvent(RecordsEvent.UpdateRecord)
-                    }
-                }
-
-                is RecordsEvent.FilterRecord -> {
-                    _filterState.update {
-                        it.updateType(event.filterType)
-                    }
-                }
-
-                is RecordsEvent.ShowNextList -> {
-                    _filterState.update {
-                        it.plusDate()
-                    }
-                }
-
-                is RecordsEvent.ShowPreviousList -> {
-                    _filterState.update {
-                        it.minusDate()
-                    }
-                }
-
-                is RecordsEvent.ChangeDate -> {
-                    _filterState.update {
-                        it.updateDate(event.selectedDate)
-                    }
-                }
-
-                is RecordsEvent.SelectedCurrencies -> {
-                    Log.i(
-                        TAG,
-                        "onEvent: ${state.value.availableCurrency}"
+        _filterState.flatMapLatest { filterState ->
+            filterState.map { start, end, _, _, _, _ ->
+                if (filterState.carryOn) {
+                    recordRepository.getUserTotalRecordBalance(
+                        endDate = end
                     )
-                    _filterState.update {
-                        it.copy(
-                            currencies = event.selectedCurrencies
-                        )
-                    }
-                    _state.update {
-                        it.copy(selectedCheckbox = event.selectedCurrencies)
-                    }
+                } else {
+                    recordRepository.getUserTotalRecordBalance(
+                        start,
+                        end
+                    )
                 }
+            }
+            }.stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(),
+                BalanceItem()
+            )
 
-                is RecordsEvent.ToggleSortType -> {
-                    _filterState.update {
-                        it.copy(
-                            sortType = when (it.sortType) {
-                                SortType.ASCENDING -> SortType.DESCENDING
-                                SortType.DESCENDING -> SortType.ASCENDING
+            private val _totalExpense = _filterState.flatMapLatest { filterState ->
+                filterState.map { start, end, _, _, _, _ ->
+                    recordRepository.getUserTotalAmountByTypeFromSpecificTime(
+                        RecordType.Expense, start, end
+                    )
+                }
+            }.stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(),
+                BalanceItem()
+            )
+
+            private val _totalIncome = _filterState.flatMapLatest { filterState ->
+                filterState.map { start, end, _, _, _, _ ->
+                    recordRepository.getUserTotalAmountByTypeFromSpecificTime(
+                        RecordType.Income, start, end
+                    )
+                }
+            }.stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(),
+                BalanceItem()
+            )
+
+            private val _totalTransfer = _filterState.flatMapLatest { filterState ->
+                filterState.map { start, end, _, _, _, _ ->
+                    recordRepository.getUserTotalAmountByTypeFromSpecificTime(
+                        RecordType.Transfer, start, end
+                    )
+                }
+            }.stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(),
+                BalanceItem()
+            )
+
+            private val _balanceBar = MutableStateFlow(
+                BalanceBar()
+            )
+
+            private val balanceBar = combine(
+                _balanceBar,
+                _totalExpense,
+                _totalIncome,
+                _totalBalance,
+                _totalTransfer,
+            ) { balanceBar, totalExpense, totalIncome, totalBalance, totalTransfer ->
+                balanceBar.copy(
+                    expense = totalExpense,
+                    income = totalIncome,
+                    balance = totalBalance,
+                    transfer = totalTransfer,
+                )
+            }.stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(),
+                BalanceBar()
+            )
+
+
+            private val _resourceData = MutableStateFlow(
+                ResourceData()
+            )
+
+            private val resourceData = combine(
+                _resourceData,
+                _categoriesWithAmount,
+                _recordsWithinSpecificTime,
+                _accountsWithAmount,
+                _recordResource,
+            ) { resourceData, categoriesWithAmount, recordsWithinSpecificTime, accountsWithAmount, recordResource ->
+                resourceData.copy(
+                    categoriesWithAmountResource = categoriesWithAmount,
+                    accountsWithAmountResource = accountsWithAmount,
+                    recordsWithinTimeResource = recordsWithinSpecificTime,
+                    recordMapsResource = recordResource
+                )
+            }.stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(),
+                ResourceData()
+            )
+
+            private val _state = MutableStateFlow(
+                RecordState()
+            )
+
+            val state = combine(
+                _state,
+                resourceData,
+                _availableCurrency,
+                balanceBar,
+                _filterState,
+            ) { state, resourceData, availableCurrency, balanceBar, filterState ->
+                state.copy(
+                    resourceData = resourceData,
+                    availableCurrency = availableCurrency,
+                    balanceBar = balanceBar,
+                    filterState = filterState
+                )
+            }.stateIn(
+                viewModelScope,
+                SharingStarted.Eagerly,
+                RecordState()
+            )
+
+
+            fun onEvent(event: RecordsEvent) {
+                viewModelScope.launch {
+                    when (event) {
+                        is RecordsEvent.ShowDialog -> {
+                            _state.update {
+                                it.copy(
+                                    trueRecord = event.trueRecord,
+                                )
                             }
-                        )
-                    }
-                }
+                        }
 
-                RecordsEvent.ToggleCarryOn -> {
-                    viewModelScope.launch {
-                        settingsRepository.saveCarryOn(!_filterState.value.carryOn)
-                    }
-                    _filterState.update {
-                        it.copy(carryOn = !it.carryOn)
-                    }
-                }
+                        is RecordsEvent.HideDialog -> {
+                            _state.update {
+                                it.copy(
+                                    trueRecord = null,
+                                )
+                            }
+                        }
 
-                RecordsEvent.ToggleShowTotal -> {
-                    viewModelScope.launch {
-                        settingsRepository.saveShowTotal(!_filterState.value.showTotal)
-                    }
-                    _filterState.update {
-                        it.copy(showTotal = !it.showTotal)
-                    }
-                }
+                        is RecordsEvent.ShowFilterDialog -> {
+                            _state.update {
+                                it.copy(
+                                    isChoosingFilter = true,
+                                )
+                            }
+                        }
 
-                RecordsEvent.UpdateRecord -> {
-                    _filterState.update {
-                        it.copy(updating = !it.updating)
+                        is RecordsEvent.HideFilterDialog -> {
+                            _state.update {
+                                it.copy(
+                                    isChoosingFilter = false,
+                                )
+                            }
+                        }
+
+                        is RecordsEvent.ToggleRecordType -> {
+                            _filterState.update {
+                                it.copy(
+                                    recordType = when (it.recordType) {
+                                        RecordType.Expense -> RecordType.Income
+                                        RecordType.Income -> RecordType.Transfer
+                                        RecordType.Transfer -> RecordType.Expense
+                                    }
+                                )
+                            }
+
+                        }
+
+                        is RecordsEvent.DeleteRecord -> {
+                            viewModelScope.launch {
+                                recordRepository.deleteRecordItem(
+                                    event.record
+                                )
+                                onEvent(RecordsEvent.UpdateRecord)
+                            }
+                        }
+
+                        is RecordsEvent.FilterRecord -> {
+                            _filterState.update {
+                                it.updateType(event.filterType)
+                            }
+                        }
+
+                        is RecordsEvent.ShowNextList -> {
+                            _filterState.update {
+                                it.plusDate()
+                            }
+                        }
+
+                        is RecordsEvent.ShowPreviousList -> {
+                            _filterState.update {
+                                it.minusDate()
+                            }
+                        }
+
+                        is RecordsEvent.ChangeDate -> {
+                            _filterState.update {
+                                it.updateDate(event.selectedDate)
+                            }
+                        }
+
+                        is RecordsEvent.SelectedCurrencies -> {
+                            Log.i(
+                                TAG,
+                                "onEvent: ${state.value.availableCurrency}"
+                            )
+                            _filterState.update {
+                                it.copy(
+                                    currencies = event.selectedCurrencies
+                                )
+                            }
+                            _state.update {
+                                it.copy(selectedCheckbox = event.selectedCurrencies)
+                            }
+                        }
+
+                        is RecordsEvent.ToggleSortType -> {
+                            _filterState.update {
+                                it.copy(
+                                    sortType = when (it.sortType) {
+                                        SortType.ASCENDING -> SortType.DESCENDING
+                                        SortType.DESCENDING -> SortType.ASCENDING
+                                    }
+                                )
+                            }
+                        }
+
+                        RecordsEvent.ToggleCarryOn -> {
+                            viewModelScope.launch {
+                                settingsRepository.saveCarryOn(!_filterState.value.carryOn)
+                            }
+                            _filterState.update {
+                                it.copy(carryOn = !it.carryOn)
+                            }
+                        }
+
+                        RecordsEvent.ToggleShowTotal -> {
+                            viewModelScope.launch {
+                                settingsRepository.saveShowTotal(!_filterState.value.showTotal)
+                            }
+                            _filterState.update {
+                                it.copy(showTotal = !it.showTotal)
+                            }
+                        }
+
+                        RecordsEvent.ToggleUserCurrency -> {
+                            _filterState.update {
+                                it.copy(useUserCurrency = !it.useUserCurrency)
+                            }
+                        }
+
+                        RecordsEvent.UpdateRecord -> {
+                            _filterState.update {
+                                it.copy(updating = !it.updating)
+                            }
+                        }
+
                     }
                 }
             }
         }
-    }
-}
 
-data class RecordState(
-    val resourceData: ResourceData = ResourceData(),
-    val graphType: GraphType = GraphType.SlimDonut,
-    val trueRecord: TrueRecord? = null,
-    val availableCurrency: List<String> = listOf(),
-    val selectedCheckbox: List<String> = listOf(),
-    val balanceBar: BalanceBar = BalanceBar(),
-    val isChoosingFilter: Boolean = false,
-    val filterState: FilterState = FilterState(),
-    val isSearching: Boolean = false,
-    val searchQuery: String = "",
-)
+    data class RecordState(
+        val resourceData: ResourceData = ResourceData(),
+        val graphType: GraphType = GraphType.SlimDonut,
+        val trueRecord: TrueRecord? = null,
+        val availableCurrency: List<String> = listOf(),
+        val selectedCheckbox: List<String> = listOf(),
+        val balanceBar: BalanceBar = BalanceBar(),
+        val isChoosingFilter: Boolean = false,
+        val filterState: FilterState = FilterState(),
+        val isSearching: Boolean = false,
+        val searchQuery: String = "",
+    )
 
-data class RecordMap(
-    val recordDate: LocalDate,
-    val records: List<TrueRecord>
-)
+    data class RecordMap(
+        val recordDate: LocalDate,
+        val records: List<TrueRecord>
+    )
 
-data class ResourceData(
-    val categoriesWithAmountResource: Resource<List<CategoryWithAmount>> = Resource.Loading(),
-    val accountsWithAmountResource: Resource<List<AccountWithAmountType>> = Resource.Loading(),
-    val recordsWithinTimeResource: Resource<List<Record>> = Resource.Loading(),
-    val recordMapsResource: Resource<List<RecordMap>> = Resource.Loading(),
-)
+    data class ResourceData(
+        val categoriesWithAmountResource: Resource<List<CategoryWithAmount>> = Resource.Loading(),
+        val accountsWithAmountResource: Resource<List<AccountWithAmountType>> = Resource.Loading(),
+        val recordsWithinTimeResource: Resource<List<Record>> = Resource.Loading(),
+        val recordMapsResource: Resource<List<RecordMap>> = Resource.Loading(),
+    )
 
 
 

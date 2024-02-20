@@ -252,7 +252,7 @@ class CurrencyRepositoryImpl @Inject constructor(
         )?.toDouble() ?: throw IllegalArgumentException(
             "Currency '$fromCurrency' not found in rates."
         )
-        return amount * (fromUsdRate / toUsdRate)
+        return amount * (toUsdRate / fromUsdRate)
     }
 
 

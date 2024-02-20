@@ -50,13 +50,6 @@ interface RecordRepository {
         endDate: LocalDateTime,
     ): Flow<Resource<List<TrueRecord>>>
 
-    fun getUserTrueRecordMapsFromSpecificTime(
-        startDate: LocalDateTime,
-        endDate: LocalDateTime,
-        sortType: SortType,
-        currency: List<String>,
-    ): Flow<Resource<List<RecordMap>>>
-
     fun getUserCategoryRecordsOrderedByDateTime(
         categoryId: String,
         sortType: SortType,
@@ -67,12 +60,22 @@ interface RecordRepository {
         sortType: SortType,
     ): Flow<Resource<List<RecordMap>>>
 
+    fun getUserTrueRecordMapsFromSpecificTime(
+        startDate: LocalDateTime,
+        endDate: LocalDateTime,
+        sortType: SortType,
+        currency: List<String>,
+        useUserCurrency: Boolean = false,
+    ): Flow<Resource<List<RecordMap>>>
+
+
     fun getUserRecordsFromSpecificTime(
         recordType: RecordType,
         sortType: SortType,
         startDate: LocalDateTime,
         endDate: LocalDateTime,
         currency: List<String>,
+        useUserCurrency: Boolean = true,
     ): Flow<Resource<List<Record>>>
 
     fun getUserCategoriesWithAmountFromSpecificTime(
@@ -81,12 +84,14 @@ interface RecordRepository {
         startDate: LocalDateTime,
         endDate: LocalDateTime,
         currency: List<String>,
+        useUserCurrency: Boolean = true,
     ): Flow<Resource<List<CategoryWithAmount>>>
 
     fun getUserAccountsWithAmountFromSpecificTime(
         sortType: SortType,
         startDate: LocalDateTime,
         endDate: LocalDateTime,
+        useUserCurrency: Boolean = false,
     ): Flow<Resource<List<AccountWithAmountType>>>
 
     fun getUserTotalAmountByType(recordType: RecordType): Flow<BalanceItem>
@@ -96,7 +101,10 @@ interface RecordRepository {
         endDate: LocalDateTime
     ): Flow<BalanceItem>
 
-    fun getUserTotalRecordBalance(): Flow<BalanceItem>
+    fun getUserTotalRecordBalance(
+        startDate: LocalDateTime = LocalDateTime.of(2000,1,1,1,1),
+        endDate: LocalDateTime
+    ): Flow<BalanceItem>
 
 }
 
@@ -264,45 +272,6 @@ class RecordRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getUserTrueRecordMapsFromSpecificTime(
-        startDate: LocalDateTime,
-        endDate: LocalDateTime,
-        sortType: SortType,
-        currency: List<String>,
-    ): Flow<Resource<List<RecordMap>>> {
-        return flow {
-            emit(Resource.Loading())
-            val currentUser = authRepository.getCurrentUser()!!
-            val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
-            Log.i(
-                TAG,
-                "getUserTrueRecordMapsFromSpecificTime: $startDate\n:\n$endDate,\ncurrency: $currency"
-            )
-            withContext(Dispatchers.IO) {
-                recordDataSource.getUserTrueRecordsFromSpecificTime(
-                    userId,
-                    startDate,
-                    endDate,
-                ).map { records ->
-                    records.filterTrueRecordCurrency(currency).toRecordSortedMaps(sortType)
-                }
-            }.collect { data ->
-                Log.i(
-                    TAG,
-                    "getUserTrueRecordMapsFromSpecificTime.data: $data"
-                )
-                emit(Resource.Success(data))
-            }
-
-        }.catch { e ->
-            Log.i(
-                TAG,
-                "getUserTrueRecordMapsFromSpecificTime.Error: $e"
-            )
-            emit(Resource.Error(e.message.toString()))
-        }
-    }
-
     override fun getUserCategoryRecordsOrderedByDateTime(
         categoryId: String,
         sortType: SortType,
@@ -373,6 +342,43 @@ class RecordRepositoryImpl @Inject constructor(
         }
     }
 
+    override fun getUserTrueRecordMapsFromSpecificTime(
+        startDate: LocalDateTime,
+        endDate: LocalDateTime,
+        sortType: SortType,
+        currency: List<String>,
+        useUserCurrency: Boolean,
+    ): Flow<Resource<List<RecordMap>>> {
+        return flow {
+            emit(Resource.Loading())
+            val currentUser = authRepository.getCurrentUser()!!
+            val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
+            val userCurrency = currentUser.userCurrency
+            Log.i(
+                TAG,
+                "getUserTrueRecordMapsFromSpecificTime: $startDate\n:\n$endDate,\ncurrency: $currency"
+            )
+            withContext(Dispatchers.IO) {
+                recordDataSource.getUserTrueRecordsFromSpecificTime(
+                    userId,
+                    startDate,
+                    endDate,
+                ).map { records ->
+                    records.convertRecordCurrency(userCurrency, useUserCurrency)
+                        .filterTrueRecordCurrency(currency).toRecordSortedMaps(sortType)
+                }
+            }.collect { data ->
+                emit(Resource.Success(data))
+            }
+
+        }.catch { e ->
+            Log.i(
+                TAG,
+                "getUserTrueRecordMapsFromSpecificTime.Error: $e"
+            )
+            emit(Resource.Error(e.message.toString()))
+        }
+    }
 
     override fun getUserRecordsFromSpecificTime(
         recordType: RecordType,
@@ -380,11 +386,13 @@ class RecordRepositoryImpl @Inject constructor(
         startDate: LocalDateTime,
         endDate: LocalDateTime,
         currency: List<String>,
+        useUserCurrency: Boolean,
     ): Flow<Resource<List<Record>>> {
         return flow {
             emit(Resource.Loading())
             val currentUser = authRepository.getCurrentUser()!!
             val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
+            val userCurrency = currentUser.userCurrency
             Log.i(
                 TAG,
                 "getUserRecordsFromSpecificTime: $startDate\n:\n$endDate"
@@ -395,9 +403,9 @@ class RecordRepositoryImpl @Inject constructor(
                     recordType,
                     startDate,
                     endDate,
-                ).map { it.filterRecordCurrency(currency)}
-            }.collect{ records ->
-                val data = records.combineSameCurrencyData(sortType)
+                ).map { it.filterRecordCurrency(currency) }
+            }.collect { records ->
+                val data = records.combineSameCurrencyData(sortType, userCurrency, useUserCurrency)
 
                 Log.i(
                     TAG,
@@ -421,11 +429,13 @@ class RecordRepositoryImpl @Inject constructor(
         startDate: LocalDateTime,
         endDate: LocalDateTime,
         currency: List<String>,
+        useUserCurrency: Boolean,
     ): Flow<Resource<List<CategoryWithAmount>>> {
         return flow {
             emit(Resource.Loading())
             val currentUser = authRepository.getCurrentUser()!!
             val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
+            val userCurrency = currentUser.userCurrency
             Log.i(
                 TAG,
                 "getUserCategoriesWithAmountFromSpecificTime: $currency\n$categoryType\n$startDate\n:\n$endDate"
@@ -440,12 +450,18 @@ class RecordRepositoryImpl @Inject constructor(
                     startDate,
                     endDate,
                 ).map { it.filterRecordCurrency(currency) }
-            }.collect{ records->
+            }.collect { records ->
                 Log.i(
                     TAG,
                     "getUserCategoriesWithAmountFromSpecificTime.Result: $records",
                 )
-                val data = records.combineSameCurrencyCategory(sortType,userCategories)
+                val data =
+                    records.combineSameCurrencyCategory(
+                        sortType,
+                        userCategories,
+                        userCurrency,
+                        useUserCurrency
+                    )
                 Log.i(
                     TAG,
                     "getUserCategoriesWithAmountFromSpecificTime.Data: $data",
@@ -467,11 +483,13 @@ class RecordRepositoryImpl @Inject constructor(
         sortType: SortType,
         startDate: LocalDateTime,
         endDate: LocalDateTime,
+        useUserCurrency: Boolean,
     ): Flow<Resource<List<AccountWithAmountType>>> {
         return flow {
             emit(Resource.Loading())
             val currentUser = authRepository.getCurrentUser()!!
             val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
+            val userCurrency = currentUser.userCurrency
             Log.i(
                 TAG,
                 "getUserAccountsWithAmountFromSpecificTime: \n$startDate\n:\n$endDate"
@@ -483,12 +501,17 @@ class RecordRepositoryImpl @Inject constructor(
                 recordDataSource.getUserRecordsFromSpecificTime(
                     userId, startDate, endDate
                 )
-            }.collect {records->
+            }.collect { records ->
                 Log.i(
                     TAG,
                     "getUserAccountsWithAmountFromSpecificTime.Result: $records",
-                    )
-                val data = records.combineSameCurrencyAccount(sortType,userAccounts)
+                )
+                val data = records.combineSameCurrencyAccount(
+                    sortType,
+                    userAccounts,
+                    userCurrency,
+                    useUserCurrency
+                )
                 Log.i(
                     TAG,
                     "getUserAccountsWithAmountFromSpecificTime.Data: $data",
@@ -567,7 +590,7 @@ class RecordRepositoryImpl @Inject constructor(
                     startDate,
                     endDate
                 ).map { it.getTotalRecordBalance(userCurrency) }
-            }.collect { recordTotalAmount->
+            }.collect { recordTotalAmount ->
                 val data = BalanceItem(
                     name = "${recordType.name}: ",
                     amount = recordTotalAmount,
@@ -587,7 +610,10 @@ class RecordRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getUserTotalRecordBalance(): Flow<BalanceItem> {
+    override fun getUserTotalRecordBalance(
+        startDate: LocalDateTime,
+        endDate: LocalDateTime
+    ): Flow<BalanceItem> {
         return flow {
             val currentUser = authRepository.getCurrentUser()!!
             val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
@@ -599,8 +625,11 @@ class RecordRepositoryImpl @Inject constructor(
                 )
 
             withContext(Dispatchers.IO) {
-                recordDataSource.getUserRecords(
-                    userId
+                recordDataSource.getUserRecordsByTypeFromSpecificTime(
+                    userId,
+                    null,
+                    startDate,
+                    endDate
                 ).map { it.getTotalRecordBalance(userCurrency) }
             }.collect { recordTotalAmount ->
                 val data = BalanceItem(
@@ -664,27 +693,64 @@ class RecordRepositoryImpl @Inject constructor(
         }
     }
 
-    private suspend fun List<Record>.combineSameCurrencyData(sortType: SortType = SortType.DESCENDING):List<Record>{
+    private suspend fun List<TrueRecord>.convertRecordCurrency(
+        userCurrency: String,
+        useUserCurrency: Boolean
+    ): List<TrueRecord> {
+        return if (useUserCurrency) {
+            this.map { trueRecord ->
+                trueRecord.copy(
+                    record = trueRecord.record.copy(
+                        recordAmount = currencyConverter(
+                            trueRecord.record.recordAmount,
+                            trueRecord.record.recordCurrency,
+                            userCurrency
+                        ),
+                        recordCurrency = userCurrency
+                    )
+                )
+            }
+        } else {
+            this
+        }
+    }
+
+    private suspend fun List<Record>.combineSameCurrencyData(
+        sortType: SortType = SortType.DESCENDING,
+        userCurrency: String,
+        useUserCurrency: Boolean
+    ): List<Record> {
         val recordsMap = mutableMapOf<String, Record>()
         this.forEach { record ->
             val key = record.recordDateTime.toLocalDate().toString()
             val existingRecord = recordsMap[key]
+            val currency = if (useUserCurrency) userCurrency else record.recordCurrency
+            val amount = if (useUserCurrency) {
+                currencyConverter(
+                    record.recordAmount,
+                    record.recordCurrency,
+                    userCurrency
+                )
+            } else {
+                record.recordAmount
+            }
 
             if (existingRecord != null) {
-                val amount = if (record.recordCurrency != existingRecord.recordCurrency) {
+                val tempAmount = if (record.recordCurrency != existingRecord.recordCurrency) {
                     currencyConverter(
-                        record.recordAmount,
+                        amount,
                         record.recordCurrency,
                         existingRecord.recordCurrency
                     )
                 } else {
-                    record.recordAmount
+                    amount
                 }
+
                 recordsMap[key] = existingRecord.copy(
-                    recordAmount = existingRecord.recordAmount + amount
+                    recordAmount = existingRecord.recordAmount + tempAmount,
                 )
             } else {
-                recordsMap[key] = record
+                recordsMap[key] = record.copy(recordAmount = amount,recordCurrency = currency, )
             }
         }
         val data = recordsMap.values.toList().let { value ->
@@ -696,22 +762,36 @@ class RecordRepositoryImpl @Inject constructor(
         }
         return data
     }
-    private suspend fun List<Record>.combineSameCurrencyCategory(sortType: SortType = SortType.DESCENDING, userCategories: List<Category>):List<CategoryWithAmount>{
+
+    private suspend fun List<Record>.combineSameCurrencyCategory(
+        sortType: SortType = SortType.DESCENDING,
+        userCategories: List<Category>,
+        userCurrency: String,
+        useUserCurrency: Boolean
+    ): List<CategoryWithAmount> {
         val categoryWithAmountMap = mutableMapOf<String, CategoryWithAmount>()
         this.forEach { record ->
-            val key = record.categoryIdFk + record.recordCurrency
-
+            val currency = if (useUserCurrency) userCurrency else record.recordCurrency
+            val key = record.categoryIdFk + currency
             val existingCategory = categoryWithAmountMap[key]
-
+            val amount = if (useUserCurrency) {
+                currencyConverter(
+                    record.recordAmount,
+                    record.recordCurrency,
+                    userCurrency
+                )
+            } else {
+                record.recordAmount
+            }
             if (existingCategory != null) {
                 categoryWithAmountMap[key] = existingCategory.copy(
-                    amount = existingCategory.amount + record.recordAmount
+                    amount = existingCategory.amount + amount,
                 )
             } else {
                 val newCategory = CategoryWithAmount(
                     category = userCategories.first { it.categoryId == record.categoryIdFk },
-                    amount = record.recordAmount,
-                    currency = record.recordCurrency
+                    amount = amount,
+                    currency = currency
                 )
                 categoryWithAmountMap[key] = newCategory
             }
@@ -728,7 +808,13 @@ class RecordRepositoryImpl @Inject constructor(
         }
         return data
     }
-    private fun List<Record>.combineSameCurrencyAccount(sortType: SortType = SortType.DESCENDING, userAccounts: List<Account>):List<AccountWithAmountType>{
+
+    private suspend fun List<Record>.combineSameCurrencyAccount(
+        sortType: SortType = SortType.DESCENDING,
+        userAccounts: List<Account>,
+        userCurrency: String,
+        useUserCurrency: Boolean,
+    ): List<AccountWithAmountType> {
         val accountWithAmountMap = mutableMapOf<String, AccountWithAmountType>()
         userAccounts.forEach { account ->
             val key = account.accountId
@@ -743,22 +829,36 @@ class RecordRepositoryImpl @Inject constructor(
             val key = record.accountIdFromFk
             val existingAccount = accountWithAmountMap[key]
             if (!isTransfer(record.recordType)) {
+                val amount = if (useUserCurrency) {
+                    currencyConverter(
+                        record.recordAmount,
+                        record.recordCurrency,
+                        userCurrency
+                    )
+                } else {
+                    record.recordAmount
+                }
                 val incomeAmount = if (isIncome(
                         record.recordType
                     )
-                ) record.recordAmount else 0.0
+                ) amount else 0.0
                 val expenseAmount = if (isExpense(
                         record.recordType
                     )
-                ) record.recordAmount else 0.0
+                ) amount else 0.0
                 if (existingAccount != null) {
+                    val currency =
+                        if (useUserCurrency) userCurrency else existingAccount.account.accountCurrency
                     accountWithAmountMap[key] = existingAccount.copy(
+                        account = existingAccount.account.copy(accountCurrency = currency),
                         incomeAmount = existingAccount.incomeAmount + incomeAmount,
                         expenseAmount = existingAccount.expenseAmount + expenseAmount,
                     )
                 } else {
+                    val account = userAccounts.first { it.accountId == record.accountIdFromFk }
+                    val currency = if (useUserCurrency) userCurrency else account.accountCurrency
                     val newAccount = AccountWithAmountType(
-                        account = userAccounts.first { it.accountId == record.accountIdFromFk },
+                        account = account.copy(accountCurrency = currency),
                         incomeAmount = incomeAmount,
                         expenseAmount = expenseAmount,
                     )

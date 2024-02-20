@@ -1,6 +1,7 @@
 package com.fredy.mysavings.Data.Database.FirebaseDataSource
 
 import android.util.Log
+import co.yml.charts.common.extensions.isNotNull
 import com.fredy.mysavings.Data.Database.Converter.TimestampConverter
 import com.fredy.mysavings.Data.Database.Model.Account
 import com.fredy.mysavings.Data.Database.Model.Category
@@ -73,7 +74,7 @@ interface RecordDataSource {
 
     suspend fun getUserRecordsByTypeFromSpecificTime(
         userId: String,
-        recordType: RecordType,
+        recordType: RecordType?,
         startDate: LocalDateTime,
         endDate: LocalDateTime
     ):Flow< List<Record>>
@@ -356,13 +357,13 @@ class RecordDataSourceImpl @Inject constructor(
 
     override suspend fun getUserRecordsByTypeFromSpecificTime(
         userId: String,
-        recordType: RecordType,
+        recordType: RecordType?,
         startDate: LocalDateTime,
         endDate: LocalDateTime
     ): Flow<List<Record>> {
         return withContext(Dispatchers.IO) {
             try {
-                val querySnapshot = recordCollection.whereGreaterThanOrEqualTo(
+                val querySnapshot1 = recordCollection.whereGreaterThanOrEqualTo(
                     "recordTimestamp",
                     TimestampConverter.fromDateTime(
                         startDate
@@ -372,15 +373,19 @@ class RecordDataSourceImpl @Inject constructor(
                     TimestampConverter.fromDateTime(
                         endDate
                     )
-                ).whereEqualTo(
+                )
+                val querySnapshot2 = (if (recordType.isNotNull()) querySnapshot1.whereEqualTo(
                     "recordType", recordType
-                ).whereEqualTo(
+                ) else querySnapshot1.whereNotEqualTo(
+                    "recordType", RecordType.Transfer
+                )).whereEqualTo(
                     "userIdFk", userId
                 ).orderBy(
                     "recordTimestamp",
                     Query.Direction.DESCENDING
                 ).snapshots()
-                querySnapshot.map { it.toObjects()}
+
+                querySnapshot2.map { it.toObjects()}
             } catch (e: Exception) {
                 Log.e(
                     TAG,

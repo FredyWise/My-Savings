@@ -15,6 +15,7 @@ data class FilterState(
     val sortType: SortType = SortType.DESCENDING,
     val carryOn: Boolean = true,
     val showTotal: Boolean = true,
+    val useUserCurrency: Boolean = true,
     val currencies: List<String> = emptyList(),
     val selectedDate: LocalDate = LocalDate.now(),
     val start: LocalDateTime = LocalDateTime.of(
@@ -41,14 +42,15 @@ fun FilterState.isFilterTypeMonthBelow(): Boolean{
     }
 }
 
-fun <T> FilterState.map(target: (start: LocalDateTime, end: LocalDateTime, RecordType, SortType, currencies: List<String>) -> T): T {
+fun <T> FilterState.map(target: (start: LocalDateTime, end: LocalDateTime, RecordType, SortType, currencies: List<String>, useUserCurrency: Boolean) -> T): T {
     return when (filterType) {
         FilterType.Daily -> target(
             start,
             end,
             recordType,
             sortType,
-            currencies
+            currencies,
+            useUserCurrency
         )
 
         FilterType.Weekly -> target(
@@ -56,7 +58,8 @@ fun <T> FilterState.map(target: (start: LocalDateTime, end: LocalDateTime, Recor
             end,
             recordType,
             sortType,
-            currencies
+            currencies,
+            useUserCurrency
         )
 
         FilterType.Monthly -> target(
@@ -64,7 +67,8 @@ fun <T> FilterState.map(target: (start: LocalDateTime, end: LocalDateTime, Recor
             end,
             recordType,
             sortType,
-            currencies
+            currencies,
+            useUserCurrency
         )
 
         FilterType.Per3Months -> target(
@@ -72,7 +76,8 @@ fun <T> FilterState.map(target: (start: LocalDateTime, end: LocalDateTime, Recor
             end,
             recordType,
             sortType,
-            currencies
+            currencies,
+            useUserCurrency
         )
 
         FilterType.Per6Months -> target(
@@ -80,7 +85,8 @@ fun <T> FilterState.map(target: (start: LocalDateTime, end: LocalDateTime, Recor
             end,
             recordType,
             sortType,
-            currencies
+            currencies,
+            useUserCurrency
         )
 
         FilterType.Yearly -> target(
@@ -88,7 +94,8 @@ fun <T> FilterState.map(target: (start: LocalDateTime, end: LocalDateTime, Recor
             end,
             recordType,
             sortType,
-            currencies
+            currencies,
+            useUserCurrency
         )
     }
 }

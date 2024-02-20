@@ -108,6 +108,8 @@ fun RecordsScreen(
         sortType = state.filterState.sortType,
         showTotal = state.filterState.showTotal,
         carryOn = state.filterState.carryOn,
+        useUserCurrency = state.filterState.useUserCurrency,
+        onUserCurrencyChange = { onEvent(RecordsEvent.ToggleUserCurrency) },
         onShowTotalChange = { onEvent(RecordsEvent.ToggleShowTotal) },
         onCarryOnChange = { onEvent(RecordsEvent.ToggleCarryOn) },
         onShortChange = { onEvent(RecordsEvent.ToggleSortType) },

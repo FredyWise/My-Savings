@@ -18,6 +18,7 @@ sealed interface RecordsEvent {
     object ShowPreviousList : RecordsEvent
     object ToggleSortType : RecordsEvent
     object ToggleShowTotal : RecordsEvent
+    object ToggleUserCurrency : RecordsEvent
     object ToggleCarryOn : RecordsEvent
     data class DeleteRecord(val record: Record) : RecordsEvent
     object UpdateRecord : RecordsEvent

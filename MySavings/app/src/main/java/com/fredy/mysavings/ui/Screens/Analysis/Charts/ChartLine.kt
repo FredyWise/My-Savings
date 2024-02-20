@@ -23,6 +23,10 @@ import co.yml.charts.ui.linechart.model.SelectionHighlightPoint
 import co.yml.charts.ui.linechart.model.SelectionHighlightPopUp
 import co.yml.charts.ui.linechart.model.ShadowUnderLine
 import com.fredy.mysavings.Util.formatBalanceAmount
+import com.fredy.mysavings.Util.formatDate
+import com.fredy.mysavings.Util.formatDay
+import java.time.LocalDate
+import java.time.Year
 import kotlin.math.nextUp
 
 @Composable
@@ -33,12 +37,17 @@ fun ChartLine(
     infoColor: Color = MaterialTheme.colorScheme.onSecondary,
     backgroundColor: Color = MaterialTheme.colorScheme.background,
     pointsData: List<Point>,
+    year: Int,
+    month: Int,
     currency: String,
 ) {
     val points = pointsData.sortedBy { it.x }.toMutableList()
     points.add(0, Point(0f, 0f))
 
     val steps = 5
+    val xMax = points.maxOf { it.x }.nextUp()
+//        val yMin = points.minOf { it.y }
+    val yMax = points.maxOf { it.y }.nextUp()
 
     val xAxisData = AxisData.Builder().axisStepSize(
         75.dp
@@ -46,7 +55,15 @@ fun ChartLine(
         contentColor
     ).axisLineColor(contentColor).topPadding(
         105.dp
-    ).steps(31).labelData { i -> (i).toString() }.labelAndAxisLinePadding(
+    ).steps(xMax.toInt()).labelData { i ->
+        if (i==0){
+            i.toString()
+        }else {
+            val localDate =
+                if (xMax > 40) LocalDate.ofYearDay(year, i) else LocalDate.of(year, month, i)
+            formatDate(localDate)
+        }
+    }.labelAndAxisLinePadding(
         15.dp
     ).build()
 
@@ -55,8 +72,6 @@ fun ChartLine(
     ).backgroundColor(backgroundColor).axisLabelColor(
         contentColor
     ).axisLineColor(contentColor).labelData { i ->
-//        val yMin = points.minOf { it.y }
-        val yMax = points.maxOf { it.y }.nextUp()
 //        val yScale = (yMax - yMin) / steps
         val yScale = yMax / steps
         formatBalanceAmount((i * yScale).toDouble(), currency,true)
