@@ -11,6 +11,7 @@ import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 interface SyncRepository {
     suspend fun syncAccounts(withDelete: Boolean = true)
@@ -19,7 +20,7 @@ interface SyncRepository {
     suspend fun syncAll(withDelete: Boolean = true)
 }
 
-class SyncRepositoryImpl(
+class SyncRepositoryImpl @Inject constructor(
     private val accountDataSource: AccountDataSource,
     private val accountDao: AccountDao,
     private val categoryDataSource: CategoryDataSource,

@@ -5,6 +5,7 @@ import androidx.compose.material.icons.filled.AccountBalanceWallet
 import androidx.compose.material.icons.filled.AddBox
 import androidx.compose.material.icons.filled.AddToPhotos
 import androidx.compose.material.icons.filled.BarChart
+import androidx.compose.material.icons.filled.CurrencyExchange
 import androidx.compose.material.icons.filled.DataSaverOff
 import androidx.compose.material.icons.filled.HowToReg
 import androidx.compose.material.icons.filled.Label
@@ -20,6 +21,7 @@ import androidx.compose.material.icons.outlined.AccountBalanceWallet
 import androidx.compose.material.icons.outlined.AddBox
 import androidx.compose.material.icons.outlined.AddToPhotos
 import androidx.compose.material.icons.outlined.BarChart
+import androidx.compose.material.icons.outlined.CurrencyExchange
 import androidx.compose.material.icons.outlined.DataSaverOff
 import androidx.compose.material.icons.outlined.HowToReg
 import androidx.compose.material.icons.outlined.Label
@@ -50,6 +52,7 @@ val analysisScreens = listOf(
 val drawerScreens = listOf(
     NavigationRoute.Preferences,
     NavigationRoute.Export,
+    NavigationRoute.Currency
 )
 
 val bottomBarScreens = listOf(
@@ -114,6 +117,14 @@ sealed class NavigationRoute(
         contentDescription = "Go to export screen",
         icon = Icons.Default.UploadFile,
         iconNot = Icons.Outlined.UploadFile
+    )
+
+    object Currency: NavigationRoute(
+        route = "currency",
+        title = "Currency",
+        contentDescription = "Go to currency screen",
+        icon = Icons.Default.CurrencyExchange,
+        iconNot = Icons.Outlined.CurrencyExchange
     )
 
 

@@ -37,6 +37,7 @@ import com.fredy.mysavings.Data.Enum.DisplayState
 import com.fredy.mysavings.Util.ActionWithName
 import com.fredy.mysavings.Util.defaultExpenseColor
 import com.fredy.mysavings.Util.defaultIncomeColor
+import com.fredy.mysavings.Util.defaultTransferColor
 import com.fredy.mysavings.Util.formatBalanceAmount
 import com.fredy.mysavings.Util.formatTime
 import com.fredy.mysavings.Util.initialDarkThemeDefaultColor
@@ -99,31 +100,24 @@ fun PreferencesScreen(
     var selectedColorType by remember {
         mutableStateOf(ChangeColorType.Surface)
     }
+    val initialColor = when (selectedColorType) {
+        ChangeColorType.Surface -> state.selectedThemeColor
+        ChangeColorType.Income -> state.selectedIncomeColor
+        ChangeColorType.Expense -> state.selectedExpenseColor
+        ChangeColorType.Transfer -> state.selectedTransferColor
+    }
     var selectedColor by remember {
         mutableStateOf(
-            when (selectedColorType) {
-                ChangeColorType.Surface -> state.selectedThemeColor
-                ChangeColorType.Income -> state.selectedIncomeColor
-                ChangeColorType.Expense -> state.selectedExpenseColor
-            }
+            initialColor
         )
     }
 
     if (state.isShowColorPallet) {
-        val initialColor = when (selectedColorType) {
-            ChangeColorType.Surface -> state.selectedThemeColor
-            ChangeColorType.Income -> state.selectedIncomeColor
-            ChangeColorType.Expense -> state.selectedExpenseColor
-        }
         SimpleDialog(
             title = "Color Picker",
             onDismissRequest = { onEvent(SettingEvent.HideColorPallet) },
             onSaveClicked = {
-                when (selectedColorType) {
-                    ChangeColorType.Surface -> onEvent(SettingEvent.ChangeThemeColor(selectedColor))
-                    ChangeColorType.Income -> onEvent(SettingEvent.ChangeIncomeColor(selectedColor))
-                    ChangeColorType.Expense -> onEvent(SettingEvent.ChangeExpenseColor(selectedColor))
-                }
+                onEvent(SettingEvent.ChangeColor(selectedColorType,selectedColor))
             },
         ) {
             ColorPicker(onColorChange = { selectedColor = it }, initialColor = initialColor)
@@ -136,9 +130,9 @@ fun PreferencesScreen(
                             if (isSystemDarkTheme) initialDarkThemeDefaultColor else initialLightThemeDefaultColor
                         }
                     }
-
                     ChangeColorType.Income -> defaultIncomeColor
                     ChangeColorType.Expense -> defaultExpenseColor
+                    ChangeColorType.Transfer -> defaultTransferColor
                 }
             }, title = "Set Back To Initial Color")
         }
@@ -226,6 +220,26 @@ fun PreferencesScreen(
                 Text(
                     text = formatBalanceAmount(3.33, "USD"),
                     color = state.selectedIncomeColor,
+                    style = MaterialTheme.typography.titleLarge
+                )
+            }
+        ) {
+            Text(
+                text = "Income Color",
+                color = optionColor,
+                style = MaterialTheme.typography.titleLarge.copy(fontSize = 20.sp)
+            )
+        }
+        Spacer(modifier = Modifier.height(spacer))
+        SimpleItem(
+            onClick = {
+                selectedColorType = ChangeColorType.Transfer
+                onEvent(SettingEvent.ShowColorPallet)
+            },
+            endContent = {
+                Text(
+                    text = formatBalanceAmount(3.33, "USD"),
+                    color = state.selectedTransferColor,
                     style = MaterialTheme.typography.titleLarge
                 )
             }

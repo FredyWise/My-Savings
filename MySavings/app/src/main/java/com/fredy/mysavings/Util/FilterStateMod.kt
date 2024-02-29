@@ -15,7 +15,7 @@ data class FilterState(
     val sortType: SortType = SortType.DESCENDING,
     val carryOn: Boolean = true,
     val showTotal: Boolean = true,
-    val useUserCurrency: Boolean = true,
+    val useUserCurrency: Boolean = false,
     val currencies: List<String> = emptyList(),
     val selectedDate: LocalDate = LocalDate.now(),
     val start: LocalDateTime = LocalDateTime.of(

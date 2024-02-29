@@ -30,6 +30,7 @@ import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.ripple.rememberRipple
@@ -51,6 +52,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
@@ -59,6 +62,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.fredy.mysavings.Util.ActionWithName
 import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.SavingsIcon
@@ -88,8 +92,8 @@ fun <T> ResourceHandler(
     fun debounce(resource: Resource<T>) {
         scope.launch {
             delay(1000L)
-            showCircularProgressIndicator = resource is Resource.Loading
             showEmptyMessage = resource is Resource.Success
+            showCircularProgressIndicator = resource is Resource.Loading
         }
     }
     Box(
@@ -132,11 +136,11 @@ fun <T> ResourceHandler(
                             content(it)
                         }
                     } else {
-                        if(showEmptyMessage) {
-                            Box(
-                                modifier = Modifier.fillMaxSize(),
-                                contentAlignment = Alignment.Center
-                            ) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            if (showEmptyMessage) {
                                 Text(
                                     text = nullOrEmptyMessage,
                                     modifier = Modifier
@@ -152,9 +156,9 @@ fun <T> ResourceHandler(
                                     style = MaterialTheme.typography.titleLarge,
                                     color = MaterialTheme.colorScheme.onBackground,
                                 )
+                            } else {
+
                             }
-                        } else {
-                            
                         }
                     }
                 }
@@ -461,5 +465,29 @@ fun ChooseIcon(
     }
 }
 
+@Composable
+fun AsyncImageHandler(
+    modifier: Modifier = Modifier,
+    imageUrl: String? = null,
+    contentDescription: String = "",
+    imageVector: ImageVector,
+    imageVectorColor: Color = MaterialTheme.colorScheme.onSurface
+) {
+    if (imageUrl != null && imageUrl != "null") {
+        AsyncImage(
+            model = imageUrl,
+            contentDescription = contentDescription,
+            modifier = modifier,
+            contentScale = ContentScale.Crop
+        )
+    } else {
+        Icon(
+            imageVector = imageVector,
+            contentDescription = contentDescription,
+            tint = imageVectorColor,
+            modifier = modifier,
+        )
+    }
+}
 
 

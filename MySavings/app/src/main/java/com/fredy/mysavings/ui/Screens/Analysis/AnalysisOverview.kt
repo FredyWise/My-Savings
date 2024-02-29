@@ -32,6 +32,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.R
 import com.fredy.mysavings.Util.BalanceColor
+import com.fredy.mysavings.Util.RecordTypeColor
 import com.fredy.mysavings.Util.defaultColors
 import com.fredy.mysavings.Util.formatBalanceAmount
 import com.fredy.mysavings.Util.isExpense
@@ -48,9 +49,6 @@ fun AnalysisOverview(
     state: RecordState,
     onEvent: (RecordsEvent) -> Unit,
 ) {
-    val expenseColor by remember { mutableStateOf(BalanceColor.Expense) }
-    val incomeColor by remember { mutableStateOf(BalanceColor.Income) }
-    val transferColor by remember { mutableStateOf(BalanceColor.Transfer) }
     state.resourceData.categoriesWithAmountResource.let { resource ->
         ResourceHandler(
             resource = resource,
@@ -69,12 +67,7 @@ fun AnalysisOverview(
                 } else if (isIncome(data.first().category.categoryType)) {
                     state.balanceBar.income.amount
                 } else state.balanceBar.transfer.amount
-            val contentColor =
-                if (isExpense(data.first().category.categoryType)) {
-                    expenseColor
-                } else if (isIncome(data.first().category.categoryType)) {
-                    incomeColor
-                } else transferColor
+            val contentColor = RecordTypeColor(recordType = data.first().category.categoryType)
             val colors = (if (isExpense(items.first().category.categoryType)) defaultColors
             else defaultColors.reversed()).subList(
                 0,

@@ -39,7 +39,7 @@ import java.util.Locale
 @Composable
 fun AnalysisTabRow(
     modifier: Modifier = Modifier,
-    color: Color = MaterialTheme.colorScheme.onBackground,
+    color: Color = MaterialTheme.colorScheme.secondary,
     allScreens: List<NavigationRoute>,
     onTabSelected: (screen: NavigationRoute) -> Unit,
     currentScreen: NavigationRoute

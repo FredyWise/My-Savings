@@ -19,6 +19,7 @@ import com.fredy.mysavings.Data.Enum.DisplayState
 import com.fredy.mysavings.Util.FilterState
 import com.fredy.mysavings.Util.defaultExpenseColor
 import com.fredy.mysavings.Util.defaultIncomeColor
+import com.fredy.mysavings.Util.defaultTransferColor
 import com.fredy.mysavings.Util.initialDarkThemeDefaultColor
 import com.fredy.mysavings.ViewModels.SettingState
 import kotlinx.coroutines.flow.Flow
@@ -26,6 +27,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import java.time.LocalTime
+import javax.inject.Inject
 
 interface SettingsRepository {
 
@@ -38,6 +40,9 @@ interface SettingsRepository {
     suspend fun saveIncomeColor(color: Color)
     fun getExpenseColor(): Flow<Color>
     suspend fun saveExpenseColor(color: Color)
+
+    fun getTransferColor(): Flow<Color>
+    suspend fun saveTransferColor(color: Color)
 
     // Notifications
     fun getDailyNotification(): Flow<Boolean>
@@ -56,16 +61,16 @@ interface SettingsRepository {
 
     // View
     fun getCarryOn(): Flow<Boolean>
-    suspend fun saveCarryOn(enableAutoLogin: Boolean)
+    suspend fun saveCarryOn(enableCarryOn: Boolean)
     fun getShowTotal(): Flow<Boolean>
-    suspend fun saveShowTotal(enableAutoLogin: Boolean)
+    suspend fun saveShowTotal(enableShowTotal: Boolean)
 
     // ALL
     fun getAllPreferenceSettings(): Flow<SettingState>
     fun getAllPreferenceView(): Flow<FilterState>
 }
 
-class SettingsRepositoryImpl(private val context: Context) : SettingsRepository {
+class SettingsRepositoryImpl @Inject constructor(private val context: Context) : SettingsRepository {
 
     companion object {
         private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("Settings")
@@ -77,6 +82,7 @@ class SettingsRepositoryImpl(private val context: Context) : SettingsRepository 
         val THEME_COLOR = intPreferencesKey("theme_color")
         val EXPENSE_COLOR = intPreferencesKey("expense_color")
         val INCOME_COLOR = intPreferencesKey("income_color")
+        val TRANSFER_COLOR = intPreferencesKey("transfer_color")
         val CARRY_ON = booleanPreferencesKey("carry_on")
         val SHOW_TOTAL = booleanPreferencesKey("show_total")
     }
@@ -122,6 +128,18 @@ class SettingsRepositoryImpl(private val context: Context) : SettingsRepository 
     override suspend fun saveExpenseColor(color: Color) {
         context.dataStore.edit { preferences ->
             preferences[EXPENSE_COLOR] = color.toArgb()
+        }
+    }
+
+
+    override fun getTransferColor(): Flow<Color> = context.dataStore.data
+        .map { preferences ->
+            Color(preferences[TRANSFER_COLOR] ?: defaultTransferColor.toArgb())
+        }
+
+    override suspend fun saveTransferColor(color: Color) {
+        context.dataStore.edit { preferences ->
+            preferences[TRANSFER_COLOR] = color.toArgb()
         }
     }
 
@@ -220,6 +238,7 @@ class SettingsRepositoryImpl(private val context: Context) : SettingsRepository 
             selectedThemeColor = getThemeColor().first(),
             selectedExpenseColor = getExpenseColor().first(),
             selectedIncomeColor = getIncomeColor().first(),
+            selectedTransferColor = getTransferColor().first(),
             isBioAuthPossible = bioAuthStatus(),
             updated = true
         )

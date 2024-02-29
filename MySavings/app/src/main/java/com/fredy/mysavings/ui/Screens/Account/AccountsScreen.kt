@@ -105,7 +105,7 @@ fun AccountsScreen(
                 onNavigationIconClick = {
                     isSheetOpen = false
                 },
-            ) { item, onBackgroundColor ->
+            ) { item, onBackgroundColor, balanceColor ->
                 SimpleEntityItem(
                     modifier = Modifier.padding(
                         vertical = 4.dp
@@ -143,7 +143,7 @@ fun AccountsScreen(
                             item.record.recordCurrency,
                             true
                         ),
-                        color = onBackgroundColor,
+                        color = balanceColor,
                         style = MaterialTheme.typography.titleLarge,
                         maxLines = 1
                     )

@@ -8,6 +8,7 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.fredy.mysavings.Data.CSV.CSVDao
+import com.fredy.mysavings.Data.Enum.ChangeColorType
 import com.fredy.mysavings.Data.Enum.DisplayState
 import com.fredy.mysavings.Data.Notification.NotificationCredentials
 import com.fredy.mysavings.Data.Notification.NotificationWorker
@@ -18,6 +19,7 @@ import com.fredy.mysavings.Util.BalanceColor
 import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.defaultExpenseColor
 import com.fredy.mysavings.Util.defaultIncomeColor
+import com.fredy.mysavings.Util.defaultTransferColor
 import com.fredy.mysavings.Util.formatDateYear
 import com.fredy.mysavings.Util.initialDarkThemeDefaultColor
 import com.fredy.mysavings.Util.isInternetConnected
@@ -44,7 +46,6 @@ class SettingViewModel @Inject constructor(
     private val syncRepository: SyncRepository,
     private val csvDao: CSVDao,
 ) : ViewModel() {
-
     init {
         viewModelScope.launch {
             settingsRepository.getAllPreferenceSettings().collect { savedState ->
@@ -70,77 +71,67 @@ class SettingViewModel @Inject constructor(
     )
 
     fun onEvent(event: SettingEvent) {
-        when (event) {
-            is SettingEvent.SelectDisplayMode -> {
-                viewModelScope.launch {
+        viewModelScope.launch {
+            when (event) {
+                is SettingEvent.SelectDisplayMode -> {
                     settingsRepository.saveDisplayMode(event.displayMode)
+                    _state.update {
+                        it.copy(displayMode = event.displayMode)
+                    }
                 }
-                _state.update {
-                    it.copy(displayMode = event.displayMode)
-                }
-            }
 
-            is SettingEvent.SelectEndExportDate -> {
-                _state.update {
-                    it.copy(endDate = LocalDateTime.of(event.endDate, LocalTime.MAX))
+                is SettingEvent.SelectEndExportDate -> {
+                    _state.update {
+                        it.copy(endDate = LocalDateTime.of(event.endDate, LocalTime.MAX))
+                    }
                 }
-            }
 
-            is SettingEvent.SelectStartExportDate -> {
-                _state.update {
-                    it.copy(startDate = LocalDateTime.of(event.startDate, LocalTime.MIN))
+                is SettingEvent.SelectStartExportDate -> {
+                    _state.update {
+                        it.copy(startDate = LocalDateTime.of(event.startDate, LocalTime.MIN))
+                    }
                 }
-            }
 
-            SettingEvent.ToggleAutoLogin -> {
-                viewModelScope.launch {
+                SettingEvent.ToggleAutoLogin -> {
                     settingsRepository.saveAutoLogin(!_state.value.autoLogin)
+                    _state.update {
+                        it.copy(autoLogin = !it.autoLogin)
+                    }
                 }
-                _state.update {
-                    it.copy(autoLogin = !it.autoLogin)
-                }
-            }
 
-            SettingEvent.ToggleBioAuth -> {
-                viewModelScope.launch {
+                SettingEvent.ToggleBioAuth -> {
                     settingsRepository.saveBioAuth(!_state.value.bioAuth)
+                    _state.update {
+                        it.copy(bioAuth = !it.bioAuth)
+                    }
                 }
-                _state.update {
-                    it.copy(bioAuth = !it.bioAuth)
-                }
-            }
 
-            SettingEvent.ToggleDailyNotification -> {
-                val notificationTime = if (!_state.value.dailyNotification) {
-                    _state.value.dailyNotificationTime
-                } else {
-                    cancelScheduledNotifications()
-                    LocalTime.now()
-                }
-                viewModelScope.launch {
+                SettingEvent.ToggleDailyNotification -> {
+                    val notificationTime = if (!_state.value.dailyNotification) {
+                        _state.value.dailyNotificationTime
+                    } else {
+                        cancelScheduledNotifications()
+                        LocalTime.now()
+                    }
                     settingsRepository.saveDailyNotification(!_state.value.dailyNotification)
                     settingsRepository.saveDailyNotificationTime(notificationTime)
+                    _state.update {
+                        it.copy(
+                            dailyNotification = !it.dailyNotification,
+                            dailyNotificationTime = notificationTime
+                        )
+                    }
                 }
-                _state.update {
-                    it.copy(
-                        dailyNotification = !it.dailyNotification,
-                        dailyNotificationTime = notificationTime
-                    )
-                }
-            }
 
-            is SettingEvent.SetDailyNotificationTime -> {
-                scheduleNotification(event.time)
-                viewModelScope.launch {
+                is SettingEvent.SetDailyNotificationTime -> {
+                    scheduleNotification(event.time)
                     settingsRepository.saveDailyNotificationTime(event.time)
+                    _state.update {
+                        it.copy(dailyNotificationTime = event.time)
+                    }
                 }
-                _state.update {
-                    it.copy(dailyNotificationTime = event.time)
-                }
-            }
 
-            is SettingEvent.OnExport -> {
-                viewModelScope.launch {
+                is SettingEvent.OnExport -> {
                     val startDate = state.value.startDate
                     val endDate = state.value.endDate
                     recordRepository.getAllTrueRecordsWithinSpecificTime(startDate, endDate)
@@ -161,47 +152,54 @@ class SettingViewModel @Inject constructor(
                             }
                         }
                 }
-            }
 
-            SettingEvent.HideColorPallet -> {
-                _state.update {
-                    it.copy(isShowColorPallet = false)
+                SettingEvent.HideColorPallet -> {
+                    _state.update {
+                        it.copy(isShowColorPallet = false)
+                    }
                 }
-            }
 
-            SettingEvent.ShowColorPallet -> {
-                _state.update {
-                    it.copy(isShowColorPallet = true)
+                SettingEvent.ShowColorPallet -> {
+                    _state.update {
+                        it.copy(isShowColorPallet = true)
+                    }
                 }
-            }
 
-            is SettingEvent.ChangeExpenseColor -> {
-                viewModelScope.launch {
-                    settingsRepository.saveExpenseColor(event.color)
-                }
-                BalanceColor.Expense = event.color
-                _state.update {
-                    it.copy(selectedExpenseColor = event.color)
-                }
-            }
+                is SettingEvent.ChangeColor -> {
+                    when (event.changeColorType) {
+                        ChangeColorType.Surface -> {
+                            settingsRepository.saveThemeColor(event.color)
+                            _state.update {
+                                it.copy(selectedThemeColor = event.color)
+                            }
+                        }
 
-            is SettingEvent.ChangeIncomeColor -> {
-                viewModelScope.launch {
-                    settingsRepository.saveIncomeColor(event.color)
-                }
-                BalanceColor.Income = event.color
-                _state.update {
-                    it.copy(selectedIncomeColor = event.color)
-                }
-            }
+                        ChangeColorType.Income -> {
+                            settingsRepository.saveIncomeColor(event.color)
+                            BalanceColor.Income = event.color
+                            _state.update {
+                                it.copy(selectedIncomeColor = event.color)
+                            }
+                        }
 
-            is SettingEvent.ChangeThemeColor -> {
-                viewModelScope.launch {
-                    settingsRepository.saveThemeColor(event.color)
+                        ChangeColorType.Expense -> {
+                            settingsRepository.saveExpenseColor(event.color)
+                            BalanceColor.Expense = event.color
+                            _state.update {
+                                it.copy(selectedExpenseColor = event.color)
+                            }
+                        }
+
+                        ChangeColorType.Transfer -> {
+                            settingsRepository.saveTransferColor(event.color)
+                            BalanceColor.Transfer = event.color
+                            _state.update {
+                                it.copy(selectedTransferColor = event.color)
+                            }
+                        }
+                    }
                 }
-                _state.update {
-                    it.copy(selectedThemeColor = event.color)
-                }
+
             }
         }
     }
@@ -253,6 +251,7 @@ data class SettingState(
     val selectedThemeColor: Color = initialDarkThemeDefaultColor,
     val selectedExpenseColor: Color = defaultExpenseColor,
     val selectedIncomeColor: Color = defaultIncomeColor,
+    val selectedTransferColor: Color = defaultTransferColor,
     val dailyNotification: Boolean = false,
     val dailyNotificationTime: LocalTime = LocalTime.now(),
     val updated: Boolean = false,

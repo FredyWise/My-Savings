@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.compose.ui.graphics.Color
 import com.fredy.mysavings.Data.Database.Model.Record
 import com.fredy.mysavings.Data.Database.Model.TrueRecord
+import com.fredy.mysavings.Data.Enum.ChangeColorType
 import com.fredy.mysavings.Data.Enum.DisplayState
 import com.fredy.mysavings.Data.Enum.FilterType
 import java.net.URI
@@ -19,9 +20,7 @@ sealed interface SettingEvent{
     data class OnExport(val uri: String): SettingEvent
     object ShowColorPallet:SettingEvent
     object HideColorPallet:SettingEvent
-    data class ChangeThemeColor(val color: Color): SettingEvent
-    data class ChangeExpenseColor(val color: Color): SettingEvent
-    data class ChangeIncomeColor(val color: Color): SettingEvent
+    data class ChangeColor(val changeColorType: ChangeColorType,val color: Color): SettingEvent
     data class SetDailyNotificationTime(val time: LocalTime): SettingEvent
     data class SelectStartExportDate(val startDate: LocalDate): SettingEvent
     data class SelectEndExportDate(val endDate: LocalDate): SettingEvent

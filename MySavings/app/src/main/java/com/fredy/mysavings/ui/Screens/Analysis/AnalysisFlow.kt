@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,21 +19,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import co.yml.charts.common.model.Point
 import com.fredy.mysavings.R
 import com.fredy.mysavings.Util.BalanceColor
+import com.fredy.mysavings.Util.RecordTypeColor
 import com.fredy.mysavings.Util.formatBalanceAmount
 import com.fredy.mysavings.Util.formatDateDay
-import com.fredy.mysavings.Util.formatDateTime
-import com.fredy.mysavings.Util.formatDay
 import com.fredy.mysavings.Util.formatRangeOfDate
 import com.fredy.mysavings.Util.isExpense
 import com.fredy.mysavings.Util.isFilterTypeMonthBelow
-import com.fredy.mysavings.Util.isIncome
 import com.fredy.mysavings.ViewModels.Event.RecordsEvent
 import com.fredy.mysavings.ViewModels.RecordState
 import com.fredy.mysavings.ui.Screens.Analysis.Charts.ChartLine
@@ -47,13 +43,10 @@ import kotlin.math.absoluteValue
 @Composable
 fun AnalysisFlow(
     modifier: Modifier = Modifier,
-    onBackgroundColor: Color = MaterialTheme.colorScheme.onBackground,
+    onBackgroundColor: Color = MaterialTheme.colorScheme.secondary,
     state: RecordState,
     onEvent: (RecordsEvent) -> Unit,
 ) {
-    val expenseColor by remember { mutableStateOf(BalanceColor.Expense) }
-    val incomeColor by remember { mutableStateOf(BalanceColor.Income) }
-    val transferColor by remember { mutableStateOf(BalanceColor.Transfer) }
     state.resourceData.recordsWithinTimeResource.let { resource ->
         ResourceHandler(
             resource = resource,
@@ -67,9 +60,7 @@ fun AnalysisFlow(
             },
         ) { data ->
             val items = if (isExpense(data.first().recordType)) data else data.reversed()
-            val contentColor =
-                if (isExpense(data.first().recordType)) expenseColor else if (isIncome(data.first().recordType)) incomeColor else transferColor
-
+            val contentColor = RecordTypeColor(recordType = data.first().recordType)
             LazyColumn(modifier = modifier) {
                 item {
                     Box(
@@ -82,7 +73,8 @@ fun AnalysisFlow(
                         ChartLine(
                             contentColor = contentColor,
                             pointsData = items.map { item ->
-                                val date =  if (state.filterState.isFilterTypeMonthBelow()) item.recordDateTime.dayOfMonth.toFloat() else item.recordDateTime.dayOfYear.toFloat()
+                                val date =
+                                    if (state.filterState.isFilterTypeMonthBelow()) item.recordDateTime.dayOfMonth.toFloat() else item.recordDateTime.dayOfYear.toFloat()
                                 Point(
                                     x = date,
                                     y = item.recordAmount.absoluteValue.toFloat(),
@@ -90,18 +82,21 @@ fun AnalysisFlow(
                             }.reversed(),
                             year = state.filterState.selectedDate.year,
                             month = state.filterState.selectedDate.monthValue,
-                            currency = items.first().recordCurrency,
+//                            currency = items.first().recordCurrency,
                         )
                     }
                     Text(
                         text = state.filterState.recordType.name + ": " + formatRangeOfDate(
                             state.filterState.selectedDate, state.filterState.filterType
                         ),
-                        modifier = Modifier.padding(horizontal = 10.dp).padding(top = 8.dp).clickable {
-                            onEvent(
-                                RecordsEvent.ToggleRecordType
-                            )
-                        },
+                        modifier = Modifier
+                            .padding(horizontal = 10.dp)
+                            .padding(top = 8.dp)
+                            .clickable {
+                                onEvent(
+                                    RecordsEvent.ToggleRecordType
+                                )
+                            },
                         color = onBackgroundColor,
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.titleLarge

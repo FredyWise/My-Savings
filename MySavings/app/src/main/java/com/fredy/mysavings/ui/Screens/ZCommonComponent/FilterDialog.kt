@@ -84,7 +84,7 @@ fun FilterDialog(
             ) {
                 Text(
                     modifier = Modifier.weight(
-                        0.5f
+                        0.7f
                     ),
                     text = "Sort by: ",
                     style = MaterialTheme.typography.titleMedium,
@@ -93,7 +93,7 @@ fun FilterDialog(
                 )
                 Column(
                     modifier = Modifier.weight(
-                        0.5f
+                        0.3f
                     ),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -113,14 +113,14 @@ fun FilterDialog(
                     )
                 }
             }
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(16.dp))
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     modifier = Modifier.weight(
-                        0.5f
+                        0.7f
                     ),
                     text = "Carry On: ",
                     style = MaterialTheme.typography.titleMedium,
@@ -129,7 +129,7 @@ fun FilterDialog(
                 )
                 Column(
                     modifier = Modifier.weight(
-                        0.5f
+                        0.3f
                     ),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -145,14 +145,14 @@ fun FilterDialog(
                     )
                 }
             }
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(16.dp))
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     modifier = Modifier.weight(
-                        0.5f
+                        0.7f
                     ),
                     text = "Show Total: ",
                     style = MaterialTheme.typography.titleMedium,
@@ -161,7 +161,7 @@ fun FilterDialog(
                 )
                 Column(
                     modifier = Modifier.weight(
-                        0.5f
+                        0.3f
                     ),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -177,14 +177,14 @@ fun FilterDialog(
                     )
                 }
             }
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(16.dp))
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     modifier = Modifier.weight(
-                        0.5f
+                        0.7f
                     ),
                     text = "Use User Currency: ",
                     style = MaterialTheme.typography.titleMedium,
@@ -193,7 +193,7 @@ fun FilterDialog(
                 )
                 Column(
                     modifier = Modifier.weight(
-                        0.5f
+                        0.3f
                     ),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -209,7 +209,7 @@ fun FilterDialog(
                     )
                 }
             }
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(16.dp))
         }
         Column(modifier = Modifier) {
             CustomStickyHeader(

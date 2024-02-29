@@ -33,7 +33,6 @@ fun ChartGroupedBar(
     incomeColor: Color = MaterialTheme.colorScheme.primary,
     expenseColor: Color = MaterialTheme.colorScheme.tertiary,
     groupBarData: List<GroupBar>,
-    currency: String
 ) {
 
     val step = 5
@@ -58,7 +57,7 @@ fun ChartGroupedBar(
     ).labelData { index ->
         formatBalanceAmount(
             (index * (groupBarData.maxOf { data -> data.barList.maxOf { it.point.y.absoluteValue } } / step).toDouble()),
-            currency, true,
+             isShortenToChar = true,
         )
     }.build()
     val colorPaletteList = listOf(

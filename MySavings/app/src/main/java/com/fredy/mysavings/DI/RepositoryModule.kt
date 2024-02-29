@@ -1,13 +1,16 @@
 package com.fredy.mysavings.DI
 
 import android.content.Context
+import com.fredy.mysavings.Data.APIs.CountryModels.CountryApi
 import com.fredy.mysavings.Data.APIs.CurrencyModels.CurrencyApi
 import com.fredy.mysavings.Data.Database.Dao.AccountDao
 import com.fredy.mysavings.Data.Database.Dao.CategoryDao
 import com.fredy.mysavings.Data.Database.Dao.CurrencyCacheDao
+import com.fredy.mysavings.Data.Database.Dao.CurrencyDao
 import com.fredy.mysavings.Data.Database.Dao.RecordDao
 import com.fredy.mysavings.Data.Database.FirebaseDataSource.AccountDataSource
 import com.fredy.mysavings.Data.Database.FirebaseDataSource.CategoryDataSource
+import com.fredy.mysavings.Data.Database.FirebaseDataSource.CurrencyCacheDataSource
 import com.fredy.mysavings.Data.Database.FirebaseDataSource.CurrencyDataSource
 import com.fredy.mysavings.Data.Database.FirebaseDataSource.RecordDataSource
 import com.fredy.mysavings.Data.Repository.AccountRepository
@@ -50,12 +53,18 @@ object RepositoryModule {
     @Singleton
     fun provideCurrencyRepository(
         currencyApi: CurrencyApi,
+        countryApi: CountryApi,
+        currencyCacheDataSource: CurrencyCacheDataSource,
         currencyDataSource: CurrencyDataSource,
         currencyCacheDao: CurrencyCacheDao,
+        currencyInfoCacheDao: CurrencyDao,
     ): CurrencyRepository = CurrencyRepositoryImpl(
         currencyApi,
+        countryApi,
+        currencyCacheDataSource,
         currencyDataSource,
         currencyCacheDao,
+        currencyInfoCacheDao
     )
 
     @Provides

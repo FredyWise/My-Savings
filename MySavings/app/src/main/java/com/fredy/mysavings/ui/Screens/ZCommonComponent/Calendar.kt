@@ -40,7 +40,7 @@ import kotlin.math.ceil
 fun Calendar(
     modifier: Modifier = Modifier,
     inputColor: Color,
-    borderColor: Color = MaterialTheme.colorScheme.onSecondary,
+    borderColor: Color = MaterialTheme.colorScheme.secondary,
     dayTextColor: Color = inputColor,
     dateTextColor: Color = MaterialTheme.colorScheme.secondary,
     calendarColumn: Int = 7,

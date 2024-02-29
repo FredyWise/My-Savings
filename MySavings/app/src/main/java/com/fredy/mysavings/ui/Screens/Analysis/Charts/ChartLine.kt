@@ -39,7 +39,6 @@ fun ChartLine(
     pointsData: List<Point>,
     year: Int,
     month: Int,
-    currency: String,
 ) {
     val points = pointsData.sortedBy { it.x }.toMutableList()
     points.add(0, Point(0f, 0f))
@@ -74,7 +73,7 @@ fun ChartLine(
     ).axisLineColor(contentColor).labelData { i ->
 //        val yScale = (yMax - yMin) / steps
         val yScale = yMax / steps
-        formatBalanceAmount((i * yScale).toDouble(), currency,true)
+        formatBalanceAmount((i * yScale).toDouble(), isShortenToChar = true)
 //        formatBalanceAmount(((i * yScale) + yMin).toDouble(),currency)
     }.build()
 

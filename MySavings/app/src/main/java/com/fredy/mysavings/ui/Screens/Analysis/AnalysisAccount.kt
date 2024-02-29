@@ -26,6 +26,7 @@ import co.yml.charts.common.model.Point
 import co.yml.charts.ui.barchart.models.BarData
 import co.yml.charts.ui.barchart.models.GroupBar
 import com.fredy.mysavings.Util.BalanceColor
+import com.fredy.mysavings.Util.deletedAccount
 import com.fredy.mysavings.Util.formatBalanceAmount
 import com.fredy.mysavings.ViewModels.Event.RecordsEvent
 import com.fredy.mysavings.ViewModels.RecordState
@@ -92,7 +93,7 @@ fun AnalysisAccount(
                                 )
                             )
                         },
-                        currency = data.first().account.accountCurrency,
+//                        currency = data.first().account.accountCurrency,
                     )
                 }
                 items(data, key = { it.account.accountId }) { item ->

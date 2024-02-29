@@ -7,12 +7,15 @@ import com.fredy.mysavings.Data.CSV.CSVDaoImpl
 import com.fredy.mysavings.Data.Database.Dao.AccountDao
 import com.fredy.mysavings.Data.Database.Dao.CategoryDao
 import com.fredy.mysavings.Data.Database.Dao.CurrencyCacheDao
+import com.fredy.mysavings.Data.Database.Dao.CurrencyDao
 import com.fredy.mysavings.Data.Database.Dao.RecordDao
 import com.fredy.mysavings.Data.Database.Dao.UserDao
 import com.fredy.mysavings.Data.Database.FirebaseDataSource.AccountDataSource
 import com.fredy.mysavings.Data.Database.FirebaseDataSource.AccountDataSourceImpl
 import com.fredy.mysavings.Data.Database.FirebaseDataSource.CategoryDataSource
 import com.fredy.mysavings.Data.Database.FirebaseDataSource.CategoryDataSourceImpl
+import com.fredy.mysavings.Data.Database.FirebaseDataSource.CurrencyCacheDataSource
+import com.fredy.mysavings.Data.Database.FirebaseDataSource.CurrencyCacheDataSourceImpl
 import com.fredy.mysavings.Data.Database.FirebaseDataSource.CurrencyDataSource
 import com.fredy.mysavings.Data.Database.FirebaseDataSource.CurrencyDataSourceImpl
 import com.fredy.mysavings.Data.Database.FirebaseDataSource.RecordDataSource
@@ -61,6 +64,10 @@ object DataModule {
     @Singleton
     fun provideCurrencyCacheDao(savingsDatabase: SavingsDatabase): CurrencyCacheDao =
         savingsDatabase.currencyCache
+    @Provides
+    @Singleton
+    fun provideCurrencyDao(savingsDatabase: SavingsDatabase): CurrencyDao =
+        savingsDatabase.currency
 
     @Provides
     @Singleton
@@ -79,7 +86,11 @@ object DataModule {
 
     @Provides
     @Singleton
-    fun provideCurrencyCacheDataSource(firestore: FirebaseFirestore): CurrencyDataSource =
+    fun provideCurrencyCacheDataSource(firestore: FirebaseFirestore): CurrencyCacheDataSource =
+        CurrencyCacheDataSourceImpl(firestore)
+    @Provides
+    @Singleton
+    fun provideCurrencyDataSource(firestore: FirebaseFirestore): CurrencyDataSource =
         CurrencyDataSourceImpl(firestore)
 
     @Provides

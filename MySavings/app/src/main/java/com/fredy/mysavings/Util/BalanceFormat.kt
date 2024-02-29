@@ -52,6 +52,21 @@ fun BalanceColor(
     }
 }
 
+@Composable
+fun RecordTypeColor(
+    recordType: RecordType
+): Color {
+    val expenseColor by remember { mutableStateOf(BalanceColor.Expense) }
+    val transferColor by remember { mutableStateOf(BalanceColor.Transfer) }
+    val incomeColor by remember { mutableStateOf(BalanceColor.Income) }
+
+    return when (recordType){
+        RecordType.Expense -> expenseColor
+        RecordType.Income -> incomeColor
+        RecordType.Transfer -> transferColor
+    }
+}
+
 object BalanceColor {
     var Expense = defaultExpenseColor
     var Transfer = defaultTransferColor

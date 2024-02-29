@@ -2,14 +2,23 @@ package com.fredy.mysavings.Data.Repository
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
+import co.yml.charts.common.extensions.isNotNull
 import com.fredy.mysavings.Data.APIs.ApiCredentials
+import com.fredy.mysavings.Data.APIs.CountryModels.CountryApi
+import com.fredy.mysavings.Data.APIs.CountryModels.Response.CurrencyInfoItem
 import com.fredy.mysavings.Data.APIs.CurrencyModels.CurrencyApi
 import com.fredy.mysavings.Data.APIs.CurrencyModels.Response.CurrencyResponse
 import com.fredy.mysavings.Data.APIs.CurrencyModels.Response.Rates
 import com.fredy.mysavings.Data.Database.Converter.CurrencyRatesConverter
 import com.fredy.mysavings.Data.Database.Dao.CurrencyCacheDao
+import com.fredy.mysavings.Data.Database.Dao.CurrencyDao
+import com.fredy.mysavings.Data.Database.FirebaseDataSource.CurrencyCacheDataSource
 import com.fredy.mysavings.Data.Database.FirebaseDataSource.CurrencyDataSource
+import com.fredy.mysavings.Data.Database.Model.Currency
 import com.fredy.mysavings.Data.Database.Model.CurrencyCache
+import com.fredy.mysavings.Data.Mappers.getRateForCurrency
+import com.fredy.mysavings.Data.Mappers.toCurrency
+import com.fredy.mysavings.Data.Mappers.toCurrencyInfoItems
 import com.fredy.mysavings.Util.BalanceItem
 import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.TAG
@@ -22,13 +31,16 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 interface CurrencyRepository {
+    suspend fun updateRates(currencyResponse: CurrencyResponse)
+    suspend fun updateCurrency(currency: Currency)
     fun convertCurrency(
         amount: Double,
         fromCurrency: String,
         toCurrency: String,
     ): Flow<Resource<BalanceItem>>
 
-    fun getRates(): Flow<Resource<CurrencyResponse>>
+    fun getCurrencyRates(): Flow<Resource<Rates>>
+    fun getCurrencies(): Flow<Resource<List<Currency>>>
 
     suspend fun convertCurrencyData(
         amount: Double,
@@ -38,12 +50,38 @@ interface CurrencyRepository {
 }
 
 class CurrencyRepositoryImpl @Inject constructor(
-    private val api: CurrencyApi,
+    private val currencyApi: CurrencyApi,
+    private val countryApi: CountryApi,
+    private val currencyCacheDataSource: CurrencyCacheDataSource,
     private val currencyDataSource: CurrencyDataSource,
     private val currencyCacheDao: CurrencyCacheDao,
+    private val currencyDao: CurrencyDao,
 ) : CurrencyRepository {
     // this should be separated by service and repository
     private val _cachedRates = MutableLiveData<CurrencyResponse>()
+    private val _cachedCurrency = MutableLiveData<List<Currency>>()
+    private val _cachedCurrencyInfoResponse = MutableLiveData<List<CurrencyInfoItem>>()
+    override suspend fun updateRates(currencyResponse: CurrencyResponse) {
+        withContext(Dispatchers.IO) {
+            val cache = CurrencyCache(
+                currencyResponse = currencyResponse,
+                cachedTime = Timestamp.now()
+            )
+            Log.i(TAG, "cacheRates: $cache")
+            _cachedRates.postValue(currencyResponse)
+            currencyCacheDataSource.upsertCurrencyCache(cache)
+            currencyCacheDao.upsertCurrencyCache(cache)
+        }
+    }
+
+    override suspend fun updateCurrency(currency: Currency) {
+        withContext(Dispatchers.IO) {
+            Log.i(TAG, "cacheRates: $currency")
+            currencyDataSource.upsertCurrency(currency)
+            currencyDao.upsertCurrency(currency)
+        }
+    }
+
     override fun convertCurrency(
         amount: Double,
         fromCurrency: String,
@@ -60,10 +98,7 @@ class CurrencyRepositoryImpl @Inject constructor(
                 )
             ) toCurrency else fromCurrency
 
-            var rates = _cachedRates.value?.rates
-            if (rates == null) {
-                rates = getRates(ApiCredentials.CurrencyModels.BASE_CURRENCY).rates
-            }
+            val rates = getRates().rates
             val result = withContext(Dispatchers.IO) {
                 singleBaseCurrencyConverter(
                     amount,
@@ -89,17 +124,13 @@ class CurrencyRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getRates(): Flow<Resource<CurrencyResponse>> {
+    override fun getCurrencyRates(): Flow<Resource<Rates>> {
         return flow {
             emit(Resource.Loading())
-
-            var currencyResponse = _cachedRates.value
-            if (currencyResponse == null) {
-                currencyResponse = getRates(ApiCredentials.CurrencyModels.BASE_CURRENCY)
-            }
+            val currencyRates = getRates().rates
             emit(
                 Resource.Success(
-                    currencyResponse
+                    currencyRates
                 )
             )
         }.catch { e ->
@@ -126,10 +157,8 @@ class CurrencyRepositoryImpl @Inject constructor(
         ) toCurrency else fromCurrency
 
         return try {
-            var rates = _cachedRates.value?.rates
-            if (rates == null) {
-                rates = getRates(ApiCredentials.CurrencyModels.BASE_CURRENCY).rates
-            }
+            val rates = getRates().rates
+
             val result = withContext(Dispatchers.IO) {
                 singleBaseCurrencyConverter(
                     amount,
@@ -151,56 +180,95 @@ class CurrencyRepositoryImpl @Inject constructor(
         }
     }
 
+    // currency info private function
 
-    private suspend fun getRates(base: String): CurrencyResponse {//we can use worker for this and maybe also for sincronizing data on room
-        Log.i(TAG, "getRates: start")
+    private suspend fun getInfo(): List<CurrencyInfoItem> {
+        Log.i(TAG, "getInfo: start")
 
         val result = withContext(Dispatchers.IO) {
             try {
-                val cachedData = getCachedRates(base)
-                Log.i(TAG, "getRates: ${cachedData}")
-
-                if (cachedData != null && isCacheValid(
-                        cachedData.cachedTime
-                    )
-                ) {// should be about online or offline
-                    val cachedResult = CurrencyResponse(
-                        cachedData.base,
-                        cachedData.date,
-                        CurrencyRatesConverter.toRates(
-                            cachedData.rates
-                        ),
-                        cachedData.success,
-                        cachedData.timestamp
-                    )
+                val info =_cachedCurrencyInfoResponse.value
+                if (info.isNullOrEmpty()) {
+                    val apiResult = getApiCurrencyInfoResponse()
                     Log.i(
                         TAG,
-                        "getCachedRates: ${cachedResult}"
-                    )
-                    cachedResult
-                } else {
-                    val apiResult = getApiRates(base)!!
-                    cacheRates(apiResult)
-                    Log.i(
-                        TAG,
-                        "getApiRates: ${apiResult}"
+                        "getApiCurrenciesInfo: $apiResult"
                     )
                     apiResult
+                }else{
+                    info
                 }
+
             } catch (e: Exception) {
                 Log.e(
-                    TAG, "Failed to fetch rates: $e"
+                    TAG, "Failed to fetch currencies info: $e"
                 )
                 throw e
             }
         }
+        _cachedCurrencyInfoResponse.postValue(result)
+        return result
+    }
+
+    private suspend fun getApiCurrencyInfoResponse(): List<CurrencyInfoItem> {
+        val response = countryApi.getCurrencyInfo()
+        return response.body()!!.toCurrencyInfoItems()
+
+    }
+
+    // rates private functions
+    private suspend fun getRates(base: String = ApiCredentials.CurrencyModels.BASE_CURRENCY): CurrencyResponse {//we can use worker for this and maybe also for sincronizing data on room
+        Log.i(TAG, "getRates: start")
+
+        val result = withContext(Dispatchers.IO) {
+            val rates = _cachedRates.value
+            if (rates.isNotNull()) {
+                rates!!
+            } else {
+                try {
+                    val cachedData = getCachedRates(base)
+                    Log.i(TAG, "getRates: $cachedData")
+
+                    if (cachedData != null && isCacheValid(cachedData.cachedTime)) {
+                        val cachedResult = CurrencyResponse(
+                            cachedData.base,
+                            cachedData.date,
+                            CurrencyRatesConverter.toRates(
+                                cachedData.rates
+                            ),
+                            cachedData.success,
+                            cachedData.timestamp
+                        )
+                        Log.i(
+                            TAG,
+                            "getCachedRates: $cachedResult"
+                        )
+                        cachedResult
+                    } else {
+                        val apiResult = getApiRates(base)!!
+                        updateRates(apiResult)
+                        Log.i(
+                            TAG,
+                            "getApiRates: $apiResult"
+                        )
+                        apiResult
+                    }
+                } catch (e: Exception) {
+                    Log.e(
+                        TAG, "Failed to fetch rates: $e"
+                    )
+                    throw e
+                }
+            }
+        }
         _cachedRates.postValue(result)
+        Log.i(TAG, "getRates: success")
         return result
     }
 
 
     private suspend fun getApiRates(base: String): CurrencyResponse? {
-        val response = api.getRates(base)
+        val response = currencyApi.getRates(base)
         return response.body()
     }
 
@@ -209,22 +277,6 @@ class CurrencyRepositoryImpl @Inject constructor(
             currencyCacheDao.getCurrencyCache(
                 base
             )
-        }
-    }
-
-    private suspend fun cacheRates(
-        response: CurrencyResponse
-    ) {
-        withContext(Dispatchers.IO) {
-            val cache = CurrencyCache(
-                currencyResponse = response,
-                cachedTime = Timestamp.now()
-            )
-            Log.i(TAG, "cacheRates: $cache")
-            currencyDataSource.upsertCurrencyCacheItem(
-                cache
-            )
-            currencyCacheDao.upsertCurrencyCache(cache)
         }
     }
 
@@ -242,194 +294,51 @@ class CurrencyRepositoryImpl @Inject constructor(
         toCurrency: String,
         rates: Rates
     ): Double {
-        val toUsdRate = getRateForCurrency(
-            toCurrency, rates
+        val toUsdRate = rates.getRateForCurrency(
+            toCurrency
         )?.toDouble() ?: throw IllegalArgumentException(
             "Currency '$toCurrency' not found in rates."
         )
-        val fromUsdRate = getRateForCurrency(
-            fromCurrency, rates
+        val fromUsdRate = rates.getRateForCurrency(
+            fromCurrency
         )?.toDouble() ?: throw IllegalArgumentException(
             "Currency '$fromCurrency' not found in rates."
         )
         return amount * (toUsdRate / fromUsdRate)
     }
 
-
-    private fun getRateForCurrency(
-        currency: String, rates: Rates
-    ) = when (currency) {
-        "AED" -> rates.AED
-        "AFN" -> rates.AFN
-        "ALL" -> rates.ALL
-        "AMD" -> rates.AMD
-        "ANG" -> rates.ANG
-        "AOA" -> rates.AOA
-        "ARS" -> rates.ARS
-        "AUD" -> rates.AUD
-        "AWG" -> rates.AWG
-        "AZN" -> rates.AZN
-        "BAM" -> rates.BAM
-        "BBD" -> rates.BBD
-        "BDT" -> rates.BDT
-        "BGN" -> rates.BGN
-        "BHD" -> rates.BHD
-        "BIF" -> rates.BIF
-        "BMD" -> rates.BMD
-        "BND" -> rates.BND
-        "BOB" -> rates.BOB
-        "BRL" -> rates.BRL
-        "BSD" -> rates.BSD
-        "BTC" -> rates.BTC
-        "BTN" -> rates.BTN
-        "BWP" -> rates.BWP
-        "BYN" -> rates.BYN
-        "BYR" -> rates.BYR
-        "BZD" -> rates.BZD
-        "CAD" -> rates.CAD
-        "CDF" -> rates.CDF
-        "CHF" -> rates.CHF
-        "CLF" -> rates.CLF
-        "CLP" -> rates.CLP
-        "CNY" -> rates.CNY
-        "COP" -> rates.COP
-        "CRC" -> rates.CRC
-        "CUC" -> rates.CUC
-        "CUP" -> rates.CUP
-        "CVE" -> rates.CVE
-        "CZK" -> rates.CZK
-        "DJF" -> rates.DJF
-        "DKK" -> rates.DKK
-        "DOP" -> rates.DOP
-        "DZD" -> rates.DZD
-        "EGP" -> rates.EGP
-        "ERN" -> rates.ERN
-        "ETB" -> rates.ETB
-        "EUR" -> rates.EUR
-        "FJD" -> rates.FJD
-        "FKP" -> rates.FKP
-        "GBP" -> rates.GBP
-        "GEL" -> rates.GEL
-        "GGP" -> rates.GGP
-        "GHS" -> rates.GHS
-        "GIP" -> rates.GIP
-        "GMD" -> rates.GMD
-        "GNF" -> rates.GNF
-        "GTQ" -> rates.GTQ
-        "GYD" -> rates.GYD
-        "HKD" -> rates.HKD
-        "HNL" -> rates.HNL
-        "HRK" -> rates.HRK
-        "HTG" -> rates.HTG
-        "HUF" -> rates.HUF
-        "IDR" -> rates.IDR
-        "ILS" -> rates.ILS
-        "IMP" -> rates.IMP
-        "INR" -> rates.INR
-        "IQD" -> rates.IQD
-        "IRR" -> rates.IRR
-        "ISK" -> rates.ISK
-        "JEP" -> rates.JEP
-        "JMD" -> rates.JMD
-        "JOD" -> rates.JOD
-        "JPY" -> rates.JPY
-        "KES" -> rates.KES
-        "KGS" -> rates.KGS
-        "KHR" -> rates.KHR
-        "KMF" -> rates.KMF
-        "KPW" -> rates.KPW
-        "KRW" -> rates.KRW
-        "KWD" -> rates.KWD
-        "KYD" -> rates.KYD
-        "KZT" -> rates.KZT
-        "LAK" -> rates.LAK
-        "LBP" -> rates.LBP
-        "LKR" -> rates.LKR
-        "LRD" -> rates.LRD
-        "LSL" -> rates.LSL
-        "LTL" -> rates.LTL
-        "LVL" -> rates.LVL
-        "LYD" -> rates.LYD
-        "MAD" -> rates.MAD
-        "MDL" -> rates.MDL
-        "MGA" -> rates.MGA
-        "MKD" -> rates.MKD
-        "MMK" -> rates.MMK
-        "MNT" -> rates.MNT
-        "MOP" -> rates.MOP
-        "MRO" -> rates.MRO
-        "MUR" -> rates.MUR
-        "MVR" -> rates.MVR
-        "MWK" -> rates.MWK
-        "MXN" -> rates.MXN
-        "MYR" -> rates.MYR
-        "MZN" -> rates.MZN
-        "NAD" -> rates.NAD
-        "NGN" -> rates.NGN
-        "NIO" -> rates.NIO
-        "NOK" -> rates.NOK
-        "NPR" -> rates.NPR
-        "NZD" -> rates.NZD
-        "OMR" -> rates.OMR
-        "PAB" -> rates.PAB
-        "PEN" -> rates.PEN
-        "PGK" -> rates.PGK
-        "PHP" -> rates.PHP
-        "PKR" -> rates.PKR
-        "PLN" -> rates.PLN
-        "PYG" -> rates.PYG
-        "QAR" -> rates.QAR
-        "RON" -> rates.RON
-        "RSD" -> rates.RSD
-        "RUB" -> rates.RUB
-        "RWF" -> rates.RWF
-        "SAR" -> rates.SAR
-        "SBD" -> rates.SBD
-        "SCR" -> rates.SCR
-        "SDG" -> rates.SDG
-        "SEK" -> rates.SEK
-        "SGD" -> rates.SGD
-        "SHP" -> rates.SHP
-        "SLE" -> rates.SLE
-        "SLL" -> rates.SLL
-        "SOS" -> rates.SOS
-        "SRD" -> rates.SRD
-        "STD" -> rates.STD
-        "SYP" -> rates.SYP
-        "SZL" -> rates.SZL
-        "THB" -> rates.THB
-        "TJS" -> rates.TJS
-        "TMT" -> rates.TMT
-        "TND" -> rates.TND
-        "TOP" -> rates.TOP
-        "TRY" -> rates.TRY
-        "TTD" -> rates.TTD
-        "TWD" -> rates.TWD
-        "TZS" -> rates.TZS
-        "UAH" -> rates.UAH
-        "UGX" -> rates.UGX
-        "USD" -> rates.USD
-        "UYU" -> rates.UYU
-        "UZS" -> rates.UZS
-        "VEF" -> rates.VEF
-        "VES" -> rates.VES
-        "VND" -> rates.VND
-        "VUV" -> rates.VUV
-        "WST" -> rates.WST
-        "XAF" -> rates.XAF
-        "XAG" -> rates.XAG
-        "XAU" -> rates.XAU
-        "XCD" -> rates.XCD
-        "XDR" -> rates.XDR
-        "XOF" -> rates.XOF
-        "XPF" -> rates.XPF
-        "YER" -> rates.YER
-        "ZAR" -> rates.ZAR
-        "ZMK" -> rates.ZMK
-        "ZMW" -> rates.ZMW
-        "ZWL" -> rates.ZWL
-        else -> null
+    override fun getCurrencies(): Flow<Resource<List<Currency>>> {
+        return flow {
+            Log.i(TAG, "getCurrencies: start")
+            emit(Resource.Loading())
+            val result = withContext(Dispatchers.IO) {
+                val cachedData = getLocalCurrencies()
+                Log.i(TAG, "getCurrencies: $cachedData")
+                cachedData.ifEmpty {
+                    val newCurrencies = makeCurrencies()
+                    Log.i(TAG, "getNewCurrencies: $newCurrencies")
+                    newCurrencies
+                }
+            }
+            _cachedCurrency.postValue(result)
+            emit(Resource.Success(result))
+        }.catch { e ->
+            Log.e(
+                TAG,
+                "Failed to get currencies: $e"
+            )
+            emit(Resource.Error(e.message.toString()))
+        }
     }
+
+    private suspend fun getLocalCurrencies(): List<Currency> {
+        return currencyDao.getCurrencies()
+    }
+
+    private suspend fun makeCurrencies(): List<Currency> {
+        return getInfo().toCurrency(getRates().rates)
+    }
+
 }
 
 

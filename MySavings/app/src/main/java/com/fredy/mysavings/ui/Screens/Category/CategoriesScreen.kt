@@ -101,7 +101,7 @@ fun CategoriesScreen(
                 onNavigationIconClick = {
                     isSheetOpen = false
                 },
-            ) { item, onBackgroundColor ->
+            ) { item, onBackgroundColor, balanceColor ->
                 SimpleEntityItem(
                     modifier = Modifier
                         .padding(
@@ -145,7 +145,7 @@ fun CategoriesScreen(
                             item.record.recordCurrency,
                             true
                         ),
-                        color = onBackgroundColor,
+                        color = balanceColor,
                         style = MaterialTheme.typography.titleLarge,
                         maxLines = 1
                     )

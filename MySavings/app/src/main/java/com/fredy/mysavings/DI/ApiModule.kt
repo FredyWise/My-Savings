@@ -1,6 +1,7 @@
 package com.fredy.mysavings.DI
 
 import com.fredy.mysavings.Data.APIs.ApiCredentials
+import com.fredy.mysavings.Data.APIs.CountryModels.CountryApi
 import com.fredy.mysavings.Data.APIs.CurrencyModels.CurrencyApi
 import com.fredy.mytest.APIs.TextCorrectionModule.TypeWiseApi
 import dagger.Module
@@ -15,6 +16,13 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object ApiModule {
+    @Provides
+    @Singleton
+    fun provideCountryApi(okHttpClient: OkHttpClient): CountryApi = Retrofit.Builder().baseUrl(
+        ApiCredentials.CountryModels.BASE_URL
+    ).addConverterFactory(GsonConverterFactory.create()).client(
+            okHttpClient
+        ).build().create(CountryApi::class.java)
 
     @Provides
     @Singleton
@@ -27,7 +35,7 @@ object ApiModule {
     @Provides
     @Singleton
     fun provideTextCorrectionApi(okHttpClient: OkHttpClient): TypeWiseApi = Retrofit.Builder().baseUrl(
-        ApiCredentials.TextCorrectionModule.BASE_URL
+        ApiCredentials.TextCorrectionModels.BASE_URL
     ).addConverterFactory(GsonConverterFactory.create()).client(
         okHttpClient
     ).build().create(TypeWiseApi::class.java)

@@ -9,6 +9,6 @@ import retrofit2.http.POST
 
 
 interface TypeWiseApi {
-    @POST(ApiCredentials.TextCorrectionModule.POST_LATEST_CORRECTION)
+    @POST(ApiCredentials.TextCorrectionModels.POST_LATEST_CORRECTION)
     fun sendPostRequest(@Body postData: TextCorrectionRequest): Call<TextCorrectionResponse>
 }

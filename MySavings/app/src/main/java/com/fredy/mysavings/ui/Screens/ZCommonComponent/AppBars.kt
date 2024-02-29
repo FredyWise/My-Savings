@@ -24,6 +24,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,8 +36,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.Data.Database.Model.TrueRecord
+import com.fredy.mysavings.Util.BalanceColor
+import com.fredy.mysavings.Util.RecordTypeColor
 import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.formatDateDay
+import com.fredy.mysavings.Util.isExpense
+import com.fredy.mysavings.Util.isIncome
 import com.fredy.mysavings.ViewModels.RecordMap
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -51,7 +58,7 @@ fun DetailAppBar(
     resource: Resource<List<RecordMap>>,
     onEmptyMessageClick: () -> Unit = {},
     onNavigationIconClick: () -> Unit,
-    content: @Composable (item: TrueRecord, itemColor: Color) -> Unit,
+    content: @Composable (item: TrueRecord, itemColor: Color, balanceColor:Color) -> Unit,
 ) {
     Column(
         modifier = modifier
@@ -169,7 +176,7 @@ fun DetailAppBar(
                                 alpha = 0.4f
                             )
                         )
-                        content(item, onBackgroundColor)
+                        content(item, onBackgroundColor, RecordTypeColor(recordType = item.record.recordType))
                     }
                 }
             }

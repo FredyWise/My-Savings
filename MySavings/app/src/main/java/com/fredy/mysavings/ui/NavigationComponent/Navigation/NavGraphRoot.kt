@@ -25,8 +25,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
+import com.fredy.mysavings.Data.APIs.ApiCredentials
 import com.fredy.mysavings.Util.TAG
 import com.fredy.mysavings.ViewModels.AuthViewModel
+import com.fredy.mysavings.ViewModels.CurrencyViewModel
 import com.fredy.mysavings.ViewModels.Event.AuthEvent
 import com.fredy.mysavings.ViewModels.RecordViewModel
 import com.fredy.mysavings.ViewModels.SearchViewModel
@@ -34,6 +36,7 @@ import com.fredy.mysavings.ViewModels.SettingViewModel
 import com.fredy.mysavings.ui.NavigationComponent.MainScreen
 import com.fredy.mysavings.ui.Screens.AddBulk.BulkAddScreen
 import com.fredy.mysavings.ui.Screens.AddSingle.AddScreen
+import com.fredy.mysavings.ui.Screens.Other.CurrencyScreen
 import com.fredy.mysavings.ui.Screens.Other.ExportScreen
 import com.fredy.mysavings.ui.Screens.Other.PreferencesScreen
 import com.fredy.mysavings.ui.Screens.Other.ProfileScreen
@@ -169,6 +172,24 @@ fun NavGraphRoot(
                     rootNavController = navController,
                     state = state,
                     onEvent = settingViewModel::onEvent
+                )
+            }
+            composable(
+                route = NavigationRoute.Currency.route,
+                enterTransition = {
+                    fadeIn()
+                },
+                exitTransition = {
+                    fadeOut()
+                },
+            ) {
+                val viewModel: CurrencyViewModel = hiltViewModel()
+                val state by viewModel.state.collectAsStateWithLifecycle()
+                CurrencyScreen(
+                    title = NavigationRoute.Currency.title,
+                    rootNavController = navController,
+                    state = state,
+//                    onEvent = settingViewModel::onEvent
                 )
             }
             composable(

@@ -8,8 +8,14 @@ sealed class ApiCredentials{
         const val CACHE_EXPIRATION_DAYS = 1
         const val BASE_CURRENCY = "USD"
     }
-    object TextCorrectionModule{
-        const val BASE_URL = "https://api.typewise.ai"
+    object TextCorrectionModels{
+        const val BASE_URL = "https://api.typewise.ai/"
         const val POST_LATEST_CORRECTION = "/latest/correction/whole_sentence"
+    }
+    object CountryModels{
+        const val BASE_URL = "https://restcountries.com/"
+        const val GET_ALL_COUNTRY = "/v3.1/all"
+        const val GET_ALL_CURRENCY_INFO = "flags,currencies"
+        const val CURRENCY_INFO_ID = "currencyInfo"
     }
 }

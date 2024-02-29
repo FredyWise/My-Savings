@@ -1,5 +1,6 @@
 package com.fredy.mysavings.Data.Repository
 
+import android.content.Context
 import android.util.Log
 import co.yml.charts.common.extensions.isNotNull
 import com.fredy.mysavings.Data.Database.Dao.RecordDao
@@ -20,12 +21,14 @@ import com.fredy.mysavings.Util.deletedAccount
 import com.fredy.mysavings.Util.deletedCategory
 import com.fredy.mysavings.Util.isExpense
 import com.fredy.mysavings.Util.isIncome
+import com.fredy.mysavings.Util.isInternetConnected
 import com.fredy.mysavings.Util.isTransfer
 import com.fredy.mysavings.ViewModels.RecordMap
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObjects
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -102,7 +105,7 @@ interface RecordRepository {
     ): Flow<BalanceItem>
 
     fun getUserTotalRecordBalance(
-        startDate: LocalDateTime = LocalDateTime.of(2000,1,1,1,1),
+        startDate: LocalDateTime = LocalDateTime.of(2000, 1, 1, 1, 1),
         endDate: LocalDateTime
     ): Flow<BalanceItem>
 
@@ -196,9 +199,9 @@ class RecordRepositoryImpl @Inject constructor(
         Log.i(TAG, "getRecordById: $recordId")
         return flow {
             val record = withContext(Dispatchers.IO) {
-                recordDataSource.getRecordById(
-                    recordId
-                )
+                    recordDataSource.getRecordById(
+                        recordId
+                    )
             }
             emit(
                 record.copy(
@@ -750,7 +753,7 @@ class RecordRepositoryImpl @Inject constructor(
                     recordAmount = existingRecord.recordAmount + tempAmount,
                 )
             } else {
-                recordsMap[key] = record.copy(recordAmount = amount,recordCurrency = currency, )
+                recordsMap[key] = record.copy(recordAmount = amount, recordCurrency = currency)
             }
         }
         val data = recordsMap.values.toList().let { value ->
@@ -817,16 +820,22 @@ class RecordRepositoryImpl @Inject constructor(
     ): List<AccountWithAmountType> {
         val accountWithAmountMap = mutableMapOf<String, AccountWithAmountType>()
         userAccounts.forEach { account ->
+            if (account.accountId == deletedAccount.accountId && account.accountAmount == 0.0) {
+                return@forEach
+            }
+            val currency = if (useUserCurrency) userCurrency else account.accountCurrency
             val key = account.accountId
             val newAccount = AccountWithAmountType(
-                account = account,
+                account = account.copy(accountCurrency = currency),
                 incomeAmount = 0.0,
                 expenseAmount = 0.0,
             )
             accountWithAmountMap[key] = newAccount
         }
         this.forEach { record ->
+            val account = userAccounts.first { it.accountId == record.accountIdFromFk }
             val key = record.accountIdFromFk
+
             val existingAccount = accountWithAmountMap[key]
             if (!isTransfer(record.recordType)) {
                 val amount = if (useUserCurrency) {
@@ -838,14 +847,8 @@ class RecordRepositoryImpl @Inject constructor(
                 } else {
                     record.recordAmount
                 }
-                val incomeAmount = if (isIncome(
-                        record.recordType
-                    )
-                ) amount else 0.0
-                val expenseAmount = if (isExpense(
-                        record.recordType
-                    )
-                ) amount else 0.0
+                val incomeAmount = if (isIncome(record.recordType)) amount else 0.0
+                val expenseAmount = if (isExpense(record.recordType)) amount else 0.0
                 if (existingAccount != null) {
                     val currency =
                         if (useUserCurrency) userCurrency else existingAccount.account.accountCurrency
@@ -854,8 +857,8 @@ class RecordRepositoryImpl @Inject constructor(
                         incomeAmount = existingAccount.incomeAmount + incomeAmount,
                         expenseAmount = existingAccount.expenseAmount + expenseAmount,
                     )
+
                 } else {
-                    val account = userAccounts.first { it.accountId == record.accountIdFromFk }
                     val currency = if (useUserCurrency) userCurrency else account.accountCurrency
                     val newAccount = AccountWithAmountType(
                         account = account.copy(accountCurrency = currency),
@@ -865,6 +868,7 @@ class RecordRepositoryImpl @Inject constructor(
                     accountWithAmountMap[key] = newAccount
                 }
             }
+
         }
 
         val data = accountWithAmountMap.values.toList().let { value ->
