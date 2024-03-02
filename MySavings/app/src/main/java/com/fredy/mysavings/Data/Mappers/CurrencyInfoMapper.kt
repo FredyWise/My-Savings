@@ -1,38 +1,35 @@
 package com.fredy.mysavings.Data.Mappers
 
 import android.util.Log
+import androidx.compose.ui.util.fastFilter
 import com.fredy.mysavings.Data.APIs.CountryModels.Response.Currencies
 import com.fredy.mysavings.Data.APIs.CountryModels.Response.CurrencyHelper
 import com.fredy.mysavings.Data.APIs.CountryModels.Response.CurrencyInfoItem
 import com.fredy.mysavings.Data.APIs.CountryModels.Response.CurrencyInfoResponse
 import com.fredy.mysavings.Data.APIs.CountryModels.Response.UsableCurrencyInfoItem
+import com.fredy.mysavings.Data.APIs.CurrencyModels.Response.CurrencyResponse
 import com.fredy.mysavings.Data.APIs.CurrencyModels.Response.Rates
+import com.fredy.mysavings.Data.Database.Converter.CurrencyRatesConverter
 import com.fredy.mysavings.Data.Database.Model.Currency
+import com.fredy.mysavings.Data.Database.Model.CurrencyCache
 import com.fredy.mysavings.Data.Database.Model.CurrencyInfoCache
 import com.fredy.mysavings.Util.TAG
 
-fun List<CurrencyInfoItem>.toCurrencyInfoCache(): CurrencyInfoCache {
-    return CurrencyInfoCache(
-        currencyInfoItems = this
-    )
-}
-
-fun CurrencyInfoCache.toCurrencyInfoItems(): List<CurrencyInfoItem> {
-    return this.currencyInfoItems
-}
 
 fun CurrencyInfoResponse.toCurrencyInfoItems(): List<CurrencyInfoItem> {
     return this.requireNoNulls().toList().requireNoNulls()
 }
 
-fun List<CurrencyInfoItem>.toCurrency(rates: Rates): List<Currency> {
+fun List<CurrencyInfoItem>.toCurrency(rates: Rates, userId:String): List<Currency> {
     return this.toUsableCurrencyInfoItem().map {
         val currencyHelper = it.currencies
         Log.e(TAG, "toCurrency1: $currencyHelper")
         val ratesValue = rates.getRateForCurrency(it.code)!!.toDouble()
         Log.e(TAG, "toCurrency2: $currencyHelper")
         Currency(
+            it.code+userId,
             it.code,
+            userId,
             currencyHelper.name,
             currencyHelper.symbol,
             ratesValue,
@@ -59,15 +56,15 @@ fun List<CurrencyInfoItem>.toUsableCurrencyInfoItem(): List<UsableCurrencyInfoIt
     }
 }
 
-
-fun List<CurrencyInfoItem>.toCurrencyHelpers(): List<CurrencyHelper> {
-    val currencyHelpers = mutableListOf<CurrencyHelper>()
-    this.forEach {
-        currencyHelpers.add(it.currencies.toList().first())
-    }
-    return currencyHelpers
-}
-
+fun CurrencyCache.toCurrencyResponse(): CurrencyResponse = CurrencyResponse(
+    this.base,
+    this.date,
+    CurrencyRatesConverter.toRates(
+        this.rates
+    ),
+    this.success,
+    this.timestamp
+)
 
 fun Rates.getRateForCurrency(
     currency: String
@@ -242,6 +239,180 @@ fun Rates.getRateForCurrency(
     "ZMW" -> this.ZMW
     "ZWL" -> this.ZWL
     else -> null
+}
+fun Rates.updateRatesUsingCode(
+    code: String, value: Number
+) = when (code) {
+    "AED" -> this.copy(AED = value)
+    "AFN" -> this.copy(AFN = value)
+    "ALL" -> this.copy(ALL = value)
+    "AMD" -> this.copy(AMD = value)
+    "ANG" -> this.copy(ANG = value)
+    "AOA" -> this.copy(AOA = value)
+    "ARS" -> this.copy(ARS = value)
+    "AUD" -> this.copy(AUD = value)
+    "AWG" -> this.copy(AWG = value)
+    "AZN" -> this.copy(AZN = value)
+    "BAM" -> this.copy(BAM = value)
+    "BBD" -> this.copy(BBD = value)
+    "BDT" -> this.copy(BDT = value)
+    "BGN" -> this.copy(BGN = value)
+    "BHD" -> this.copy(BHD = value)
+    "BIF" -> this.copy(BIF = value)
+    "BMD" -> this.copy(BMD = value)
+    "BND" -> this.copy(BND = value)
+    "BOB" -> this.copy(BOB = value)
+    "BRL" -> this.copy(BRL = value)
+    "BSD" -> this.copy(BSD = value)
+    "BTC" -> this.copy(BTC = value)
+    "BTN" -> this.copy(BTN = value)
+    "BWP" -> this.copy(BWP = value)
+    "BYN" -> this.copy(BYN = value)
+    "BYR" -> this.copy(BYR = value)
+    "BZD" -> this.copy(BZD = value)
+    "CAD" -> this.copy(CAD = value)
+    "CDF" -> this.copy(CDF = value)
+    "CHF" -> this.copy(CHF = value)
+    "CLF" -> this.copy(CLF = value)
+    "CLP" -> this.copy(CLP = value)
+    "CNY" -> this.copy(CNY = value)
+    "COP" -> this.copy(COP = value)
+    "CRC" -> this.copy(CRC = value)
+    "CUC" -> this.copy(CUC = value)
+    "CUP" -> this.copy(CUP = value)
+    "CVE" -> this.copy(CVE = value)
+    "CZK" -> this.copy(CZK = value)
+    "DJF" -> this.copy(DJF = value)
+    "DKK" -> this.copy(DKK = value)
+    "DOP" -> this.copy(DOP = value)
+    "DZD" -> this.copy(DZD = value)
+    "EGP" -> this.copy(EGP = value)
+    "ERN" -> this.copy(ERN = value)
+    "ETB" -> this.copy(ETB = value)
+    "EUR" -> this.copy(EUR = value)
+    "FJD" -> this.copy(FJD = value)
+    "FKP" -> this.copy(FKP = value)
+    "GBP" -> this.copy(GBP = value)
+    "GEL" -> this.copy(GEL = value)
+    "GGP" -> this.copy(GGP = value)
+    "GHS" -> this.copy(GHS = value)
+    "GIP" -> this.copy(GIP = value)
+    "GMD" -> this.copy(GMD = value)
+    "GNF" -> this.copy(GNF = value)
+    "GTQ" -> this.copy(GTQ = value)
+    "GYD" -> this.copy(GYD = value)
+    "HKD" -> this.copy(HKD = value)
+    "HNL" -> this.copy(HNL = value)
+    "HRK" -> this.copy(HRK = value)
+    "HTG" -> this.copy(HTG = value)
+    "HUF" -> this.copy(HUF = value)
+    "IDR" -> this.copy(IDR = value)
+    "ILS" -> this.copy(ILS = value)
+    "IMP" -> this.copy(IMP = value)
+    "INR" -> this.copy(INR = value)
+    "IQD" -> this.copy(IQD = value)
+    "IRR" -> this.copy(IRR = value)
+    "ISK" -> this.copy(ISK = value)
+    "JEP" -> this.copy(JEP = value)
+    "JMD" -> this.copy(JMD = value)
+    "JOD" -> this.copy(JOD = value)
+    "JPY" -> this.copy(JPY = value)
+    "KES" -> this.copy(KES = value)
+    "KGS" -> this.copy(KGS = value)
+    "KHR" -> this.copy(KHR = value)
+    "KMF" -> this.copy(KMF = value)
+    "KPW" -> this.copy(KPW = value)
+    "KRW" -> this.copy(KRW = value)
+    "KWD" -> this.copy(KWD = value)
+    "KYD" -> this.copy(KYD = value)
+    "KZT" -> this.copy(KZT = value)
+    "LAK" -> this.copy(LAK = value)
+    "LBP" -> this.copy(LBP = value)
+    "LKR" -> this.copy(LKR = value)
+    "LRD" -> this.copy(LRD = value)
+    "LSL" -> this.copy(LSL = value)
+    "LTL" -> this.copy(LTL = value)
+    "LVL" -> this.copy(LVL = value)
+    "LYD" -> this.copy(LYD = value)
+    "MAD" -> this.copy(MAD = value)
+    "MDL" -> this.copy(MDL = value)
+    "MGA" -> this.copy(MGA = value)
+    "MKD" -> this.copy(MKD = value)
+    "MMK" -> this.copy(MMK = value)
+    "MNT" -> this.copy(MNT = value)
+    "MOP" -> this.copy(MOP = value)
+    "MRO" -> this.copy(MRO = value)
+    "MUR" -> this.copy(MUR = value)
+    "MVR" -> this.copy(MVR = value)
+    "MWK" -> this.copy(MWK = value)
+    "MXN" -> this.copy(MXN = value)
+    "MYR" -> this.copy(MYR = value)
+    "MZN" -> this.copy(MZN = value)
+    "NAD" -> this.copy(NAD = value)
+    "NGN" -> this.copy(NGN = value)
+    "NIO" -> this.copy(NIO = value)
+    "NOK" -> this.copy(NOK = value)
+    "NPR" -> this.copy(NPR = value)
+    "NZD" -> this.copy(NZD = value)
+    "OMR" -> this.copy(OMR = value)
+    "PAB" -> this.copy(PAB = value)
+    "PEN" -> this.copy(PEN = value)
+    "PGK" -> this.copy(PGK = value)
+    "PHP" -> this.copy(PHP = value)
+    "PKR" -> this.copy(PKR = value)
+    "PLN" -> this.copy(PLN = value)
+    "PYG" -> this.copy(PYG = value)
+    "QAR" -> this.copy(QAR = value)
+    "RON" -> this.copy(RON = value)
+    "RSD" -> this.copy(RSD = value)
+    "RUB" -> this.copy(RUB = value)
+    "RWF" -> this.copy(RWF = value)
+    "SAR" -> this.copy(SAR = value)
+    "SBD" -> this.copy(SBD = value)
+    "SCR" -> this.copy(SCR = value)
+    "SDG" -> this.copy(SDG = value)
+    "SEK" -> this.copy(SEK = value)
+    "SGD" -> this.copy(SGD = value)
+    "SHP" -> this.copy(SHP = value)
+    "SLE" -> this.copy(SLE = value)
+    "SLL" -> this.copy(SLL = value)
+    "SOS" -> this.copy(SOS = value)
+    "SRD" -> this.copy(SRD = value)
+    "STD" -> this.copy(STD = value)
+    "SYP" -> this.copy(SYP = value)
+    "SZL" -> this.copy(SZL = value)
+    "THB" -> this.copy(THB = value)
+    "TJS" -> this.copy(TJS = value)
+    "TMT" -> this.copy(TMT = value)
+    "TND" -> this.copy(TND = value)
+    "TOP" -> this.copy(TOP = value)
+    "TRY" -> this.copy(TRY = value)
+    "TTD" -> this.copy(TTD = value)
+    "TWD" -> this.copy(TWD = value)
+    "TZS" -> this.copy(TZS = value)
+    "UAH" -> this.copy(UAH = value)
+    "UGX" -> this.copy(UGX = value)
+    "USD" -> this.copy(USD = value)
+    "UYU" -> this.copy(UYU = value)
+    "UZS" -> this.copy(UZS = value)
+    "VEF" -> this.copy(VEF = value)
+    "VES" -> this.copy(VES = value)
+    "VND" -> this.copy(VND = value)
+    "VUV" -> this.copy(VUV = value)
+    "WST" -> this.copy(WST = value)
+    "XAF" -> this.copy(XAF = value)
+    "XAG" -> this.copy(XAG = value)
+    "XAU" -> this.copy(XAU = value)
+    "XCD" -> this.copy(XCD = value)
+    "XDR" -> this.copy(XDR = value)
+    "XOF" -> this.copy(XOF = value)
+    "XPF" -> this.copy(XPF = value)
+    "YER" -> this.copy(YER = value)
+    "ZAR" -> this.copy(ZAR = value)
+    "ZMK" -> this.copy(ZMK = value)
+    "ZMW" -> this.copy(ZMW = value)
+    "ZWL" -> this.copy(ZWL = value)
+    else -> this
 }
 
 fun Currencies.toList(): List<CurrencyHelper> {

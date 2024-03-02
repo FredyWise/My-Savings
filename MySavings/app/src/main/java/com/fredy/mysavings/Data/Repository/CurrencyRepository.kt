@@ -9,7 +9,6 @@ import com.fredy.mysavings.Data.APIs.CountryModels.Response.CurrencyInfoItem
 import com.fredy.mysavings.Data.APIs.CurrencyModels.CurrencyApi
 import com.fredy.mysavings.Data.APIs.CurrencyModels.Response.CurrencyResponse
 import com.fredy.mysavings.Data.APIs.CurrencyModels.Response.Rates
-import com.fredy.mysavings.Data.Database.Converter.CurrencyRatesConverter
 import com.fredy.mysavings.Data.Database.Dao.CurrencyCacheDao
 import com.fredy.mysavings.Data.Database.Dao.CurrencyDao
 import com.fredy.mysavings.Data.Database.FirebaseDataSource.CurrencyCacheDataSource
@@ -19,6 +18,8 @@ import com.fredy.mysavings.Data.Database.Model.CurrencyCache
 import com.fredy.mysavings.Data.Mappers.getRateForCurrency
 import com.fredy.mysavings.Data.Mappers.toCurrency
 import com.fredy.mysavings.Data.Mappers.toCurrencyInfoItems
+import com.fredy.mysavings.Data.Mappers.toCurrencyResponse
+import com.fredy.mysavings.Data.Mappers.updateRatesUsingCode
 import com.fredy.mysavings.Util.BalanceItem
 import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.TAG
@@ -50,6 +51,7 @@ interface CurrencyRepository {
 }
 
 class CurrencyRepositoryImpl @Inject constructor(
+    private val authRepository: AuthRepository,
     private val currencyApi: CurrencyApi,
     private val countryApi: CountryApi,
     private val currencyCacheDataSource: CurrencyCacheDataSource,
@@ -67,7 +69,7 @@ class CurrencyRepositoryImpl @Inject constructor(
                 currencyResponse = currencyResponse,
                 cachedTime = Timestamp.now()
             )
-            Log.i(TAG, "cacheRates: $cache")
+            Log.i(TAG, "updateRates: $cache")
             _cachedRates.postValue(currencyResponse)
             currencyCacheDataSource.upsertCurrencyCache(cache)
             currencyCacheDao.upsertCurrencyCache(cache)
@@ -76,11 +78,29 @@ class CurrencyRepositoryImpl @Inject constructor(
 
     override suspend fun updateCurrency(currency: Currency) {
         withContext(Dispatchers.IO) {
-            Log.i(TAG, "cacheRates: $currency")
+            val currentUser = authRepository.getCurrentUser()!!
+            val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
+            Log.i(TAG, "updateCurrency: $currency")
             currencyDataSource.upsertCurrency(currency)
             currencyDao.upsertCurrency(currency)
+            syncRates(currency, ApiCredentials.CurrencyModels.BASE_CURRENCY)
+            syncRates(currency, ApiCredentials.CurrencyModels.USER_SAVED_CURRENCY)
         }
     }
+
+    private suspend fun syncRates(currency: Currency, base: String) {
+        val response = getRateResponse(base)
+        val tempRates = response.copy(
+            rates = response.rates.updateRatesUsingCode(
+                currency.code,
+                currency.value
+            )
+        )
+        updateRates(
+            tempRates
+        )
+    }
+
 
     override fun convertCurrency(
         amount: Double,
@@ -98,7 +118,7 @@ class CurrencyRepositoryImpl @Inject constructor(
                 )
             ) toCurrency else fromCurrency
 
-            val rates = getRates().rates
+            val rates = getRateResponse().rates
             val result = withContext(Dispatchers.IO) {
                 singleBaseCurrencyConverter(
                     amount,
@@ -127,7 +147,7 @@ class CurrencyRepositoryImpl @Inject constructor(
     override fun getCurrencyRates(): Flow<Resource<Rates>> {
         return flow {
             emit(Resource.Loading())
-            val currencyRates = getRates().rates
+            val currencyRates = getRateResponse().rates
             emit(
                 Resource.Success(
                     currencyRates
@@ -157,7 +177,7 @@ class CurrencyRepositoryImpl @Inject constructor(
         ) toCurrency else fromCurrency
 
         return try {
-            val rates = getRates().rates
+            val rates = getRateResponse().rates
 
             val result = withContext(Dispatchers.IO) {
                 singleBaseCurrencyConverter(
@@ -187,7 +207,7 @@ class CurrencyRepositoryImpl @Inject constructor(
 
         val result = withContext(Dispatchers.IO) {
             try {
-                val info =_cachedCurrencyInfoResponse.value
+                val info = _cachedCurrencyInfoResponse.value
                 if (info.isNullOrEmpty()) {
                     val apiResult = getApiCurrencyInfoResponse()
                     Log.i(
@@ -195,7 +215,7 @@ class CurrencyRepositoryImpl @Inject constructor(
                         "getApiCurrenciesInfo: $apiResult"
                     )
                     apiResult
-                }else{
+                } else {
                     info
                 }
 
@@ -213,11 +233,10 @@ class CurrencyRepositoryImpl @Inject constructor(
     private suspend fun getApiCurrencyInfoResponse(): List<CurrencyInfoItem> {
         val response = countryApi.getCurrencyInfo()
         return response.body()!!.toCurrencyInfoItems()
-
     }
 
     // rates private functions
-    private suspend fun getRates(base: String = ApiCredentials.CurrencyModels.BASE_CURRENCY): CurrencyResponse {//we can use worker for this and maybe also for sincronizing data on room
+    private suspend fun getRateResponse(base: String = ApiCredentials.CurrencyModels.BASE_CURRENCY): CurrencyResponse {//we can use worker for this and maybe also for sincronizing data on room
         Log.i(TAG, "getRates: start")
 
         val result = withContext(Dispatchers.IO) {
@@ -230,15 +249,7 @@ class CurrencyRepositoryImpl @Inject constructor(
                     Log.i(TAG, "getRates: $cachedData")
 
                     if (cachedData != null && isCacheValid(cachedData.cachedTime)) {
-                        val cachedResult = CurrencyResponse(
-                            cachedData.base,
-                            cachedData.date,
-                            CurrencyRatesConverter.toRates(
-                                cachedData.rates
-                            ),
-                            cachedData.success,
-                            cachedData.timestamp
-                        )
+                        val cachedResult = cachedData.toCurrencyResponse()
                         Log.i(
                             TAG,
                             "getCachedRates: $cachedResult"
@@ -266,21 +277,18 @@ class CurrencyRepositoryImpl @Inject constructor(
         return result
     }
 
-
     private suspend fun getApiRates(base: String): CurrencyResponse? {
         val response = currencyApi.getRates(base)
         return response.body()
     }
 
     private suspend fun getCachedRates(base: String): CurrencyCache {// this should be able from room and firebase
-        return withContext(Dispatchers.IO) {
-            currencyCacheDao.getCurrencyCache(
-                base
-            )
+        return withContext(Dispatchers.IO) {// will not be used if used currency
+            currencyCacheDao.getCurrencyCache(base)
         }
     }
 
-    private fun isCacheValid(timestamp: Timestamp): Boolean {
+    private fun isCacheValid(timestamp: Timestamp): Boolean {// will not be used if used currency
         val timestampInMilliseconds = timestamp.seconds * 1000
         val expirationTime =
             timestampInMilliseconds + ApiCredentials.CurrencyModels.CACHE_EXPIRATION_DAYS * 24 * 60 * 60 * 1000
@@ -294,34 +302,38 @@ class CurrencyRepositoryImpl @Inject constructor(
         toCurrency: String,
         rates: Rates
     ): Double {
-        val toUsdRate = rates.getRateForCurrency(
+        val toBaseRate = rates.getRateForCurrency(
             toCurrency
         )?.toDouble() ?: throw IllegalArgumentException(
             "Currency '$toCurrency' not found in rates."
         )
-        val fromUsdRate = rates.getRateForCurrency(
+        val fromBaseRate = rates.getRateForCurrency(
             fromCurrency
         )?.toDouble() ?: throw IllegalArgumentException(
             "Currency '$fromCurrency' not found in rates."
         )
-        return amount * (toUsdRate / fromUsdRate)
+        return amount * (toBaseRate / fromBaseRate)
     }
 
+    // currencies
     override fun getCurrencies(): Flow<Resource<List<Currency>>> {
         return flow {
             Log.i(TAG, "getCurrencies: start")
             emit(Resource.Loading())
-            val result = withContext(Dispatchers.IO) {
-                val cachedData = getLocalCurrencies()
+            withContext(Dispatchers.IO) {
+                getLocalCurrencies()
+            }.collect { cachedData ->
                 Log.i(TAG, "getCurrencies: $cachedData")
-                cachedData.ifEmpty {
+                val result = cachedData.ifEmpty {
                     val newCurrencies = makeCurrencies()
                     Log.i(TAG, "getNewCurrencies: $newCurrencies")
+                    updateCurrencies(newCurrencies)
                     newCurrencies
-                }
+                }.sortedBy { it.name }
+
+                _cachedCurrency.postValue(result)
+                emit(Resource.Success(result))
             }
-            _cachedCurrency.postValue(result)
-            emit(Resource.Success(result))
         }.catch { e ->
             Log.e(
                 TAG,
@@ -331,12 +343,21 @@ class CurrencyRepositoryImpl @Inject constructor(
         }
     }
 
-    private suspend fun getLocalCurrencies(): List<Currency> {
-        return currencyDao.getCurrencies()
+    private suspend fun getLocalCurrencies(): Flow<List<Currency>> {
+        val currentUser = authRepository.getCurrentUser()!!
+        val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
+        return currencyDao.getCurrencies(userId)
     }
 
     private suspend fun makeCurrencies(): List<Currency> {
-        return getInfo().toCurrency(getRates().rates)
+        val currentUser = authRepository.getCurrentUser()!!
+        val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
+        return getInfo().toCurrency(getRateResponse().rates,userId)
+    }
+
+    private suspend fun updateCurrencies(currencies: List<Currency>) {
+        currencyDao.upsertAllCurrencies(currencies)
+        currencyDataSource.upsertAllCurrencyItem(currencies)
     }
 
 }

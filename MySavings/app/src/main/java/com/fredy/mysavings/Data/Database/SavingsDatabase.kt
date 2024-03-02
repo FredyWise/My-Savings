@@ -1,5 +1,6 @@
 package com.fredy.mysavings.Data.Database
 
+import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
@@ -25,7 +26,14 @@ import com.fredy.mysavings.Data.Database.Model.UserData
 @TypeConverters(value = [DateTimeConverter::class, TimestampConverter::class, CurrencyRatesConverter::class, CurrencyResponseConverter::class, CurrencyInfoResponseConverter::class])
 @Database(
     entities = [Record::class, Account::class, Category::class, UserData::class, CurrencyCache::class, Currency::class],
-    version = 1
+    version = 1,
+//    exportSchema = true,
+//    autoMigrations = [
+//        AutoMigration (
+//            from = 1,
+//            to = 2,
+//        )
+//    ]
 )
 abstract class SavingsDatabase : RoomDatabase() {
     abstract val recordDao: RecordDao

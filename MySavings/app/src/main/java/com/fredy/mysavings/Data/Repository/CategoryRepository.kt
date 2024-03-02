@@ -72,9 +72,7 @@ class CategoryRepositoryImpl @Inject constructor(
     override fun getCategory(categoryId: String): Flow<Category> {
         return flow {
             val category = withContext(Dispatchers.IO) {
-                categoryDao.getCategory(
-                    categoryId
-                )
+                categoryDao.getCategory(categoryId)
             }
             emit(category)
         }
@@ -89,7 +87,7 @@ class CategoryRepositoryImpl @Inject constructor(
                 categoryDataSource.getUserCategoriesOrderedByName(
                     userId
                 )
-            }.collect{ data ->
+            }.collect { data ->
                 emit(data)
             }
         }
@@ -102,11 +100,11 @@ class CategoryRepositoryImpl @Inject constructor(
             val currentUser = authRepository.getCurrentUser()!!
             val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
 
-             withContext(Dispatchers.IO) {
+            withContext(Dispatchers.IO) {
                 categoryDataSource.getUserCategoriesOrderedByName(
                     userId
                 )
-            }.collect{ categories->
+            }.collect { categories ->
                 val data = categories.toCategoryMaps()
                 emit(Resource.Success(data))
             }

@@ -8,7 +8,7 @@ import com.fredy.mysavings.Util.categoryInitIcon
 @Entity
 data class Category(
     @PrimaryKey
-    var categoryId: String = "",
+    val categoryId: String = "",
     val userIdFk: String = "",
     val categoryName: String = "Category",
     val categoryType: RecordType = RecordType.Expense,

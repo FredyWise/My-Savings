@@ -64,6 +64,7 @@ object DataModule {
     @Singleton
     fun provideCurrencyCacheDao(savingsDatabase: SavingsDatabase): CurrencyCacheDao =
         savingsDatabase.currencyCache
+
     @Provides
     @Singleton
     fun provideCurrencyDao(savingsDatabase: SavingsDatabase): CurrencyDao =
@@ -88,6 +89,7 @@ object DataModule {
     @Singleton
     fun provideCurrencyCacheDataSource(firestore: FirebaseFirestore): CurrencyCacheDataSource =
         CurrencyCacheDataSourceImpl(firestore)
+
     @Provides
     @Singleton
     fun provideCurrencyDataSource(firestore: FirebaseFirestore): CurrencyDataSource =

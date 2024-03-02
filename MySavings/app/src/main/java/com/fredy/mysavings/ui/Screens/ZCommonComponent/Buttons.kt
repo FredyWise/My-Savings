@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -360,9 +359,11 @@ fun CurrencyDropdown(
     val icon = if (expanded) Icons.Filled.KeyboardArrowUp
     else Icons.Filled.KeyboardArrowDown
 
-    ExposedDropdownMenuBox(modifier = modifier,
+    ExposedDropdownMenuBox(
+        modifier = modifier,
         expanded = expanded,
-        onExpandedChange = { }) {
+        onExpandedChange = { },
+    ) {
         TextField(
             value = selectedText,
             singleLine = true,
@@ -376,9 +377,12 @@ fun CurrencyDropdown(
             colors = textFieldColors,
             trailingIcon = {
                 Icon(
-                    modifier = Modifier.clip(CircleShape).clickable {
-                        expanded = !expanded
-                    }.padding(8.dp),
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .clickable {
+                            expanded = !expanded
+                        }
+                        .padding(8.dp),
                     imageVector = icon,
                     contentDescription = "contentDescription",
                 )

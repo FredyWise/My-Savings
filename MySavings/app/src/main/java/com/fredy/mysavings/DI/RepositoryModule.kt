@@ -52,6 +52,7 @@ object RepositoryModule {
     @Provides
     @Singleton
     fun provideCurrencyRepository(
+        authRepository: AuthRepository,
         currencyApi: CurrencyApi,
         countryApi: CountryApi,
         currencyCacheDataSource: CurrencyCacheDataSource,
@@ -59,6 +60,7 @@ object RepositoryModule {
         currencyCacheDao: CurrencyCacheDao,
         currencyInfoCacheDao: CurrencyDao,
     ): CurrencyRepository = CurrencyRepositoryImpl(
+        authRepository,
         currencyApi,
         countryApi,
         currencyCacheDataSource,

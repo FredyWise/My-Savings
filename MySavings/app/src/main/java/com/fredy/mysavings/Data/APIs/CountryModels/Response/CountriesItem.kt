@@ -7,10 +7,6 @@ import com.fredy.mysavings.Data.APIs.CountryModels.Response.AdditionalData.Langu
 import com.fredy.mysavings.Data.APIs.CountryModels.Response.AdditionalData.Name
 import com.fredy.mysavings.Data.APIs.CountryModels.Response.AdditionalData.PostalCode
 import com.fredy.mysavings.Data.APIs.CountryModels.Response.AdditionalData.Translations
-import com.fredy.mysavings.Data.APIs.CountryModels.Response.Translation.Gini
-import com.fredy.mysavings.Data.APIs.CountryModels.Response.Translation.Car
-import com.fredy.mysavings.Data.APIs.CountryModels.Response.Translation.Idd
-import com.fredy.mysavings.Data.APIs.CountryModels.Response.Translation.Maps
 
 data class CountriesItem(
     val altSpellings: List<String>,
@@ -18,7 +14,7 @@ data class CountriesItem(
     val borders: List<String>,
     val capital: List<String>,
     val capitalInfo: CapitalInfo,
-    val car: Car,
+    val car: TranslationHelper,
     val cca2: String,
     val cca3: String,
     val ccn3: String,
@@ -30,13 +26,13 @@ data class CountriesItem(
     val fifa: String,
     val flag: String,
     val flags: Flags,
-    val gini: Gini,
-    val idd: Idd,
+    val gini: TranslationHelper,
+    val idd: TranslationHelper,
     val independent: Boolean,
     val landlocked: Boolean,
     val languages: Languages,
     val latlng: List<Double>,
-    val maps: Maps,
+    val maps: TranslationHelper,
     val name: Name,
     val population: Int,
     val postalCode: PostalCode,

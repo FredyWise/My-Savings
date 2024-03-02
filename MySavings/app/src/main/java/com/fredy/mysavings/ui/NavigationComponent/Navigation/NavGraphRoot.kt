@@ -189,7 +189,7 @@ fun NavGraphRoot(
                     title = NavigationRoute.Currency.title,
                     rootNavController = navController,
                     state = state,
-//                    onEvent = settingViewModel::onEvent
+                    onEvent = viewModel::onEvent
                 )
             }
             composable(

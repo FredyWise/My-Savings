@@ -469,16 +469,18 @@ fun ChooseIcon(
 fun AsyncImageHandler(
     modifier: Modifier = Modifier,
     imageUrl: String? = null,
+    imageScale: ContentScale = ContentScale.Crop,
     contentDescription: String = "",
     imageVector: ImageVector,
-    imageVectorColor: Color = MaterialTheme.colorScheme.onSurface
+    imageVectorColor: Color = MaterialTheme.colorScheme.onSurface,
+
 ) {
     if (imageUrl != null && imageUrl != "null") {
         AsyncImage(
             model = imageUrl,
             contentDescription = contentDescription,
             modifier = modifier,
-            contentScale = ContentScale.Crop
+            contentScale = imageScale
         )
     } else {
         Icon(

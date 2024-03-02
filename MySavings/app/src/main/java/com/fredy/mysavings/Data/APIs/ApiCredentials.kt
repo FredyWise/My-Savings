@@ -7,6 +7,7 @@ sealed class ApiCredentials{
         const val GET_LATEST = "/exchangerates_data/latest"
         const val CACHE_EXPIRATION_DAYS = 1
         const val BASE_CURRENCY = "USD"
+        const val USER_SAVED_CURRENCY = "UserSavedData"
     }
     object TextCorrectionModels{
         const val BASE_URL = "https://api.typewise.ai/"
