@@ -78,6 +78,9 @@ dependencies {
     implementation("com.google.firebase:firebase-auth-ktx")
     implementation("com.google.firebase:firebase-messaging-ktx")
 
+    // Google ml kit
+    implementation("com.google.android.gms:play-services-mlkit-document-scanner:16.0.0-beta1")
+
     // Unit and UI testing libraries
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

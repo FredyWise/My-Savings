@@ -33,7 +33,7 @@ sealed interface AuthEvent {
     data class UpdateUserData(
         val email: String,
         val username: String,
-        val preferredCurrency: String,
+//        val preferredCurrency: String,
         val photoUrl: Uri,
     ): AuthEvent
 

@@ -45,9 +45,10 @@ import com.fredy.mysavings.ui.Search.SearchScreen
 @Composable
 fun NavGraphRoot(
     navController: NavHostController,
+    startDestination: String,
     settingViewModel: SettingViewModel,
     authViewModel: AuthViewModel,
-    startDestination: String
+    currencyViewModel: CurrencyViewModel = hiltViewModel()
 ) {
     NavHost(
         modifier = Modifier.background(
@@ -183,13 +184,12 @@ fun NavGraphRoot(
                     fadeOut()
                 },
             ) {
-                val viewModel: CurrencyViewModel = hiltViewModel()
-                val state by viewModel.state.collectAsStateWithLifecycle()
+                val state by currencyViewModel.state.collectAsStateWithLifecycle()
                 CurrencyScreen(
                     title = NavigationRoute.Currency.title,
                     rootNavController = navController,
                     state = state,
-                    onEvent = viewModel::onEvent
+                    onEvent = currencyViewModel::onEvent
                 )
             }
             composable(

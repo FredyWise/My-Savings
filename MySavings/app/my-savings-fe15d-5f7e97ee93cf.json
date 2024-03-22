@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "my-savings-fe15d",
+  "private_key_id": "5f7e97ee93cf77b8da8070a64f1a0fc62c3adcc7",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDkWYZnHKTNlOQo\nKm3QBGbfOiUbEmvzSOXEJC55Buv4T/2HjgM1hR9ZRHg54C2VbkyftjWkDXnhw2im\n5oqhiWyoBe033jOrRoRmVrkEYoWOFP2C0sTa9a0vrD8M05r45k1rx120f2D9e9KU\nX5i03jmU88l3zFookn2kHcnbIoWnoH2qrbmGX+iUWuMpu06+aDJuM3eVCzHuhxSa\n7RZKfPQ4M6jq/mkLabC0SOpDkV2O+xdWlDoNxC0TKsD5lYAsRI2DwiAkZfBGD+R/\njEd/M/7a48f1fOgrbvj2H0TVxQo1AlPje0Dz+w1NVC7yWSV7szgJCqL5C9Mn6d3I\nrKGfpyZHAgMBAAECggEACjucPEWIC/Zn2L85bkU/qA06Ir1LKtZkBYJqtibdin2y\nBfaApb2gBkvGVlPndwlkU+4v0uZ9acBHtkwhWtRiALRutvVZ4ItMJnZ2JKUEdpE6\nzoCVLJ4uYOn1HMm/6Ykz8dXuvVjNq5d2V3hiXXrbVbpRTl8H+iIK/sCe+/Kqqg//\nb1NT9a7FhBsBzJ0+oLVeRtM4OXShJ47G/+xEYV+5pzJZkL035/hcwbEL6S91/X2F\nk3r0XhXLJMSj68BURw/2n2U/W42I8LLNr5V6+aLvaCzSmdDnDDwMTfHYGo52CesP\nXwQfLbnSRcj9tmc9vwC0YZ/iQfaRa33PAkmL/W71QQKBgQDyou6/SJeJq93UDJOH\nSrB3tNpIBigEl3eeUITyzcsAaTOrn12R7UWNdXkaw3p+NXH8ELGY15r+EibjP1Kl\nFchR2JLkwQaLdCxYHiakKTwmWTYQC6gV+fVFTt0/PoAyk/ZNrAOGE9cdZktHtEnh\nubvyKYTWYvY73eshaU6Q/6bG8QKBgQDw7SfQ1eoQAcV900ub5aJZgJvKT0eqfz0D\nylvPHWYZ9SeFrkJRn0aeJcY7WCV9Klui6y8tL/7Jna/zT6U0JuB0NZ5eKSQtHJOr\nQQSu8aIUwUQtb1dfji0ry+FiueM8qT6eZ8cvceXS5bqrkpqrsMRYhfctewpDWn/s\nzf9Z9b3wtwKBgDD1f4dJdoppC5HGF96sy37cF0+BLoH+rjxbsvfrXpLup2Zx+ceA\nQRCSK6Wi3AyrbByYob1dhADQWNhx5pM5Gfqp4LoX2OI6xtfg/ZsSVvjF94q1T21f\nyoX5q9sfGW8bPA/gLbXYOwfLpFULo/zQJYRvrEY2Iclithc/0IKhk12BAoGAXRD/\nZGh9thk5FNXeSyZ1hGVtyMS/RllIVIKC3IraugQ9dCJQc/825DhrTtlKAgOuykxX\nOPllTrSfFzoY8wBhjAJ6Xp094D89u9Wt3XZxydquX263La5aPKTRN7Xe1bv6+G3W\nP7mbsdAUP9qt7MynzBpT1TnGSSZYbD1W+oU3DhkCgYEAqvagqVsTYtmewbpXeh/Q\nEBxzw4NvCzBwx2QbAmXwTS5zIAWyPqFGQEF4RO+1xagMMAmivjgbkQdDDtw+KekH\n2DDGIsenggieJNxBdMGfO4qTUUP/ngEYeSuUSPGl5vj9TM6s2jMtG4HaOofUL+dw\nYP/vMYiq9cVCNGePjGCmK5g=\n-----END PRIVATE KEY-----\n",
+  "client_email": "document-ml-services@my-savings-fe15d.iam.gserviceaccount.com",
+  "client_id": "112599723355985627642",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/document-ml-services%40my-savings-fe15d.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

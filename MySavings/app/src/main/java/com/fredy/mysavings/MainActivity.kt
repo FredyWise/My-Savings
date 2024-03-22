@@ -1,7 +1,6 @@
 package com.fredy.mysavings
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -10,7 +9,6 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
-import com.fredy.mysavings.Util.TAG
 import com.fredy.mysavings.ViewModels.AuthViewModel
 import com.fredy.mysavings.ViewModels.SettingViewModel
 import com.fredy.mysavings.ui.NavigationComponent.Navigation.Graph
@@ -38,7 +36,7 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     val startDestination =
                         if (state.signedInUser != null && setting.autoLogin) Graph.MainNav else Graph.AuthNav
-                    NavGraphRoot(navController, viewModel, authViewModel, startDestination)
+                    NavGraphRoot(navController, startDestination, viewModel, authViewModel)
                 }
             }
         }

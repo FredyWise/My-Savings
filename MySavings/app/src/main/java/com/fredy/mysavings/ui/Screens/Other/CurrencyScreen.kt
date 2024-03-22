@@ -1,5 +1,7 @@
 package com.fredy.mysavings.ui.Screens.Other
 
+import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -20,6 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -30,6 +33,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.fredy.mysavings.Util.TAG
 import com.fredy.mysavings.Util.formatBalanceAmount
 import com.fredy.mysavings.Util.truncateString
 import com.fredy.mysavings.ViewModels.CurrencyState
@@ -49,7 +53,6 @@ fun CurrencyScreen(
     state: CurrencyState,
     onEvent: (CurrencyEvent) -> Unit
 ) {
-    val context = LocalContext.current
     state.currency?.let { currency ->
         SimpleDialog(
             title = currency.name,
@@ -71,27 +74,26 @@ fun CurrencyScreen(
         onNavigationIconClick = { rootNavController.navigateUp() },
     ) {
         Column(
-            modifier = modifier
-                .padding(top = 8.dp)
-                .padding(
-                    horizontal = 8.dp
-                )
         ) {
             CurrencyItem(
-                text = "Base Currency", onItemClick = {},
+                modifier = Modifier
+                    .background(MaterialTheme.colorScheme.surface)
+                    .padding(horizontal = 4.dp, vertical = 8.dp),
+                text = "Base Currency",
                 leadingComponent = {
                     CurrencyDropdown(
                         modifier = Modifier.weight(1f),
-                        selectedText = "",
-                        textFieldColors = TextFieldDefaults.colors(
-                            focusedIndicatorColor = Color.Unspecified,
-                            unfocusedIndicatorColor = Color.Unspecified,
-                        ),
-                        onClick = {}
+                        selectedText = state.userData.userCurrency,
+                        onClick = {onEvent(CurrencyEvent.BaseCurrency(it))}
                     )
                 },
             )
             ResourceHandler(
+                modifier = Modifier
+                    .padding(top = 8.dp)
+                    .padding(
+                        horizontal = 8.dp
+                    ),
                 resource = state.currenciesResource,
                 isNullOrEmpty = { it.isNullOrEmpty() },
                 onMessageClick = { },
@@ -116,11 +118,12 @@ fun CurrencyScreen(
                     items(data, key = { it.code }) {
                         Spacer(modifier = Modifier.width(4.dp))
                         CurrencyItem(
-                            modifier = Modifier.height(50.dp),
+                            modifier = Modifier
+                                .height(50.dp)
+                                .clickable { onEvent(CurrencyEvent.ShowDialog(it)) },
                             imageUrl = it.url,
                             contentDescription = it.alt,
-                            onItemClick = { onEvent(CurrencyEvent.ShowDialog(it)) },
-                            text = truncateString(it.name, 20) + " | " + it.code,
+                            text = truncateString(it.name, 18) + " | " + it.code,
                             leadingComponent = {
                                 Text(
                                     text = formatBalanceAmount(it.value, it.symbol),
@@ -215,15 +218,13 @@ fun CurrencyItem(
     modifier: Modifier = Modifier,
     imageUrl: String? = null,
     contentDescription: String = "",
-    onItemClick: () -> Unit,
     text: String,
     leadingComponent: @Composable () -> Unit,
     onBackgroundColor: Color = MaterialTheme.colorScheme.onSurface
 ) {
     Row(
         modifier = modifier
-            .fillMaxWidth()
-            .clickable { onItemClick() },
+            .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         AsyncImageHandler(

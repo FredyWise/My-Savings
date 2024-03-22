@@ -1,7 +1,6 @@
 package com.fredy.mysavings.Data.Mappers
 
 import android.util.Log
-import androidx.compose.ui.util.fastFilter
 import com.fredy.mysavings.Data.APIs.CountryModels.Response.Currencies
 import com.fredy.mysavings.Data.APIs.CountryModels.Response.CurrencyHelper
 import com.fredy.mysavings.Data.APIs.CountryModels.Response.CurrencyInfoItem
@@ -11,8 +10,7 @@ import com.fredy.mysavings.Data.APIs.CurrencyModels.Response.CurrencyResponse
 import com.fredy.mysavings.Data.APIs.CurrencyModels.Response.Rates
 import com.fredy.mysavings.Data.Database.Converter.CurrencyRatesConverter
 import com.fredy.mysavings.Data.Database.Model.Currency
-import com.fredy.mysavings.Data.Database.Model.CurrencyCache
-import com.fredy.mysavings.Data.Database.Model.CurrencyInfoCache
+import com.fredy.mysavings.Data.Database.Model.RatesCache
 import com.fredy.mysavings.Util.TAG
 
 
@@ -20,14 +18,14 @@ fun CurrencyInfoResponse.toCurrencyInfoItems(): List<CurrencyInfoItem> {
     return this.requireNoNulls().toList().requireNoNulls()
 }
 
-fun List<CurrencyInfoItem>.toCurrency(rates: Rates, userId:String): List<Currency> {
+fun List<CurrencyInfoItem>.toCurrency(rates: Rates, userId: String): List<Currency> {
     return this.toUsableCurrencyInfoItem().map {
         val currencyHelper = it.currencies
         Log.e(TAG, "toCurrency1: $currencyHelper")
         val ratesValue = rates.getRateForCurrency(it.code)!!.toDouble()
         Log.e(TAG, "toCurrency2: $currencyHelper")
         Currency(
-            it.code+userId,
+            it.code + userId,
             it.code,
             userId,
             currencyHelper.name,
@@ -56,7 +54,15 @@ fun List<CurrencyInfoItem>.toUsableCurrencyInfoItem(): List<UsableCurrencyInfoIt
     }
 }
 
-fun CurrencyCache.toCurrencyResponse(): CurrencyResponse = CurrencyResponse(
+fun List<Currency>.changeBase(newBaseCode: String): List<Currency> {
+    val newBase = this.first { it.code == newBaseCode }
+    return this.map { currency ->
+        currency.copy(value = currency.value / newBase.value)
+    }
+}
+
+
+fun RatesCache.toCurrencyResponse(): CurrencyResponse = CurrencyResponse(
     this.base,
     this.date,
     CurrencyRatesConverter.toRates(
@@ -240,6 +246,7 @@ fun Rates.getRateForCurrency(
     "ZWL" -> this.ZWL
     else -> null
 }
+
 fun Rates.updateRatesUsingCode(
     code: String, value: Number
 ) = when (code) {

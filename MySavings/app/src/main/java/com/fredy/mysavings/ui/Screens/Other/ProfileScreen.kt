@@ -78,11 +78,11 @@ fun ProfileScreen(
                 currentUserData.username ?: ""
             )
         }
-        var preferredCurrency by remember {
-            mutableStateOf(
-                currentUserData.userCurrency
-            )
-        }
+//        var preferredCurrency by remember {
+//            mutableStateOf(
+//                currentUserData.userCurrency
+//            )
+//        }
         var emailOrPhone by remember { mutableStateOf(currentUserData.emailOrPhone ?: "") }
         var profilePictureUri by remember {
             mutableStateOf<Uri>(
@@ -194,22 +194,22 @@ fun ProfileScreen(
             )
             Spacer(modifier = Modifier.height(16.dp))
 
-            CurrencyDropdown(selectedText = preferredCurrency, onClick = { preferredCurrency = it })
-            Spacer(modifier = Modifier.height(16.dp))
+//            CurrencyDropdown(selectedText = preferredCurrency, onClick = { preferredCurrency = it })
+//            Spacer(modifier = Modifier.height(16.dp))
             Button(
                 onClick = {
                     onEvent(
                         AuthEvent.UpdateUserData(
                             emailOrPhone,
                             username,
-                            preferredCurrency,
+//                            preferredCurrency,
                             profilePictureUri
                         )
                     )
                 },
                 enabled = isValidEmailOrPhone(
                     emailOrPhone
-                ) && currencyCodes.contains(preferredCurrency),
+                ),// && currencyCodes.contains(preferredCurrency),
                 colors = ButtonDefaults.buttonColors(
                     disabledContainerColor = primaryColor.copy(
                         0.7f

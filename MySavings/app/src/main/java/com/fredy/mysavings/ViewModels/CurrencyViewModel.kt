@@ -5,7 +5,10 @@ import androidx.lifecycle.viewModelScope
 import co.yml.charts.common.extensions.isNotNull
 import com.fredy.mysavings.Data.APIs.CurrencyModels.Response.Rates
 import com.fredy.mysavings.Data.Database.Model.Currency
+import com.fredy.mysavings.Data.Database.Model.UserData
+import com.fredy.mysavings.Data.Mappers.changeBase
 import com.fredy.mysavings.Data.Repository.CurrencyRepository
+import com.fredy.mysavings.Data.Repository.UserRepository
 import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.ViewModels.Event.CurrencyEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,10 +23,25 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CurrencyViewModel @Inject constructor(
+    private val userRepository: UserRepository,
     private val currencyRepository: CurrencyRepository
 ) : ViewModel() {
 
-    private val _currencies = currencyRepository.getCurrencies().stateIn(
+    init {
+        viewModelScope.launch {
+            userRepository.getCurrentUser().collect { userData ->
+                userData.data?.let { user ->
+                    _state.update {
+                        it.copy(
+                            userData = user
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    private val _currenciesResource = currencyRepository.getCurrencies().stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(),
         Resource.Success(emptyList())
@@ -35,8 +53,12 @@ class CurrencyViewModel @Inject constructor(
 
     val state = combine(
         _state,
-        _currencies,
-    ) { state, currencies ->
+        _currenciesResource,
+    ) { state, currenciesResource ->
+        val currencies =
+            if (currenciesResource is Resource.Success && state.userData.userCurrency != "USD") {
+                Resource.Success(currenciesResource.data!!.changeBase(state.userData.userCurrency))
+            } else currenciesResource
         state.copy(
             currenciesResource = currencies
         )
@@ -73,6 +95,18 @@ class CurrencyViewModel @Inject constructor(
                     }
                 }
 
+                is CurrencyEvent.BaseCurrency -> {
+                    viewModelScope.launch {
+                        val user = _state.value.userData.copy(userCurrency = event.baseCurrency)
+                        if (_state.value.userData.userCurrency == event.baseCurrency) {
+                            userRepository.upsertUser(user)
+                        }
+                        _state.update {
+                            it.copy(userData = user)
+                        }
+                    }
+                }
+
                 CurrencyEvent.SaveCurrency -> {
                     _state.value.currency?.let {
                         if (_state.value.updatedValue.toDoubleOrNull().isNotNull()) {
@@ -100,8 +134,11 @@ class CurrencyViewModel @Inject constructor(
                         it.copy(updatedValue = event.updatedValue)
                     }
                 }
+
             }
-            if (_state.value.fromValue.toDoubleOrNull().isNotNull()) {
+            if (_state.value.fromValue.toDoubleOrNull()
+                    .isNotNull() && _state.value.fromCurrency.isNotEmpty() && _state.value.toCurrency.isNotEmpty()
+            ) {
                 currencyRepository.convertCurrency(
                     _state.value.fromValue.toDouble(),
                     _state.value.fromCurrency,
@@ -131,5 +168,6 @@ data class CurrencyState(
     val fromCurrency: String = "",
     val fromValue: String = "0.0",
     val toCurrency: String = "",
-    val toValue: String = "0.0"
+    val toValue: String = "0.0",
+    val userData: UserData = UserData(),
 )

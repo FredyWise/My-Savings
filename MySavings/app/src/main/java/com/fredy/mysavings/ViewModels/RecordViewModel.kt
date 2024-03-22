@@ -45,6 +45,7 @@ import java.time.LocalDateTime
 import javax.inject.Inject
 
 
+@ExperimentalCoroutinesApi
 @HiltViewModel
 class RecordViewModel @Inject constructor(
     private val recordRepository: RecordRepository,

@@ -5,19 +5,18 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
-import com.fredy.mysavings.Data.Database.Model.CurrencyCache
-import kotlinx.coroutines.flow.Flow
+import com.fredy.mysavings.Data.Database.Model.RatesCache
 
 @Dao
 interface CurrencyCacheDao {
     @Upsert
-    suspend fun upsertCurrencyCache(userData: CurrencyCache)
+    suspend fun upsertCurrencyCache(userData: RatesCache)
 
     @Delete
-    suspend fun deleteCurrencyCache(userData: CurrencyCache)
+    suspend fun deleteCurrencyCache(userData: RatesCache)
 
-    @Query("SELECT * FROM CurrencyCache WHERE base = :base")
-    suspend fun getCurrencyCache(base: String): CurrencyCache
+    @Query("SELECT * FROM RatesCache WHERE base = :base")
+    suspend fun getCurrencyCache(base: String): RatesCache
 
 
 }

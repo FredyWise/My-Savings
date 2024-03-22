@@ -3,12 +3,11 @@ package com.fredy.mysavings.Data.Database.Model
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.fredy.mysavings.Data.APIs.CurrencyModels.Response.CurrencyResponse
-import com.fredy.mysavings.Data.APIs.CurrencyModels.Response.Rates
 import com.fredy.mysavings.Data.Database.Converter.CurrencyRatesConverter
 import com.google.firebase.Timestamp
 
 @Entity
-data class CurrencyCache(
+data class RatesCache(
     @PrimaryKey
     val base: String = "",
     val date: String = "",

@@ -31,6 +31,7 @@ import com.fredy.mysavings.Util.formatDateDay
 import com.fredy.mysavings.Util.formatRangeOfDate
 import com.fredy.mysavings.Util.isExpense
 import com.fredy.mysavings.Util.isFilterTypeMonthBelow
+import com.fredy.mysavings.Util.isIncome
 import com.fredy.mysavings.ViewModels.Event.RecordsEvent
 import com.fredy.mysavings.ViewModels.RecordState
 import com.fredy.mysavings.ui.Screens.Analysis.Charts.ChartLine
@@ -59,6 +60,11 @@ fun AnalysisFlow(
                 )
             },
         ) { data ->
+            val totalAmount = if (isExpense(data.first().recordType)) {
+                state.balanceBar.expense.amount
+            } else if (isIncome(data.first().recordType)) {
+                state.balanceBar.income.amount
+            } else state.balanceBar.transfer.amount
             val items = if (isExpense(data.first().recordType)) data else data.reversed()
             val contentColor = RecordTypeColor(recordType = data.first().recordType)
             LazyColumn(modifier = modifier) {
@@ -86,9 +92,7 @@ fun AnalysisFlow(
                         )
                     }
                     Text(
-                        text = state.filterState.recordType.name + ": " + formatRangeOfDate(
-                            state.filterState.selectedDate, state.filterState.filterType
-                        ),
+                        text = "Total "+state.filterState.recordType.name + ": " + formatBalanceAmount(totalAmount),
                         modifier = Modifier
                             .padding(horizontal = 10.dp)
                             .padding(top = 8.dp)
