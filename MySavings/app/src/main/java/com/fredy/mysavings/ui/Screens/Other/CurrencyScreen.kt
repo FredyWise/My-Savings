@@ -1,6 +1,5 @@
 package com.fredy.mysavings.ui.Screens.Other
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -22,20 +21,16 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.fredy.mysavings.Util.TAG
 import com.fredy.mysavings.Util.formatBalanceAmount
-import com.fredy.mysavings.Util.truncateString
 import com.fredy.mysavings.ViewModels.CurrencyState
 import com.fredy.mysavings.ViewModels.Event.CurrencyEvent
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.AsyncImageHandler
@@ -79,12 +74,12 @@ fun CurrencyScreen(
                 modifier = Modifier
                     .background(MaterialTheme.colorScheme.surface)
                     .padding(horizontal = 4.dp, vertical = 8.dp),
-                text = "Base Currency",
+                name = "Base Currency",
                 leadingComponent = {
                     CurrencyDropdown(
                         modifier = Modifier.weight(1f),
                         selectedText = state.userData.userCurrency,
-                        onClick = {onEvent(CurrencyEvent.BaseCurrency(it))}
+                        onClick = { onEvent(CurrencyEvent.BaseCurrency(it)) }
                     )
                 },
             )
@@ -123,7 +118,8 @@ fun CurrencyScreen(
                                 .clickable { onEvent(CurrencyEvent.ShowDialog(it)) },
                             imageUrl = it.url,
                             contentDescription = it.alt,
-                            text = truncateString(it.name, 18) + " | " + it.code,
+                            name = it.name,
+                            code = it.code,
                             leadingComponent = {
                                 Text(
                                     text = formatBalanceAmount(it.value, it.symbol),
@@ -218,7 +214,8 @@ fun CurrencyItem(
     modifier: Modifier = Modifier,
     imageUrl: String? = null,
     contentDescription: String = "",
-    text: String,
+    name: String,
+    code: String = "",
     leadingComponent: @Composable () -> Unit,
     onBackgroundColor: Color = MaterialTheme.colorScheme.onSurface
 ) {
@@ -235,19 +232,35 @@ fun CurrencyItem(
             imageVector = Icons.Default.CurrencyExchange
         )
         Spacer(modifier = Modifier.width(8.dp))
-        Text(
-            text = text,
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold,
-            color = onBackgroundColor,
+        Row(
             modifier = Modifier
-                .padding(
-                    vertical = 3.dp
-                )
                 .weight(1f),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = name,
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                color = onBackgroundColor,
+                modifier = Modifier
+                    .padding(vertical = 3.dp)
+                    .weight(1f, fill = false),
+                maxLines = Int.MAX_VALUE,
+                overflow = TextOverflow.Ellipsis,
+            )
+            if (code.isNotEmpty()) {
+                Text(
+                    text = " | $code",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = onBackgroundColor,
+                    modifier = Modifier
+                        .padding(vertical = 3.dp),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
+        }
         Spacer(modifier = Modifier.width(8.dp))
         leadingComponent()
     }

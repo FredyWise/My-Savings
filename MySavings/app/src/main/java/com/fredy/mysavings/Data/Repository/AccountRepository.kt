@@ -20,7 +20,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 interface AccountRepository {
-    suspend fun upsertAccount(account: Account)
+    suspend fun upsertAccount(account: Account): String
     suspend fun deleteAccount(account: Account)
     fun getAccount(accountId: String): Flow<Account>
     fun getUserAccountOrderedByName(): Flow<Resource<List<Account>>>
@@ -41,8 +41,8 @@ class AccountRepositoryImpl @Inject constructor(
     )
 
 
-    override suspend fun upsertAccount(account: Account) {
-        withContext(Dispatchers.IO) {
+    override suspend fun upsertAccount(account: Account):String {
+        return withContext(Dispatchers.IO) {
             val currentUserId = authRepository.getCurrentUser()!!.firebaseUserId
             val tempAccount = if (account.accountId.isEmpty()) {
                 val newAccountRef = accountCollection.document()
@@ -60,6 +60,7 @@ class AccountRepositoryImpl @Inject constructor(
             accountDataSource.upsertAccountItem(
                 tempAccount
             )
+            tempAccount.accountId
         }
     }
 

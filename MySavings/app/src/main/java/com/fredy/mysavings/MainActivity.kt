@@ -35,7 +35,7 @@ class MainActivity : ComponentActivity() {
                 MySavingsTheme(state = setting) {
                     val navController = rememberNavController()
                     val startDestination =
-                        if (state.signedInUser != null && setting.autoLogin) Graph.MainNav else Graph.AuthNav
+                        if (state.signedInUser != null && setting.autoLogin && !setting.bioAuth) Graph.MainNav else Graph.AuthNav
                     NavGraphRoot(navController, startDestination, viewModel, authViewModel)
                 }
             }

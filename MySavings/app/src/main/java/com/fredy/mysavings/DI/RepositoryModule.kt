@@ -3,6 +3,7 @@ package com.fredy.mysavings.DI
 import android.content.Context
 import com.fredy.mysavings.Data.APIs.CountryModels.CountryApi
 import com.fredy.mysavings.Data.APIs.CurrencyModels.CurrencyApi
+import com.fredy.mysavings.Data.CSV.CSVDao
 import com.fredy.mysavings.Data.Database.Dao.AccountDao
 import com.fredy.mysavings.Data.Database.Dao.CategoryDao
 import com.fredy.mysavings.Data.Database.Dao.CurrencyCacheDao
@@ -17,6 +18,8 @@ import com.fredy.mysavings.Data.Repository.AccountRepository
 import com.fredy.mysavings.Data.Repository.AccountRepositoryImpl
 import com.fredy.mysavings.Data.Repository.AuthRepository
 import com.fredy.mysavings.Data.Repository.AuthRepositoryImpl
+import com.fredy.mysavings.Data.Repository.CSVRepository
+import com.fredy.mysavings.Data.Repository.CSVRepositoryImpl
 import com.fredy.mysavings.Data.Repository.CategoryRepository
 import com.fredy.mysavings.Data.Repository.CategoryRepositoryImpl
 import com.fredy.mysavings.Data.Repository.CurrencyRepository
@@ -137,6 +140,18 @@ object RepositoryModule {
         @ApplicationContext appContext: Context
     ): SettingsRepository = SettingsRepositoryImpl(
         appContext
+    )
+
+    @Provides
+    @Singleton
+    fun provideCSVRepository(
+        csvDao: CSVDao,
+        authRepository: AuthRepository,
+        accountRepository: AccountRepository,
+        recordRepository: RecordRepository,
+        categoryRepository: CategoryRepository
+    ): CSVRepository = CSVRepositoryImpl(
+        csvDao, authRepository, accountRepository, recordRepository, categoryRepository
     )
 
     @Provides

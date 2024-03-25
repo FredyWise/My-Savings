@@ -21,6 +21,8 @@ import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 
 interface CSVDao {
@@ -33,20 +35,33 @@ interface CSVDao {
 
     fun inputFromCSV(
         directory: String,
-        filename: String,
+        filename: String = "",
         delimiter: String = ","
     ): List<TrueRecord>
 }
 
-class CSVDaoImpl(private val context: Context): CSVDao {
+class CSVDaoImpl(private val context: Context) : CSVDao {
     override fun inputFromCSV(
         directory: String,
         filename: String,
         delimiter: String
     ): List<TrueRecord> {
-        val name = filename.replace(" ","_")
         return try {
-            FileInputStream("$directory/$name.csv").use { inputStream ->
+            val storageManager = getSystemService(context, StorageManager::class.java)!!
+            val uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                storageManager.storageVolumes[0].directory?.path
+            } else {
+                null
+            }
+            val directory = directory.replace("%3A", ":").replace("%20", " ").replace("%2F", "/")
+                .replace("%2C", ",").replace(
+                    "content://com.android.externalstorage.documents/document/primary:",
+                    uri.toString() + "/"
+                )
+            val filename = filename.replace(" ", "")
+            Log.e(TAG, "inputFromCSV: $directory")
+            Log.e(TAG, "inputFromCSV: ${uri.toString()}")
+            FileInputStream(if (filename.isNotEmpty()) "$directory/$filename.csv" else directory).use { inputStream ->
                 inputStream.readCsv(delimiter)
             }
         } catch (e: IOException) {
@@ -63,14 +78,18 @@ class CSVDaoImpl(private val context: Context): CSVDao {
     ) {
 
         try {
-            val storageManager = getSystemService(context,StorageManager::class.java)!!
+            val storageManager = getSystemService(context, StorageManager::class.java)!!
             val uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 storageManager.storageVolumes[0].directory?.path
             } else {
                 null
             }
-            val directory = directory.replace("%3A",":").replace("%20"," ").replace("%2F","/").replace("content://com.android.externalstorage.documents/tree/primary:",uri.toString()+"/")
-            val filename = filename.replace(" ","")
+            val directory = directory.replace("%3A", ":").replace("%20", " ").replace("%2F", "/")
+                .replace(
+                    "content://com.android.externalstorage.documents/tree/primary:",
+                    uri.toString() + "/"
+                )
+            val filename = filename.replace(" ", "")
 
             val file = File("$directory/$filename.csv")
             Log.e(TAG, "outputToCSV: $directory/$filename.csv")
@@ -88,8 +107,11 @@ class CSVDaoImpl(private val context: Context): CSVDao {
 
     private fun InputStream.readCsv(delimiter: String): List<TrueRecord> {
         bufferedReader().useLines { lines ->
-            val header = lines.firstOrNull()?.split(delimiter) ?: emptyList()
-            return lines.drop(1).mapNotNull { line ->
+            val linesList = lines.toList()
+            Log.e(TAG, "readCsv: $linesList")
+            val header = linesList.firstOrNull()?.split(delimiter) ?: emptyList()
+            return linesList.drop(1).mapNotNull { line ->
+                Log.e(TAG, "readCsv: $line")
                 val values = line.split(delimiter)
                 if (values.size == header.size) {
                     createTrueRecordFromValues(header, values)
@@ -97,9 +119,10 @@ class CSVDaoImpl(private val context: Context): CSVDao {
                     Log.w(TAG, "Skipping malformed CSV line: $line")
                     null
                 }
-            }.toList()
+            }
         }
     }
+
 
     private fun createTrueRecordFromValues(
         header: List<String>,
@@ -107,18 +130,22 @@ class CSVDaoImpl(private val context: Context): CSVDao {
     ): TrueRecord {
         val recordValues = header.zip(values).toMap()
 
-        val recordDateTime = LocalDateTime.parse(recordValues["Record Date Time"]!!)
-        val recordAmount = recordValues["Record Amount"]!!.toDouble()
-        val recordCurrency = recordValues["Record Currency"]!!
+        val recordDateTime = recordValues["Record Date Time"]!!.toLocalDateTimeConverter()
+        val amount = recordValues["Record Amount"]!!.split(" ")
+        val recordAmount = amount[0].toDouble()
+        val recordCurrency = amount[1]
         val recordType = RecordType.valueOf(recordValues["Record Type"]!!)
         val recordNotes = recordValues["Record Notes"] ?: ""
-
-        val senderName = recordValues["From Account Name"]!!
-        val senderIcon = recordValues["From Account Icon"]!!
-        val recipientAccountName = recordValues["To Account Name"]
-        val recipientAccountIcon = recordValues["To Account Icon"]
-        val recipientCategoryName =  recordValues["To Category Name"]
-        val recipientCategoryIcon =  recordValues["To Category Icon"]
+        val senderAccount = recordValues["From Account Name"]!!.split("-")
+        val senderAccountName = senderAccount[0]
+        val senderAccountCurrency = senderAccount[1]
+        val senderAccountIconDescription = recordValues["From Account Icon"]!!
+        val recipientAccount = recordValues["To Account Name"]!!.split("-")
+        val recipientAccountName = recipientAccount[0]
+        val recipientAccountCurrency = recipientAccount[1]
+        val recipientAccountIconDescription = recordValues["To Account Icon"]
+        val recipientCategoryName = recordValues["To Category Name"]!!
+        val recipientCategoryIconDescription = recordValues["To Category Icon"]
 
 
         val record = Record(
@@ -129,9 +156,21 @@ class CSVDaoImpl(private val context: Context): CSVDao {
             recordNotes = recordNotes,
         )
 
-        val fromAccount = Account(accountName = senderName, accountIcon = senderIcon.toInt())
-        val toAccount = if (recipientAccountName != null && recipientAccountIcon!=null) Account(accountName = recipientAccountName, accountIcon = recipientAccountIcon.toInt()) else Account()
-        val toCategory = if (recipientCategoryName != null && recipientCategoryIcon!=null) Category(categoryName = recipientCategoryName, categoryIcon = recipientCategoryIcon.toInt()) else Category()
+        val fromAccount = Account(
+            accountName = senderAccountName,
+            accountCurrency = senderAccountCurrency,
+            accountIconDescription = senderAccountIconDescription
+        )
+        val toAccount = if (recipientAccountName != null && recipientAccountIconDescription != null) Account(
+            accountName = recipientAccountName,
+            accountCurrency = recipientAccountCurrency,
+            accountIconDescription = recipientAccountIconDescription
+        ) else Account()
+        val toCategory =
+            if (recipientCategoryName != null && recipientCategoryIconDescription != null) Category(
+                categoryName = recipientCategoryName,
+                categoryIconDescription = recipientCategoryIconDescription
+            ) else Category()
 
         return TrueRecord(
             record,
@@ -151,13 +190,13 @@ class CSVDaoImpl(private val context: Context): CSVDao {
             "Record Date Time",
             "Record Type",
             "From Account Name",
-            "To Category Name",
-            "To Account Name",
-            "Record Amount",
-            "Record Notes",
             "From Account Icon",
+            "To Category Name",
             "To Category Icon",
-            "To Account Icon"
+            "To Account Name",
+            "To Account Icon",
+            "Record Amount",
+            "Record Notes"
         ).joinToString(delimiter) {
             it.replace(
                 "\"", "\"\""
@@ -173,32 +212,20 @@ class CSVDaoImpl(private val context: Context): CSVDao {
     }
 
     private fun trueRecordToString(trueRecord: TrueRecord): String {
-        var toCategoryName = "null"
-        var toAccountName = "null"
-        var toCategoryIcon = "null"
-        var toAccountIcon = "null"
-        if (trueRecord.toAccount == trueRecord.fromAccount) {
-            toCategoryName = trueRecord.toCategory.categoryName
-            toCategoryIcon = trueRecord.toCategory.categoryIcon.toString()
-        } else {
-            toAccountName = trueRecord.toAccount.accountName
-            toAccountIcon = trueRecord.toAccount.accountIcon.toString()
-        }
-
         val values = listOf(
-            formatDateYearTime(trueRecord.record.recordDateTime).replace(",",""),
+            formatDateYearTime(trueRecord.record.recordDateTime).replace(",", ""),
             trueRecord.record.recordType.name,
-            trueRecord.fromAccount.accountName,
-            toCategoryName,
-            toAccountName,
+            trueRecord.fromAccount.accountName + "-" + trueRecord.fromAccount.accountCurrency,
+            trueRecord.fromAccount.accountIconDescription,
+            trueRecord.toCategory.categoryName,
+            trueRecord.toCategory.categoryIconDescription,
+            trueRecord.toAccount.accountName + "-" + trueRecord.toAccount.accountCurrency,
+            trueRecord.toAccount.accountIconDescription,
             formatBalanceAmount(
                 trueRecord.record.recordAmount,
                 trueRecord.record.recordCurrency
             ),
-            trueRecord.record.recordNotes,
-            trueRecord.fromAccount.accountIcon.toString(),
-            toCategoryIcon,
-            toAccountIcon
+            trueRecord.record.recordNotes
         )
         val escapedValues = values.map {
             it.replace("\"", "\"\"")
@@ -206,5 +233,8 @@ class CSVDaoImpl(private val context: Context): CSVDao {
         return escapedValues.joinToString(",")
     }
 
-
+    private fun String.toLocalDateTimeConverter(): LocalDateTime {
+        val formatter = DateTimeFormatter.ofPattern("MMM dd yyyy hh:mm a", Locale.ENGLISH)
+        return LocalDateTime.parse(this, formatter)
+    }
 }

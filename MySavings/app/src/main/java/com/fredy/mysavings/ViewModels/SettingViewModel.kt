@@ -1,6 +1,7 @@
 package com.fredy.mysavings.ViewModels
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,11 +13,13 @@ import com.fredy.mysavings.Data.Enum.ChangeColorType
 import com.fredy.mysavings.Data.Enum.DisplayState
 import com.fredy.mysavings.Data.Notification.NotificationCredentials
 import com.fredy.mysavings.Data.Notification.NotificationWorker
+import com.fredy.mysavings.Data.Repository.CSVRepository
 import com.fredy.mysavings.Data.Repository.RecordRepository
 import com.fredy.mysavings.Data.Repository.SettingsRepository
 import com.fredy.mysavings.Data.Repository.SyncRepository
 import com.fredy.mysavings.Util.BalanceColor
 import com.fredy.mysavings.Util.Resource
+import com.fredy.mysavings.Util.TAG
 import com.fredy.mysavings.Util.defaultExpenseColor
 import com.fredy.mysavings.Util.defaultIncomeColor
 import com.fredy.mysavings.Util.defaultTransferColor
@@ -44,7 +47,7 @@ class SettingViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository,
     private val recordRepository: RecordRepository,
     private val syncRepository: SyncRepository,
-    private val csvDao: CSVDao,
+    private val csvRepository: CSVRepository,
 ) : ViewModel() {
     init {
         viewModelScope.launch {
@@ -77,18 +80,6 @@ class SettingViewModel @Inject constructor(
                     settingsRepository.saveDisplayMode(event.displayMode)
                     _state.update {
                         it.copy(displayMode = event.displayMode)
-                    }
-                }
-
-                is SettingEvent.SelectEndExportDate -> {
-                    _state.update {
-                        it.copy(endDate = LocalDateTime.of(event.endDate, LocalTime.MAX))
-                    }
-                }
-
-                is SettingEvent.SelectStartExportDate -> {
-                    _state.update {
-                        it.copy(startDate = LocalDateTime.of(event.startDate, LocalTime.MIN))
                     }
                 }
 
@@ -131,6 +122,18 @@ class SettingViewModel @Inject constructor(
                     }
                 }
 
+                is SettingEvent.SelectEndExportDate -> {
+                    _state.update {
+                        it.copy(endDate = LocalDateTime.of(event.endDate, LocalTime.MAX))
+                    }
+                }
+
+                is SettingEvent.SelectStartExportDate -> {
+                    _state.update {
+                        it.copy(startDate = LocalDateTime.of(event.startDate, LocalTime.MIN))
+                    }
+                }
+
                 is SettingEvent.OnExport -> {
                     val startDate = state.value.startDate
                     val endDate = state.value.endDate
@@ -140,17 +143,24 @@ class SettingViewModel @Inject constructor(
                                 is Resource.Error -> {}
                                 is Resource.Loading -> {}
                                 is Resource.Success -> {
-                                    csvDao.outputToCSV(
+                                    csvRepository.outputToCSV(
                                         event.uri,
                                         formatDateYear(startDate.toLocalDate()) + "- " + formatDateYear(
                                             endDate.toLocalDate()
                                         ),
                                         recordsResource.data!!
                                     )
-
                                 }
                             }
                         }
+                }
+
+
+                is SettingEvent.OnImport -> {
+                    val result = csvRepository.inputFromCSV(
+                        event.uri.path,
+                    )
+                    Log.e(TAG, "onEvent: $result",)
                 }
 
                 SettingEvent.HideColorPallet -> {
@@ -199,7 +209,6 @@ class SettingViewModel @Inject constructor(
                         }
                     }
                 }
-
             }
         }
     }

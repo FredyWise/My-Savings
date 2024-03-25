@@ -113,7 +113,7 @@ sealed class NavigationRoute(
 
     object Export: NavigationRoute(
         route = "export",
-        title = "Export records",
+        title = "Export & Import records",
         contentDescription = "Go to export screen",
         icon = Icons.Default.UploadFile,
         iconNot = Icons.Outlined.UploadFile

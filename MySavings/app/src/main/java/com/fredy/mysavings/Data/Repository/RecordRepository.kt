@@ -42,7 +42,7 @@ import javax.inject.Inject
 
 
 interface RecordRepository {
-    suspend fun upsertRecordItem(record: Record)
+    suspend fun upsertRecordItem(record: Record):String
     suspend fun deleteRecordItem(record: Record)
     suspend fun updateRecordItemWithDeletedAccount(account: Account)
     suspend fun updateRecordItemWithDeletedCategory(category: Category)
@@ -124,8 +124,8 @@ class RecordRepositoryImpl @Inject constructor(
 
     override suspend fun upsertRecordItem(
         record: Record
-    ) {
-        withContext(Dispatchers.IO) {
+    ): String {
+        return withContext(Dispatchers.IO) {
             val currentUserId = authRepository.getCurrentUser()!!.firebaseUserId
             Log.i(TAG, "upsertRecordItem: $record")
 
@@ -145,6 +145,7 @@ class RecordRepositoryImpl @Inject constructor(
             recordDataSource.upsertRecordItem(
                 tempRecord
             )
+            tempRecord.recordId
         }
     }
 
@@ -217,7 +218,7 @@ class RecordRepositoryImpl @Inject constructor(
         }.catch { e ->
             Log.i(
                 TAG,
-                "getAllTrueRecordsWithinSpecificTime.Error: $e"
+                "getRecordById.Error: $e"
             )
         }
     }

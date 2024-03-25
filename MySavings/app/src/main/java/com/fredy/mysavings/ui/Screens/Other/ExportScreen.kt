@@ -8,6 +8,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -29,6 +30,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.darkrockstudios.libraries.mpfilepicker.DirectoryPicker
+import com.darkrockstudios.libraries.mpfilepicker.FilePicker
 import com.fredy.mysavings.Util.formatDateYear
 import com.fredy.mysavings.ViewModels.Event.SettingEvent
 import com.fredy.mysavings.ViewModels.SettingState
@@ -62,6 +64,7 @@ fun ExportScreen(
     } else {
         true
     }
+    var isImport by remember { mutableStateOf(false) }
 
     val permissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -90,6 +93,13 @@ fun ExportScreen(
             showDirPicker = false
         }
     )
+    var showFilePicker by remember { mutableStateOf(false) }
+    FilePicker(show = showFilePicker, fileExtensions = listOf("csv"), onFileSelected = {
+        it?.let {
+            onEvent(SettingEvent.OnImport(it))
+        }
+        showFilePicker = false
+    })
     DefaultAppBar(
         modifier = modifier, title = title,
         onNavigationIconClick = { rootNavController.navigateUp() },
@@ -106,7 +116,10 @@ fun ExportScreen(
             Column(
                 modifier = Modifier
                     .weight(1f)
-                    .clickable { startDateDialogState.show() },
+                    .clickable {
+                        isImport = false
+                        startDateDialogState.show()
+                    },
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
@@ -135,7 +148,10 @@ fun ExportScreen(
             Column(
                 modifier = Modifier
                     .weight(1f)
-                    .clickable { endDateDialogState.show() },
+                    .clickable {
+                        isImport = false
+                        endDateDialogState.show()
+                    },
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
@@ -156,6 +172,19 @@ fun ExportScreen(
             .fillMaxWidth(0.7f), text = "Export Now", onClick = {
             if (permissionState) {
                 showDirPicker = true
+            } else {
+                if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
+                    permissionLauncher.launch(
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    )
+                }
+            }
+        })
+        Spacer(modifier = Modifier.height(50.dp))
+        SettingButton(modifier = Modifier
+            .fillMaxWidth(0.7f), text = "Import Now", onClick = {
+            if (permissionState) {
+                showFilePicker = true
             } else {
                 if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
                     permissionLauncher.launch(

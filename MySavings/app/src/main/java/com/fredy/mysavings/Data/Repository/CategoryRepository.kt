@@ -18,7 +18,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 interface CategoryRepository {
-    suspend fun upsertCategory(category: Category)
+    suspend fun upsertCategory(category: Category): String
     suspend fun deleteCategory(category: Category)
     fun getCategory(categoryId: String): Flow<Category>
     fun getUserCategoriesOrderedByName(): Flow<List<Category>>
@@ -35,8 +35,8 @@ class CategoryRepositoryImpl @Inject constructor(
         "category"
     )
 
-    override suspend fun upsertCategory(category: Category) {
-        withContext(Dispatchers.IO) {
+    override suspend fun upsertCategory(category: Category): String {
+        return withContext(Dispatchers.IO) {
             val currentUserId = authRepository.getCurrentUser()!!.firebaseUserId
             val tempCategory = if (category.categoryId.isEmpty()) {
                 val newCategoryRef = categoryCollection.document()
@@ -56,6 +56,7 @@ class CategoryRepositoryImpl @Inject constructor(
             categoryDataSource.upsertCategoryItem(
                 tempCategory
             )
+            tempCategory.categoryId
         }
     }
 

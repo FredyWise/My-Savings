@@ -26,7 +26,7 @@ object TimestampConverter {
         return Timestamp(
             dateTime.toEpochSecond(
                 ZoneOffset.UTC
-            ), 0
+            ), dateTime.nano
         )
     }
 }

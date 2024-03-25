@@ -21,7 +21,7 @@ interface CurrencyDataSource {
     suspend fun upsertCurrency(cache: Currency)
     suspend fun upsertAllCurrencyItem(currencies: List<Currency>)
     suspend fun deleteCurrency(cache: Currency)
-    suspend fun getCurrency(cacheId: String): Currency
+    suspend fun getCurrencyByCode(code: String,userId:String): Currency
     suspend fun getCurrencies(userId:String): Flow<List<Currency>>
 }
 class CurrencyDataSourceImpl @Inject constructor(
@@ -34,7 +34,7 @@ class CurrencyDataSourceImpl @Inject constructor(
         currency: Currency
     ) {
         currencyCollection.document(
-            currency.code
+            currency.currencyId
         ).set(
             currency
         )
@@ -43,19 +43,21 @@ class CurrencyDataSourceImpl @Inject constructor(
     override suspend fun upsertAllCurrencyItem(currencies: List<Currency>) {
         val batch = firestore.batch()
         for (currency in currencies) {
-            batch.set(currencyCollection.document(currency.code), currency)
+            batch.set(currencyCollection.document(currency.currencyId), currency)
         }
         batch.commit()
     }
 
 
     override suspend fun deleteCurrency(currency: Currency) {
-        currencyCollection.document(currency.code).delete()
+        currencyCollection.document(currency.currencyId).delete()
     }
 
-    override suspend fun getCurrency(code: String): Currency {
+    override suspend fun getCurrencyByCode(code: String,userId:String): Currency {
         return try {
-            currencyCollection.document(code).get().await().toObject<Currency>()?: throw Exception(
+            currencyCollection.whereEqualTo("code", code).whereEqualTo(
+                "userIdFk", userId
+            ).get().await().toObjects<Currency>().firstOrNull()?: throw Exception(
                 "Currency Not Found"
             )
         } catch (e: Exception) {
