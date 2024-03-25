@@ -3,7 +3,6 @@
 package com.fredy.mysavings.ViewModels
 
 import android.util.Log
-import androidx.compose.ui.util.fastZip
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fredy.mysavings.Data.Database.Model.Record
@@ -29,14 +28,10 @@ import com.fredy.mysavings.Util.updateType
 import com.fredy.mysavings.ViewModels.Event.RecordsEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -145,16 +140,10 @@ class RecordViewModel @Inject constructor(
 
     private val _totalBalance = _filterState.flatMapLatest { filterState ->
         filterState.map { start, end, _, _, _, _ ->
-            if (filterState.carryOn) {
-                recordRepository.getUserTotalRecordBalance(
-                    endDate = end
-                )
-            } else {
-                recordRepository.getUserTotalRecordBalance(
-                    start,
-                    end
-                )
-            }
+            recordRepository.getUserTotalRecordBalance(
+                if (filterState.carryOn) LocalDateTime.of(2000, 1, 1, 1, 1) else start,
+                end
+            )
         }
     }.stateIn(
         viewModelScope,

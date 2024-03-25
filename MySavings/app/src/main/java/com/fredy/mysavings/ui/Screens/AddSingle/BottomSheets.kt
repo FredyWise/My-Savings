@@ -128,14 +128,14 @@ fun AddBottomSheet(
         categoryState.categoryResource.let { resource ->
             ResourceHandler(
                 resource = resource,
-                nullOrEmptyMessage = "You Didn't Have Any Account Yet",
+                nullOrEmptyMessage = "You Didn't Have Any Categories Yet",
                 isNullOrEmpty = { it.isNullOrEmpty() },
                 errorMessage = resource.message ?: "",
                 onMessageClick = {
-                    onEventAccount(
-                        AccountEvent.ShowDialog(
-                            Account(
-                                accountName = ""
+                    onEventCategory(
+                        CategoryEvent.ShowDialog(
+                            Category(
+                                categoryName = ""
                             )
                         )
                     )

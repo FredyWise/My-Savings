@@ -627,11 +627,9 @@ class RecordRepositoryImpl @Inject constructor(
                 "getUserTotalRecordBalance: ",
 
                 )
-
             withContext(Dispatchers.IO) {
-                recordDataSource.getUserRecordsByTypeFromSpecificTime(
+                recordDataSource.getUserRecordsByTypeNotEqualTransferFromSpecificTime(
                     userId,
-                    null,
                     startDate,
                     endDate
                 ).map { it.getTotalRecordBalance(userCurrency) }
@@ -643,13 +641,11 @@ class RecordRepositoryImpl @Inject constructor(
                 )
                 Log.i(
                     TAG,
-                    "getUserTotalRecordBalance.Result: $data",
+                    "getUserTotalRecordBalance.Data: $data",
 
                     )
                 emit(data)
             }
-
-
         }.catch { e ->
             Log.i(
                 TAG,

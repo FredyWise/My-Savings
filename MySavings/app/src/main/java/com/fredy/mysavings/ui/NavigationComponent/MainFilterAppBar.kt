@@ -47,7 +47,7 @@ fun MainFilterAppBar(
 ) {
     val displayedBalance = mutableListOf(
         balanceBar.expense,
-        balanceBar.income
+        balanceBar.income,
     )
     if (showTotal) {
         displayedBalance.add(balanceBar.balance)

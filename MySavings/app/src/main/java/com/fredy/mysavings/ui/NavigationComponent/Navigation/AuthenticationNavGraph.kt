@@ -146,7 +146,7 @@ fun NavGraphBuilder.authenticationNavGraph(
                     is Resource.Success -> {
                         Toast.makeText(
                             context,
-                            "SignIn Success",
+                            "SignUp Success",
                             Toast.LENGTH_SHORT
                         ).show()
                         viewModel.onEvent(AuthEvent.GetCurrentUser)

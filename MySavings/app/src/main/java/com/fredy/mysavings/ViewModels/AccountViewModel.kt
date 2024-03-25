@@ -66,12 +66,13 @@ class AccountViewModel @Inject constructor(
         SortType.ASCENDING
     )
 
-    private val _totalAccountBalance =
-        _updating.flatMapLatest { accountRepository.getUserAccountTotalBalance() }.stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(),
-            BalanceItem()
-        )
+    private val _totalAccountBalance = _updating.flatMapLatest {
+        accountRepository.getUserAccountTotalBalance()
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(),
+        BalanceItem()
+    )
 
     private val _totalExpense = _updating.flatMapLatest {
         recordRepository.getUserTotalAmountByType(
@@ -104,8 +105,8 @@ class AccountViewModel @Inject constructor(
         _totalAccountBalance
     ) { balanceBar, totalExpense, totalIncome, totalAccountBalance ->
         balanceBar.copy(
-            expense = totalExpense.copy(name = "Expense So Far"),
-            income = totalIncome.copy(name = "Income So Far"),
+            expense = totalExpense.copy(name = "Total Expense"),
+            income = totalIncome.copy(name = "Total Income"),
             balance = totalAccountBalance.copy(name = "Total Balance"),
         )
     }.stateIn(
