@@ -51,8 +51,8 @@ import com.fredy.mysavings.ViewModels.Event.AccountEvent
 import com.fredy.mysavings.ViewModels.Event.AddRecordEvent
 import com.fredy.mysavings.ViewModels.Event.CategoryEvent
 import com.fredy.mysavings.ui.Screens.Account.AccountAddDialog
-import com.fredy.mysavings.ui.Screens.AddBulk.createImageUri
-import com.fredy.mysavings.ui.Screens.AddBulk.detectTextFromImage
+import com.fredy.mysavings.Util.createImageUri
+import com.fredy.mysavings.Util.detectTextFromImage
 import com.fredy.mysavings.ui.Screens.Category.CategoryAddDialog
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleButton
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleWarningDialog

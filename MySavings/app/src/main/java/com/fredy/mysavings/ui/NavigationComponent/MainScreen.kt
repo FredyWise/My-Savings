@@ -22,7 +22,9 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Logout
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -40,12 +42,16 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.fredy.mysavings.Data.Database.Model.UserData
+import com.fredy.mysavings.Util.formatRangeOfDate
 import com.fredy.mysavings.ViewModels.AccountViewModel
 import com.fredy.mysavings.ViewModels.CategoryViewModel
+import com.fredy.mysavings.ViewModels.Event.RecordsEvent
+import com.fredy.mysavings.ViewModels.RecordState
 import com.fredy.mysavings.ViewModels.RecordViewModel
 import com.fredy.mysavings.ui.NavigationComponent.Navigation.HomeNavGraph
 import com.fredy.mysavings.ui.NavigationComponent.Navigation.NavigationRoute
@@ -62,9 +68,13 @@ fun MainScreen(
     contentColor: Color = MaterialTheme.colorScheme.surface,
     onContentColor: Color = MaterialTheme.colorScheme.onSurface,
     rootNavController: NavHostController,
+    recordViewModel: RecordViewModel,
     currentUser: UserData?,
     signOut: () -> Unit,
 ) {
+
+    val state by recordViewModel.state.collectAsStateWithLifecycle()
+    val onEvent= recordViewModel::onEvent
     val navController = rememberNavController()
     val scaffoldState = rememberScaffoldState()
 //    var offsetX by remember { mutableStateOf(0f) }
@@ -75,11 +85,11 @@ fun MainScreen(
 //        )
 //    }
 
-    var isShowingAdd by remember {
-        mutableStateOf(
-            false
-        )
-    }
+//    var isShowingAdd by remember {
+//        mutableStateOf(
+//            false
+//        )
+//    }
     val scope = rememberCoroutineScope()
     val currentBackStack by navController.currentBackStackEntryAsState()
     val currentDestination = currentBackStack?.destination
@@ -155,24 +165,24 @@ fun MainScreen(
                     navController.navigateSingleTopTo(
                         newScreen.route
                     )
-                    isShowingAdd = false
+//                    isShowingAdd = false
                 },
                 currentScreen = currentScreen
             )
         },
         floatingActionButton = {
 //            AnimatedVisibility(visible = isFabVisible) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                AnimatedVisibility(
-                    visible = isShowingAdd,
-                    enter = fadeIn(animationSpec = tween(300)),
-                    exit = fadeOut(animationSpec = tween(300)),
-                ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                    ) {
+//            Column(
+//                horizontalAlignment = Alignment.CenterHorizontally,
+//            ) {
+//                AnimatedVisibility(
+//                    visible = isShowingAdd,
+//                    enter = fadeIn(animationSpec = tween(300)),
+//                    exit = fadeOut(animationSpec = tween(300)),
+//                ) {
+//                    Column(
+//                        horizontalAlignment = Alignment.CenterHorizontally,
+//                    ) {
                         FloatingActionButton(
                             onClick = {
                                 rootNavController.navigate(
@@ -189,7 +199,8 @@ fun MainScreen(
                             ),
                         ) {
                             Icon(
-                                NavigationRoute.Add.icon,
+//                                NavigationRoute.Add.icon,
+                                Icons.Default.Add,
                                 modifier = Modifier.size(
                                     30.dp
                                 ),
@@ -197,65 +208,65 @@ fun MainScreen(
                                 contentDescription = ""
                             )
                         }
-                        Spacer(
-                            modifier = Modifier.height(
-                                8.dp
-                            )
-                        )
-                        FloatingActionButton(
-                            onClick = {
-                                rootNavController.navigate(
-                                    NavigationRoute.BulkAdd.route
-                                )
-                            },
-                            backgroundColor = contentColor,
-                            modifier = Modifier.border(
-                                1.dp,
-                                MaterialTheme.colorScheme.secondary.copy(
-                                    0.3f
-                                ),
-                                CircleShape
-                            ),
-                        ) {
-                            Icon(
-                                NavigationRoute.BulkAdd.icon,
-                                modifier = Modifier.size(
-                                    30.dp
-                                ),
-                                tint = onContentColor,
-                                contentDescription = ""
-                            )
-                        }
-                        Spacer(
-                            modifier = Modifier.height(
-                                8.dp
-                            )
-                        )
-                    }
-                }
-                FloatingActionButton(
-                    onClick = {
-                        isShowingAdd = !isShowingAdd
-                    },
-                    backgroundColor = contentColor,
-                    modifier = Modifier.border(
-                        1.dp,
-                        MaterialTheme.colorScheme.secondary.copy(
-                            0.3f
-                        ),
-                        CircleShape
-                    ),
-                ) {
-                    Icon(
-                        Icons.Default.Add,
-                        modifier = Modifier.size(
-                            35.dp
-                        ),
-                        tint = onContentColor,
-                        contentDescription = ""
-                    )
-                }
-            }
+//                        Spacer(
+//                            modifier = Modifier.height(
+//                                8.dp
+//                            )
+//                        )
+//                        FloatingActionButton(
+//                            onClick = {
+//                                rootNavController.navigate(
+//                                    NavigationRoute.BulkAdd.route
+//                                )
+//                            },
+//                            backgroundColor = contentColor,
+//                            modifier = Modifier.border(
+//                                1.dp,
+//                                MaterialTheme.colorScheme.secondary.copy(
+//                                    0.3f
+//                                ),
+//                                CircleShape
+//                            ),
+//                        ) {
+//                            Icon(
+//                                NavigationRoute.BulkAdd.icon,
+//                                modifier = Modifier.size(
+//                                    30.dp
+//                                ),
+//                                tint = onContentColor,
+//                                contentDescription = ""
+//                            )
+//                        }
+//                        Spacer(
+//                            modifier = Modifier.height(
+//                                8.dp
+//                            )
+//                        )
+//                    }
+//                }
+//                FloatingActionButton(
+//                    onClick = {
+//                        isShowingAdd = !isShowingAdd
+//                    },
+//                    backgroundColor = contentColor,
+//                    modifier = Modifier.border(
+//                        1.dp,
+//                        MaterialTheme.colorScheme.secondary.copy(
+//                            0.3f
+//                        ),
+//                        CircleShape
+//                    ),
+//                ) {
+//                    Icon(
+//                        Icons.Default.Add,
+//                        modifier = Modifier.size(
+//                            35.dp
+//                        ),
+//                        tint = onContentColor,
+//                        contentDescription = ""
+//                    )
+//                }
+//            }
 //            }
         },
 
@@ -284,13 +295,79 @@ fun MainScreen(
                 },
                 currentUser = currentUser
             )
-            HomeNavGraph(
-                rootNavController = rootNavController,
-                navController = navController,
-                modifier = Modifier.padding(
-                    innerPadding
+            MainFilterAppBar(
+                modifier = modifier,
+                onShowAppBar = currentScreen == NavigationRoute.Records || currentScreen == NavigationRoute.Analysis ,
+                selectedDate = state.filterState.selectedDate,
+                onDateChange = {
+                    onEvent(
+                        RecordsEvent.ChangeDate(it)
+                    )
+                },
+                selectedDateFormat = formatRangeOfDate(
+                    state.filterState.selectedDate,
+                    state.filterState.filterType
                 ),
-            )
+                isChoosingFilter = state.isChoosingFilter,
+                selectedFilter = state.filterState.filterType.name,
+                checkboxesFilter = state.availableCurrency,
+                selectedCheckbox = state.selectedCheckbox,
+                onDismissFilterDialog = {
+                    onEvent(RecordsEvent.HideFilterDialog)
+                },
+                onSelectFilter = {
+                    onEvent(
+                        RecordsEvent.FilterRecord(it)
+                    )
+                },
+                onSelectCheckboxFilter = {
+                    onEvent(
+                        RecordsEvent.SelectedCurrencies(it)
+                    )
+                },
+                balanceBar = state.balanceBar,
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Outlined.Search,
+                        contentDescription = "",
+                        tint = MaterialTheme.colorScheme.onSurface,
+                    )
+                },
+                trailingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.FilterList,
+                        contentDescription = "",
+                        tint = MaterialTheme.colorScheme.onSurface,
+                    )
+                },
+                sortType = state.filterState.sortType,
+                showTotal = state.filterState.showTotal,
+                carryOn = state.filterState.carryOn,
+                useUserCurrency = state.filterState.useUserCurrency,
+                onUserCurrencyChange = { onEvent(RecordsEvent.ToggleUserCurrency) },
+                onShowTotalChange = { onEvent(RecordsEvent.ToggleShowTotal) },
+                onCarryOnChange = { onEvent(RecordsEvent.ToggleCarryOn) },
+                onShortChange = { onEvent(RecordsEvent.ToggleSortType) },
+                onPrevious = { onEvent(RecordsEvent.ShowPreviousList) },
+                onNext = { onEvent(RecordsEvent.ShowNextList) },
+                onLeadingIconClick = {
+                    rootNavController.navigate(
+                        NavigationRoute.Search.route
+                    )
+                },
+                onTrailingIconClick = {
+                    onEvent(RecordsEvent.ShowFilterDialog)
+                },
+            ) {
+                HomeNavGraph(
+                    rootNavController = rootNavController,
+                    navController = navController,
+                    recordViewModel = recordViewModel,
+                    modifier = Modifier.padding(
+                        innerPadding
+                    ),
+                )
+            }
         }
     }
 }

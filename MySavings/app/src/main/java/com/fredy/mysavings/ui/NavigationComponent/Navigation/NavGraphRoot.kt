@@ -1,8 +1,8 @@
 package com.fredy.mysavings.ui.NavigationComponent.Navigation
 
+import BulkAddScreen
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -25,7 +24,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
-import com.fredy.mysavings.Data.APIs.ApiCredentials
 import com.fredy.mysavings.Util.TAG
 import com.fredy.mysavings.ViewModels.AuthViewModel
 import com.fredy.mysavings.ViewModels.CurrencyViewModel
@@ -34,21 +32,23 @@ import com.fredy.mysavings.ViewModels.RecordViewModel
 import com.fredy.mysavings.ViewModels.SearchViewModel
 import com.fredy.mysavings.ViewModels.SettingViewModel
 import com.fredy.mysavings.ui.NavigationComponent.MainScreen
-import com.fredy.mysavings.ui.Screens.AddBulk.BulkAddScreen
 import com.fredy.mysavings.ui.Screens.AddSingle.AddScreen
 import com.fredy.mysavings.ui.Screens.Other.CurrencyScreen
 import com.fredy.mysavings.ui.Screens.Other.ExportScreen
 import com.fredy.mysavings.ui.Screens.Other.PreferencesScreen
 import com.fredy.mysavings.ui.Screens.Other.ProfileScreen
 import com.fredy.mysavings.ui.Search.SearchScreen
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @Composable
 fun NavGraphRoot(
     navController: NavHostController,
     startDestination: String,
     settingViewModel: SettingViewModel,
     authViewModel: AuthViewModel,
-    currencyViewModel: CurrencyViewModel = hiltViewModel()
+    currencyViewModel: CurrencyViewModel = hiltViewModel(),
+    recordViewModel: RecordViewModel = hiltViewModel(),
 ) {
     NavHost(
         modifier = Modifier.background(
@@ -80,6 +80,7 @@ fun NavGraphRoot(
                 val context = LocalContext.current
                 MainScreen(
                     rootNavController = navController,
+                    recordViewModel = recordViewModel,
                     signOut = {
                         authViewModel.onEvent(
                             AuthEvent.SignOut

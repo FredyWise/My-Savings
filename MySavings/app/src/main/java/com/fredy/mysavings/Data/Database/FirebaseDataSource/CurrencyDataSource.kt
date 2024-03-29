@@ -28,7 +28,7 @@ class CurrencyDataSourceImpl @Inject constructor(
     private val firestore: FirebaseFirestore,
 ):CurrencyDataSource{
     private val currencyCollection = firestore.collection(
-        "Currency"
+        "currency"
     )
     override suspend fun upsertCurrency(
         currency: Currency

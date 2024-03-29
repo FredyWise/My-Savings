@@ -26,7 +26,7 @@ fun HomeNavGraph(
     rootNavController: NavHostController,
     navController: NavHostController,
     modifier: Modifier = Modifier,
-    recordViewModel: RecordViewModel = hiltViewModel(),
+    recordViewModel: RecordViewModel,
     accountViewModel: AccountViewModel = hiltViewModel(),
     categoryViewModel: CategoryViewModel = hiltViewModel(),
 ) {

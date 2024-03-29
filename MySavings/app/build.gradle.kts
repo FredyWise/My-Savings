@@ -7,6 +7,14 @@ plugins {
 }
 
 android {
+    signingConfigs {
+        create("release") {
+            storeFile = file("C:\\Users\\ASUS\\OneDrive - Universitas Atma Jaya Yogyakarta\\Github\\My-Savings\\mysavingskey.jks")
+            storePassword = "TEDDY&#9051"
+            keyPassword = "TEDDY&#9051"
+            keyAlias = "mysavingskey"
+        }
+    }
     namespace = "com.fredy.mysavings"
     compileSdk = 34
 
@@ -23,6 +31,7 @@ android {
         }
     }
 
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -30,6 +39,8 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("release")
+            signingConfigs.getByName("release")
         }
     }
     compileOptions {

@@ -1,4 +1,4 @@
-package com.fredy.mysavings.ui.Screens.AddBulk
+package com.fredy.mysavings.Util
 
 import android.content.Context
 import android.graphics.Bitmap

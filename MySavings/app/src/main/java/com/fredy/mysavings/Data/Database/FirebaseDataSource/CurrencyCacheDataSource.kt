@@ -19,7 +19,7 @@ class CurrencyCacheDataSourceImpl @Inject constructor(
     private val firestore: FirebaseFirestore,
 ) : CurrencyCacheDataSource {
     private val currencyCollection = firestore.collection(
-        ApiCredentials.CurrencyModels.BASE_CURRENCY
+        "currencyCache"
     )
 
     override suspend fun upsertCurrencyCache(

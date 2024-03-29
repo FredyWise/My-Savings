@@ -18,6 +18,7 @@ import java.time.LocalDate
 @Composable
 fun MainFilterAppBar(
     modifier: Modifier = Modifier,
+    onShowAppBar: Boolean = true,
     selectedDate: LocalDate,
     onDateChange: (LocalDate) -> Unit,
     selectedDateFormat: String,
@@ -77,27 +78,29 @@ fun MainFilterAppBar(
         )
     }
     Column(modifier = modifier) {
-        DisplayBar(
-            selectedDate = selectedDate,
-            onDateChange = {
-                onDateChange(it)
-            },
-            selectedTitle = selectedDateFormat,
-            onPrevious = onPrevious,
-            onNext = onNext,
-            onLeadingIconClick = onLeadingIconClick,
-            onTrailingIconClick = onTrailingIconClick,
-            leadingIcon = leadingIcon,
-            trailingIcon = trailingIcon,
-        )
-        BalanceBar(
-            modifier = Modifier
-                .background(
-                    MaterialTheme.colorScheme.surface
-                )
-                .padding(vertical = 5.dp),
-            amountBars = displayedBalance
-        )
+        if (onShowAppBar) {
+            DisplayBar(
+                selectedDate = selectedDate,
+                onDateChange = {
+                    onDateChange(it)
+                },
+                selectedTitle = selectedDateFormat,
+                onPrevious = onPrevious,
+                onNext = onNext,
+                onLeadingIconClick = onLeadingIconClick,
+                onTrailingIconClick = onTrailingIconClick,
+                leadingIcon = leadingIcon,
+                trailingIcon = trailingIcon,
+            )
+            BalanceBar(
+                modifier = Modifier
+                    .background(
+                        MaterialTheme.colorScheme.surface
+                    )
+                    .padding(vertical = 5.dp),
+                amountBars = displayedBalance
+            )
+        }
         content()
     }
 }

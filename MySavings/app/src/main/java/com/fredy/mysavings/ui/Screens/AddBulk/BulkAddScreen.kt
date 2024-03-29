@@ -1,4 +1,3 @@
-package com.fredy.mysavings.ui.Screens.AddBulk
 
 import android.Manifest
 import android.net.Uri
@@ -45,6 +44,8 @@ import com.canhub.cropper.CropImageContract
 import com.canhub.cropper.CropImageContractOptions
 import com.canhub.cropper.CropImageOptions
 import com.fredy.mysavings.R
+import com.fredy.mysavings.Util.createImageUri
+import com.fredy.mysavings.Util.detectTextFromImage
 import com.fredy.mysavings.Util.isTransfer
 import com.fredy.mysavings.ViewModels.AccountViewModel
 import com.fredy.mysavings.ViewModels.AddSingleRecordViewModel
