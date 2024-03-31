@@ -7,6 +7,7 @@ import android.net.Uri
 import android.os.CancellationSignal
 import android.util.Log
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.yml.charts.common.extensions.isNotNull
@@ -170,8 +171,7 @@ class AuthViewModel @Inject constructor(
 
             is AuthEvent.UpdateUserData -> {
                 viewModelScope.launch {
-                    _state.update { it.copy(updateResource = Resource.Loading()) }
-                    val user = _state.value.signedInUser!!.run {
+                    _state.value.signedInUser!!.run {
                         val profilePictureUrl = if (event.photoUrl != Uri.EMPTY) {
                             uploadProfilePicture(
                                 firebaseUserId, event.photoUrl
@@ -179,16 +179,32 @@ class AuthViewModel @Inject constructor(
                         } else {
                             profilePictureUrl
                         }
-                        UserData(
-                            firebaseUserId = firebaseUserId,
-                            username = event.username,
-                            emailOrPhone = event.email,
-                            userCurrency = userCurrency,
-                            profilePictureUrl = profilePictureUrl
-                        )
+                        repository.updateUserInformation(
+                            profilePictureUrl?.toUri(),
+                            event.username,
+                            event.email,
+                            event.oldPassword,
+                            event.password
+                        ).collectLatest { updateResource ->
+                            when (updateResource) {
+                                is Resource.Success -> {
+                                    val user = UserData(
+                                        firebaseUserId = firebaseUserId,
+                                        username = event.username,
+                                        emailOrPhone = event.email,
+                                        userCurrency = userCurrency,
+                                        profilePictureUrl = profilePictureUrl
+                                    )
+                                    userRepository.upsertUser(user)
+                                    _state.update { it.copy(updateResource = updateResource) }
+                                }
+
+                                else -> {
+                                    _state.update { it.copy(updateResource = updateResource) }
+                                }
+                            }
+                        }
                     }
-                    userRepository.upsertUser(user)
-                    _state.update { it.copy(updateResource = Resource.Success("User Data Successfully Updated")) }
                     onEvent(AuthEvent.GetCurrentUser)
 
                 }
@@ -213,7 +229,6 @@ class AuthViewModel @Inject constructor(
                             }
                         }
                     }
-                    _state.update { it.copy(updateResource = Resource.Error("")) }
                 }
             }
 
@@ -340,14 +355,15 @@ class AuthViewModel @Inject constructor(
 }
 
 data class AuthState(
-    val updateResource: Resource<String> = Resource.Error(""),
+    val updateResource: Resource<String> = Resource.Success(""),
     val bioAuthResource: Resource<String> = Resource.Loading(),
     val authResource: Resource<AuthResult> = Resource.Loading(),
     val sendOtpResource: Resource<String> = Resource.Loading(),
     val authType: AuthMethod = AuthMethod.None,
     val signedInUser: UserData? = null,
-    val isSignedIn: Boolean = false
-)
+    val isSignedIn: Boolean = false,
+
+    )
 
 
 

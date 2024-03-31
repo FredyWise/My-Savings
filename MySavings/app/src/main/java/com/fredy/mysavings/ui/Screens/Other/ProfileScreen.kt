@@ -5,6 +5,7 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -40,19 +41,20 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.fredy.mysavings.Data.Database.Model.UserData
 import com.fredy.mysavings.Util.Resource
-import com.fredy.mysavings.Util.currencyCodes
 import com.fredy.mysavings.Util.isValidEmailOrPhone
+import com.fredy.mysavings.Util.isValidPassword
 import com.fredy.mysavings.ViewModels.AuthState
 import com.fredy.mysavings.ViewModels.Event.AuthEvent
 import com.fredy.mysavings.ui.Screens.AuthScreen.CustomTextField
-import com.fredy.mysavings.ui.Screens.ZCommonComponent.CurrencyDropdown
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.DefaultAppBar
 
 @Composable
@@ -73,21 +75,20 @@ fun ProfileScreen(
         onNavigationIconClick = { rootNavController.navigateUp() },
     ) {
         val context = LocalContext.current
-        var username by remember {
-            mutableStateOf(
-                currentUserData.username ?: ""
-            )
-        }
-//        var preferredCurrency by remember {
-//            mutableStateOf(
-//                currentUserData.userCurrency
-//            )
-//        }
-        var emailOrPhone by remember { mutableStateOf(currentUserData.emailOrPhone ?: "") }
         var profilePictureUri by remember {
             mutableStateOf<Uri>(
                 Uri.EMPTY
             )
+        }
+        var username by remember { mutableStateOf(currentUserData.username ?: "") }
+        var emailOrPhone by remember { mutableStateOf(currentUserData.emailOrPhone ?: "") }
+        var oldPassword by remember { mutableStateOf("") }
+        var newPassword by remember { mutableStateOf("") }
+        var confirmPassword by remember {
+            mutableStateOf("")
+        }
+        var isChangeCredentials by remember {
+            mutableStateOf(false)
         }
         val imagePickerLauncher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.PickVisualMedia(),
@@ -97,7 +98,33 @@ fun ProfileScreen(
                 }
             },
         )
+        LaunchedEffect(key1 = state.updateResource){
+            when(state.updateResource){
+                is Resource.Success -> {
+                    val message = state.updateResource.data
+                    message.orEmpty().ifEmpty {
+                        Toast.makeText(
+                            context,
+                            message,
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                }
 
+                is Resource.Error -> {
+                    val message = state.updateResource.message
+                    message.orEmpty().ifEmpty {
+                        Toast.makeText(
+                            context,
+                            message,
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                }
+
+                is Resource.Loading -> {}
+            }
+        }
 
         Column(
             modifier = Modifier
@@ -183,33 +210,70 @@ fun ProfileScreen(
                 onValueChange = { username = it },
                 placeholder = "type Username..."
             )
+            AnimatedVisibility(isChangeCredentials) {
+                Column {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    CustomTextField(
+                        label = "Email",
+                        value = emailOrPhone,
+                        onValueChange = { emailOrPhone = it },
+                        placeholder = "type Email...",
+                        keyboardType = KeyboardType.Email
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    CustomTextField(
+                        label = "Old Password",
+                        value = oldPassword,
+                        onValueChange = { oldPassword = it },
+                        placeholder = "typePassword...",
+                        visualTransformation = PasswordVisualTransformation(),
+                        keyboardType = KeyboardType.Password
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    CustomTextField(
+                        label = "New Password",
+                        value = newPassword,
+                        onValueChange = { newPassword = it },
+                        placeholder = "typePassword...",
+                        visualTransformation = PasswordVisualTransformation(),
+                        keyboardType = KeyboardType.Password
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    CustomTextField(
+                        label = "Confirm Password",
+                        value = confirmPassword,
+                        onValueChange = { confirmPassword = it },
+                        placeholder = "typeConfirmPassword...",
+                        visualTransformation = PasswordVisualTransformation(),
+                        keyboardType = KeyboardType.Password
+                    )
+                }
+            }
             Spacer(modifier = Modifier.height(8.dp))
-
-            CustomTextField(
-                label = "Email",
-                value = emailOrPhone,
-                onValueChange = { emailOrPhone = it },
-                placeholder = "type Email...",
-                keyboardType = KeyboardType.Email
+            Text(
+                text = "Change Credentials? ${if (isChangeCredentials) "Yes" else "No"}",
+                modifier = Modifier.clickable {
+                    isChangeCredentials = isChangeCredentials.not()
+                },
+                fontWeight = FontWeight.Bold,
+                color = onBackgroundColor,
             )
             Spacer(modifier = Modifier.height(16.dp))
-
-//            CurrencyDropdown(selectedText = preferredCurrency, onClick = { preferredCurrency = it })
-//            Spacer(modifier = Modifier.height(16.dp))
             Button(
                 onClick = {
                     onEvent(
                         AuthEvent.UpdateUserData(
-                            emailOrPhone,
-                            username,
-//                            preferredCurrency,
-                            profilePictureUri
+                            email = emailOrPhone,
+                            username = username,
+                            oldPassword = oldPassword,
+                            password = newPassword,
+                            photoUrl = profilePictureUri
                         )
                     )
                 },
-                enabled = isValidEmailOrPhone(
-                    emailOrPhone
-                ),// && currencyCodes.contains(preferredCurrency),
+                enabled = if (isChangeCredentials) {
+                    isValidEmailOrPhone(emailOrPhone) && (isValidPassword(newPassword) || newPassword.isEmpty()) && (newPassword == confirmPassword) && oldPassword.isNotEmpty()
+                } else true,
                 colors = ButtonDefaults.buttonColors(
                     disabledContainerColor = primaryColor.copy(
                         0.7f
@@ -228,29 +292,15 @@ fun ProfileScreen(
                             color = onPrimaryColor
                         )
                     }
-
-                    is Resource.Success -> {
-                        LaunchedEffect(
-                            key1 = state.updateResource,
-                        ) {
-                            Toast.makeText(
-                                context,
-                                state.updateResource.data,
-                                Toast.LENGTH_LONG
-                            ).show()
-                        }
-                        null
+                    else ->{
+                        Text(
+                            text = "Save User Data",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = onPrimaryColor,
+                            modifier = Modifier.padding(10.dp)
+                        )
                     }
-
-                    is Resource.Error -> {
-                        null
-                    }
-                } ?: Text(
-                    text = "Save User Data",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = onPrimaryColor,
-                    modifier = Modifier.padding(10.dp)
-                )
+                }
             }
         }
     }

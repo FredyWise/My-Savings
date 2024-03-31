@@ -36,6 +36,7 @@ import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleWarningDialog
 fun AccountBody(
     modifier: Modifier = Modifier,
     accounts: List<Account>,
+    topItem: @Composable () -> Unit = {},
     onEvent: (AccountEvent) -> Unit,
     onDeleteAccount: () -> Unit,
     onEntityClick: () -> Unit,
@@ -56,6 +57,7 @@ fun AccountBody(
         warningText = "Are You Sure Want to Delete This Account?"
     )
     LazyColumn(modifier = modifier) {
+        item { topItem() }
         stickyHeader {
             CustomStickyHeader(
                 modifier = Modifier.background(

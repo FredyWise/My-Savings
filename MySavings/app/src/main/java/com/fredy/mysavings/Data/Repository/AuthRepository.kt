@@ -1,6 +1,7 @@
 package com.fredy.mysavings.Data.Repository
 
 import android.content.Context
+import android.net.Uri
 import android.util.Log
 import com.fredy.mysavings.Data.Database.Model.UserData
 import com.fredy.mysavings.MainActivity
@@ -10,10 +11,12 @@ import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.AuthResult
+import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthOptions
 import com.google.firebase.auth.PhoneAuthProvider
+import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.channels.awaitClose
@@ -21,12 +24,15 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.tasks.await
 import java.util.concurrent.CancellationException
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import kotlin.coroutines.resume
 
-interface AuthRepository {// this is should be a service that will need user repo
+interface AuthRepository {
+    // this is should be a service that will need user repo
     fun loginUser(
         email: String, password: String
     ): Flow<Resource<AuthResult>>
@@ -35,6 +41,14 @@ interface AuthRepository {// this is should be a service that will need user rep
         email: String,
         password: String,
     ): Flow<Resource<AuthResult>>
+
+    fun updateUserInformation(
+        profilePicture: Uri?,
+        username: String,
+        email: String,
+        oldPassword: String,
+        password: String,
+    ): Flow<Resource<String>>
 
     fun googleSignIn(credential: AuthCredential): Flow<Resource<AuthResult>>
 
@@ -58,7 +72,7 @@ class AuthRepositoryImpl @Inject constructor(
     private val oneTapClient: SignInClient,
     private val firestore: FirebaseFirestore,
     private val firebaseAuth: FirebaseAuth
-): AuthRepository {
+) : AuthRepository {
     override fun loginUser(
         email: String, password: String
     ): Flow<Resource<AuthResult>> {
@@ -88,6 +102,94 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
+    override fun updateUserInformation(
+        profilePicture: Uri?,
+        username: String,
+        email: String,
+        oldPassword: String,
+        password: String,
+    ): Flow<Resource<String>> = flow {
+        emit(Resource.Loading())
+        Log.i(TAG, "updateUserInformation: starting")
+        val successMessage = mutableListOf<String>()
+        val errorMessage = mutableListOf<String>()
+        val profileUpdates = UserProfileChangeRequest.Builder()
+            .setDisplayName(username)
+            .setPhotoUri(profilePicture)
+            .build()
+        val user = firebaseAuth.currentUser!!
+
+        suspendCancellableCoroutine<Unit> { continuation ->
+            user.updateProfile(profileUpdates).addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Log.i(TAG, "Display name updated successfully")
+                    successMessage.add("Display Name")
+                } else {
+                    Log.e(TAG, "Error updating display name")
+                    errorMessage.add("Display Name")
+                }
+                continuation.resume(Unit)
+            }
+        }
+
+        if (oldPassword.isNotEmpty()) {
+            val credential = EmailAuthProvider.getCredential(user.email ?: "", oldPassword)
+
+            suspendCancellableCoroutine<Unit> { continuation ->
+                user.reauthenticate(credential).addOnCompleteListener { reAuthTask ->
+                    if (reAuthTask.isSuccessful) {
+                        if (password.isNotEmpty()) {
+                            user.updatePassword(password)
+                                .addOnCompleteListener { passwordUpdateTask ->
+                                    if (passwordUpdateTask.isSuccessful) {
+                                        Log.i(TAG, "Password updated successfully")
+                                        successMessage.add("Password")
+                                    } else {
+                                        Log.e(TAG, "Error updating password")
+                                        errorMessage.add("Password")
+                                    }
+                                }
+                        }
+                        if (email.isNotEmpty() && email != user.email) {
+                            user.verifyBeforeUpdateEmail(email)
+                                .addOnCompleteListener { emailUpdateTask ->
+                                    if (emailUpdateTask.isSuccessful) {
+                                        Log.i(TAG, "Email address updated successfully")
+                                        successMessage.add("Email")
+                                    } else {
+                                        Log.e(TAG, "Error updating email address")
+                                        errorMessage.add("Email")
+                                    }
+                                }
+                        }
+                    } else {
+                        Log.e(TAG, "Re-authentication failed")
+                        errorMessage.add("Re-authentication")
+                    }
+                    continuation.resume(Unit)
+                }
+            }
+        }
+
+        emit(
+            if (successMessage.isNotEmpty()) {
+                val successString =
+                    successMessage.joinToString(separator = ", ", limit = successMessage.size - 1) +
+                            (if (successMessage.size > 1) ", and " else "") + successMessage.last()
+                Resource.Success("$successString updated successfully")
+            } else if (errorMessage.isNotEmpty()) {
+                val errorString =
+                    errorMessage.joinToString(separator = ", ", limit = errorMessage.size - 1) +
+                            (if (errorMessage.size > 1) ", and " else "") + errorMessage.last()
+                Resource.Error("Error updating $errorString")
+            } else Resource.Error("Unexpected Error")
+        )
+    }.catch { e ->
+        Log.e(TAG, "Error updating user information: ${e.message}")
+        emit(Resource.Error("Error updating user information: ${e.message}"))
+    }
+
+
     override fun googleSignIn(credential: AuthCredential): Flow<Resource<AuthResult>> {
         return flow {
             emit(Resource.Loading())
@@ -105,7 +207,7 @@ class AuthRepositoryImpl @Inject constructor(
         phoneNumber: String,
     ): Flow<Resource<String>> = callbackFlow {
         trySend(Resource.Loading())
-        val callback = object: PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+        val callback = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
             override fun onVerificationCompleted(
                 credential: PhoneAuthCredential
             ) {
@@ -189,7 +291,7 @@ class AuthRepositoryImpl @Inject constructor(
         try {
             oneTapClient.signOut().await()
             firebaseAuth.signOut()
-            Log.d(TAG, "signOut: "+firebaseAuth.currentUser)
+            Log.d(TAG, "signOut: " + firebaseAuth.currentUser)
         } catch (e: Exception) {
             e.printStackTrace()
             if (e is CancellationException) throw e
