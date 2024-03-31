@@ -69,6 +69,8 @@ fun MainScreen(
     onContentColor: Color = MaterialTheme.colorScheme.onSurface,
     rootNavController: NavHostController,
     recordViewModel: RecordViewModel,
+    accountViewModel: AccountViewModel,
+    categoryViewModel: CategoryViewModel = hiltViewModel(),
     currentUser: UserData?,
     signOut: () -> Unit,
 ) {
@@ -363,6 +365,8 @@ fun MainScreen(
                     rootNavController = rootNavController,
                     navController = navController,
                     recordViewModel = recordViewModel,
+                    accountViewModel = accountViewModel,
+                    categoryViewModel = categoryViewModel,
                     modifier = Modifier.padding(
                         innerPadding
                     ),

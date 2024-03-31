@@ -37,6 +37,7 @@ import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleWarningDialog
 fun CategoryBody(
     modifier: Modifier = Modifier,
     categoryMaps: List<CategoryMap>,
+    topItem: @Composable () -> Unit = {},
     onDeleteCategory: () -> Unit = {},
     onEvent: (CategoryEvent) -> Unit,
     onEntityClick: () -> Unit,
@@ -57,6 +58,9 @@ fun CategoryBody(
         warningText = "Are You Sure Want to Delete This Category?"
     )
     LazyColumn(modifier = modifier) {
+        item { 
+            topItem()
+        }
         categoryMaps.forEach { categoryMap ->
             if (!isTransfer(categoryMap.categoryType)) {
                 stickyHeader {

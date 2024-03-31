@@ -44,10 +44,12 @@ class CategoryRepositoryImpl @Inject constructor(
                     categoryId = newCategoryRef.id,
                     userIdFk = currentUserId
                 )
-            } else {
+            } else if (category.userIdFk.isEmpty()){
                 category.copy(
                     userIdFk = currentUserId
                 )
+            } else{
+                category
             }
 
             categoryDao.upsertCategoryItem(

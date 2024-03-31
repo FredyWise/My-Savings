@@ -3,6 +3,7 @@ package com.fredy.mysavings.ui.Screens.Account
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -107,9 +108,15 @@ fun AccountsScreen(
                 },
             ) { item, onBackgroundColor, balanceColor ->
                 SimpleEntityItem(
-                    modifier = Modifier.padding(
-                        vertical = 4.dp
-                    ),
+                    modifier = Modifier
+                        .padding(
+                            vertical = 4.dp
+                        )
+                        .clickable {
+                            recordEvent(
+                                RecordsEvent.ShowDialog(item)
+                            )
+                        },
                     iconModifier = Modifier
                         .size(
                             40.dp
@@ -148,7 +155,6 @@ fun AccountsScreen(
                         maxLines = 1
                     )
                 }
-
             }
         }
     }
@@ -249,7 +255,6 @@ fun AccountsScreen(
                 )
             }
         }
-
     }
 }
 

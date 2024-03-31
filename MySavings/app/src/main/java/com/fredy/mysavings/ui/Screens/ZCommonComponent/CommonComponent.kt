@@ -30,7 +30,6 @@ import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.ripple.rememberRipple
@@ -91,9 +90,13 @@ fun <T> ResourceHandler(
 
     fun debounce(resource: Resource<T>) {
         scope.launch {
-            delay(1000L)
-            showEmptyMessage = resource is Resource.Success
-            showCircularProgressIndicator = resource is Resource.Loading
+            delay(1500L)
+            if (resource is Resource.Loading) {
+                showCircularProgressIndicator = resource is Resource.Loading
+            }
+            if (resource is Resource.Success) {
+                showEmptyMessage = resource is Resource.Success
+            }
         }
     }
     Box(
@@ -474,8 +477,8 @@ fun AsyncImageHandler(
     imageVector: ImageVector,
     imageVectorColor: Color = MaterialTheme.colorScheme.onSurface,
 
-) {
-    if (imageUrl != null && imageUrl != "null") {
+    ) {
+    if (!imageUrl.isNullOrEmpty() && !imageUrl.contains("null",true) ) {
         AsyncImage(
             model = imageUrl,
             contentDescription = contentDescription,

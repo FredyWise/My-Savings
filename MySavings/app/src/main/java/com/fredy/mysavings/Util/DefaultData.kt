@@ -38,7 +38,7 @@ val accountIcons = listOf(
     SavingsIcon(R.drawable.ic_wallet, "Big Wallet"),
     SavingsIcon(R.drawable.ic_paypal, "Pay Pal"),
     SavingsIcon(R.drawable.ic_withdrawal, "Withdrawal"),
-    )
+)
 
 val categoryIcons = listOf(
     SavingsIcon(R.drawable.ic_fruit, "Fruit"),
@@ -57,9 +57,9 @@ val categoryIcons = listOf(
 
 
 val accountIconsMap = accountIcons.plus(accountInitIcon).associateBy { it.description }
-val categoryIconsMap = categoryIcons.plus(categoryInitIcon).plus(transferIcon).associateBy { it.description }
+val categoryIconsMap =
+    categoryIcons.plus(categoryInitIcon).plus(transferIcon).associateBy { it.description }
 val savingsIcons = accountIconsMap.plus(categoryIconsMap)
-
 
 
 val appIcon = SavingsIcon(R.drawable.ic_wallet_foreground, "Application Icon")
@@ -69,13 +69,25 @@ val WebClientId = "895326687881-e2kh5jh12kjvpf9se1cehbeias0iuvmq.apps.googleuser
 
 val transferCategory = Category(
     categoryId = "transferCategory",
+    userIdFk = "0",
     categoryName = RecordType.Transfer.name,
     categoryType = RecordType.Transfer,
     categoryIcon = transferIcon.image,
     categoryIconDescription = transferIcon.description,
 )
-val deletedCategory = Category(categoryId = "deletedCategory", categoryName = "Deleted Category", categoryType = RecordType.Transfer)
-val deletedAccount = Account(accountId = "deletedAccount", accountName = "Deleted Account", accountCurrency = "USD")
+val deletedCategory = Category(
+    categoryId = "deletedCategory",
+    userIdFk = "0",
+    categoryName = "Deleted Category",
+    categoryType = RecordType.Transfer
+)
+val deletedAccount =
+    Account(
+        accountId = "deletedAccount",
+        userIdFk = "0",
+        accountName = "Deleted Account",
+        accountCurrency = "USD"
+    )
 
 
 //color
@@ -106,6 +118,7 @@ val defaultColors = listOf(
     toColor(Color.parseColor("#55ffff")),
     toColor(Color.parseColor("#55ff00")),
 )
+
 // currency
 val currencyCodes = listOf(
     "AED",

@@ -78,6 +78,7 @@ fun AnalysisFlow(
                     ) {
                         ChartLine(
                             contentColor = contentColor,
+                            infoColor = RecordTypeColor(recordType = state.filterState.recordType),
                             pointsData = items.map { item ->
                                 val date =
                                     if (state.filterState.isFilterTypeMonthBelow()) item.recordDateTime.dayOfMonth.toFloat() else item.recordDateTime.dayOfYear.toFloat()
@@ -101,7 +102,7 @@ fun AnalysisFlow(
                                     RecordsEvent.ToggleRecordType
                                 )
                             },
-                        color = onBackgroundColor,
+                        color = RecordTypeColor(recordType = state.filterState.recordType),
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.titleLarge
                     )

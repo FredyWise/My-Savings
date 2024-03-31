@@ -12,11 +12,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -25,9 +28,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
 import com.fredy.mysavings.Util.TAG
+import com.fredy.mysavings.ViewModels.AccountViewModel
 import com.fredy.mysavings.ViewModels.AuthViewModel
 import com.fredy.mysavings.ViewModels.CurrencyViewModel
+import com.fredy.mysavings.ViewModels.Event.AccountEvent
 import com.fredy.mysavings.ViewModels.Event.AuthEvent
+import com.fredy.mysavings.ViewModels.Event.RecordsEvent
 import com.fredy.mysavings.ViewModels.RecordViewModel
 import com.fredy.mysavings.ViewModels.SearchViewModel
 import com.fredy.mysavings.ViewModels.SettingViewModel
@@ -47,8 +53,6 @@ fun NavGraphRoot(
     startDestination: String,
     settingViewModel: SettingViewModel,
     authViewModel: AuthViewModel,
-    currencyViewModel: CurrencyViewModel = hiltViewModel(),
-    recordViewModel: RecordViewModel = hiltViewModel(),
 ) {
     NavHost(
         modifier = Modifier.background(
@@ -75,12 +79,16 @@ fun NavGraphRoot(
                 exitTransition = {
                     fadeOut()
                 },
-            ) {
+            ) { entry ->
+                val recordViewModel = entry.sharedViewModel<RecordViewModel>(navController)
+                val accountViewModel = entry.sharedViewModel<AccountViewModel>(navController)
+                val currencyViewModel = entry.sharedViewModel<CurrencyViewModel>(navController)
                 val state by authViewModel.state.collectAsStateWithLifecycle()
                 val context = LocalContext.current
                 MainScreen(
                     rootNavController = navController,
                     recordViewModel = recordViewModel,
+                    accountViewModel = accountViewModel,
                     signOut = {
                         authViewModel.onEvent(
                             AuthEvent.SignOut
@@ -184,13 +192,20 @@ fun NavGraphRoot(
                 exitTransition = {
                     fadeOut()
                 },
-            ) {
+            ) { entry ->
+                val recordViewModel = entry.sharedViewModel<RecordViewModel>(navController)
+                val accountViewModel = entry.sharedViewModel<AccountViewModel>(navController)
+                val currencyViewModel = entry.sharedViewModel<CurrencyViewModel>(navController)
                 val state by currencyViewModel.state.collectAsStateWithLifecycle()
                 CurrencyScreen(
                     title = NavigationRoute.Currency.title,
                     rootNavController = navController,
                     state = state,
-                    onEvent = currencyViewModel::onEvent
+                    onEvent = currencyViewModel::onEvent,
+                    updateMainScreen = {
+                        accountViewModel.onEvent(AccountEvent.UpdateAccount)
+                        recordViewModel.onEvent(RecordsEvent.UpdateRecord)
+                    }
                 )
             }
             composable(
@@ -257,3 +272,13 @@ fun NavHostController.navigateSingleTopTo(route: String) = this.navigate(
 
 }
 
+@Composable
+inline fun <reified T : ViewModel> NavBackStackEntry.sharedViewModel(
+    navController: NavHostController,
+): T {
+    val navGraphRoute = destination.parent?.route ?: return hiltViewModel()
+    val parentEntry = remember(this) {
+        navController.getBackStackEntry(navGraphRoute)
+    }
+    return hiltViewModel(parentEntry)
+}

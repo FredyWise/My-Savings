@@ -133,7 +133,7 @@ class CategoryViewModel @Inject constructor(
                     categoryRepository.deleteCategory(
                         event.category
                     )
-                    toggleUpdating()
+//                    toggleUpdating()
                     recordRepository.updateRecordItemWithDeletedCategory(event.category)
                     event.onDeleteEffect()
                 }
@@ -161,13 +161,13 @@ class CategoryViewModel @Inject constructor(
                     categoryRepository.upsertCategory(
                         category
                     )
-                    toggleUpdating()
                     categoryRepository.upsertCategory(
                         transferCategory
                     )
                     categoryRepository.upsertCategory(
                         deletedCategory
                     )
+//                    toggleUpdating()
                 }
                 _state.update { CategoryState() }
             }

@@ -10,6 +10,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 import com.fredy.mysavings.ViewModels.AuthViewModel
+import com.fredy.mysavings.ViewModels.Event.AuthEvent
 import com.fredy.mysavings.ViewModels.SettingViewModel
 import com.fredy.mysavings.ui.NavigationComponent.Navigation.Graph
 import com.fredy.mysavings.ui.NavigationComponent.Navigation.NavGraphRoot
@@ -40,5 +41,11 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        val prefs = getSharedPreferences("MyPrefs", MODE_PRIVATE)
     }
 }

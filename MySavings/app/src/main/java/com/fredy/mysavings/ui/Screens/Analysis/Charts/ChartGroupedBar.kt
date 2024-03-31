@@ -20,6 +20,8 @@ import co.yml.charts.ui.barchart.models.BarStyle
 import co.yml.charts.ui.barchart.models.GroupBar
 import co.yml.charts.ui.barchart.models.GroupBarChartData
 import co.yml.charts.ui.barchart.models.GroupSeparatorConfig
+import co.yml.charts.ui.barchart.models.SelectionHighlightData
+import co.yml.charts.ui.linechart.model.SelectionHighlightPopUp
 import com.fredy.mysavings.Util.formatBalanceAmount
 import com.fredy.mysavings.Util.truncateString
 import kotlin.math.absoluteValue
@@ -30,6 +32,8 @@ fun ChartGroupedBar(
     modifier: Modifier = Modifier,
     contentColor: Color = MaterialTheme.colorScheme.primary,
     backgroundColor: Color = MaterialTheme.colorScheme.background,
+    infoBackgroundColor: Color = MaterialTheme.colorScheme.background,
+    infoColor: Color = MaterialTheme.colorScheme.onSecondary,
     incomeColor: Color = MaterialTheme.colorScheme.primary,
     expenseColor: Color = MaterialTheme.colorScheme.tertiary,
     groupBarData: List<GroupBar>,
@@ -43,7 +47,7 @@ fun ChartGroupedBar(
         contentColor
     ).axisLineColor(contentColor).axisStepSize(
         30.dp
-    ).bottomPadding(5.dp).startDrawPadding(50.dp)
+    ).bottomPadding(5.dp).startDrawPadding(1.dp)
         .labelData { index -> truncateString(groupBarData[index].label, 10) }.build()
 
     val yAxisData = AxisData.Builder().backgroundColor(
@@ -61,8 +65,8 @@ fun ChartGroupedBar(
         )
     }.build()
     val colorPaletteList = listOf(
+        expenseColor,
         incomeColor,
-        expenseColor
     )
     val legendsConfig = LegendsConfig(
         legendLabelList = listOf(
@@ -80,7 +84,19 @@ fun ChartGroupedBar(
     )
     val groupBarPlotData = BarPlotData(
         groupBarList = groupBarData,
-        barStyle = BarStyle(barWidth = 25.dp),
+        barStyle = BarStyle(barWidth = 25.dp, selectionHighlightData = SelectionHighlightData(
+            highlightTextBackgroundColor = infoBackgroundColor,
+            highlightTextColor = infoColor,
+            groupBarPopUpLabel = { x, y ->
+                val xLabel = "name : ${groupBarData[x.toInt()-1].label} "
+                val yLabel = "amount : ${
+                    formatBalanceAmount(
+                        y.toDouble()
+                    )
+                }"
+                "$xLabel $yLabel"
+            },
+        )),
         barColorPaletteList = colorPaletteList
     )
     val data = GroupBarChartData(
@@ -91,8 +107,10 @@ fun ChartGroupedBar(
         groupSeparatorConfig = GroupSeparatorConfig(
             0.dp
         ),
+        horizontalExtraSpace = 50.dp,
+        tapPadding = 30.dp,
         paddingEnd = 0.dp,
-        paddingBetweenStackedBars = 0.dp
+        paddingBetweenStackedBars = 0.dp,
     )
     Column(
         modifier.height(300.dp)

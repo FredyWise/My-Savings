@@ -1,6 +1,5 @@
 package com.fredy.mysavings.ui.Screens.Category
 
-import android.widget.Toast
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -23,7 +22,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.fredy.mysavings.Data.Database.Model.Category
@@ -179,35 +177,6 @@ fun CategoriesScreen(
                 )
             },
         )
-        SimpleButton(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    horizontal = 50.dp
-                )
-                .padding(top = 16.dp)
-                .clip(
-                    MaterialTheme.shapes.medium
-                )
-                .border(
-                    width = 2.dp,
-                    color = MaterialTheme.colorScheme.secondary,
-                    shape = MaterialTheme.shapes.medium
-                ),
-            image = R.drawable.ic_add_foreground,
-            imageColor = MaterialTheme.colorScheme.onBackground,
-            onClick = {
-                onEvent(
-                    CategoryEvent.ShowDialog(
-                        Category(categoryName = "")
-                    )
-                )
-            },
-            title = "Add New Category ",
-            titleStyle = MaterialTheme.typography.titleLarge.copy(
-                MaterialTheme.colorScheme.onBackground
-            )
-        )
         state.categoryResource.let { resource ->
             ResourceHandler(
                 resource = resource,
@@ -226,6 +195,37 @@ fun CategoriesScreen(
             ) { data ->
                 CategoryBody(
                     categoryMaps = data,
+                    topItem = {
+                        SimpleButton(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(
+                                    horizontal = 50.dp
+                                )
+                                .padding(top = 16.dp)
+                                .clip(
+                                    MaterialTheme.shapes.medium
+                                )
+                                .border(
+                                    width = 2.dp,
+                                    color = MaterialTheme.colorScheme.secondary,
+                                    shape = MaterialTheme.shapes.medium
+                                ),
+                            image = R.drawable.ic_add_foreground,
+                            imageColor = MaterialTheme.colorScheme.onBackground,
+                            onClick = {
+                                onEvent(
+                                    CategoryEvent.ShowDialog(
+                                        Category(categoryName = "")
+                                    )
+                                )
+                            },
+                            title = "Add New Category ",
+                            titleStyle = MaterialTheme.typography.titleLarge.copy(
+                                MaterialTheme.colorScheme.onBackground
+                            )
+                        )
+                    },
                     onEvent = onEvent,
                     onEntityClick = {
                         isSheetOpen = true

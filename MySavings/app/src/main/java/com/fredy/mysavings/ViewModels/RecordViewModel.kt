@@ -117,7 +117,7 @@ class RecordViewModel @Inject constructor(
                 start,
                 end,
                 currencies,
-                useUserCurrency
+                useUserCurrency,
             )
         }
     }.stateIn(
@@ -311,7 +311,7 @@ class RecordViewModel @Inject constructor(
                         recordRepository.deleteRecordItem(
                             event.record
                         )
-                        onEvent(RecordsEvent.UpdateRecord)
+//                        onEvent(RecordsEvent.UpdateRecord)
                     }
                 }
 

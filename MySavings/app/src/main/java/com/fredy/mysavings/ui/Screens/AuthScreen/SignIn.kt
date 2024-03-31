@@ -275,7 +275,7 @@ fun SignIn(
         }
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "Login with ${if (switchState) "Phone Number" else "Email"} instead? ",
+            text = "Sign In with ${if (switchState) "Phone Number" else "Email"} instead? ",
             modifier = Modifier.clickable {
                 switchState = !switchState
             },

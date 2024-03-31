@@ -59,6 +59,8 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "META-INF/DEPENDENCIES" // this to below is for the document ai
+            excludes += "META-INF/INDEX.LIST"
         }
     }
 }
@@ -91,6 +93,10 @@ dependencies {
 
     // Google ml kit
     implementation("com.google.android.gms:play-services-mlkit-document-scanner:16.0.0-beta1")
+//    implementation("com.google.cloud:google-cloud-document-ai:2.42.0"){
+//        exclude (group= "com.google.protobuf", module= "protobuf-java")
+//        exclude (group= "com.google.api.grpc", module= "proto-google-common-protos")
+//    }
 
     // Unit and UI testing libraries
     testImplementation("junit:junit:4.13.2")

@@ -92,6 +92,12 @@ class SettingViewModel @Inject constructor(
 
                 SettingEvent.ToggleBioAuth -> {
                     settingsRepository.saveBioAuth(!_state.value.bioAuth)
+                    if (!_state.value.bioAuth){
+                        settingsRepository.saveAutoLogin(true)
+                        _state.update {
+                            it.copy(autoLogin = true)
+                        }
+                    }
                     _state.update {
                         it.copy(bioAuth = !it.bioAuth)
                     }

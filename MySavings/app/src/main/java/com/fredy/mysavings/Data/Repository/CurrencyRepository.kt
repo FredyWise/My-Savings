@@ -78,8 +78,6 @@ class CurrencyRepositoryImpl @Inject constructor(
 
     override suspend fun updateCurrency(currency: Currency) {
         withContext(Dispatchers.IO) {
-            val currentUser = authRepository.getCurrentUser()!!
-            val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
             Log.i(TAG, "updateCurrency: $currency")
             currencyDataSource.upsertCurrency(currency)
             currencyDao.upsertCurrency(currency)
@@ -317,8 +315,8 @@ class CurrencyRepositoryImpl @Inject constructor(
     // currencies
     override fun getCurrencies(): Flow<Resource<List<Currency>>> {
         return flow {
-            Log.i(TAG, "getCurrencies: start")
             emit(Resource.Loading())
+            Log.i(TAG, "getCurrencies: start")
             val cachedRates = getCachedRates(ApiCredentials.CurrencyModels.BASE_CURRENCY)
 
             val currencies = _cachedCurrency.value

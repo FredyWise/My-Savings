@@ -34,6 +34,7 @@ fun ChartLine(
     modifier: Modifier = Modifier,
     contentColor: Color = MaterialTheme.colorScheme.primary,
     gridColor: Color = MaterialTheme.colorScheme.secondary,
+    infoBackgroundColor: Color = MaterialTheme.colorScheme.background,
     infoColor: Color = MaterialTheme.colorScheme.onSecondary,
     backgroundColor: Color = MaterialTheme.colorScheme.background,
     pointsData: List<Point>,
@@ -103,7 +104,7 @@ fun ChartLine(
                         )
                     ),
                     selectionHighlightPopUp = SelectionHighlightPopUp(
-                        backgroundColor = gridColor,
+                        backgroundColor = infoBackgroundColor,
                         labelColor = infoColor,
                         popUpLabel = { x, y ->
                             val xLabel = "date : ${x.toInt()} "

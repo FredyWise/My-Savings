@@ -29,10 +29,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.fredy.mysavings.Util.formatBalanceAmount
+import com.fredy.mysavings.ViewModels.AccountViewModel
 import com.fredy.mysavings.ViewModels.CurrencyState
+import com.fredy.mysavings.ViewModels.Event.AccountEvent
 import com.fredy.mysavings.ViewModels.Event.CurrencyEvent
+import com.fredy.mysavings.ViewModels.Event.RecordsEvent
+import com.fredy.mysavings.ViewModels.RecordViewModel
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.AsyncImageHandler
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.CurrencyDropdown
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.DefaultAppBar
@@ -46,7 +51,8 @@ fun CurrencyScreen(
     rootNavController: NavController,
     title: String,
     state: CurrencyState,
-    onEvent: (CurrencyEvent) -> Unit
+    onEvent: (CurrencyEvent) -> Unit,
+    updateMainScreen: () -> Unit
 ) {
     state.currency?.let { currency ->
         SimpleDialog(
@@ -68,18 +74,21 @@ fun CurrencyScreen(
         modifier = modifier, title = title,
         onNavigationIconClick = { rootNavController.navigateUp() },
     ) {
-        Column(
-        ) {
+        Column() {
             CurrencyItem(
                 modifier = Modifier
                     .background(MaterialTheme.colorScheme.surface)
-                    .padding(horizontal = 4.dp, vertical = 8.dp),
+                    .padding(horizontal = 4.dp, vertical = 8.dp)
+                    .clickable {  },
                 name = "Base Currency",
                 leadingComponent = {
                     CurrencyDropdown(
                         modifier = Modifier.weight(1f),
                         selectedText = state.userData.userCurrency,
-                        onClick = { onEvent(CurrencyEvent.BaseCurrency(it)) }
+                        onClick = {
+                            onEvent(CurrencyEvent.BaseCurrency(it))
+                            updateMainScreen()
+                        }
                     )
                 },
             )

@@ -83,6 +83,9 @@ interface RecordDataSource {
         startDate: LocalDateTime,
         endDate: LocalDateTime
     ):Flow< List<Record>>
+
+    suspend fun getUserAccounts(userId: String):List<Account>
+    suspend fun getUserCategories(userId: String):List<Category>
 }
 
 class RecordDataSourceImpl @Inject constructor(
@@ -431,7 +434,29 @@ class RecordDataSourceImpl @Inject constructor(
         }
     }
 
+    override suspend fun getUserAccounts(
+        userId: String
+    ): List<Account> = Firebase.firestore.collection(
+        "account"
+    ).whereEqualTo(
+        "userIdFk", userId
+    ).get().await().toObjects<Account>() + Firebase.firestore.collection(
+        "account"
+    ).whereEqualTo(
+        "userIdFk", "0"
+    ).get().await().toObjects<Account>()
 
+    override suspend fun getUserCategories(
+        userId: String
+    ) = Firebase.firestore.collection(
+        "category"
+    ).whereEqualTo(
+        "userIdFk", userId
+    ).get().await().toObjects<Category>() + Firebase.firestore.collection(
+        "category"
+    ).whereEqualTo(
+        "userIdFk", "0"
+    ).get().await().toObjects<Category>()
     private suspend fun getTrueRecord(record: Record) = coroutineScope {
         withContext(Dispatchers.IO) {
             val fromAccountDeferred = async {
@@ -485,25 +510,10 @@ class RecordDataSourceImpl @Inject constructor(
         }
     }
 
-    private suspend fun getUserAccounts(
-        userId: String
-    ) = Firebase.firestore.collection(
-        "account"
-    ).whereEqualTo(
-        "userIdFk", userId
-    ).get().await().toObjects<Account>()
-
-    private suspend fun getUserCategories(
-        userId: String
-    ) = Firebase.firestore.collection(
-        "category"
-    ).whereEqualTo(
-        "userIdFk", userId
-    ).get().await().toObjects<Category>()
-
     data class TrueRecordComponentResult(
         val fromAccount: List<Account>,
         val toAccount: List<Account>,
         val toCategory: List<Category>,
     )
+
 }

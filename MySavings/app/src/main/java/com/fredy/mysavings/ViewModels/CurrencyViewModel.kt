@@ -98,7 +98,7 @@ class CurrencyViewModel @Inject constructor(
                 is CurrencyEvent.BaseCurrency -> {
                     viewModelScope.launch {
                         val user = _state.value.userData.copy(userCurrency = event.baseCurrency)
-                        if (_state.value.userData.userCurrency == event.baseCurrency) {
+                        if (_state.value.userData.userCurrency != event.baseCurrency) {
                             userRepository.upsertUser(user)
                         }
                         _state.update {

@@ -58,10 +58,6 @@ class AccountViewModel @Inject constructor(
         false
     )
 
-    private fun toggleUpdating() {
-        _updating.update { it.not() }
-    }
-
     private val _sortType = MutableStateFlow(
         SortType.ASCENDING
     )
@@ -128,7 +124,8 @@ class AccountViewModel @Inject constructor(
 
     private val _records = _state.flatMapLatest {
         recordRepository.getUserAccountRecordsOrderedByDateTime(
-            it.account.accountId, _sortType.value
+            it.account.accountId,
+            _sortType.value
         )
     }.stateIn(
         viewModelScope,
@@ -210,8 +207,8 @@ class AccountViewModel @Inject constructor(
                     accountRepository.deleteAccount(
                         event.account
                     )
-                    toggleUpdating()
                     recordRepository.updateRecordItemWithDeletedAccount(event.account)
+//                    onEvent(AccountEvent.UpdateAccount)
                     event.onDeleteEffect()
                 }
             }
@@ -240,10 +237,10 @@ class AccountViewModel @Inject constructor(
                     accountRepository.upsertAccount(
                         account
                     )
-                    toggleUpdating()
                     accountRepository.upsertAccount(
                         deletedAccount
                     )
+//                    onEvent(AccountEvent.UpdateAccount)
                 }
                 _state.update {
                     AccountState(
@@ -291,7 +288,7 @@ class AccountViewModel @Inject constructor(
                     accountRepository.upsertAccount(
                         event.account
                     )
-                    toggleUpdating()
+                    onEvent(AccountEvent.UpdateAccount)
                 }
             }
 
@@ -315,6 +312,9 @@ class AccountViewModel @Inject constructor(
                 _sortType.value = event.sortType
             }
 
+            is AccountEvent.UpdateAccount -> {
+                _updating.update { it.not() }
+            }
         }
     }
 }

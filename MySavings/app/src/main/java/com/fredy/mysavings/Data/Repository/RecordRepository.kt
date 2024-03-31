@@ -316,9 +316,9 @@ class RecordRepositoryImpl @Inject constructor(
         sortType: SortType,
     ): Flow<Resource<List<RecordMap>>> {
         return flow {
+            emit(Resource.Loading())
             val currentUser = authRepository.getCurrentUser()!!
             val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
-            emit(Resource.Loading())
             Log.i(
                 TAG,
                 "getUserAccountRecordsOrderedByDateTime: $accountId",
@@ -369,7 +369,7 @@ class RecordRepositoryImpl @Inject constructor(
                     endDate,
                 ).map { records ->
                     records.convertRecordCurrency(userCurrency, useUserCurrency)
-                        .filterTrueRecordCurrency(currency).toRecordSortedMaps(sortType)
+                        .filterTrueRecordCurrency(currency+userCurrency).toRecordSortedMaps(sortType)
                 }
             }.collect { data ->
                 emit(Resource.Success(data))
@@ -444,7 +444,7 @@ class RecordRepositoryImpl @Inject constructor(
                 TAG,
                 "getUserCategoriesWithAmountFromSpecificTime: $currency\n$categoryType\n$startDate\n:\n$endDate"
             )
-            val userCategories = getUserCategory(
+            val userCategories = recordDataSource.getUserCategories(
                 userId
             )
             withContext(Dispatchers.IO) {
@@ -498,7 +498,7 @@ class RecordRepositoryImpl @Inject constructor(
                 TAG,
                 "getUserAccountsWithAmountFromSpecificTime: \n$startDate\n:\n$endDate"
             )
-            val userAccounts = getUserAccount(
+            val userAccounts = recordDataSource.getUserAccounts(
                 userId
             )
             withContext(Dispatchers.IO) {
@@ -654,25 +654,6 @@ class RecordRepositoryImpl @Inject constructor(
         }
     }
 
-    private suspend fun getUserAccount(
-        userId: String
-    ) = withContext(Dispatchers.IO) {
-        Firebase.firestore.collection(
-            "account"
-        ).whereEqualTo(
-            "userIdFk", userId
-        ).get().await().toObjects<Account>()
-    }
-
-    private suspend fun getUserCategory(
-        userId: String
-    ) = withContext(Dispatchers.IO) {
-        Firebase.firestore.collection(
-            "category"
-        ).whereEqualTo(
-            "userIdFk", userId
-        ).get().await().toObjects<Category>()
-    }
 
     private suspend fun currencyConverter(
         amount: Double, from: String, to: String
@@ -736,7 +717,7 @@ class RecordRepositoryImpl @Inject constructor(
             }
 
             if (existingRecord != null) {
-                val tempAmount = if (record.recordCurrency != existingRecord.recordCurrency) {
+                val tempAmount = if (record.recordCurrency != existingRecord.recordCurrency && !useUserCurrency) {
                     currencyConverter(
                         amount,
                         record.recordCurrency,
@@ -745,7 +726,6 @@ class RecordRepositoryImpl @Inject constructor(
                 } else {
                     amount
                 }
-
                 recordsMap[key] = existingRecord.copy(
                     recordAmount = existingRecord.recordAmount + tempAmount,
                 )

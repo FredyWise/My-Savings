@@ -8,9 +8,13 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -117,7 +121,7 @@ fun PreferencesScreen(
             title = "Color Picker",
             onDismissRequest = { onEvent(SettingEvent.HideColorPallet) },
             onSaveClicked = {
-                onEvent(SettingEvent.ChangeColor(selectedColorType,selectedColor))
+                onEvent(SettingEvent.ChangeColor(selectedColorType, selectedColor))
             },
         ) {
             ColorPicker(onColorChange = { selectedColor = it }, initialColor = initialColor)
@@ -130,6 +134,7 @@ fun PreferencesScreen(
                             if (isSystemDarkTheme) initialDarkThemeDefaultColor else initialLightThemeDefaultColor
                         }
                     }
+
                     ChangeColorType.Income -> defaultIncomeColor
                     ChangeColorType.Expense -> defaultExpenseColor
                     ChangeColorType.Transfer -> defaultTransferColor
@@ -183,6 +188,14 @@ fun PreferencesScreen(
                 selectedColorType = ChangeColorType.Surface
                 onEvent(SettingEvent.ShowColorPallet)
             },
+            endContent = {
+                Box(
+                    modifier = Modifier
+                        .padding(end = 20.dp)
+                        .size(20.dp)
+                        .background(MaterialTheme.colorScheme.surface)
+                )
+            }
         ) {
             Text(
                 text = "Theme Color",

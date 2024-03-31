@@ -9,6 +9,8 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.fredy.mysavings.Util.BalanceColor
+import com.fredy.mysavings.Util.RecordTypeColor
 import com.fredy.mysavings.ViewModels.Event.RecordsEvent
 import com.fredy.mysavings.ViewModels.RecordState
 import com.fredy.mysavings.ui.NavigationComponent.Navigation.AnalysisNavGraph
@@ -28,9 +30,10 @@ fun AnalysisScreen(
     val currentDestination = currentBackStack?.destination
     val currentScreen =
         analysisScreens.find { it.route == currentDestination?.route } ?: NavigationRoute.Records
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         AnalysisTabRow(
             allScreens = analysisScreens,
+            color = RecordTypeColor(recordType = state.filterState.recordType).copy(alpha = 0.8f),
             onTabSelected = { screen ->
                 navController.navigateSingleTopTo(
                     screen.route

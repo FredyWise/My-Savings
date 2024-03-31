@@ -1,5 +1,6 @@
 package com.fredy.mysavings.ui.NavigationComponent
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -78,28 +79,30 @@ fun MainFilterAppBar(
         )
     }
     Column(modifier = modifier) {
-        if (onShowAppBar) {
-            DisplayBar(
-                selectedDate = selectedDate,
-                onDateChange = {
-                    onDateChange(it)
-                },
-                selectedTitle = selectedDateFormat,
-                onPrevious = onPrevious,
-                onNext = onNext,
-                onLeadingIconClick = onLeadingIconClick,
-                onTrailingIconClick = onTrailingIconClick,
-                leadingIcon = leadingIcon,
-                trailingIcon = trailingIcon,
-            )
-            BalanceBar(
-                modifier = Modifier
-                    .background(
-                        MaterialTheme.colorScheme.surface
-                    )
-                    .padding(vertical = 5.dp),
-                amountBars = displayedBalance
-            )
+        AnimatedVisibility(visible =onShowAppBar) {
+            Column {
+                DisplayBar(
+                    selectedDate = selectedDate,
+                    onDateChange = {
+                        onDateChange(it)
+                    },
+                    selectedTitle = selectedDateFormat,
+                    onPrevious = onPrevious,
+                    onNext = onNext,
+                    onLeadingIconClick = onLeadingIconClick,
+                    onTrailingIconClick = onTrailingIconClick,
+                    leadingIcon = leadingIcon,
+                    trailingIcon = trailingIcon,
+                )
+                BalanceBar(
+                    modifier = Modifier
+                        .background(
+                            MaterialTheme.colorScheme.surface
+                        )
+                        .padding(vertical = 5.dp),
+                    amountBars = displayedBalance
+                )
+            }
         }
         content()
     }

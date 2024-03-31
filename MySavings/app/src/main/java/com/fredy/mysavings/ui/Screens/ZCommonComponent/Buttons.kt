@@ -346,7 +346,7 @@ fun CurrencyDropdown(
     val scope = rememberCoroutineScope()
     fun debounce(query: String) {
         scope.launch {
-            delay(1000L)
+            delay(500L)
             if (query == selectedText) {
                 filteredData = currencyCodes.filter { data ->
                     data.contains(query.replace(" ", ""), ignoreCase = true)

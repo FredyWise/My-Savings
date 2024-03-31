@@ -40,7 +40,6 @@ class AccountRepositoryImpl @Inject constructor(
         "account"
     )
 
-
     override suspend fun upsertAccount(account: Account):String {
         return withContext(Dispatchers.IO) {
             val currentUserId = authRepository.getCurrentUser()!!.firebaseUserId
@@ -50,10 +49,12 @@ class AccountRepositoryImpl @Inject constructor(
                     accountId = newAccountRef.id,
                     userIdFk = currentUserId
                 )
-            } else {
+            } else if (account.userIdFk.isEmpty()){
                 account.copy(
                     userIdFk = currentUserId
                 )
+            } else{
+                account
             }
 
             accountDao.upsertAccountItem(tempAccount)
@@ -95,7 +96,6 @@ class AccountRepositoryImpl @Inject constructor(
                     userId
                 ).map { accounts -> accounts.filter { it.accountName != deletedAccount.accountName } }
             }.collect { data ->
-
                 emit(Resource.Success(data))
             }
         }.catch { e ->

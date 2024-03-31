@@ -14,6 +14,7 @@ import com.fredy.mysavings.Data.Repository.RecordRepository
 import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.isExpense
 import com.fredy.mysavings.Util.isTransfer
+import com.fredy.mysavings.Util.transferCategory
 import com.fredy.mysavings.ViewModels.Event.AddRecordEvent
 import com.fredy.mysavings.ViewModels.Event.CalcEvent
 import com.fredy.mysavings.ViewModels.Event.CalcOperation
@@ -203,7 +204,7 @@ class AddSingleRecordViewModel @Inject constructor(
         }
 
         if (isTransfer(recordType)) {
-            categoryIdToFk = "1"
+            categoryIdToFk = transferCategory.categoryId
         } else {
             accountIdToFk = accountIdFromFk
         }
