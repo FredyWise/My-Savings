@@ -31,7 +31,7 @@ sealed interface AuthEvent {
     ): AuthEvent
 
     data class UpdateUserData(
-        val email: String,
+//        val email: String,
         val username: String,
         val oldPassword: String,
         val password: String,

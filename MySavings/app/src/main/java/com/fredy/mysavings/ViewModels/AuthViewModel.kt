@@ -182,7 +182,7 @@ class AuthViewModel @Inject constructor(
                         repository.updateUserInformation(
                             profilePictureUrl?.toUri(),
                             event.username,
-                            event.email,
+//                            event.email,
                             event.oldPassword,
                             event.password
                         ).collectLatest { updateResource ->
@@ -191,18 +191,17 @@ class AuthViewModel @Inject constructor(
                                     val user = UserData(
                                         firebaseUserId = firebaseUserId,
                                         username = event.username,
-                                        emailOrPhone = event.email,
+                                        emailOrPhone = emailOrPhone,//event.email,
                                         userCurrency = userCurrency,
                                         profilePictureUrl = profilePictureUrl
                                     )
                                     userRepository.upsertUser(user)
-                                    _state.update { it.copy(updateResource = updateResource) }
                                 }
 
                                 else -> {
-                                    _state.update { it.copy(updateResource = updateResource) }
                                 }
                             }
+                            _state.update { it.copy(updateResource = updateResource) }
                         }
                     }
                     onEvent(AuthEvent.GetCurrentUser)

@@ -327,6 +327,7 @@ fun CurrencyDropdown(
     modifier: Modifier = Modifier,
     menuModifier: Modifier = Modifier,
     textFieldColors: TextFieldColors = TextFieldDefaults.colors(),
+    delayTime: Long = 500L,
     selectedText: String,
     onClick: (String) -> Unit
 ) {
@@ -344,9 +345,9 @@ fun CurrencyDropdown(
         mutableStateOf(currencyCodes)
     }
     val scope = rememberCoroutineScope()
-    fun debounce(query: String) {
+    fun debounce(query: String, timeMillis:Long = delayTime) {
         scope.launch {
-            delay(500L)
+            delay(timeMillis)
             if (query == selectedText) {
                 filteredData = currencyCodes.filter { data ->
                     data.contains(query.replace(" ", ""), ignoreCase = true)

@@ -45,7 +45,7 @@ interface AuthRepository {
     fun updateUserInformation(
         profilePicture: Uri?,
         username: String,
-        email: String,
+//        email: String,
         oldPassword: String,
         password: String,
     ): Flow<Resource<String>>
@@ -105,7 +105,7 @@ class AuthRepositoryImpl @Inject constructor(
     override fun updateUserInformation(
         profilePicture: Uri?,
         username: String,
-        email: String,
+//        email: String,
         oldPassword: String,
         password: String,
     ): Flow<Resource<String>> = flow {
@@ -126,7 +126,7 @@ class AuthRepositoryImpl @Inject constructor(
                     successMessage.add("Display Name")
                 } else {
                     Log.e(TAG, "Error updating display name")
-                    errorMessage.add("Display Name")
+                    errorMessage.add("Updating Display Name")
                 }
                 continuation.resume(Unit)
             }
@@ -146,25 +146,25 @@ class AuthRepositoryImpl @Inject constructor(
                                         successMessage.add("Password")
                                     } else {
                                         Log.e(TAG, "Error updating password")
-                                        errorMessage.add("Password")
+                                        errorMessage.add("Updating Password")
                                     }
                                 }
                         }
-                        if (email.isNotEmpty() && email != user.email) {
-                            user.verifyBeforeUpdateEmail(email)
-                                .addOnCompleteListener { emailUpdateTask ->
-                                    if (emailUpdateTask.isSuccessful) {
-                                        Log.i(TAG, "Email address updated successfully")
-                                        successMessage.add("Email")
-                                    } else {
-                                        Log.e(TAG, "Error updating email address")
-                                        errorMessage.add("Email")
-                                    }
-                                }
-                        }
+//                        if (email.isNotEmpty() && email != user.email) {
+//                            user.verifyBeforeUpdateEmail(email)
+//                                .addOnCompleteListener { emailUpdateTask ->
+//                                    if (emailUpdateTask.isSuccessful) {
+//                                        Log.i(TAG, "Email address updated successfully")
+//                                        successMessage.add("Email")
+//                                    } else {
+//                                        Log.e(TAG, "Error updating email address")
+//                                        errorMessage.add("Updating Email")
+//                                    }
+//                                }
+//                        }
                     } else {
                         Log.e(TAG, "Re-authentication failed")
-                        errorMessage.add("Re-authentication")
+                        errorMessage.add(": Re-authentication failed")
                     }
                     continuation.resume(Unit)
                 }
@@ -172,16 +172,16 @@ class AuthRepositoryImpl @Inject constructor(
         }
 
         emit(
-            if (successMessage.isNotEmpty()) {
+            if (errorMessage.isNotEmpty()) {
+                val errorString =
+                    errorMessage.joinToString(separator = ", ", limit = errorMessage.size - 1) +
+                            (if (errorMessage.size > 1) ", and " else "") + errorMessage.last()
+                Resource.Error("Error $errorString")
+            } else if (successMessage.isNotEmpty()) {
                 val successString =
                     successMessage.joinToString(separator = ", ", limit = successMessage.size - 1) +
                             (if (successMessage.size > 1) ", and " else "") + successMessage.last()
                 Resource.Success("$successString updated successfully")
-            } else if (errorMessage.isNotEmpty()) {
-                val errorString =
-                    errorMessage.joinToString(separator = ", ", limit = errorMessage.size - 1) +
-                            (if (errorMessage.size > 1) ", and " else "") + errorMessage.last()
-                Resource.Error("Error updating $errorString")
             } else Resource.Error("Unexpected Error")
         )
     }.catch { e ->

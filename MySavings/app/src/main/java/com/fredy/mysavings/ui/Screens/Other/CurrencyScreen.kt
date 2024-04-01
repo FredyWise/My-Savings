@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -182,6 +183,7 @@ fun CurrencyConverter(
             )
             TextField(
                 modifier = Modifier.height(50.dp),
+                shape = RectangleShape,
                 value = fromValue,
                 onValueChange = onFromValueChange,
                 maxLines = 1,
@@ -207,6 +209,7 @@ fun CurrencyConverter(
             )
             TextField(
                 modifier = Modifier.height(50.dp),
+                shape = RectangleShape,
                 value = toValue,
                 onValueChange = onToValueChange,
                 maxLines = 1,

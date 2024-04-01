@@ -21,6 +21,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.fredy.mysavings.Data.Enum.DisplayState
 import com.fredy.mysavings.Util.TAG
+import com.fredy.mysavings.Util.initialDarkThemeDefaultColor
+import com.fredy.mysavings.Util.initialLightThemeDefaultColor
 import com.fredy.mysavings.ViewModels.SettingState
 import com.fredy.mysavings.ViewModels.SettingViewModel
 
@@ -97,8 +99,8 @@ fun MySavingsTheme(
     state: SettingState,
     content: @Composable () -> Unit
 ) {
-    val darkColorTheme = DarkColorScheme.copy(surface = state.selectedThemeColor)
-    val lightColorTheme = LightColorScheme.copy(surface = state.selectedThemeColor)
+    val darkColorTheme = DarkColorScheme.copy(surface = state.selectedThemeColor?: initialDarkThemeDefaultColor)
+    val lightColorTheme = LightColorScheme.copy(surface = state.selectedThemeColor?: initialLightThemeDefaultColor)
     val colorScheme = when(state.displayMode) {
         DisplayState.Light -> lightColorTheme
         DisplayState.Dark -> darkColorTheme

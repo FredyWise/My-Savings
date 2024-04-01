@@ -191,26 +191,32 @@ class SettingViewModel @Inject constructor(
                         }
 
                         ChangeColorType.Income -> {
-                            settingsRepository.saveIncomeColor(event.color)
-                            BalanceColor.Income = event.color
-                            _state.update {
-                                it.copy(selectedIncomeColor = event.color)
+                            event.color?.let {
+                                settingsRepository.saveIncomeColor(event.color)
+                                BalanceColor.Income = event.color
+                                _state.update {
+                                    it.copy(selectedIncomeColor = event.color)
+                                }
                             }
                         }
 
                         ChangeColorType.Expense -> {
-                            settingsRepository.saveExpenseColor(event.color)
-                            BalanceColor.Expense = event.color
-                            _state.update {
-                                it.copy(selectedExpenseColor = event.color)
+                            event.color?.let {
+                                settingsRepository.saveExpenseColor(event.color)
+                                BalanceColor.Expense = event.color
+                                _state.update {
+                                    it.copy(selectedExpenseColor = event.color)
+                                }
                             }
                         }
 
                         ChangeColorType.Transfer -> {
-                            settingsRepository.saveTransferColor(event.color)
-                            BalanceColor.Transfer = event.color
-                            _state.update {
-                                it.copy(selectedTransferColor = event.color)
+                            event.color?.let {
+                                settingsRepository.saveTransferColor(event.color)
+                                BalanceColor.Transfer = event.color
+                                _state.update {
+                                    it.copy(selectedTransferColor = event.color)
+                                }
                             }
                         }
                     }
@@ -263,7 +269,7 @@ data class SettingState(
     val bioAuth: Boolean = false,
     val isBioAuthPossible: Boolean = false,
     val isShowColorPallet: Boolean = false,
-    val selectedThemeColor: Color = initialDarkThemeDefaultColor,
+    val selectedThemeColor: Color? = null,
     val selectedExpenseColor: Color = defaultExpenseColor,
     val selectedIncomeColor: Color = defaultIncomeColor,
     val selectedTransferColor: Color = defaultTransferColor,

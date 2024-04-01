@@ -45,7 +45,9 @@ class MainActivity : ComponentActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-
-        val prefs = getSharedPreferences("MyPrefs", MODE_PRIVATE)
+        val authViewModel by viewModels<AuthViewModel>()
+        if (!viewModel.state.value.autoLogin){
+            authViewModel.onEvent(AuthEvent.SignOut)
+        }
     }
 }

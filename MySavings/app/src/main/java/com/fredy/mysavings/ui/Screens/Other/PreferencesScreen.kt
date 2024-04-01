@@ -104,14 +104,21 @@ fun PreferencesScreen(
     var selectedColorType by remember {
         mutableStateOf(ChangeColorType.Surface)
     }
-    val initialColor = when (selectedColorType) {
-        ChangeColorType.Surface -> state.selectedThemeColor
-        ChangeColorType.Income -> state.selectedIncomeColor
-        ChangeColorType.Expense -> state.selectedExpenseColor
-        ChangeColorType.Transfer -> state.selectedTransferColor
+    var initialColor by remember {
+        mutableStateOf(
+            when (selectedColorType) {
+                ChangeColorType.Surface -> {
+                    state.selectedThemeColor
+                        ?: if (isSystemDarkTheme) initialDarkThemeDefaultColor else initialLightThemeDefaultColor
+                }
+                ChangeColorType.Income -> state.selectedIncomeColor
+                ChangeColorType.Expense -> state.selectedExpenseColor
+                ChangeColorType.Transfer -> state.selectedTransferColor
+            }
+        )
     }
     var selectedColor by remember {
-        mutableStateOf(
+        mutableStateOf<Color?>(
             initialColor
         )
     }
@@ -127,18 +134,12 @@ fun PreferencesScreen(
             ColorPicker(onColorChange = { selectedColor = it }, initialColor = initialColor)
             SimpleButton(onClick = {
                 selectedColor = when (selectedColorType) {
-                    ChangeColorType.Surface -> when (state.displayMode) {
-                        DisplayState.Light -> initialLightThemeDefaultColor
-                        DisplayState.Dark -> initialDarkThemeDefaultColor
-                        DisplayState.System -> {
-                            if (isSystemDarkTheme) initialDarkThemeDefaultColor else initialLightThemeDefaultColor
-                        }
-                    }
-
+                    ChangeColorType.Surface -> null
                     ChangeColorType.Income -> defaultIncomeColor
                     ChangeColorType.Expense -> defaultExpenseColor
                     ChangeColorType.Transfer -> defaultTransferColor
                 }
+                initialColor = selectedColor?: if (isSystemDarkTheme) initialDarkThemeDefaultColor else initialLightThemeDefaultColor
             }, title = "Set Back To Initial Color")
         }
     }

@@ -1,6 +1,7 @@
 package com.fredy.mysavings.ui.Screens.Other
 
 import android.net.Uri
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -50,6 +51,7 @@ import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.fredy.mysavings.Data.Database.Model.UserData
 import com.fredy.mysavings.Util.Resource
+import com.fredy.mysavings.Util.TAG
 import com.fredy.mysavings.Util.isValidEmailOrPhone
 import com.fredy.mysavings.Util.isValidPassword
 import com.fredy.mysavings.ViewModels.AuthState
@@ -81,7 +83,7 @@ fun ProfileScreen(
             )
         }
         var username by remember { mutableStateOf(currentUserData.username ?: "") }
-        var emailOrPhone by remember { mutableStateOf(currentUserData.emailOrPhone ?: "") }
+//        var emailOrPhone by remember { mutableStateOf(currentUserData.emailOrPhone ?: "") }
         var oldPassword by remember { mutableStateOf("") }
         var newPassword by remember { mutableStateOf("") }
         var confirmPassword by remember {
@@ -99,10 +101,11 @@ fun ProfileScreen(
             },
         )
         LaunchedEffect(key1 = state.updateResource){
+            Log.e(TAG, "ProfileScreen: ${state.updateResource}", )
             when(state.updateResource){
                 is Resource.Success -> {
-                    val message = state.updateResource.data
-                    message.orEmpty().ifEmpty {
+                    val message = state.updateResource.data.orEmpty()
+                    if (message.isNotEmpty()) {
                         Toast.makeText(
                             context,
                             message,
@@ -112,8 +115,8 @@ fun ProfileScreen(
                 }
 
                 is Resource.Error -> {
-                    val message = state.updateResource.message
-                    message.orEmpty().ifEmpty {
+                    val message = state.updateResource.message.orEmpty()
+                    if (message.isNotEmpty()) {
                         Toast.makeText(
                             context,
                             message,
@@ -212,14 +215,14 @@ fun ProfileScreen(
             )
             AnimatedVisibility(isChangeCredentials) {
                 Column {
-                    Spacer(modifier = Modifier.height(8.dp))
-                    CustomTextField(
-                        label = "Email",
-                        value = emailOrPhone,
-                        onValueChange = { emailOrPhone = it },
-                        placeholder = "type Email...",
-                        keyboardType = KeyboardType.Email
-                    )
+//                    Spacer(modifier = Modifier.height(8.dp))
+//                    CustomTextField(
+//                        label = "Email",
+//                        value = emailOrPhone,
+//                        onValueChange = { emailOrPhone = it },
+//                        placeholder = "type Email...",
+//                        keyboardType = KeyboardType.Email
+//                    )
                     Spacer(modifier = Modifier.height(8.dp))
                     CustomTextField(
                         label = "Old Password",
@@ -263,7 +266,7 @@ fun ProfileScreen(
                 onClick = {
                     onEvent(
                         AuthEvent.UpdateUserData(
-                            email = emailOrPhone,
+//                            email = emailOrPhone,
                             username = username,
                             oldPassword = oldPassword,
                             password = newPassword,
@@ -272,7 +275,7 @@ fun ProfileScreen(
                     )
                 },
                 enabled = if (isChangeCredentials) {
-                    isValidEmailOrPhone(emailOrPhone) && (isValidPassword(newPassword) || newPassword.isEmpty()) && (newPassword == confirmPassword) && oldPassword.isNotEmpty()
+                    /*isValidEmailOrPhone(emailOrPhone) &&*/ (isValidPassword(newPassword) || newPassword.isEmpty()) && (newPassword == confirmPassword) && oldPassword.isNotEmpty()
                 } else true,
                 colors = ButtonDefaults.buttonColors(
                     disabledContainerColor = primaryColor.copy(

@@ -14,7 +14,7 @@ sealed interface SettingEvent {
     object ToggleAutoLogin : SettingEvent
     object ShowColorPallet : SettingEvent
     object HideColorPallet : SettingEvent
-    data class ChangeColor(val changeColorType: ChangeColorType, val color: Color) : SettingEvent
+    data class ChangeColor(val changeColorType: ChangeColorType, val color: Color?) : SettingEvent
     data class SetDailyNotificationTime(val time: LocalTime) : SettingEvent
     data class SelectStartExportDate(val startDate: LocalDate) : SettingEvent
     data class SelectEndExportDate(val endDate: LocalDate) : SettingEvent

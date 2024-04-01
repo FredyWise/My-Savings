@@ -34,8 +34,8 @@ interface SettingsRepository {
     // Display mode
     fun getDisplayMode(): Flow<DisplayState>
     suspend fun saveDisplayMode(displayMode: DisplayState)
-    fun getThemeColor(): Flow<Color>
-    suspend fun saveThemeColor(color: Color)
+    fun getThemeColor(): Flow<Color?>
+    suspend fun saveThemeColor(color: Color?)
     fun getIncomeColor(): Flow<Color>
     suspend fun saveIncomeColor(color: Color)
     fun getExpenseColor(): Flow<Color>
@@ -98,14 +98,19 @@ class SettingsRepositoryImpl @Inject constructor(private val context: Context) :
         }
     }
 
-    override fun getThemeColor(): Flow<Color> = context.dataStore.data
+    override fun getThemeColor(): Flow<Color?> = context.dataStore.data
         .map { preferences ->
-            Color(preferences[THEME_COLOR] ?: initialDarkThemeDefaultColor.toArgb())
+            val colorCode = preferences[THEME_COLOR]
+            colorCode?.let {
+                Color(colorCode)
+            }
         }
 
-    override suspend fun saveThemeColor(color: Color) {
+    override suspend fun saveThemeColor(color: Color?) {
         context.dataStore.edit { preferences ->
-            preferences[THEME_COLOR] = color.toArgb()
+            color?.let {
+                preferences[THEME_COLOR] = color.toArgb()
+            }?: preferences.remove(THEME_COLOR)
         }
     }
 
