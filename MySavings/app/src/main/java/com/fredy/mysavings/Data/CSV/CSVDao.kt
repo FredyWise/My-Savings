@@ -63,12 +63,8 @@ class CSVDaoImpl(private val context: Context) : CSVDao {
                     "content://com.android.externalstorage.documents/document/primary:",
                     uri.toString() + "/"
                 )
-//            val filenameClean = filename.replace(" ", "")
-//            Log.i(TAG, "inputFromCSV1: $directoryPath")
-//            Log.i(TAG, "inputFromCSV2: $filenameClean")
-//            Log.i(TAG, "inputFromCSV3: ${uri.toString()}")
 
-            FileReader("$directoryPath").use { reader ->
+            FileReader(directoryPath).use { reader ->
                 reader.readCsv(delimiter)
             }
         } catch (e: IOException) {
@@ -217,10 +213,9 @@ class CSVDaoImpl(private val context: Context) : CSVDao {
         var file = File(directory, filename)
         var fileNo = 0
 
-        // Check if the filename already exists
         while (file.exists()) {
             fileNo++
-            val newName = "${filenameWithoutExtension(filename)}($fileNo)${file.extension}"
+            val newName = "${filenameWithoutExtension(filename)}($fileNo).${file.extension}"
             file = File(directory, newName)
         }
 

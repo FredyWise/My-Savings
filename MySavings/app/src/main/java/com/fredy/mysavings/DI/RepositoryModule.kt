@@ -148,11 +148,10 @@ object RepositoryModule {
         csvDao: CSVDao,
         authRepository: AuthRepository,
         accountRepository: AccountRepository,
-        recordRepository: RecordRepository,
         recordDataSource: RecordDataSource,
         categoryRepository: CategoryRepository
     ): CSVRepository = CSVRepositoryImpl(
-        csvDao, authRepository, accountRepository, recordRepository,recordDataSource, categoryRepository
+        csvDao, authRepository, accountRepository, recordDataSource, categoryRepository
     )
 
     @Provides

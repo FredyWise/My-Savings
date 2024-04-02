@@ -41,7 +41,6 @@ class CSVRepositoryImpl(
     private val csvDao: CSVDao,
     private val authRepository: AuthRepository,
     private val accountRepository: AccountRepository,
-    private val recordRepository: RecordRepository,
     private val recordDataSource: RecordDataSource,
     private val categoryRepository: CategoryRepository,
 ) : CSVRepository {
