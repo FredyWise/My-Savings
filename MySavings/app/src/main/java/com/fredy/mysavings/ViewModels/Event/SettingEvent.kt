@@ -16,9 +16,5 @@ sealed interface SettingEvent {
     object HideColorPallet : SettingEvent
     data class ChangeColor(val changeColorType: ChangeColorType, val color: Color?) : SettingEvent
     data class SetDailyNotificationTime(val time: LocalTime) : SettingEvent
-    data class SelectStartExportDate(val startDate: LocalDate) : SettingEvent
-    data class SelectEndExportDate(val endDate: LocalDate) : SettingEvent
-    data class OnExport(val uri: String) : SettingEvent
-    data class OnImport(val uri: MPFile<Any>) : SettingEvent
 
 }

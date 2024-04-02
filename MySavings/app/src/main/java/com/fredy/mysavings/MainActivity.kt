@@ -1,6 +1,7 @@
 package com.fredy.mysavings
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -9,6 +10,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
+import com.fredy.mysavings.Util.TAG
 import com.fredy.mysavings.ViewModels.AuthViewModel
 import com.fredy.mysavings.ViewModels.Event.AuthEvent
 import com.fredy.mysavings.ViewModels.SettingViewModel
@@ -45,9 +47,11 @@ class MainActivity : ComponentActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+        Log.e(TAG, "onDestroy: start", )
         val authViewModel by viewModels<AuthViewModel>()
         if (!viewModel.state.value.autoLogin){
             authViewModel.onEvent(AuthEvent.SignOut)
+            Log.e(TAG, "onDestroy: logout success", )
         }
     }
 }

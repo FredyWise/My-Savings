@@ -1,6 +1,11 @@
 package com.fredy.mysavings.ui.NavigationComponent
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -79,7 +84,13 @@ fun MainFilterAppBar(
         )
     }
     Column(modifier = modifier) {
-        AnimatedVisibility(visible =onShowAppBar) {
+        AnimatedVisibility(
+            modifier = modifier,
+            visible = onShowAppBar,
+            enter = slideInVertically(
+                initialOffsetY = { fullHeight -> -fullHeight },
+            ) +fadeIn(animationSpec = tween(300)),
+        ) {
             Column {
                 DisplayBar(
                     selectedDate = selectedDate,

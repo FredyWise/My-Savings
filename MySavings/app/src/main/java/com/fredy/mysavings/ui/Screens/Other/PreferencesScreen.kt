@@ -69,7 +69,7 @@ fun PreferencesScreen(
     headerColor: Color = MaterialTheme.colorScheme.primary.copy(0.8f),
     optionColor: Color = MaterialTheme.colorScheme.onBackground,
     isSystemDarkTheme: Boolean = isSystemInDarkTheme(),
-    spacer: Dp = 5.dp,
+    spacer: Dp = 3.dp,
     rootNavController: NavController,
     title: String,
     state: SettingState,

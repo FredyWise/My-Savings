@@ -37,9 +37,6 @@ class CategoryViewModel @Inject constructor(
     private val _updating = MutableStateFlow(
         false
     )
-    private fun toggleUpdating(){
-        _updating.update { it.not() }
-    }
 
     private val _state = MutableStateFlow(
         CategoryState()

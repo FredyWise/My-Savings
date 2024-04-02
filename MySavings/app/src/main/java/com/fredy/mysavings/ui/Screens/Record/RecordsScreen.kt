@@ -56,12 +56,8 @@ fun RecordsScreen(
     AnimatedVisibility(
         modifier = modifier,
         visibleState = isVisible,
-        enter = slideInVertically(
-            initialOffsetY = { fullHeight -> fullHeight },
-        ) + fadeIn(),
-        exit = slideOutVertically(
-            targetOffsetY = { fullHeight -> fullHeight },
-        ) + fadeOut()
+        enter =  fadeIn(),
+        exit = fadeOut()
     ) {
         state.resourceData.recordMapsResource.let { resource ->
             ResourceHandler(

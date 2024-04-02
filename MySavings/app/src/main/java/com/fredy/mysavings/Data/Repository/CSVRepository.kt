@@ -3,6 +3,7 @@ package com.fredy.mysavings.Data.Repository
 
 import android.util.Log
 import com.fredy.mysavings.Data.CSV.CSVDao
+import com.fredy.mysavings.Data.Database.FirebaseDataSource.RecordDataSource
 import com.fredy.mysavings.Data.Database.Model.Account
 import com.fredy.mysavings.Data.Database.Model.Category
 import com.fredy.mysavings.Data.Database.Model.Record
@@ -10,11 +11,13 @@ import com.fredy.mysavings.Data.Database.Model.TrueRecord
 import com.fredy.mysavings.Util.TAG
 import com.fredy.mysavings.Util.deletedAccount
 import com.fredy.mysavings.Util.deletedCategory
-import com.google.firebase.Firebase
-import com.google.firebase.firestore.firestore
-import com.google.firebase.firestore.toObjects
+import com.fredy.mysavings.Util.isExpense
+import com.fredy.mysavings.Util.isIncome
+import com.fredy.mysavings.Util.isTransfer
+import com.fredy.mysavings.ViewModels.DBInfo
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
 
 
@@ -28,9 +31,10 @@ interface CSVRepository {
 
     suspend fun inputFromCSV(
         directory: String,
-        filename: String = "",
         delimiter: String = ","
-    )
+    ): List<TrueRecord>
+
+    suspend fun getDBInfoFlow(): Flow<DBInfo>
 }
 
 class CSVRepositoryImpl(
@@ -38,32 +42,9 @@ class CSVRepositoryImpl(
     private val authRepository: AuthRepository,
     private val accountRepository: AccountRepository,
     private val recordRepository: RecordRepository,
+    private val recordDataSource: RecordDataSource,
     private val categoryRepository: CategoryRepository,
 ) : CSVRepository {
-    override suspend fun inputFromCSV(
-        directory: String,
-        filename: String,
-        delimiter: String
-    ) {
-        withContext(Dispatchers.IO) {
-            val trueRecords = csvDao.inputFromCSV(directory, filename, delimiter)
-            val currentUserId = authRepository.getCurrentUser()!!.firebaseUserId
-            trueRecords.forEach {
-                Log.e(TAG, "inputFromCSV: $it")
-                val accountIdFromFk = findAccountId(it.fromAccount, currentUserId)
-                val accountIdToFk = findAccountId(it.toAccount, currentUserId)
-                val categoryIdFk = findCategoryId(it.toCategory, currentUserId)
-                val record = it.constructRecordsWithIds(
-                    accountIdFromFk = accountIdFromFk,
-                    accountIdToFk = accountIdToFk,
-                    categoryIdFk = categoryIdFk,
-                    userIdFk = currentUserId
-                )
-                Log.e(TAG, "inputFromCSV: $record")
-                recordRepository.upsertRecordItem(record)
-            }
-        }
-    }
 
     override suspend fun outputToCSV(
         directory: String,
@@ -76,27 +57,89 @@ class CSVRepositoryImpl(
         }
     }
 
+    override suspend fun inputFromCSV(
+        directory: String,
+        delimiter: String
+    ): List<TrueRecord> {
+        return withContext(Dispatchers.IO) {
+            val trueRecords = csvDao.inputFromCSV(directory, delimiter)
+            Log.e(TAG, "inputFromCSVRepo: $trueRecords")
+            val currentUserId = authRepository.getCurrentUser()!!.firebaseUserId
+            val trueRecord = trueRecords.map {
+                Log.e(TAG, "inputFromCSVRepo: $it")
+                val accountIdFromFk = findAccountId(it.fromAccount, currentUserId)
+                val accountIdToFk = findAccountId(it.toAccount, currentUserId)
+                val categoryIdFk = findCategoryId(it.toCategory, currentUserId)
+                val recordId = findRecordId(it.record, currentUserId)
+                it.constructRecordsWithIds(
+                    recordId = recordId,
+                    accountIdFromFk = accountIdFromFk,
+                    accountIdToFk = accountIdToFk,
+                    categoryIdFk = categoryIdFk,
+                    userIdFk = currentUserId
+                )
+            }
+            Log.e(TAG, "inputFromCSVRepo1: $trueRecord")
+            trueRecord
+        }
+    }
+
+    override suspend fun getDBInfoFlow(): Flow<DBInfo> = flow {
+        val currentUserId = authRepository.getCurrentUser()!!.firebaseUserId
+        val sumOfRecord = recordDataSource.getUserRecords(currentUserId)
+        val sumOfAccount = recordDataSource.getUserAccounts(currentUserId).size
+        val sumOfCategory = recordDataSource.getUserCategories(currentUserId).size
+        val sumOfExpense = sumOfRecord.sumOf { (if (isExpense(it.recordType)) 1 else 0).toInt() }
+        val sumOfIncome = sumOfRecord.sumOf { (if (isIncome(it.recordType)) 1 else 0).toInt() }
+        val sumOfTransfer = sumOfRecord.sumOf { (if (isTransfer(it.recordType)) 1 else 0).toInt() }
+
+        emit(
+            DBInfo(
+                sumOfRecords = sumOfRecord.size,
+                sumOfAccounts = sumOfAccount,
+                sumOfCategories = sumOfCategory,
+                sumOfExpense = sumOfExpense,
+                sumOfIncome = sumOfIncome,
+                sumOfTransfer = sumOfTransfer
+            )
+        )
+    }
+
+
     private fun TrueRecord.constructRecordsWithIds(
+        recordId: String,
         accountIdFromFk: String,
         accountIdToFk: String,
         categoryIdFk: String,
         userIdFk: String,
-    ): Record {
-        return this.record.copy(
-            accountIdFromFk = accountIdFromFk,
-            accountIdToFk = accountIdToFk,
-            categoryIdFk = categoryIdFk,
-            userIdFk = userIdFk
+    ): TrueRecord {
+        return this.copy(
+            record = record.copy(
+                recordId = recordId,
+                accountIdFromFk = accountIdFromFk,
+                accountIdToFk = accountIdToFk,
+                categoryIdFk = categoryIdFk,
+                userIdFk = userIdFk
+            )
         )
     }
+
+    private suspend fun findRecordId(record: Record, userId: String): String {
+        val records = recordDataSource.getUserRecords(userId)
+        return records.singleOrNull { it.compareTo(record) }?.recordId ?: ""
+    }
+
+
     private fun Record.compareTo(record: Record): Boolean {
-        return this.recordAmount == record.recordAmount &&
-                this.recordCurrency == record.recordCurrency &&
-                this.recordDateTime == record.recordDateTime
+        return recordAmount == record.recordAmount &&
+                recordCurrency == record.recordCurrency &&
+                recordDateTime == record.recordDateTime &&
+                recordNotes == record.recordNotes &&
+                recordType == record.recordType
     }
 
     private suspend fun findAccountId(account: Account, userId: String): String {
-        val accounts = getUserAccounts(userId)
+        val accounts = recordDataSource.getUserAccounts(userId)
         val accountId = if (!account.compareTo(deletedAccount)) {
             accounts.firstOrNull {
                 it.compareTo(account)
@@ -108,13 +151,13 @@ class CSVRepositoryImpl(
     }
 
     private fun Account.compareTo(account: Account): Boolean {
-        return this.accountName == account.accountName &&
-                this.accountCurrency == account.accountCurrency &&
-                this.accountIconDescription == account.accountIconDescription
+        return accountName == account.accountName &&
+                accountCurrency == account.accountCurrency &&
+                accountIconDescription == account.accountIconDescription
     }
 
     private suspend fun findCategoryId(category: Category, userId: String): String {
-        val categories = getUserCategories(userId)
+        val categories = recordDataSource.getUserCategories(userId)
         val categoryId = if (!category.compareTo(deletedCategory)) {
             categories.firstOrNull {
                 it.compareTo(category)
@@ -126,23 +169,8 @@ class CSVRepositoryImpl(
     }
 
     private fun Category.compareTo(category: Category): Boolean {
-        return this.categoryName == category.categoryName &&
-                this.categoryIconDescription == category.categoryIconDescription
+        return categoryName == category.categoryName &&
+                categoryIconDescription == category.categoryIconDescription
     }
 
-    private suspend fun getUserAccounts(
-        userId: String
-    ) = Firebase.firestore.collection(
-        "account"
-    ).whereEqualTo(
-        "userIdFk", userId
-    ).get().await().toObjects<Account>()
-
-    private suspend fun getUserCategories(
-        userId: String
-    ) = Firebase.firestore.collection(
-        "category"
-    ).whereEqualTo(
-        "userIdFk", userId
-    ).get().await().toObjects<Category>()
 }

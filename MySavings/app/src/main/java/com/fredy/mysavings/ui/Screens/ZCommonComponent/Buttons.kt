@@ -66,9 +66,6 @@ fun SettingButton(
     SimpleButton(
         modifier = modifier
             .padding(top = 16.dp)
-            .clip(
-                MaterialTheme.shapes.medium
-            )
             .border(
                 width = 2.dp,
                 color = MaterialTheme.colorScheme.secondary,

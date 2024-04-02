@@ -8,7 +8,8 @@ import androidx.lifecycle.viewModelScope
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
-import com.fredy.mysavings.Data.CSV.CSVDao
+import co.yml.charts.common.extensions.isNotNull
+import com.fredy.mysavings.Data.Database.Model.TrueRecord
 import com.fredy.mysavings.Data.Enum.ChangeColorType
 import com.fredy.mysavings.Data.Enum.DisplayState
 import com.fredy.mysavings.Data.Notification.NotificationCredentials
@@ -24,14 +25,14 @@ import com.fredy.mysavings.Util.defaultExpenseColor
 import com.fredy.mysavings.Util.defaultIncomeColor
 import com.fredy.mysavings.Util.defaultTransferColor
 import com.fredy.mysavings.Util.formatDateYear
-import com.fredy.mysavings.Util.initialDarkThemeDefaultColor
 import com.fredy.mysavings.Util.isInternetConnected
 import com.fredy.mysavings.ViewModels.Event.SettingEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -40,14 +41,13 @@ import java.time.LocalTime
 import java.util.Calendar
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import kotlin.math.log
 
 @HiltViewModel
 class SettingViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val settingsRepository: SettingsRepository,
-    private val recordRepository: RecordRepository,
     private val syncRepository: SyncRepository,
-    private val csvRepository: CSVRepository,
 ) : ViewModel() {
     init {
         viewModelScope.launch {
@@ -67,9 +67,10 @@ class SettingViewModel @Inject constructor(
     private val _state = MutableStateFlow(
         SettingState()
     )
+
     val state = _state.stateIn(
         viewModelScope,
-        SharingStarted.WhileSubscribed(10000),
+        SharingStarted.WhileSubscribed(),
         SettingState()
     )
 
@@ -92,7 +93,7 @@ class SettingViewModel @Inject constructor(
 
                 SettingEvent.ToggleBioAuth -> {
                     settingsRepository.saveBioAuth(!_state.value.bioAuth)
-                    if (!_state.value.bioAuth){
+                    if (!_state.value.bioAuth) {
                         settingsRepository.saveAutoLogin(true)
                         _state.update {
                             it.copy(autoLogin = true)
@@ -126,47 +127,6 @@ class SettingViewModel @Inject constructor(
                     _state.update {
                         it.copy(dailyNotificationTime = event.time)
                     }
-                }
-
-                is SettingEvent.SelectEndExportDate -> {
-                    _state.update {
-                        it.copy(endDate = LocalDateTime.of(event.endDate, LocalTime.MAX))
-                    }
-                }
-
-                is SettingEvent.SelectStartExportDate -> {
-                    _state.update {
-                        it.copy(startDate = LocalDateTime.of(event.startDate, LocalTime.MIN))
-                    }
-                }
-
-                is SettingEvent.OnExport -> {
-                    val startDate = state.value.startDate
-                    val endDate = state.value.endDate
-                    recordRepository.getAllTrueRecordsWithinSpecificTime(startDate, endDate)
-                        .collectLatest { recordsResource ->
-                            when (recordsResource) {
-                                is Resource.Error -> {}
-                                is Resource.Loading -> {}
-                                is Resource.Success -> {
-                                    csvRepository.outputToCSV(
-                                        event.uri,
-                                        formatDateYear(startDate.toLocalDate()) + "- " + formatDateYear(
-                                            endDate.toLocalDate()
-                                        ),
-                                        recordsResource.data!!
-                                    )
-                                }
-                            }
-                        }
-                }
-
-
-                is SettingEvent.OnImport -> {
-                    val result = csvRepository.inputFromCSV(
-                        event.uri.path,
-                    )
-                    Log.e(TAG, "onEvent: $result",)
                 }
 
                 SettingEvent.HideColorPallet -> {
@@ -265,7 +225,7 @@ data class SettingState(
     val startDate: LocalDateTime = LocalDateTime.now(),
     val endDate: LocalDateTime = LocalDateTime.now(),
     val displayMode: DisplayState = DisplayState.System,
-    val autoLogin: Boolean = true,
+    val autoLogin: Boolean = false,
     val bioAuth: Boolean = false,
     val isBioAuthPossible: Boolean = false,
     val isShowColorPallet: Boolean = false,

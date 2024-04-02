@@ -10,6 +10,7 @@ import com.fredy.mysavings.ui.theme.md_theme_dark_secondary
 import com.fredy.mysavings.ui.theme.md_theme_dark_surface
 import com.fredy.mysavings.ui.theme.md_theme_dark_tertiary
 import com.fredy.mysavings.ui.theme.md_theme_light_surface
+import java.time.LocalDateTime
 import androidx.compose.ui.graphics.Color as toColor
 
 //icon
@@ -89,6 +90,9 @@ val deletedAccount =
         accountCurrency = "USD"
     )
 
+//date
+val minDate = LocalDateTime.of(2000, 1, 1, 1, 1)
+val maxDate = LocalDateTime.of(3000, 1, 1, 1, 1)
 
 //color
 val initialDarkThemeDefaultColor = md_theme_dark_surface

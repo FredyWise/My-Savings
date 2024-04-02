@@ -1,15 +1,16 @@
 package com.fredy.mysavings.Data.Database.FirebaseDataSource
 
 import android.util.Log
-import co.yml.charts.common.extensions.isNotNull
+import androidx.lifecycle.MutableLiveData
+import com.fredy.mysavings.Data.APIs.CurrencyModels.Response.CurrencyResponse
 import com.fredy.mysavings.Data.Database.Converter.TimestampConverter
 import com.fredy.mysavings.Data.Database.Model.Account
 import com.fredy.mysavings.Data.Database.Model.Category
+import com.fredy.mysavings.Data.Database.Model.Currency
 import com.fredy.mysavings.Data.Database.Model.Record
 import com.fredy.mysavings.Data.Database.Model.TrueRecord
 import com.fredy.mysavings.Data.Enum.RecordType
 import com.fredy.mysavings.Data.Mappers.toTrueRecords
-import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.TAG
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.Filter
@@ -23,10 +24,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
@@ -58,9 +56,13 @@ interface RecordDataSource {
     ): Flow<List<TrueRecord>>
 
 
-    suspend fun getUserRecords(
+    suspend fun getUserFlowOfRecords(
         userId: String
     ): Flow<List<Record>>
+
+    suspend fun getUserRecords(
+        userId: String
+    ): List<Record>
 
     suspend fun getUserRecordsFromSpecificTime(
         userId: String,
@@ -77,15 +79,16 @@ interface RecordDataSource {
         recordType: RecordType,
         startDate: LocalDateTime,
         endDate: LocalDateTime
-    ):Flow< List<Record>>
+    ): Flow<List<Record>>
+
     suspend fun getUserRecordsByTypeNotEqualTransferFromSpecificTime(
         userId: String,
         startDate: LocalDateTime,
         endDate: LocalDateTime
-    ):Flow< List<Record>>
+    ): Flow<List<Record>>
 
-    suspend fun getUserAccounts(userId: String):List<Account>
-    suspend fun getUserCategories(userId: String):List<Category>
+    suspend fun getUserAccounts(userId: String): List<Account>
+    suspend fun getUserCategories(userId: String): List<Category>
 }
 
 class RecordDataSourceImpl @Inject constructor(
@@ -285,9 +288,7 @@ class RecordDataSourceImpl @Inject constructor(
         }
     }
 
-
-
-    override suspend fun getUserRecords(
+    override suspend fun getUserFlowOfRecords(
         userId: String
     ): Flow<List<Record>> {
         return withContext(Dispatchers.IO) {
@@ -296,7 +297,7 @@ class RecordDataSourceImpl @Inject constructor(
                     "userIdFk", userId
                 ).snapshots()
 
-                querySnapshot.map { it.toObjects()}
+                querySnapshot.map { it.toObjects() }
             } catch (e: Exception) {
                 Log.e(
                     TAG,
@@ -330,7 +331,7 @@ class RecordDataSourceImpl @Inject constructor(
                     "recordTimestamp",
                     Query.Direction.DESCENDING
                 ).snapshots()
-                querySnapshot.map { it.toObjects()}
+                querySnapshot.map { it.toObjects() }
             } catch (e: Exception) {
                 Log.e(
                     TAG,
@@ -351,7 +352,7 @@ class RecordDataSourceImpl @Inject constructor(
                 ).whereEqualTo(
                     "userIdFk", userId
                 ).snapshots()
-                querySnapshot.map { it.toObjects()}
+                querySnapshot.map { it.toObjects() }
 
             } catch (e: Exception) {
                 Log.e(
@@ -388,7 +389,7 @@ class RecordDataSourceImpl @Inject constructor(
                 ).orderBy(
                     "recordTimestamp",
                     Query.Direction.DESCENDING
-                ).snapshots().map { it.toObjects()}
+                ).snapshots().map { it.toObjects() }
             } catch (e: Exception) {
                 Log.e(
                     TAG,
@@ -419,11 +420,11 @@ class RecordDataSourceImpl @Inject constructor(
                 ).whereEqualTo(
                     "userIdFk", userId
                 ).whereIn(
-                    "recordType", listOf( RecordType.Expense,RecordType.Income)
+                    "recordType", listOf(RecordType.Expense, RecordType.Income)
                 ).orderBy(
                     "recordTimestamp",
                     Query.Direction.DESCENDING
-                ).snapshots().map { it.toObjects()}
+                ).snapshots().map { it.toObjects() }
             } catch (e: Exception) {
                 Log.e(
                     TAG,
@@ -434,29 +435,53 @@ class RecordDataSourceImpl @Inject constructor(
         }
     }
 
+    private val _records = MutableLiveData<List<Record>>()
+    private val _accounts = MutableLiveData<List<Account>>()
+    private val _categories = MutableLiveData<List<Category>>()
+
+
+    override suspend fun getUserRecords(
+        userId: String
+    ): List<Record> {
+        val records = _records.value ?: recordCollection.whereEqualTo(
+            "userIdFk", userId
+        ).get().await().toObjects()
+        _records.postValue(records)
+        return records
+    }
+
     override suspend fun getUserAccounts(
         userId: String
-    ): List<Account> = Firebase.firestore.collection(
-        "account"
-    ).whereEqualTo(
-        "userIdFk", userId
-    ).get().await().toObjects<Account>() + Firebase.firestore.collection(
-        "account"
-    ).whereEqualTo(
-        "userIdFk", "0"
-    ).get().await().toObjects<Account>()
+    ): List<Account> {
+        val accounts = _accounts.value ?: (Firebase.firestore.collection(
+            "account"
+        ).whereEqualTo(
+            "userIdFk", userId
+        ).get().await().toObjects<Account>() + Firebase.firestore.collection(
+            "account"
+        ).whereEqualTo(
+            "userIdFk", "0"
+        ).get().await().toObjects<Account>())
+        _accounts.postValue(accounts)
+        return accounts
+    }
 
     override suspend fun getUserCategories(
         userId: String
-    ) = Firebase.firestore.collection(
-        "category"
-    ).whereEqualTo(
-        "userIdFk", userId
-    ).get().await().toObjects<Category>() + Firebase.firestore.collection(
-        "category"
-    ).whereEqualTo(
-        "userIdFk", "0"
-    ).get().await().toObjects<Category>()
+    ) : List<Category> {
+        val categories = _categories.value ?: (Firebase.firestore.collection(
+            "category"
+        ).whereEqualTo(
+            "userIdFk", userId
+        ).get().await().toObjects<Category>() + Firebase.firestore.collection(
+            "category"
+        ).whereEqualTo(
+            "userIdFk", "0"
+        ).get().await().toObjects<Category>())
+        _categories.postValue(categories)
+        return categories
+    }
+
     private suspend fun getTrueRecord(record: Record) = coroutineScope {
         withContext(Dispatchers.IO) {
             val fromAccountDeferred = async {

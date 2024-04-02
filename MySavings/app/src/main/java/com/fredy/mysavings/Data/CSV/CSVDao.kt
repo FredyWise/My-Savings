@@ -14,12 +14,17 @@ import com.fredy.mysavings.Data.Enum.RecordType
 import com.fredy.mysavings.Util.TAG
 import com.fredy.mysavings.Util.formatBalanceAmount
 import com.fredy.mysavings.Util.formatDateYearTime
+import java.io.BufferedWriter
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
+import java.io.FileReader
+import java.io.FileWriter
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
+import java.io.Reader
+import java.io.Writer
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -35,7 +40,6 @@ interface CSVDao {
 
     fun inputFromCSV(
         directory: String,
-        filename: String = "",
         delimiter: String = ","
     ): List<TrueRecord>
 }
@@ -43,26 +47,29 @@ interface CSVDao {
 class CSVDaoImpl(private val context: Context) : CSVDao {
     override fun inputFromCSV(
         directory: String,
-        filename: String,
         delimiter: String
     ): List<TrueRecord> {
         return try {
+            Log.i(TAG, "inputFromCSV: Start")
             val storageManager = getSystemService(context, StorageManager::class.java)!!
             val uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 storageManager.storageVolumes[0].directory?.path
             } else {
                 null
             }
-            val directory = directory.replace("%3A", ":").replace("%20", " ").replace("%2F", "/")
-                .replace("%2C", ",").replace(
+            val directoryPath = directory.replace("%3A", ":").replace("%20", " ")
+                .replace("%2F", "/").replace("%2C", ",")
+                .replace(
                     "content://com.android.externalstorage.documents/document/primary:",
                     uri.toString() + "/"
                 )
-            val filename = filename.replace(" ", "")
-            Log.e(TAG, "inputFromCSV: $directory")
-            Log.e(TAG, "inputFromCSV: ${uri.toString()}")
-            FileInputStream(if (filename.isNotEmpty()) "$directory/$filename.csv" else directory).use { inputStream ->
-                inputStream.readCsv(delimiter)
+//            val filenameClean = filename.replace(" ", "")
+//            Log.i(TAG, "inputFromCSV1: $directoryPath")
+//            Log.i(TAG, "inputFromCSV2: $filenameClean")
+//            Log.i(TAG, "inputFromCSV3: ${uri.toString()}")
+
+            FileReader("$directoryPath").use { reader ->
+                reader.readCsv(delimiter)
             }
         } catch (e: IOException) {
             Log.e(TAG, "Error reading CSV: $e")
@@ -76,41 +83,41 @@ class CSVDaoImpl(private val context: Context) : CSVDao {
         trueRecords: List<TrueRecord>,
         delimiter: String
     ) {
-
         try {
+            Log.i(TAG, "outputToCSV: Start")
+            Log.i(TAG, "outputToCSV: $trueRecords")
             val storageManager = getSystemService(context, StorageManager::class.java)!!
             val uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 storageManager.storageVolumes[0].directory?.path
             } else {
                 null
             }
-            val directory = directory.replace("%3A", ":").replace("%20", " ").replace("%2F", "/")
-                .replace(
+            val directoryPath = directory.replace("%3A", ":").replace("%20", " ")
+                .replace("%2F", "/").replace(
                     "content://com.android.externalstorage.documents/tree/primary:",
                     uri.toString() + "/"
                 )
-            val filename = filename.replace(" ", "")
+            val filenameClean = filename.replace(" ", "")
 
-            val file = File("$directory/$filename.csv")
-            Log.e(TAG, "outputToCSV: $directory/$filename.csv")
-            if (!file.exists()) {
-                Log.e(TAG, "outputToCSV: $file\n$directory/$filename.csv")
-                file.createNewFile()
-            }
-            FileOutputStream(file).use { outputStream ->
-                outputStream.writeCsv(trueRecords, delimiter)
+            val file = getUniqueFile(directoryPath,"$filenameClean.csv")
+            Log.i(TAG, "outputToCSV: $file")
+
+            FileWriter(file, false).use { writer ->
+                writer.writeCsv(trueRecords, delimiter)
             }
         } catch (e: IOException) {
             Log.e(TAG, "Error writing CSV: $e")
         }
     }
 
-    private fun InputStream.readCsv(delimiter: String): List<TrueRecord> {
-        bufferedReader().useLines { lines ->
+
+
+    private fun Reader.readCsv(delimiter: String): List<TrueRecord> {
+        return this.useLines { lines ->
             val linesList = lines.toList()
-            Log.e(TAG, "readCsv: $linesList")
+            Log.i(TAG, "readCsv: $linesList")
             val header = linesList.firstOrNull()?.split(delimiter) ?: emptyList()
-            return linesList.drop(1).mapNotNull { line ->
+            linesList.drop(1).mapNotNull { line ->
                 Log.e(TAG, "readCsv: $line")
                 val values = line.split(delimiter)
                 if (values.size == header.size) {
@@ -122,7 +129,6 @@ class CSVDaoImpl(private val context: Context) : CSVDao {
             }
         }
     }
-
 
     private fun createTrueRecordFromValues(
         header: List<String>,
@@ -180,12 +186,10 @@ class CSVDaoImpl(private val context: Context) : CSVDao {
         )
     }
 
-
-    private fun OutputStream.writeCsv(
+    private fun FileWriter.writeCsv(
         trueRecords: List<TrueRecord>,
         delimiter: String = ","
     ) {
-        val writer = bufferedWriter()
         val propertyNames = listOf(
             "Record Date Time",
             "Record Type",
@@ -198,18 +202,36 @@ class CSVDaoImpl(private val context: Context) : CSVDao {
             "Record Amount",
             "Record Notes"
         ).joinToString(delimiter) {
-            it.replace(
-                "\"", "\"\""
-            )
+            it.replace("\"", "\"\"")
         }
-        writer.write(propertyNames)
-        writer.newLine()
-        trueRecords.forEach {
-            writer.write(trueRecordToString(it))
-            writer.newLine()
+        write(propertyNames)
+        write("\n")
+        trueRecords.forEach { trueRecord ->
+            write(trueRecordToString(trueRecord))
+            write("\n")
         }
-        writer.flush()
+        flush()
     }
+
+    private fun getUniqueFile(directory: String, filename: String): File {
+        var file = File(directory, filename)
+        var fileNo = 0
+
+        // Check if the filename already exists
+        while (file.exists()) {
+            fileNo++
+            val newName = "${filenameWithoutExtension(filename)}($fileNo)${file.extension}"
+            file = File(directory, newName)
+        }
+
+        return file
+    }
+
+    private fun filenameWithoutExtension(filename: String): String {
+        val dotIndex = filename.lastIndexOf('.')
+        return if (dotIndex == -1) filename else filename.substring(0, dotIndex)
+    }
+
 
     private fun trueRecordToString(trueRecord: TrueRecord): String {
         val values = listOf(

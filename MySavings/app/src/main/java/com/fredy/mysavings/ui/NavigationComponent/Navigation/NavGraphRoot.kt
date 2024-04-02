@@ -34,6 +34,7 @@ import com.fredy.mysavings.ViewModels.CurrencyViewModel
 import com.fredy.mysavings.ViewModels.Event.AccountEvent
 import com.fredy.mysavings.ViewModels.Event.AuthEvent
 import com.fredy.mysavings.ViewModels.Event.RecordsEvent
+import com.fredy.mysavings.ViewModels.InputOutputViewModel
 import com.fredy.mysavings.ViewModels.RecordViewModel
 import com.fredy.mysavings.ViewModels.SearchViewModel
 import com.fredy.mysavings.ViewModels.SettingViewModel
@@ -176,12 +177,13 @@ fun NavGraphRoot(
                     fadeOut()
                 },
             ) {
-                val state by settingViewModel.state.collectAsStateWithLifecycle()
+                val viewModel: InputOutputViewModel = hiltViewModel()
+                val state by viewModel.state.collectAsStateWithLifecycle()
                 ExportScreen(
                     title = NavigationRoute.Export.title,
                     rootNavController = navController,
                     state = state,
-                    onEvent = settingViewModel::onEvent
+                    onEvent = viewModel::onEvent
                 )
             }
             composable(

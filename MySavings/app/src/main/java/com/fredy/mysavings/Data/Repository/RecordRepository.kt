@@ -163,7 +163,7 @@ class RecordRepositoryImpl @Inject constructor(
         withContext(Dispatchers.IO) {
             val currentUser = authRepository.getCurrentUser()!!
             val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
-            val records = recordDataSource.getUserRecords(userId).first()
+            val records = recordDataSource.getUserFlowOfRecords(userId).first()
             val tempRecords = records.filter {
                 it.accountIdFromFk == account.accountId || it.accountIdToFk == account.accountId
             }.map {
@@ -185,7 +185,7 @@ class RecordRepositoryImpl @Inject constructor(
         withContext(Dispatchers.IO) {
             val currentUser = authRepository.getCurrentUser()!!
             val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
-            val records = recordDataSource.getUserRecords(userId).first()
+            val records = recordDataSource.getUserFlowOfRecords(userId).first()
             val tempRecords = records.filter {
                 it.categoryIdFk == category.categoryId
             }.map {
@@ -229,7 +229,6 @@ class RecordRepositoryImpl @Inject constructor(
     ): Flow<Resource<List<TrueRecord>>> {
         return flow {
             emit(Resource.Loading())
-
             val currentUser = authRepository.getCurrentUser()!!
             val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
             withContext(Dispatchers.IO) {
