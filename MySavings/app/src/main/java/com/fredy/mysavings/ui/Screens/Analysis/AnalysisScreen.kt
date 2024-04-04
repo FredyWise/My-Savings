@@ -1,6 +1,7 @@
 package com.fredy.mysavings.ui.Screens.Analysis
 
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -30,7 +31,14 @@ fun AnalysisScreen(
     val currentDestination = currentBackStack?.destination
     val currentScreen =
         analysisScreens.find { it.route == currentDestination?.route } ?: NavigationRoute.Records
-    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+    Box(modifier = modifier) {
+        AnalysisNavGraph(
+            rootNavController = rootNavController,
+            navController = navController,
+            state = state,
+            onEvent = onEvent,
+        )
+
         AnalysisTabRow(
             allScreens = analysisScreens,
             color = RecordTypeColor(recordType = state.filterState.recordType).copy(alpha = 0.8f),
@@ -46,13 +54,6 @@ fun AnalysisScreen(
             },
             currentScreen = currentScreen,
         )
-        AnalysisNavGraph(
-            rootNavController = rootNavController,
-            navController = navController,
-            state = state,
-            onEvent = onEvent,
-        )
-
     }
 }
 

@@ -46,12 +46,12 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         Log.e(TAG, "onDestroy: start", )
         val authViewModel by viewModels<AuthViewModel>()
         if (!viewModel.state.value.autoLogin){
             authViewModel.onEvent(AuthEvent.SignOut)
             Log.e(TAG, "onDestroy: logout success", )
         }
+        super.onDestroy()
     }
 }

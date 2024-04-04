@@ -101,12 +101,14 @@ object RepositoryModule {
     @Provides
     @Singleton
     fun provideAccountRepository(
+        @ApplicationContext context: Context,
         currencyRepository: CurrencyRepository,
         authRepository: AuthRepository,
         accountDataSource: AccountDataSource,
         accountDao: AccountDao,
         firestore: FirebaseFirestore,
     ): AccountRepository = AccountRepositoryImpl(
+        context,
         currencyRepository,
         authRepository,
         accountDataSource,

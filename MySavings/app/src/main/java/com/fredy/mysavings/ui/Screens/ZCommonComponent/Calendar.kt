@@ -41,7 +41,7 @@ fun Calendar(
     modifier: Modifier = Modifier,
     inputColor: Color,
     borderColor: Color = MaterialTheme.colorScheme.secondary,
-    dayTextColor: Color = inputColor,
+    dayTextColor: Color = MaterialTheme.colorScheme.primary,
     dateTextColor: Color = MaterialTheme.colorScheme.secondary,
     calendarColumn: Int = 7,
     calendarInput: Map<Int, String>,

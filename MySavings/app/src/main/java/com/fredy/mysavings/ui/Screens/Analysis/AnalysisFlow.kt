@@ -3,6 +3,7 @@ package com.fredy.mysavings.ui.Screens.Analysis
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -66,8 +67,11 @@ fun AnalysisFlow(
                 state.balanceBar.income.amount
             } else state.balanceBar.transfer.amount
             val items = if (isExpense(data.first().recordType)) data else data.reversed()
-            val contentColor = RecordTypeColor(recordType = data.first().recordType)
+            val contentColor = RecordTypeColor(recordType = state.filterState.recordType)
             LazyColumn(modifier = modifier) {
+                item{
+                    Spacer(modifier = Modifier.height(50.dp))
+                }
                 item {
                     Box(
                         modifier = Modifier
@@ -78,7 +82,7 @@ fun AnalysisFlow(
                     ) {
                         ChartLine(
                             contentColor = contentColor,
-                            infoColor = RecordTypeColor(recordType = state.filterState.recordType),
+                            infoColor = contentColor,
                             pointsData = items.map { item ->
                                 val date =
                                     if (state.filterState.isFilterTypeMonthBelow()) item.recordDateTime.dayOfMonth.toFloat() else item.recordDateTime.dayOfYear.toFloat()
@@ -89,23 +93,40 @@ fun AnalysisFlow(
                             }.reversed(),
                             year = state.filterState.selectedDate.year,
                             month = state.filterState.selectedDate.monthValue,
-//                            currency = items.first().recordCurrency,
                         )
                     }
-                    Text(
-                        text = "Total "+state.filterState.recordType.name + ": " + formatBalanceAmount(totalAmount),
-                        modifier = Modifier
-                            .padding(horizontal = 10.dp)
-                            .padding(top = 8.dp)
-                            .clickable {
-                                onEvent(
-                                    RecordsEvent.ToggleRecordType
-                                )
-                            },
-                        color = RecordTypeColor(recordType = state.filterState.recordType),
-                        fontWeight = FontWeight.Bold,
-                        style = MaterialTheme.typography.titleLarge
-                    )
+                    Row{
+                        Text(
+                            text = "Total " + state.filterState.recordType.name + ": " ,
+                            modifier = Modifier
+                                .padding(horizontal = 10.dp)
+                                .padding(top = 8.dp)
+                                .clickable {
+                                    onEvent(
+                                        RecordsEvent.ToggleRecordType
+                                    )
+                                },
+                            color = onBackgroundColor,
+                            fontWeight = FontWeight.Bold,
+                            style = MaterialTheme.typography.titleLarge
+                        )
+                        Text(
+                            text = formatBalanceAmount(
+                                totalAmount
+                            ),
+                            modifier = Modifier
+                                .padding(horizontal = 10.dp)
+                                .padding(top = 8.dp)
+                                .clickable {
+                                    onEvent(
+                                        RecordsEvent.ToggleRecordType
+                                    )
+                                },
+                            color = RecordTypeColor(recordType = state.filterState.recordType),
+                            fontWeight = FontWeight.Bold,
+                            style = MaterialTheme.typography.titleLarge
+                        )
+                    }
                     if (state.filterState.isFilterTypeMonthBelow()) {
                         Calendar(
                             inputColor = contentColor,
@@ -145,7 +166,7 @@ fun AnalysisFlow(
                                     k = false
                                 ),
                                 style = MaterialTheme.typography.titleLarge,
-                                color = onBackgroundColor
+                                color = contentColor
                             )
                         },
                     ) {

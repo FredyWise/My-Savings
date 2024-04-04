@@ -1,5 +1,6 @@
 package com.fredy.mysavings.Data.Repository
 
+import android.content.Context
 import android.util.Log
 import co.yml.charts.common.extensions.isNotNull
 import com.fredy.mysavings.Data.Database.Dao.AccountDao
@@ -10,6 +11,7 @@ import com.fredy.mysavings.Util.BalanceItem
 import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.TAG
 import com.fredy.mysavings.Util.deletedAccount
+import com.fredy.mysavings.Util.isInternetConnected
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -30,6 +32,7 @@ interface AccountRepository {
 
 
 class AccountRepositoryImpl @Inject constructor(
+    private val context: Context,
     private val currencyRepository: CurrencyRepository,
     private val authRepository: AuthRepository,
     private val accountDataSource: AccountDataSource,
@@ -40,7 +43,7 @@ class AccountRepositoryImpl @Inject constructor(
         "account"
     )
 
-    override suspend fun upsertAccount(account: Account):String {
+    override suspend fun upsertAccount(account: Account): String {
         return withContext(Dispatchers.IO) {
             val currentUserId = authRepository.getCurrentUser()!!.firebaseUserId
             val tempAccount = if (account.accountId.isEmpty()) {
@@ -49,11 +52,11 @@ class AccountRepositoryImpl @Inject constructor(
                     accountId = newAccountRef.id,
                     userIdFk = currentUserId
                 )
-            } else if (account.userIdFk.isEmpty()){
+            } else if (account.userIdFk.isEmpty()) {
                 account.copy(
                     userIdFk = currentUserId
                 )
-            } else{
+            } else {
                 account
             }
 
@@ -78,9 +81,13 @@ class AccountRepositoryImpl @Inject constructor(
     override fun getAccount(accountId: String): Flow<Account> {
         return flow {
             val account = withContext(Dispatchers.IO) {
-                accountDao.getAccount(
-                    accountId
-                )
+                if (isInternetConnected(context)) {
+                    accountDataSource.getAccount(accountId)
+                } else {
+                    accountDao.getAccount(
+                        accountId
+                    )
+                }
             }
             emit(account)
         }
@@ -92,9 +99,13 @@ class AccountRepositoryImpl @Inject constructor(
             val currentUser = authRepository.getCurrentUser()!!
             val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
             withContext(Dispatchers.IO) {
-                accountDataSource.getUserAccounts(
-                    userId
-                ).map { accounts -> accounts.filter { it.accountName != deletedAccount.accountName } }
+                if (isInternetConnected(context)) {
+                    accountDataSource.getUserAccounts(
+                        userId
+                    )
+                } else {
+                    accountDao.getUserAccounts(userId)
+                }.map { accounts -> accounts.filter { it.accountName != deletedAccount.accountName } }
             }.collect { data ->
                 emit(Resource.Success(data))
             }

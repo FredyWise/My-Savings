@@ -39,9 +39,12 @@ import androidx.navigation.NavController
 import com.fredy.mysavings.Data.Enum.ChangeColorType
 import com.fredy.mysavings.Data.Enum.DisplayState
 import com.fredy.mysavings.Util.ActionWithName
-import com.fredy.mysavings.Util.defaultExpenseColor
-import com.fredy.mysavings.Util.defaultIncomeColor
-import com.fredy.mysavings.Util.defaultTransferColor
+import com.fredy.mysavings.Util.defaultDarkThemeExpenseColor
+import com.fredy.mysavings.Util.defaultDarkThemeIncomeColor
+import com.fredy.mysavings.Util.defaultDarkThemeTransferColor
+import com.fredy.mysavings.Util.defaultLightThemeExpenseColor
+import com.fredy.mysavings.Util.defaultLightThemeIncomeColor
+import com.fredy.mysavings.Util.defaultLightThemeTransferColor
 import com.fredy.mysavings.Util.formatBalanceAmount
 import com.fredy.mysavings.Util.formatTime
 import com.fredy.mysavings.Util.initialDarkThemeDefaultColor
@@ -104,18 +107,15 @@ fun PreferencesScreen(
     var selectedColorType by remember {
         mutableStateOf(ChangeColorType.Surface)
     }
-    var initialColor by remember {
-        mutableStateOf(
-            when (selectedColorType) {
-                ChangeColorType.Surface -> {
-                    state.selectedThemeColor
-                        ?: if (isSystemDarkTheme) initialDarkThemeDefaultColor else initialLightThemeDefaultColor
-                }
-                ChangeColorType.Income -> state.selectedIncomeColor
-                ChangeColorType.Expense -> state.selectedExpenseColor
-                ChangeColorType.Transfer -> state.selectedTransferColor
-            }
-        )
+    val initialColor = when (selectedColorType) {
+        ChangeColorType.Surface -> {
+            state.selectedThemeColor
+                ?: if (isSystemDarkTheme) initialDarkThemeDefaultColor else initialLightThemeDefaultColor
+        }
+
+        ChangeColorType.Income -> state.selectedIncomeColor
+        ChangeColorType.Expense -> state.selectedExpenseColor
+        ChangeColorType.Transfer -> state.selectedTransferColor
     }
     var selectedColor by remember {
         mutableStateOf<Color?>(
@@ -135,11 +135,10 @@ fun PreferencesScreen(
             SimpleButton(onClick = {
                 selectedColor = when (selectedColorType) {
                     ChangeColorType.Surface -> null
-                    ChangeColorType.Income -> defaultIncomeColor
-                    ChangeColorType.Expense -> defaultExpenseColor
-                    ChangeColorType.Transfer -> defaultTransferColor
+                    ChangeColorType.Income -> if (state.displayMode == DisplayState.Dark || (state.displayMode == DisplayState.System && isSystemDarkTheme)) defaultDarkThemeIncomeColor else defaultLightThemeIncomeColor
+                    ChangeColorType.Expense -> if (state.displayMode == DisplayState.Dark || (state.displayMode == DisplayState.System && isSystemDarkTheme)) defaultDarkThemeExpenseColor else defaultLightThemeExpenseColor
+                    ChangeColorType.Transfer -> if (state.displayMode == DisplayState.Dark || (state.displayMode == DisplayState.System && isSystemDarkTheme)) defaultDarkThemeTransferColor else defaultLightThemeTransferColor
                 }
-                initialColor = selectedColor?: if (isSystemDarkTheme) initialDarkThemeDefaultColor else initialLightThemeDefaultColor
             }, title = "Set Back To Initial Color")
         }
     }
@@ -259,7 +258,7 @@ fun PreferencesScreen(
             }
         ) {
             Text(
-                text = "Income Color",
+                text = "Transfer Color",
                 color = optionColor,
                 style = MaterialTheme.typography.titleLarge.copy(fontSize = 20.sp)
             )

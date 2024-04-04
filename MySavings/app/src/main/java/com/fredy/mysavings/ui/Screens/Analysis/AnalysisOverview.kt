@@ -78,6 +78,9 @@ fun AnalysisOverview(
                 proportion.amount.toFloat()
             }
             LazyColumn(modifier = modifier) {
+                item{
+                    Spacer(modifier = Modifier.height(50.dp))
+                }
                 item {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Box(

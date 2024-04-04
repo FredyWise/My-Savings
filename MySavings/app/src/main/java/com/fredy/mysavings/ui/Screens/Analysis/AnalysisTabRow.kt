@@ -4,6 +4,7 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -46,10 +47,12 @@ fun AnalysisTabRow(
 ) {
     Row(
         modifier
-            .padding(vertical = 4.dp, horizontal = 16.dp)
-            .border(1.dp, color, CircleShape)
-            .height(IntrinsicSize.Max)
             .fillMaxWidth()
+            .padding(vertical = 4.dp, horizontal = 16.dp)
+            .clip(CircleShape)
+            .background(MaterialTheme.colorScheme.background)
+            .border(2.dp, color, CircleShape)
+            .height(IntrinsicSize.Max)
             .selectableGroup(),
         horizontalArrangement = Arrangement.Center,
     ) {

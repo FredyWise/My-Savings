@@ -9,7 +9,6 @@ import co.yml.charts.common.extensions.isNotNull
 import com.fredy.mysavings.Data.Enum.RecordType
 import java.text.DecimalFormat
 import kotlin.math.abs
-import kotlin.math.absoluteValue
 
 data class BalanceBar(
     val expense: BalanceItem = BalanceItem(),
@@ -68,9 +67,9 @@ fun RecordTypeColor(
 }
 
 object BalanceColor {
-    var Expense = defaultExpenseColor
-    var Transfer = defaultTransferColor
-    var Income = defaultIncomeColor
+    var Expense = defaultDarkThemeExpenseColor
+    var Transfer = defaultDarkThemeTransferColor
+    var Income = defaultDarkThemeIncomeColor
 }
 
 fun formatBalanceAmount(

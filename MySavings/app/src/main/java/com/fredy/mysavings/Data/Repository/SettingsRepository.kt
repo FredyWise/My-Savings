@@ -17,10 +17,9 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.fredy.mysavings.Data.Database.Converter.LocalTimeConverter
 import com.fredy.mysavings.Data.Enum.DisplayState
 import com.fredy.mysavings.Util.FilterState
-import com.fredy.mysavings.Util.defaultExpenseColor
-import com.fredy.mysavings.Util.defaultIncomeColor
-import com.fredy.mysavings.Util.defaultTransferColor
-import com.fredy.mysavings.Util.initialDarkThemeDefaultColor
+import com.fredy.mysavings.Util.defaultDarkThemeExpenseColor
+import com.fredy.mysavings.Util.defaultDarkThemeIncomeColor
+import com.fredy.mysavings.Util.defaultDarkThemeTransferColor
 import com.fredy.mysavings.ViewModels.SettingState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -37,12 +36,12 @@ interface SettingsRepository {
     fun getThemeColor(): Flow<Color?>
     suspend fun saveThemeColor(color: Color?)
     fun getIncomeColor(): Flow<Color>
-    suspend fun saveIncomeColor(color: Color)
+    suspend fun saveIncomeColor(color: Color?)
     fun getExpenseColor(): Flow<Color>
-    suspend fun saveExpenseColor(color: Color)
+    suspend fun saveExpenseColor(color: Color?)
 
     fun getTransferColor(): Flow<Color>
-    suspend fun saveTransferColor(color: Color)
+    suspend fun saveTransferColor(color: Color?)
 
     // Notifications
     fun getDailyNotification(): Flow<Boolean>
@@ -70,7 +69,8 @@ interface SettingsRepository {
     fun getAllPreferenceView(): Flow<FilterState>
 }
 
-class SettingsRepositoryImpl @Inject constructor(private val context: Context) : SettingsRepository {
+class SettingsRepositoryImpl @Inject constructor(private val context: Context) :
+    SettingsRepository {
 
     companion object {
         private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("Settings")
@@ -110,41 +110,56 @@ class SettingsRepositoryImpl @Inject constructor(private val context: Context) :
         context.dataStore.edit { preferences ->
             color?.let {
                 preferences[THEME_COLOR] = color.toArgb()
-            }?: preferences.remove(THEME_COLOR)
+            } ?: preferences.remove(THEME_COLOR)
         }
     }
 
     override fun getIncomeColor(): Flow<Color> = context.dataStore.data
         .map { preferences ->
-            Color(preferences[INCOME_COLOR] ?: defaultIncomeColor.toArgb())
+            val colorCode = preferences[INCOME_COLOR]
+            colorCode?.let {
+                Color(colorCode)
+            } ?: defaultDarkThemeIncomeColor
         }
 
-    override suspend fun saveIncomeColor(color: Color) {
+    override suspend fun saveIncomeColor(color: Color?) {
         context.dataStore.edit { preferences ->
-            preferences[INCOME_COLOR] = color.toArgb()
+            color?.let {
+                preferences[INCOME_COLOR] = color.toArgb()
+            } ?: preferences.remove(INCOME_COLOR)
         }
     }
 
     override fun getExpenseColor(): Flow<Color> = context.dataStore.data
         .map { preferences ->
-            Color(preferences[EXPENSE_COLOR] ?: defaultExpenseColor.toArgb())
+            val colorCode = preferences[EXPENSE_COLOR]
+            colorCode?.let {
+                Color(colorCode)
+            } ?: defaultDarkThemeExpenseColor
         }
 
-    override suspend fun saveExpenseColor(color: Color) {
+    override suspend fun saveExpenseColor(color: Color?) {
         context.dataStore.edit { preferences ->
-            preferences[EXPENSE_COLOR] = color.toArgb()
+            color?.let {
+                preferences[EXPENSE_COLOR] = color.toArgb()
+            } ?: preferences.remove(EXPENSE_COLOR)
         }
     }
 
 
     override fun getTransferColor(): Flow<Color> = context.dataStore.data
         .map { preferences ->
-            Color(preferences[TRANSFER_COLOR] ?: defaultTransferColor.toArgb())
+            val colorCode = preferences[TRANSFER_COLOR]
+            colorCode?.let {
+                Color(colorCode)
+            } ?: defaultDarkThemeTransferColor
         }
 
-    override suspend fun saveTransferColor(color: Color) {
+    override suspend fun saveTransferColor(color: Color?) {
         context.dataStore.edit { preferences ->
-            preferences[TRANSFER_COLOR] = color.toArgb()
+            color?.let {
+                preferences[TRANSFER_COLOR] = color.toArgb()
+            } ?: preferences.remove(TRANSFER_COLOR)
         }
     }
 
