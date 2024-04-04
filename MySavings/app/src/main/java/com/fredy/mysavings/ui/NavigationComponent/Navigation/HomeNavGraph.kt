@@ -2,13 +2,7 @@ package com.fredy.mysavings.ui.NavigationComponent.Navigation
 
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -18,7 +12,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.fredy.mysavings.Util.defaultColors
 import com.fredy.mysavings.ViewModels.AccountViewModel
 import com.fredy.mysavings.ViewModels.CategoryViewModel
 import com.fredy.mysavings.ViewModels.RecordViewModel
@@ -58,7 +51,6 @@ fun HomeNavGraph(
                 state = state,
                 onEvent = recordViewModel::onEvent,
             )
-
         }
         composable(
             route = NavigationRoute.Analysis.route,
@@ -90,7 +82,7 @@ fun HomeNavGraph(
             val recordState by recordViewModel.state.collectAsStateWithLifecycle()
 
             AccountsScreen(
-                modifier = Modifier.padding(horizontal = 8.dp),
+                modifier = Modifier.padding(8.dp),
                 rootNavController = rootNavController,
                 state = state,
                 onEvent = accountViewModel::onEvent,
@@ -111,7 +103,7 @@ fun HomeNavGraph(
             val recordState by recordViewModel.state.collectAsStateWithLifecycle()
 
             CategoriesScreen(
-                modifier = Modifier.padding(horizontal = 8.dp),
+                modifier = Modifier.padding(8.dp),
                 rootNavController = rootNavController,
                 state = state,
                 onEvent = categoryViewModel::onEvent,

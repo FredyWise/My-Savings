@@ -57,9 +57,6 @@ fun AnalysisAccount(
             },
         ) { data ->
             LazyColumn(modifier = modifier) {
-                item{
-                    Spacer(modifier = Modifier.height(50.dp))
-                }
                 item {
                     ChartGroupedBar(
                         incomeColor = incomeColor,

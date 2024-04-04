@@ -21,7 +21,6 @@ import com.fredy.mysavings.Util.FilterState
 import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.TAG
 import com.fredy.mysavings.Util.map
-import com.fredy.mysavings.Util.minDate
 import com.fredy.mysavings.Util.minusDate
 import com.fredy.mysavings.Util.plusDate
 import com.fredy.mysavings.Util.updateDate
@@ -142,7 +141,7 @@ class RecordViewModel @Inject constructor(
     private val _totalBalance = _filterState.flatMapLatest { filterState ->
         filterState.map { start, end, _, _, _, _ ->
             recordRepository.getUserTotalRecordBalance(
-                if (filterState.carryOn) minDate else start,
+                if (filterState.carryOn) LocalDateTime.of(2000, 1, 1, 1, 1) else start,
                 end
             )
         }

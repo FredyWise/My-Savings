@@ -52,8 +52,8 @@ fun ChartLine(
     val xAxisData = AxisData.Builder().axisStepSize(
         75.dp
     ).backgroundColor(backgroundColor).axisLabelColor(
-        gridColor
-    ).axisLineColor(gridColor).topPadding(
+        contentColor
+    ).axisLineColor(contentColor).topPadding(
         105.dp
     ).steps(xMax.toInt()).labelData { i ->
         if (i==0){
@@ -70,8 +70,8 @@ fun ChartLine(
     val yAxisData = AxisData.Builder().steps(steps).labelAndAxisLinePadding(
         35.dp
     ).backgroundColor(backgroundColor).axisLabelColor(
-        gridColor
-    ).axisLineColor(gridColor).labelData { i ->
+        contentColor
+    ).axisLineColor(contentColor).labelData { i ->
 //        val yScale = (yMax - yMin) / steps
         val yScale = yMax / steps
         formatBalanceAmount((i * yScale).toDouble(), isShortenToChar = true)

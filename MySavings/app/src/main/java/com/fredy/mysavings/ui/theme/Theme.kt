@@ -1,19 +1,30 @@
 package com.fredy.mysavings.ui.theme
 
 import android.app.Activity
+import android.os.Build
+import android.util.Log
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Shapes
 import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.dynamicDarkColorScheme
+import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.fredy.mysavings.Data.Enum.DisplayState
+import com.fredy.mysavings.Util.TAG
 import com.fredy.mysavings.Util.initialDarkThemeDefaultColor
 import com.fredy.mysavings.Util.initialLightThemeDefaultColor
 import com.fredy.mysavings.ViewModels.SettingState
+import com.fredy.mysavings.ViewModels.SettingViewModel
 
 private val LightColorScheme = lightColorScheme(
     primary = md_theme_light_primary,
@@ -88,15 +99,9 @@ fun MySavingsTheme(
     state: SettingState,
     content: @Composable () -> Unit
 ) {
-    val darkColorTheme =
-        DarkColorScheme.copy(
-            surface = state.selectedThemeColor ?: initialDarkThemeDefaultColor,
-        )
-    val lightColorTheme =
-        LightColorScheme.copy(
-            surface = state.selectedThemeColor ?: initialLightThemeDefaultColor
-        )
-    val colorScheme = when (state.displayMode) {
+    val darkColorTheme = DarkColorScheme.copy(surface = state.selectedThemeColor?: initialDarkThemeDefaultColor)
+    val lightColorTheme = LightColorScheme.copy(surface = state.selectedThemeColor?: initialLightThemeDefaultColor)
+    val colorScheme = when(state.displayMode) {
         DisplayState.Light -> lightColorTheme
         DisplayState.Dark -> darkColorTheme
         DisplayState.System -> {
@@ -111,7 +116,7 @@ fun MySavingsTheme(
             WindowCompat.getInsetsController(
                 window,
                 view
-            ).isAppearanceLightStatusBars = when (state.displayMode) {
+            ).isAppearanceLightStatusBars = when(state.displayMode) {
                 DisplayState.Light -> true
                 DisplayState.Dark -> false
                 DisplayState.System -> !darkTheme

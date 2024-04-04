@@ -9,11 +9,7 @@ import com.fredy.mysavings.ui.theme.md_theme_dark_primary
 import com.fredy.mysavings.ui.theme.md_theme_dark_secondary
 import com.fredy.mysavings.ui.theme.md_theme_dark_surface
 import com.fredy.mysavings.ui.theme.md_theme_dark_tertiary
-import com.fredy.mysavings.ui.theme.md_theme_light_inversePrimary
-import com.fredy.mysavings.ui.theme.md_theme_light_primary
-import com.fredy.mysavings.ui.theme.md_theme_light_secondary
 import com.fredy.mysavings.ui.theme.md_theme_light_surface
-import com.fredy.mysavings.ui.theme.md_theme_light_tertiary
 import java.time.LocalDateTime
 import androidx.compose.ui.graphics.Color as toColor
 
@@ -95,25 +91,22 @@ val deletedAccount =
     )
 
 //date
-val minDate = LocalDateTime.of(1900, 1, 1, 1, 1)
+val minDate = LocalDateTime.of(2000, 1, 1, 1, 1)
 val maxDate = LocalDateTime.of(3000, 1, 1, 1, 1)
 
 //color
 val initialDarkThemeDefaultColor = md_theme_dark_surface
 val initialLightThemeDefaultColor = md_theme_light_surface
 
-val defaultDarkThemeIncomeColor = md_theme_dark_tertiary
-val defaultDarkThemeExpenseColor = md_theme_dark_primary
-val defaultDarkThemeTransferColor = md_theme_dark_secondary
-
-val defaultLightThemeIncomeColor = md_theme_light_tertiary
-val defaultLightThemeExpenseColor = md_theme_light_inversePrimary
-val defaultLightThemeTransferColor = md_theme_light_secondary
+val defaultIncomeColor = md_theme_dark_tertiary
+val defaultExpenseColor = md_theme_dark_primary
+val defaultTransferColor = md_theme_dark_secondary
 
 
 val defaultColors = listOf(
     toColor(Color.parseColor("#ff0055")),
     toColor(Color.parseColor("#ff9955")),
+    toColor(Color.parseColor("#ffff55")),
     toColor(Color.parseColor("#ffcc88")),
     toColor(Color.parseColor("#ff0088")),
     toColor(Color.parseColor("#ff55ff")),
