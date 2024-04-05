@@ -21,7 +21,7 @@ interface CategoryRepository {
     suspend fun upsertCategory(category: Category): String
     suspend fun deleteCategory(category: Category)
     fun getCategory(categoryId: String): Flow<Category>
-    fun getUserCategoriesOrderedByName(): Flow<List<Category>>
+    fun getUserCategories(userId:String): Flow<List<Category>>
     fun getCategoryMapOrderedByName(): Flow<Resource<List<CategoryMap>>>
 }
 
@@ -81,11 +81,8 @@ class CategoryRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getUserCategoriesOrderedByName(): Flow<List<Category>> {
+    override fun getUserCategories(userId:String): Flow<List<Category>> {
         return flow {
-            val currentUser = authRepository.getCurrentUser()!!
-            val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
-
             withContext(Dispatchers.IO) {
                 categoryDataSource.getUserCategoriesOrderedByName(
                     userId
@@ -104,7 +101,7 @@ class CategoryRepositoryImpl @Inject constructor(
             val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
 
             withContext(Dispatchers.IO) {
-                categoryDataSource.getUserCategoriesOrderedByName(
+                getUserCategories(
                     userId
                 )
             }.collect { categories ->

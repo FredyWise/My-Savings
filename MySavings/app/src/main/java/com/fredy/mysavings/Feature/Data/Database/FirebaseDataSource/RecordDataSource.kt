@@ -539,4 +539,74 @@ class RecordDataSourceImpl @Inject constructor(
         val toCategory: List<Category>,
     )
 
+//    suspend fun getUserTrueRecords(
+//        userId: String,
+//        startDate: LocalDateTime? = null,
+//        endDate: LocalDateTime? = null,
+//        categoryId: String? = null,
+//        accountId: String? = null
+//    ): Flow<List<TrueRecord>> {
+//        val trueRecordComponentResult = getTrueRecordsComponent(userId)
+//
+//        return withContext(Dispatchers.IO) {
+//            try {
+//                var query = recordCollection.whereEqualTo("userIdFk", userId)
+//
+//                if (startDate != null && endDate != null) {
+//                    query = query.whereGreaterThanOrEqualTo("recordTimestamp", TimestampConverter.fromDateTime(startDate))
+//                        .whereLessThanOrEqualTo("recordTimestamp", TimestampConverter.fromDateTime(endDate))
+//                }
+//                if (categoryId != null) {
+//                    query = query.whereEqualTo("categoryIdFk", categoryId)
+//                }
+//                if (accountId != null) {
+//                    query = query.where(Filter.or(Filter.equalTo("accountIdFromFk", accountId), Filter.equalTo("accountIdToFk", accountId)))
+//                }
+//
+//                query = query.orderBy("recordTimestamp", Query.Direction.DESCENDING)
+//
+//                val recordFlow = query.snapshots().map { it.toObjects<Record>() }
+//                recordFlow.map { records ->
+//                    records.toTrueRecords(trueRecordComponentResult)
+//                }
+//            } catch (e: Exception) {
+//                Log.e(TAG, "getUserTrueRecordsError: ${e.message}")
+//                throw e
+//            }
+//        }
+//    }
+
+//    suspend fun getUserRecords(
+//        userId: String,
+//        startDate: LocalDateTime? = null,
+//        endDate: LocalDateTime? = null,
+//        recordType: RecordType? = null,
+//        excludeTransfer: Boolean = false
+//    ): Flow<List<Record>> {
+//        return withContext(Dispatchers.IO) {
+//            try {
+//                var query = recordCollection.whereEqualTo("userIdFk", userId)
+//
+//                if (startDate != null && endDate != null) {
+//                    query = query.whereGreaterThanOrEqualTo("recordTimestamp", TimestampConverter.fromDateTime(startDate))
+//                        .whereLessThanOrEqualTo("recordTimestamp", TimestampConverter.fromDateTime(endDate))
+//                }
+//                if (recordType != null) {
+//                    query = query.whereEqualTo("recordType", recordType)
+//                }
+//                if (excludeTransfer) {
+//                    query = query.whereIn("recordType", listOf(RecordType.Expense, RecordType.Income))
+//                }
+//
+//                query = query.orderBy("recordTimestamp", Query.Direction.DESCENDING)
+//
+//                val recordFlow = query.snapshots().map { it.toObjects<Record>() }
+//                recordFlow
+//            } catch (e: Exception) {
+//                Log.e(TAG, "getUserRecordsError: ${e.message}")
+//                throw e
+//            }
+//        }
+//    }
+
 }
