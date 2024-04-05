@@ -108,6 +108,21 @@ object UseCasesModule {
 
     @Provides
     @Singleton
+    fun provideUserUseCases(
+        userRepository: UserRepository
+    ): UserUseCases = UserUseCases(
+        upsertUser = UpsertUser(userRepository),
+        deleteUser = DeleteUser(userRepository),
+        getUser = GetUser(userRepository),
+        getCurrentUser = GetCurrentUser(userRepository),
+        getAllUsersOrderedByName = GetAllUsersOrderedByName(userRepository),
+        searchUsers = SearchUsers(userRepository)
+    )
+
+
+
+    @Provides
+    @Singleton
     fun provideCategoryUseCases(
         authRepository: AuthRepository,
         categoryRepository: CategoryRepository
@@ -120,18 +135,4 @@ object UseCasesModule {
             authRepository
         )
     )
-
-    @Provides
-    @Singleton
-    fun provideUserUseCases(
-        userRepository: UserRepository
-    ): UserUseCases = UserUseCases(
-        upsertUser = UpsertUser(userRepository),
-        deleteUser = DeleteUser(userRepository),
-        getUser = GetUser(userRepository),
-        getCurrentUser = GetCurrentUser(userRepository),
-        getAllUsersOrderedByName = GetAllUsersOrderedByName(userRepository),
-        searchUsers = SearchUsers(userRepository)
-    )
-
 }

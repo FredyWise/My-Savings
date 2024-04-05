@@ -14,9 +14,9 @@ import com.fredy.mysavings.Feature.Domain.Notification.NotificationWorker
 import com.fredy.mysavings.Feature.Domain.Repository.SettingsRepository
 import com.fredy.mysavings.Feature.Domain.Repository.SyncRepository
 import com.fredy.mysavings.Util.BalanceColor
-import com.fredy.mysavings.Util.defaultExpenseColor
-import com.fredy.mysavings.Util.defaultIncomeColor
-import com.fredy.mysavings.Util.defaultTransferColor
+import com.fredy.mysavings.Util.defaultDarkExpenseColor
+import com.fredy.mysavings.Util.defaultDarkIncomeColor
+import com.fredy.mysavings.Util.defaultDarkTransferColor
 import com.fredy.mysavings.Util.isInternetConnected
 import com.fredy.mysavings.ViewModels.Event.SettingEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -219,9 +219,9 @@ data class SettingState(
     val isBioAuthPossible: Boolean = false,
     val isShowColorPallet: Boolean = false,
     val selectedThemeColor: Color? = null,
-    val selectedExpenseColor: Color = defaultExpenseColor,
-    val selectedIncomeColor: Color = defaultIncomeColor,
-    val selectedTransferColor: Color = defaultTransferColor,
+    val selectedExpenseColor: Color = defaultDarkExpenseColor,
+    val selectedIncomeColor: Color = defaultDarkIncomeColor,
+    val selectedTransferColor: Color = defaultDarkTransferColor,
     val dailyNotification: Boolean = false,
     val dailyNotificationTime: LocalTime = LocalTime.now(),
     val updated: Boolean = false,

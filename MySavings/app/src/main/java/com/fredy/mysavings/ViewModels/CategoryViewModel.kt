@@ -28,7 +28,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CategoryViewModel @Inject constructor(
-//    private val categoryRepository: CategoryRepository,
     private val categoryUseCases: CategoryUseCases,
     private val recordRepository: RecordRepository
 ): ViewModel() {

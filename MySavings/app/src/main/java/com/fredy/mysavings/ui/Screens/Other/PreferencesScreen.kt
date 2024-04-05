@@ -39,9 +39,12 @@ import androidx.navigation.NavController
 import com.fredy.mysavings.Feature.Data.Enum.ChangeColorType
 import com.fredy.mysavings.Feature.Data.Enum.DisplayState
 import com.fredy.mysavings.Util.ActionWithName
-import com.fredy.mysavings.Util.defaultExpenseColor
-import com.fredy.mysavings.Util.defaultIncomeColor
-import com.fredy.mysavings.Util.defaultTransferColor
+import com.fredy.mysavings.Util.defaultDarkExpenseColor
+import com.fredy.mysavings.Util.defaultDarkIncomeColor
+import com.fredy.mysavings.Util.defaultDarkTransferColor
+import com.fredy.mysavings.Util.defaultLightExpenseColor
+import com.fredy.mysavings.Util.defaultLightIncomeColor
+import com.fredy.mysavings.Util.defaultLightTransferColor
 import com.fredy.mysavings.Util.formatBalanceAmount
 import com.fredy.mysavings.Util.formatTime
 import com.fredy.mysavings.Util.initialDarkThemeDefaultColor
@@ -133,13 +136,14 @@ fun PreferencesScreen(
         ) {
             ColorPicker(onColorChange = { selectedColor = it }, initialColor = initialColor)
             SimpleButton(onClick = {
+                val isSystemDarkThemes = isSystemDarkTheme && state.displayMode == DisplayState.System
+                val isDisplayDark = state.displayMode == DisplayState.Dark
                 selectedColor = when (selectedColorType) {
                     ChangeColorType.Surface -> null
-                    ChangeColorType.Income -> defaultIncomeColor
-                    ChangeColorType.Expense -> defaultExpenseColor
-                    ChangeColorType.Transfer -> defaultTransferColor
+                    ChangeColorType.Income -> if (isSystemDarkThemes || isDisplayDark ) defaultDarkIncomeColor else defaultLightIncomeColor
+                    ChangeColorType.Expense -> if (isSystemDarkThemes || isDisplayDark ) defaultDarkExpenseColor else defaultLightExpenseColor
+                    ChangeColorType.Transfer ->if (isSystemDarkThemes || isDisplayDark ) defaultDarkTransferColor else defaultLightTransferColor
                 }
-                initialColor = selectedColor?: if (isSystemDarkTheme) initialDarkThemeDefaultColor else initialLightThemeDefaultColor
             }, title = "Set Back To Initial Color")
         }
     }

@@ -9,7 +9,10 @@ import com.fredy.mysavings.ui.theme.md_theme_dark_primary
 import com.fredy.mysavings.ui.theme.md_theme_dark_secondary
 import com.fredy.mysavings.ui.theme.md_theme_dark_surface
 import com.fredy.mysavings.ui.theme.md_theme_dark_tertiary
+import com.fredy.mysavings.ui.theme.md_theme_light_primary
+import com.fredy.mysavings.ui.theme.md_theme_light_secondary
 import com.fredy.mysavings.ui.theme.md_theme_light_surface
+import com.fredy.mysavings.ui.theme.md_theme_light_tertiary
 import java.time.LocalDateTime
 import androidx.compose.ui.graphics.Color as toColor
 
@@ -98,9 +101,13 @@ val maxDate = LocalDateTime.of(3000, 1, 1, 1, 1)
 val initialDarkThemeDefaultColor = md_theme_dark_surface
 val initialLightThemeDefaultColor = md_theme_light_surface
 
-val defaultIncomeColor = md_theme_dark_tertiary
-val defaultExpenseColor = md_theme_dark_primary
-val defaultTransferColor = md_theme_dark_secondary
+val defaultDarkIncomeColor = md_theme_dark_tertiary
+val defaultDarkExpenseColor = md_theme_dark_primary
+val defaultDarkTransferColor = md_theme_dark_secondary
+
+val defaultLightIncomeColor = md_theme_light_tertiary
+val defaultLightExpenseColor = md_theme_light_primary
+val defaultLightTransferColor = md_theme_light_secondary
 
 
 val defaultColors = listOf(

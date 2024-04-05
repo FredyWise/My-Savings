@@ -17,10 +17,9 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.fredy.mysavings.Feature.Data.Database.Converter.LocalTimeConverter
 import com.fredy.mysavings.Feature.Data.Enum.DisplayState
 import com.fredy.mysavings.Util.FilterState
-import com.fredy.mysavings.Util.defaultExpenseColor
-import com.fredy.mysavings.Util.defaultIncomeColor
-import com.fredy.mysavings.Util.defaultTransferColor
-import com.fredy.mysavings.Util.initialDarkThemeDefaultColor
+import com.fredy.mysavings.Util.defaultDarkExpenseColor
+import com.fredy.mysavings.Util.defaultDarkIncomeColor
+import com.fredy.mysavings.Util.defaultDarkTransferColor
 import com.fredy.mysavings.ViewModels.SettingState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -117,7 +116,7 @@ class SettingsRepositoryImpl @Inject constructor(private val context: Context) :
 
     override fun getIncomeColor(): Flow<Color> = context.dataStore.data
         .map { preferences ->
-            Color(preferences[INCOME_COLOR] ?: defaultIncomeColor.toArgb())
+            Color(preferences[INCOME_COLOR] ?: defaultDarkIncomeColor.toArgb())
         }
 
     override suspend fun saveIncomeColor(color: Color) {
@@ -128,7 +127,7 @@ class SettingsRepositoryImpl @Inject constructor(private val context: Context) :
 
     override fun getExpenseColor(): Flow<Color> = context.dataStore.data
         .map { preferences ->
-            Color(preferences[EXPENSE_COLOR] ?: defaultExpenseColor.toArgb())
+            Color(preferences[EXPENSE_COLOR] ?: defaultDarkExpenseColor.toArgb())
         }
 
     override suspend fun saveExpenseColor(color: Color) {
@@ -140,7 +139,7 @@ class SettingsRepositoryImpl @Inject constructor(private val context: Context) :
 
     override fun getTransferColor(): Flow<Color> = context.dataStore.data
         .map { preferences ->
-            Color(preferences[TRANSFER_COLOR] ?: defaultTransferColor.toArgb())
+            Color(preferences[TRANSFER_COLOR] ?: defaultDarkTransferColor.toArgb())
         }
 
     override suspend fun saveTransferColor(color: Color) {
