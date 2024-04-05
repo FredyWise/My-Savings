@@ -6,9 +6,9 @@ import com.fredy.mysavings.Data.Database.Model.Account
 import com.fredy.mysavings.Data.Database.Model.UserData
 import com.fredy.mysavings.Data.Enum.RecordType
 import com.fredy.mysavings.Data.Enum.SortType
-import com.fredy.mysavings.Data.Repository.AccountRepository
-import com.fredy.mysavings.Data.Repository.RecordRepository
-import com.fredy.mysavings.Data.Repository.UserRepository
+import com.fredy.mysavings.Feature.Domain.Repository.AccountRepository
+import com.fredy.mysavings.Feature.Domain.Repository.RecordRepository
+import com.fredy.mysavings.Feature.Domain.Repository.UserRepository
 import com.fredy.mysavings.Util.BalanceBar
 import com.fredy.mysavings.Util.BalanceItem
 import com.fredy.mysavings.Util.Resource

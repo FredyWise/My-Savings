@@ -1,4 +1,4 @@
-package com.fredy.mysavings.Data.Repository
+package com.fredy.mysavings.Feature.Domain.Repository
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
@@ -15,11 +15,11 @@ import com.fredy.mysavings.Data.Database.FirebaseDataSource.CurrencyCacheDataSou
 import com.fredy.mysavings.Data.Database.FirebaseDataSource.CurrencyDataSource
 import com.fredy.mysavings.Data.Database.Model.Currency
 import com.fredy.mysavings.Data.Database.Model.RatesCache
-import com.fredy.mysavings.Data.Mappers.getRateForCurrency
-import com.fredy.mysavings.Data.Mappers.toCurrency
-import com.fredy.mysavings.Data.Mappers.toCurrencyInfoItems
-import com.fredy.mysavings.Data.Mappers.toCurrencyResponse
-import com.fredy.mysavings.Data.Mappers.updateRatesUsingCode
+import com.fredy.mysavings.Feature.Mappers.getRateForCurrency
+import com.fredy.mysavings.Feature.Mappers.toCurrency
+import com.fredy.mysavings.Feature.Mappers.toCurrencyInfoItems
+import com.fredy.mysavings.Feature.Mappers.toCurrencyResponse
+import com.fredy.mysavings.Feature.Mappers.updateRatesUsingCode
 import com.fredy.mysavings.Util.BalanceItem
 import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.TAG

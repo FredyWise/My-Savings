@@ -54,7 +54,7 @@
                 android:resource="@xml/path_provider" />
         </provider>
         <service
-            android:name=".Data.Notification.PushNotificationService"
+            android:name=".Feature.Domain.Notification.PushNotificationService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSANGING_EVENT" />

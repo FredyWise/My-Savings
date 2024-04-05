@@ -10,7 +10,7 @@ import com.fredy.mysavings.Data.Database.Model.Currency
 import com.fredy.mysavings.Data.Database.Model.Record
 import com.fredy.mysavings.Data.Database.Model.TrueRecord
 import com.fredy.mysavings.Data.Enum.RecordType
-import com.fredy.mysavings.Data.Mappers.toTrueRecords
+import com.fredy.mysavings.Feature.Mappers.toTrueRecords
 import com.fredy.mysavings.Util.TAG
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.Filter

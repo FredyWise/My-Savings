@@ -1,4 +1,4 @@
-package com.fredy.mysavings.Data.Notification
+package com.fredy.mysavings.Feature.Domain.Notification
 
 import android.Manifest
 import android.app.Notification
@@ -6,14 +6,12 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.fredy.mysavings.MainActivity
-import com.fredy.mysavings.Util.TAG
 import com.fredy.mysavings.Util.appIcon
 import dagger.hilt.android.qualifiers.ApplicationContext
 
@@ -51,7 +49,9 @@ class NotificationWorker(
             .setAutoCancel(true)
             .build()
 
-        showNotifications(notification,NotificationCredentials.DailyNotification.NOTIFICATION_MANAGER_ID)
+        showNotifications(notification,
+            NotificationCredentials.DailyNotification.NOTIFICATION_MANAGER_ID
+        )
     }
 
     private fun showNotifications(notification: Notification, notificationId: Int){

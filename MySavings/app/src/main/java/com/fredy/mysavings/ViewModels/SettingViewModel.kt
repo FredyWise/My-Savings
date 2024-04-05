@@ -1,38 +1,28 @@
 package com.fredy.mysavings.ViewModels
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
-import co.yml.charts.common.extensions.isNotNull
-import com.fredy.mysavings.Data.Database.Model.TrueRecord
 import com.fredy.mysavings.Data.Enum.ChangeColorType
 import com.fredy.mysavings.Data.Enum.DisplayState
-import com.fredy.mysavings.Data.Notification.NotificationCredentials
-import com.fredy.mysavings.Data.Notification.NotificationWorker
-import com.fredy.mysavings.Data.Repository.CSVRepository
-import com.fredy.mysavings.Data.Repository.RecordRepository
-import com.fredy.mysavings.Data.Repository.SettingsRepository
-import com.fredy.mysavings.Data.Repository.SyncRepository
+import com.fredy.mysavings.Feature.Domain.Notification.NotificationCredentials
+import com.fredy.mysavings.Feature.Domain.Notification.NotificationWorker
+import com.fredy.mysavings.Feature.Domain.Repository.SettingsRepository
+import com.fredy.mysavings.Feature.Domain.Repository.SyncRepository
 import com.fredy.mysavings.Util.BalanceColor
-import com.fredy.mysavings.Util.Resource
-import com.fredy.mysavings.Util.TAG
 import com.fredy.mysavings.Util.defaultExpenseColor
 import com.fredy.mysavings.Util.defaultIncomeColor
 import com.fredy.mysavings.Util.defaultTransferColor
-import com.fredy.mysavings.Util.formatDateYear
 import com.fredy.mysavings.Util.isInternetConnected
 import com.fredy.mysavings.ViewModels.Event.SettingEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -41,7 +31,6 @@ import java.time.LocalTime
 import java.util.Calendar
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
-import kotlin.math.log
 
 @HiltViewModel
 class SettingViewModel @Inject constructor(

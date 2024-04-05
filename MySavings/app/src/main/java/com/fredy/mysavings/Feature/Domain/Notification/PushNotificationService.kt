@@ -1,4 +1,4 @@
-package com.fredy.mysavings.Data.Notification
+package com.fredy.mysavings.Feature.Domain.Notification
 
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage

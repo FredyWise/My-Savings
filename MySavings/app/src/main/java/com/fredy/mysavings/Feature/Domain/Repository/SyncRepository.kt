@@ -1,4 +1,4 @@
-package com.fredy.mysavings.Data.Repository
+package com.fredy.mysavings.Feature.Domain.Repository
 
 import co.yml.charts.common.extensions.isNotNull
 import com.fredy.mysavings.Data.Database.Dao.AccountDao

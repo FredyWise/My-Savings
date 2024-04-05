@@ -1,4 +1,4 @@
-package com.fredy.mysavings.Data.Repository
+package com.fredy.mysavings.Feature.Domain.Repository
 
 import android.util.Log
 import com.fredy.mysavings.Data.Database.Model.UserData

@@ -1,4 +1,4 @@
-package com.fredy.mysavings.Data.Repository
+package com.fredy.mysavings.Feature.Domain.Repository
 
 import android.Manifest
 import android.app.KeyguardManager
@@ -70,7 +70,8 @@ interface SettingsRepository {
     fun getAllPreferenceView(): Flow<FilterState>
 }
 
-class SettingsRepositoryImpl @Inject constructor(private val context: Context) : SettingsRepository {
+class SettingsRepositoryImpl @Inject constructor(private val context: Context) :
+    SettingsRepository {
 
     companion object {
         private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("Settings")

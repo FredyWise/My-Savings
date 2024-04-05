@@ -6,9 +6,9 @@ import co.yml.charts.common.extensions.isNotNull
 import com.fredy.mysavings.Data.APIs.CurrencyModels.Response.Rates
 import com.fredy.mysavings.Data.Database.Model.Currency
 import com.fredy.mysavings.Data.Database.Model.UserData
-import com.fredy.mysavings.Data.Mappers.changeBase
-import com.fredy.mysavings.Data.Repository.CurrencyRepository
-import com.fredy.mysavings.Data.Repository.UserRepository
+import com.fredy.mysavings.Feature.Mappers.changeBase
+import com.fredy.mysavings.Feature.Domain.Repository.CurrencyRepository
+import com.fredy.mysavings.Feature.Domain.Repository.UserRepository
 import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.ViewModels.Event.CurrencyEvent
 import dagger.hilt.android.lifecycle.HiltViewModel

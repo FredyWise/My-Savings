@@ -10,11 +10,11 @@ import com.fredy.mysavings.Data.Database.Model.TrueRecord
 import com.fredy.mysavings.Data.Enum.GraphType
 import com.fredy.mysavings.Data.Enum.RecordType
 import com.fredy.mysavings.Data.Enum.SortType
-import com.fredy.mysavings.Data.Repository.AccountRepository
-import com.fredy.mysavings.Data.Repository.AccountWithAmountType
-import com.fredy.mysavings.Data.Repository.CategoryWithAmount
-import com.fredy.mysavings.Data.Repository.RecordRepository
-import com.fredy.mysavings.Data.Repository.SettingsRepository
+import com.fredy.mysavings.Feature.Domain.Repository.AccountRepository
+import com.fredy.mysavings.Feature.Domain.Repository.AccountWithAmountType
+import com.fredy.mysavings.Feature.Domain.Repository.CategoryWithAmount
+import com.fredy.mysavings.Feature.Domain.Repository.RecordRepository
+import com.fredy.mysavings.Feature.Domain.Repository.SettingsRepository
 import com.fredy.mysavings.Util.BalanceBar
 import com.fredy.mysavings.Util.BalanceItem
 import com.fredy.mysavings.Util.FilterState

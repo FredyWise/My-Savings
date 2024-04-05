@@ -9,8 +9,8 @@ import com.fredy.mysavings.Data.Database.Model.Account
 import com.fredy.mysavings.Data.Database.Model.Category
 import com.fredy.mysavings.Data.Database.Model.Record
 import com.fredy.mysavings.Data.Enum.RecordType
-import com.fredy.mysavings.Data.Repository.CurrencyRepository
-import com.fredy.mysavings.Data.Repository.RecordRepository
+import com.fredy.mysavings.Feature.Domain.Repository.CurrencyRepository
+import com.fredy.mysavings.Feature.Domain.Repository.RecordRepository
 import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.isExpense
 import com.fredy.mysavings.Util.isTransfer
