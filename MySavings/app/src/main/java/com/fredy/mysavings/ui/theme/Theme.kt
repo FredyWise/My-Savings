@@ -19,7 +19,7 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.fredy.mysavings.Data.Enum.DisplayState
+import com.fredy.mysavings.Feature.Data.Enum.DisplayState
 import com.fredy.mysavings.Util.TAG
 import com.fredy.mysavings.Util.initialDarkThemeDefaultColor
 import com.fredy.mysavings.Util.initialLightThemeDefaultColor

@@ -7,8 +7,8 @@ import androidx.lifecycle.viewModelScope
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
-import com.fredy.mysavings.Data.Enum.ChangeColorType
-import com.fredy.mysavings.Data.Enum.DisplayState
+import com.fredy.mysavings.Feature.Data.Enum.ChangeColorType
+import com.fredy.mysavings.Feature.Data.Enum.DisplayState
 import com.fredy.mysavings.Feature.Domain.Notification.NotificationCredentials
 import com.fredy.mysavings.Feature.Domain.Notification.NotificationWorker
 import com.fredy.mysavings.Feature.Domain.Repository.SettingsRepository

@@ -46,7 +46,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.fredy.mysavings.Data.Database.Model.UserData
+import com.fredy.mysavings.Feature.Data.Database.Model.UserData
 import com.fredy.mysavings.Util.formatRangeOfDate
 import com.fredy.mysavings.ViewModels.AccountViewModel
 import com.fredy.mysavings.ViewModels.CategoryViewModel

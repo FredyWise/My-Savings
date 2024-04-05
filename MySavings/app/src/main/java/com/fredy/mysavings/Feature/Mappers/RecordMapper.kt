@@ -1,9 +1,9 @@
 package com.fredy.mysavings.Feature.Mappers
 
-import com.fredy.mysavings.Data.Database.FirebaseDataSource.RecordDataSourceImpl.TrueRecordComponentResult
-import com.fredy.mysavings.Data.Database.Model.Record
-import com.fredy.mysavings.Data.Database.Model.TrueRecord
-import com.fredy.mysavings.Data.Enum.SortType
+import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.RecordDataSourceImpl.TrueRecordComponentResult
+import com.fredy.mysavings.Feature.Data.Database.Model.Record
+import com.fredy.mysavings.Feature.Data.Database.Model.TrueRecord
+import com.fredy.mysavings.Feature.Data.Enum.SortType
 import com.fredy.mysavings.ViewModels.RecordMap
 
 fun List<Record>.toTrueRecords(trueRecordComponentResult: TrueRecordComponentResult):List<TrueRecord>{

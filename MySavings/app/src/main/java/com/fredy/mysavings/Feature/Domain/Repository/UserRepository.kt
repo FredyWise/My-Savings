@@ -1,7 +1,7 @@
 package com.fredy.mysavings.Feature.Domain.Repository
 
 import android.util.Log
-import com.fredy.mysavings.Data.Database.Model.UserData
+import com.fredy.mysavings.Feature.Data.Database.Model.UserData
 import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.TAG
 import com.google.firebase.auth.FirebaseAuth

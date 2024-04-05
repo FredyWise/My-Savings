@@ -11,8 +11,8 @@ import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.yml.charts.common.extensions.isNotNull
-import com.fredy.mysavings.Data.Database.Model.UserData
-import com.fredy.mysavings.Data.Enum.AuthMethod
+import com.fredy.mysavings.Feature.Data.Database.Model.UserData
+import com.fredy.mysavings.Feature.Data.Enum.AuthMethod
 import com.fredy.mysavings.Feature.Domain.Repository.AuthRepository
 import com.fredy.mysavings.Feature.Domain.Repository.SettingsRepository
 import com.fredy.mysavings.Feature.Domain.Repository.UserRepository

@@ -3,9 +3,9 @@ package com.fredy.mysavings.ViewModels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.yml.charts.common.extensions.isNotNull
-import com.fredy.mysavings.Data.APIs.CurrencyModels.Response.Rates
-import com.fredy.mysavings.Data.Database.Model.Currency
-import com.fredy.mysavings.Data.Database.Model.UserData
+import com.fredy.mysavings.Feature.Data.APIs.CurrencyModels.Response.Rates
+import com.fredy.mysavings.Feature.Data.Database.Model.Currency
+import com.fredy.mysavings.Feature.Data.Database.Model.UserData
 import com.fredy.mysavings.Feature.Mappers.changeBase
 import com.fredy.mysavings.Feature.Domain.Repository.CurrencyRepository
 import com.fredy.mysavings.Feature.Domain.Repository.UserRepository

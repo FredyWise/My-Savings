@@ -1,8 +1,8 @@
 package com.fredy.mysavings.ViewModels.Event
 
-import com.fredy.mysavings.Data.Database.Model.Record
-import com.fredy.mysavings.Data.Database.Model.TrueRecord
-import com.fredy.mysavings.Data.Enum.FilterType
+import com.fredy.mysavings.Feature.Data.Database.Model.Record
+import com.fredy.mysavings.Feature.Data.Database.Model.TrueRecord
+import com.fredy.mysavings.Feature.Data.Enum.FilterType
 import java.time.LocalDate
 
 sealed interface RecordsEvent {

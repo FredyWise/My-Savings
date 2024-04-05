@@ -2,7 +2,7 @@ package com.fredy.mysavings.ViewModels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.fredy.mysavings.Data.Database.Model.TrueRecord
+import com.fredy.mysavings.Feature.Data.Database.Model.TrueRecord
 import com.fredy.mysavings.Feature.Domain.Repository.RecordRepository
 import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.map

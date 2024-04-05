@@ -2,9 +2,9 @@ package com.fredy.mysavings.Feature.Domain.Repository
 
 import android.util.Log
 import co.yml.charts.common.extensions.isNotNull
-import com.fredy.mysavings.Data.Database.Dao.AccountDao
-import com.fredy.mysavings.Data.Database.FirebaseDataSource.AccountDataSource
-import com.fredy.mysavings.Data.Database.Model.Account
+import com.fredy.mysavings.Feature.Data.Database.Dao.AccountDao
+import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.AccountDataSource
+import com.fredy.mysavings.Feature.Data.Database.Model.Account
 import com.fredy.mysavings.Feature.Mappers.getCurrencies
 import com.fredy.mysavings.Util.BalanceItem
 import com.fredy.mysavings.Util.Resource
@@ -23,6 +23,7 @@ interface AccountRepository {
     suspend fun upsertAccount(account: Account): String
     suspend fun deleteAccount(account: Account)
     fun getAccount(accountId: String): Flow<Account>
+    fun getUserAccounts(userId: String): Flow<List<Account>>
     fun getUserAccountOrderedByName(): Flow<Resource<List<Account>>>
     fun getUserAccountTotalBalance(): Flow<BalanceItem>
     fun getUserAvailableCurrency(): Flow<List<String>>
@@ -86,13 +87,23 @@ class AccountRepositoryImpl @Inject constructor(
         }
     }
 
+    override fun getUserAccounts(userId: String): Flow<List<Account>> {
+        return flow {
+            withContext(Dispatchers.IO) {
+                accountDataSource.getUserAccounts(userId)
+            }.collect { accounts ->
+                emit(accounts)
+            }
+        }
+    }
+
     override fun getUserAccountOrderedByName(): Flow<Resource<List<Account>>> {
         return flow {
             emit(Resource.Loading())
             val currentUser = authRepository.getCurrentUser()!!
             val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
             withContext(Dispatchers.IO) {
-                accountDataSource.getUserAccounts(
+                getUserAccounts(
                     userId
                 ).map { accounts -> accounts.filter { it.accountName != deletedAccount.accountName } }
             }.collect { data ->
@@ -118,7 +129,7 @@ class AccountRepositoryImpl @Inject constructor(
                 "getUserAccountTotalBalance: $currentUser"
             )
             withContext(Dispatchers.IO) {
-                accountDataSource.getUserAccounts(
+                getUserAccounts(
                     userId
                 )
             }.collect { accounts ->
@@ -143,7 +154,7 @@ class AccountRepositoryImpl @Inject constructor(
             val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
 
             withContext(Dispatchers.IO) {
-                accountDataSource.getUserAccounts(
+                getUserAccounts(
                     userId
                 ).map { it.getCurrencies() }
             }.collect { data ->

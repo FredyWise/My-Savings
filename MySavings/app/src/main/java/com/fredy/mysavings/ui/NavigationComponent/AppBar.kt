@@ -22,7 +22,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.fredy.mysavings.Data.Database.Model.UserData
+import com.fredy.mysavings.Feature.Data.Database.Model.UserData
 import com.fredy.mysavings.R
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.AsyncImageHandler
 

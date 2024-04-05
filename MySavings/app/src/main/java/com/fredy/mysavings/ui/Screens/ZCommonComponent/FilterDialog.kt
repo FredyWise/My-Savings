@@ -23,8 +23,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.fredy.mysavings.Data.Enum.FilterType
-import com.fredy.mysavings.Data.Enum.SortType
+import com.fredy.mysavings.Feature.Data.Enum.FilterType
+import com.fredy.mysavings.Feature.Data.Enum.SortType
 
 @Composable
 fun FilterDialog(

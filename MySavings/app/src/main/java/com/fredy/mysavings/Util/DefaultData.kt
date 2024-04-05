@@ -1,9 +1,9 @@
 package com.fredy.mysavings.Util
 
 import android.graphics.Color
-import com.fredy.mysavings.Data.Database.Model.Account
-import com.fredy.mysavings.Data.Database.Model.Category
-import com.fredy.mysavings.Data.Enum.RecordType
+import com.fredy.mysavings.Feature.Data.Database.Model.Account
+import com.fredy.mysavings.Feature.Data.Database.Model.Category
+import com.fredy.mysavings.Feature.Data.Enum.RecordType
 import com.fredy.mysavings.R
 import com.fredy.mysavings.ui.theme.md_theme_dark_primary
 import com.fredy.mysavings.ui.theme.md_theme_dark_secondary

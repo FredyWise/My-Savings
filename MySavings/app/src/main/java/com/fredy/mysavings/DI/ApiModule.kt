@@ -1,9 +1,9 @@
 package com.fredy.mysavings.DI
 
-import com.fredy.mysavings.Data.APIs.ApiCredentials
-import com.fredy.mysavings.Data.APIs.CountryModels.CountryApi
-import com.fredy.mysavings.Data.APIs.CurrencyModels.CurrencyApi
-import com.fredy.mytest.APIs.TextCorrectionModule.TypeWiseApi
+import com.fredy.mysavings.Feature.Data.APIs.ApiCredentials
+import com.fredy.mysavings.Feature.Data.APIs.CountryModels.CountryApi
+import com.fredy.mysavings.Feature.Data.APIs.CurrencyModels.CurrencyApi
+import com.fredy.mysavings.Data.APIs.TextCorrectionModels.TypeWiseApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

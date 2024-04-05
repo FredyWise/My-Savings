@@ -1,8 +1,8 @@
 package com.fredy.mysavings.ViewModels.Event
 
-import com.fredy.mysavings.Data.Database.Model.Category
-import com.fredy.mysavings.Data.Enum.RecordType
-import com.fredy.mysavings.Data.Enum.SortType
+import com.fredy.mysavings.Feature.Data.Database.Model.Category
+import com.fredy.mysavings.Feature.Data.Enum.RecordType
+import com.fredy.mysavings.Feature.Data.Enum.SortType
 
 sealed interface CategoryEvent {
     object SaveCategory: CategoryEvent

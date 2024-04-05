@@ -1,8 +1,8 @@
 package com.fredy.mysavings.Util
 
-import com.fredy.mysavings.Data.Enum.FilterType
-import com.fredy.mysavings.Data.Enum.RecordType
-import com.fredy.mysavings.Data.Enum.SortType
+import com.fredy.mysavings.Feature.Data.Enum.FilterType
+import com.fredy.mysavings.Feature.Data.Enum.RecordType
+import com.fredy.mysavings.Feature.Data.Enum.SortType
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime

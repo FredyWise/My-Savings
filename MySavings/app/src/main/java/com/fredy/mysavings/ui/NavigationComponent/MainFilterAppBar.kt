@@ -13,8 +13,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.fredy.mysavings.Data.Enum.FilterType
-import com.fredy.mysavings.Data.Enum.SortType
+import com.fredy.mysavings.Feature.Data.Enum.FilterType
+import com.fredy.mysavings.Feature.Data.Enum.SortType
 import com.fredy.mysavings.Util.BalanceBar
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.BalanceBar
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.DisplayBar

@@ -36,8 +36,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.fredy.mysavings.Data.Enum.ChangeColorType
-import com.fredy.mysavings.Data.Enum.DisplayState
+import com.fredy.mysavings.Feature.Data.Enum.ChangeColorType
+import com.fredy.mysavings.Feature.Data.Enum.DisplayState
 import com.fredy.mysavings.Util.ActionWithName
 import com.fredy.mysavings.Util.defaultExpenseColor
 import com.fredy.mysavings.Util.defaultIncomeColor

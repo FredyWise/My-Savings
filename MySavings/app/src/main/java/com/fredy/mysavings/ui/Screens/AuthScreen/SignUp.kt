@@ -46,7 +46,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.compose.rememberImagePainter
-import com.fredy.mysavings.Data.Enum.AuthMethod
+import com.fredy.mysavings.Feature.Data.Enum.AuthMethod
 import com.fredy.mysavings.R
 import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.ViewModels.AuthState

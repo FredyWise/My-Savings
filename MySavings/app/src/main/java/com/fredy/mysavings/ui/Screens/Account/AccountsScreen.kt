@@ -26,7 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.fredy.mysavings.Data.Database.Model.Account
+import com.fredy.mysavings.Feature.Data.Database.Model.Account
 import com.fredy.mysavings.R
 import com.fredy.mysavings.Util.formatBalanceAmount
 import com.fredy.mysavings.Util.formatTime

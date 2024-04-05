@@ -3,7 +3,7 @@ package com.fredy.mysavings.Feature.Domain.Repository
 import android.content.Context
 import android.net.Uri
 import android.util.Log
-import com.fredy.mysavings.Data.Database.Model.UserData
+import com.fredy.mysavings.Feature.Data.Database.Model.UserData
 import com.fredy.mysavings.MainActivity
 import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.TAG

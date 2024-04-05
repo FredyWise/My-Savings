@@ -1,11 +1,6 @@
 package com.fredy.mysavings.Feature.Mappers
 
-import com.fredy.mysavings.Data.Database.FirebaseDataSource.RecordDataSourceImpl.TrueRecordComponentResult
-import com.fredy.mysavings.Data.Database.Model.Account
-import com.fredy.mysavings.Data.Database.Model.Record
-import com.fredy.mysavings.Data.Database.Model.TrueRecord
-import com.fredy.mysavings.Data.Enum.SortType
-import com.fredy.mysavings.ViewModels.RecordMap
+import com.fredy.mysavings.Feature.Data.Database.Model.Account
 
 fun List<Account>.getCurrencies():List<String>{
     return this.map { it.accountCurrency }.distinct()

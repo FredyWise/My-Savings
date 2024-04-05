@@ -2,10 +2,10 @@ package com.fredy.mysavings.ViewModels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.fredy.mysavings.Data.Database.Model.Category
-import com.fredy.mysavings.Data.Database.Model.TrueRecord
-import com.fredy.mysavings.Data.Enum.RecordType
-import com.fredy.mysavings.Data.Enum.SortType
+import com.fredy.mysavings.Feature.Data.Database.Model.Category
+import com.fredy.mysavings.Feature.Data.Database.Model.TrueRecord
+import com.fredy.mysavings.Feature.Data.Enum.RecordType
+import com.fredy.mysavings.Feature.Data.Enum.SortType
 import com.fredy.mysavings.Feature.Domain.Repository.CategoryRepository
 import com.fredy.mysavings.Feature.Domain.Repository.RecordRepository
 import com.fredy.mysavings.Util.Resource

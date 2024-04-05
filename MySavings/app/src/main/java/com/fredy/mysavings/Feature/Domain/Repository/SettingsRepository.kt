@@ -14,8 +14,8 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import com.fredy.mysavings.Data.Database.Converter.LocalTimeConverter
-import com.fredy.mysavings.Data.Enum.DisplayState
+import com.fredy.mysavings.Feature.Data.Database.Converter.LocalTimeConverter
+import com.fredy.mysavings.Feature.Data.Enum.DisplayState
 import com.fredy.mysavings.Util.FilterState
 import com.fredy.mysavings.Util.defaultExpenseColor
 import com.fredy.mysavings.Util.defaultIncomeColor

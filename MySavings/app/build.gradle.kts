@@ -107,6 +107,10 @@ dependencies {
     testImplementation ("com.google.truth:truth:1.1.3")
     testImplementation ("com.squareup.okhttp3:mockwebserver:4.9.1")
     testImplementation ("io.mockk:mockk:1.10.5")
+    testImplementation("junit:junit:4.12")
+    testImplementation("junit:junit:4.12")
+    testImplementation("junit:junit:4.12")
+    testImplementation("junit:junit:4.12")
 //    debugImplementation ("androidx.compose.ui:ui-test-manifest:1.6.5")
 
     // Instrumentation tests

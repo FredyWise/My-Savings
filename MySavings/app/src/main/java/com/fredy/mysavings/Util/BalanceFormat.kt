@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import co.yml.charts.common.extensions.isNotNull
-import com.fredy.mysavings.Data.Enum.RecordType
+import com.fredy.mysavings.Feature.Data.Enum.RecordType
 import java.text.DecimalFormat
 import kotlin.math.abs
 import kotlin.math.absoluteValue

@@ -1,6 +1,6 @@
 package com.fredy.mysavings.ViewModels.Event
 
-import com.fredy.mysavings.Data.Database.Model.Currency
+import com.fredy.mysavings.Feature.Data.Database.Model.Currency
 
 sealed interface CurrencyEvent {
     data class FromCurrency(val fromCurrency: String) : CurrencyEvent

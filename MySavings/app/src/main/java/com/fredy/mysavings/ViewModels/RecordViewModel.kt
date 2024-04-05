@@ -5,11 +5,11 @@ package com.fredy.mysavings.ViewModels
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.fredy.mysavings.Data.Database.Model.Record
-import com.fredy.mysavings.Data.Database.Model.TrueRecord
-import com.fredy.mysavings.Data.Enum.GraphType
-import com.fredy.mysavings.Data.Enum.RecordType
-import com.fredy.mysavings.Data.Enum.SortType
+import com.fredy.mysavings.Feature.Data.Database.Model.Record
+import com.fredy.mysavings.Feature.Data.Database.Model.TrueRecord
+import com.fredy.mysavings.Feature.Data.Enum.GraphType
+import com.fredy.mysavings.Feature.Data.Enum.RecordType
+import com.fredy.mysavings.Feature.Data.Enum.SortType
 import com.fredy.mysavings.Feature.Domain.Repository.AccountRepository
 import com.fredy.mysavings.Feature.Domain.Repository.AccountWithAmountType
 import com.fredy.mysavings.Feature.Domain.Repository.CategoryWithAmount
