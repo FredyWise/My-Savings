@@ -3,6 +3,7 @@ package com.fredy.mysavings.ui.Screens.Analysis
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -92,8 +93,7 @@ fun AnalysisFlow(
 //                            currency = items.first().recordCurrency,
                         )
                     }
-                    Text(
-                        text = "Total "+state.filterState.recordType.name + ": " + formatBalanceAmount(totalAmount),
+                    Row(
                         modifier = Modifier
                             .padding(horizontal = 10.dp)
                             .padding(top = 8.dp)
@@ -101,11 +101,22 @@ fun AnalysisFlow(
                                 onEvent(
                                     RecordsEvent.ToggleRecordType
                                 )
-                            },
-                        color = RecordTypeColor(recordType = state.filterState.recordType),
-                        fontWeight = FontWeight.Bold,
-                        style = MaterialTheme.typography.titleLarge
-                    )
+                            },){
+                        Text(
+                            text = "Total " + state.filterState.recordType.name + ": " ,
+                            color = onBackgroundColor,
+                            fontWeight = FontWeight.Bold,
+                            style = MaterialTheme.typography.titleLarge
+                        )
+                        Text(
+                            text =  formatBalanceAmount(
+                                totalAmount
+                            ),
+                            color = RecordTypeColor(recordType = state.filterState.recordType),
+                            fontWeight = FontWeight.Bold,
+                            style = MaterialTheme.typography.titleLarge
+                        )
+                    }
                     if (state.filterState.isFilterTypeMonthBelow()) {
                         Calendar(
                             inputColor = contentColor,

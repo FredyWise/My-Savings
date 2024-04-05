@@ -113,7 +113,6 @@ val defaultLightTransferColor = md_theme_light_secondary
 val defaultColors = listOf(
     toColor(Color.parseColor("#ff0055")),
     toColor(Color.parseColor("#ff9955")),
-    toColor(Color.parseColor("#ffff55")),
     toColor(Color.parseColor("#ffcc88")),
     toColor(Color.parseColor("#ff0088")),
     toColor(Color.parseColor("#ff55ff")),
