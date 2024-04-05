@@ -20,7 +20,6 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 interface UserRepository {
-    suspend fun insertUser(user: UserData)
     suspend fun upsertUser(user: UserData)
     suspend fun deleteUser(user: UserData)
     fun getUser(userId: String): Flow<UserData>
@@ -36,16 +35,6 @@ class UserRepositoryImpl @Inject constructor(
     private val userCollection = firestore.collection(
         "user"
     )
-
-    override suspend fun insertUser(user: UserData) {
-        withContext(Dispatchers.IO) {
-            val document = userCollection.document(user.firebaseUserId)
-            val snapshot = document.get().await()
-            if (!snapshot.exists()) {
-                document.set(user)
-            }
-        }
-    }
 
     override suspend fun upsertUser(user: UserData) {
         withContext(Dispatchers.IO) {

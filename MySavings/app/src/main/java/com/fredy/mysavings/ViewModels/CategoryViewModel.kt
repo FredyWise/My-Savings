@@ -8,6 +8,7 @@ import com.fredy.mysavings.Feature.Data.Enum.RecordType
 import com.fredy.mysavings.Feature.Data.Enum.SortType
 import com.fredy.mysavings.Feature.Domain.Repository.CategoryRepository
 import com.fredy.mysavings.Feature.Domain.Repository.RecordRepository
+import com.fredy.mysavings.Feature.Domain.UseCases.AccountUseCases.CategoryUseCases
 import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.deletedCategory
 import com.fredy.mysavings.Util.transferCategory
@@ -17,6 +18,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMap
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
@@ -26,7 +28,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CategoryViewModel @Inject constructor(
-    private val categoryRepository: CategoryRepository,
+//    private val categoryRepository: CategoryRepository,
+    private val categoryUseCases: CategoryUseCases,
     private val recordRepository: RecordRepository
 ): ViewModel() {
 
@@ -34,15 +37,11 @@ class CategoryViewModel @Inject constructor(
         SortType.ASCENDING
     )
 
-    private val _updating = MutableStateFlow(
-        false
-    )
-
     private val _state = MutableStateFlow(
         CategoryState()
     )
 
-    private val _categoryResource = _updating.flatMapLatest { categoryRepository.getCategoryMapOrderedByName()}.stateIn(
+    private val _categoryResource = categoryUseCases.getCategoryMapOrderedByName().stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(),
         Resource.Success(emptyList())
@@ -127,10 +126,9 @@ class CategoryViewModel @Inject constructor(
 
             is CategoryEvent.DeleteCategory -> {
                 viewModelScope.launch {
-                    categoryRepository.deleteCategory(
+                    categoryUseCases.deleteCategory(
                         event.category
                     )
-//                    toggleUpdating()
                     recordRepository.updateRecordItemWithDeletedCategory(event.category)
                     event.onDeleteEffect()
                 }
@@ -155,16 +153,15 @@ class CategoryViewModel @Inject constructor(
                     categoryIcon = categoryIcon,
                 )
                 viewModelScope.launch {
-                    categoryRepository.upsertCategory(
+                    categoryUseCases.upsertCategory(
                         category
                     )
-                    categoryRepository.upsertCategory(
+                    categoryUseCases.upsertCategory(
                         transferCategory
                     )
-                    categoryRepository.upsertCategory(
+                    categoryUseCases.upsertCategory(
                         deletedCategory
                     )
-//                    toggleUpdating()
                 }
                 _state.update { CategoryState() }
             }

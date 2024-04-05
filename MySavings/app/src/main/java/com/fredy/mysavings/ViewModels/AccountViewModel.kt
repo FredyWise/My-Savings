@@ -6,9 +6,10 @@ import com.fredy.mysavings.Feature.Data.Database.Model.Account
 import com.fredy.mysavings.Feature.Data.Database.Model.UserData
 import com.fredy.mysavings.Feature.Data.Enum.RecordType
 import com.fredy.mysavings.Feature.Data.Enum.SortType
-import com.fredy.mysavings.Feature.Domain.Repository.AccountRepository
 import com.fredy.mysavings.Feature.Domain.Repository.RecordRepository
 import com.fredy.mysavings.Feature.Domain.Repository.UserRepository
+import com.fredy.mysavings.Feature.Domain.UseCases.AccountUseCases.AccountUseCases
+import com.fredy.mysavings.Feature.Domain.UseCases.AccountUseCases.UserUseCases
 import com.fredy.mysavings.Util.BalanceBar
 import com.fredy.mysavings.Util.BalanceItem
 import com.fredy.mysavings.Util.Resource
@@ -28,13 +29,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AccountViewModel @Inject constructor(
-    private val accountRepository: AccountRepository,
+    private val accountUseCases: AccountUseCases,
     private val recordRepository: RecordRepository,
-    private val userRepository: UserRepository,
+    private val userUseCases: UserUseCases,
 ) : ViewModel() {
     init {
         viewModelScope.launch {
-            userRepository.getCurrentUser().collectLatest { currentUser ->
+            userUseCases.getCurrentUser().collectLatest { currentUser ->
                 when (currentUser) {
                     is Resource.Success -> {
                         currentUser.data?.let { user ->
@@ -63,7 +64,7 @@ class AccountViewModel @Inject constructor(
     )
 
     private val _totalAccountBalance = _updating.flatMapLatest {
-        accountRepository.getUserAccountTotalBalance()
+        accountUseCases.getAccountsTotalBalance()
     }.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(),
@@ -116,7 +117,7 @@ class AccountViewModel @Inject constructor(
     )
 
     private val _accountResource =
-        _updating.flatMapLatest { accountRepository.getUserAccountOrderedByName() }.stateIn(
+        _updating.flatMapLatest { accountUseCases.getAccountOrderedByName() }.stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(),
             Resource.Success(emptyList())
@@ -204,7 +205,7 @@ class AccountViewModel @Inject constructor(
 
             is AccountEvent.DeleteAccount -> {
                 viewModelScope.launch {
-                    accountRepository.deleteAccount(
+                    accountUseCases.deleteAccount(
                         event.account
                     )
                     recordRepository.updateRecordItemWithDeletedAccount(event.account)
@@ -234,10 +235,10 @@ class AccountViewModel @Inject constructor(
                     accountIconDescription = accountIconDescription,
                 )
                 viewModelScope.launch {
-                    accountRepository.upsertAccount(
+                    accountUseCases.upsertAccount(
                         account
                     )
-                    accountRepository.upsertAccount(
+                    accountUseCases.upsertAccount(
                         deletedAccount
                     )
 //                    onEvent(AccountEvent.UpdateAccount)
@@ -285,7 +286,7 @@ class AccountViewModel @Inject constructor(
 
             is AccountEvent.UpdateAccountBalance -> {
                 viewModelScope.launch {
-                    accountRepository.upsertAccount(
+                    accountUseCases.upsertAccount(
                         event.account
                     )
                     onEvent(AccountEvent.UpdateAccount)

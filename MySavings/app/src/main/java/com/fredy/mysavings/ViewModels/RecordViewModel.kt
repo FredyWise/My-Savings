@@ -56,7 +56,7 @@ class RecordViewModel @Inject constructor(
 //                    }
 //                }
 //            }
-            accountRepository.getUserAvailableCurrency().collect { currency ->
+            accountRepository.getAvailableCurrency().collect { currency ->
                 _state.update {
                     it.copy(selectedCheckbox = currency)
                 }
@@ -71,7 +71,7 @@ class RecordViewModel @Inject constructor(
         FilterState()
     )
 
-    private val _availableCurrency = accountRepository.getUserAvailableCurrency().stateIn(
+    private val _availableCurrency = accountRepository.getAvailableCurrency().stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(),
         emptyList()

@@ -330,7 +330,7 @@ class AuthViewModel @Inject constructor(
                 profilePictureUrl = profilePictureUrl
             )
         }
-        userRepository.insertUser(
+        userRepository.upsertUser(
             userData!!
         )
     }

@@ -24,9 +24,9 @@ interface AccountRepository {
     suspend fun deleteAccount(account: Account)
     fun getAccount(accountId: String): Flow<Account>
     fun getUserAccounts(userId: String): Flow<List<Account>>
-    fun getUserAccountOrderedByName(): Flow<Resource<List<Account>>>
-    fun getUserAccountTotalBalance(): Flow<BalanceItem>
-    fun getUserAvailableCurrency(): Flow<List<String>>
+    fun getAccountOrderedByName(): Flow<Resource<List<Account>>>
+    fun getAccountTotalBalance(): Flow<BalanceItem>
+    fun getAvailableCurrency(): Flow<List<String>>
 }
 
 
@@ -97,7 +97,7 @@ class AccountRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getUserAccountOrderedByName(): Flow<Resource<List<Account>>> {
+    override fun getAccountOrderedByName(): Flow<Resource<List<Account>>> {
         return flow {
             emit(Resource.Loading())
             val currentUser = authRepository.getCurrentUser()!!
@@ -118,7 +118,7 @@ class AccountRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getUserAccountTotalBalance(): Flow<BalanceItem> {
+    override fun getAccountTotalBalance(): Flow<BalanceItem> {
         return flow {
             val currentUser = authRepository.getCurrentUser()!!
             val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
@@ -148,7 +148,7 @@ class AccountRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getUserAvailableCurrency(): Flow<List<String>> {
+    override fun getAvailableCurrency(): Flow<List<String>> {
         return flow {
             val currentUser = authRepository.getCurrentUser()!!
             val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
