@@ -6,10 +6,9 @@ import com.fredy.mysavings.Feature.Data.Database.Model.Account
 import com.fredy.mysavings.Feature.Data.Database.Model.UserData
 import com.fredy.mysavings.Feature.Data.Enum.RecordType
 import com.fredy.mysavings.Feature.Data.Enum.SortType
-import com.fredy.mysavings.Feature.Domain.Repository.RecordRepository
-import com.fredy.mysavings.Feature.Domain.Repository.UserRepository
 import com.fredy.mysavings.Feature.Domain.UseCases.AccountUseCases.AccountUseCases
-import com.fredy.mysavings.Feature.Domain.UseCases.AccountUseCases.UserUseCases
+import com.fredy.mysavings.Feature.Domain.UseCases.UserUseCases.UserUseCases
+import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.RecordUseCases
 import com.fredy.mysavings.Util.BalanceBar
 import com.fredy.mysavings.Util.BalanceItem
 import com.fredy.mysavings.Util.Resource
@@ -30,7 +29,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AccountViewModel @Inject constructor(
     private val accountUseCases: AccountUseCases,
-    private val recordRepository: RecordRepository,
+    private val recordUseCases: RecordUseCases,
     private val userUseCases: UserUseCases,
 ) : ViewModel() {
     init {
@@ -72,7 +71,7 @@ class AccountViewModel @Inject constructor(
     )
 
     private val _totalExpense = _updating.flatMapLatest {
-        recordRepository.getUserTotalAmountByType(
+        recordUseCases.getUserTotalAmountByType(
             RecordType.Expense
         )
     }.stateIn(
@@ -82,7 +81,7 @@ class AccountViewModel @Inject constructor(
     )
 
     private val _totalIncome = _updating.flatMapLatest {
-        recordRepository.getUserTotalAmountByType(
+        recordUseCases.getUserTotalAmountByType(
             RecordType.Income
         )
     }.stateIn(
@@ -124,7 +123,7 @@ class AccountViewModel @Inject constructor(
         )
 
     private val _records = _state.flatMapLatest {
-        recordRepository.getUserAccountRecordsOrderedByDateTime(
+        recordUseCases.getUserAccountRecordsOrderedByDateTime(
             it.account.accountId,
             _sortType.value
         )
@@ -208,7 +207,7 @@ class AccountViewModel @Inject constructor(
                     accountUseCases.deleteAccount(
                         event.account
                     )
-                    recordRepository.updateRecordItemWithDeletedAccount(event.account)
+                    recordUseCases.updateRecordItemWithDeletedAccount(event.account)
 //                    onEvent(AccountEvent.UpdateAccount)
                     event.onDeleteEffect()
                 }

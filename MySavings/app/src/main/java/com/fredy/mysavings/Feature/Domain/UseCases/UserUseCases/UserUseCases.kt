@@ -1,12 +1,15 @@
-package com.fredy.mysavings.Feature.Domain.UseCases.AccountUseCases
+package com.fredy.mysavings.Feature.Domain.UseCases.UserUseCases
 
+import co.yml.charts.common.extensions.isNotNull
 import com.fredy.mysavings.Feature.Data.Database.Model.UserData
 import com.fredy.mysavings.Feature.Domain.Repository.UserRepository
 import com.fredy.mysavings.Util.Resource
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
 
 data class UserUseCases(
-    val upsertUser: UpsertUser,
+    val insertUser: InsertUser,
+    val updateUser: UpdateUser,
     val deleteUser: DeleteUser,
     val getUser: GetUser,
     val getCurrentUser: GetCurrentUser,
@@ -15,7 +18,19 @@ data class UserUseCases(
 )
 
 
-class UpsertUser(
+class InsertUser(
+    private val userRepository: UserRepository
+) {
+    suspend operator fun invoke(user: UserData) {
+        userRepository.getUser(user.firebaseUserId).collectLatest{ isExist ->
+            if (!isExist.isNotNull()){
+                userRepository.upsertUser(user)
+            }
+        }
+    }
+}
+
+class UpdateUser(
     private val userRepository: UserRepository
 ) {
     suspend operator fun invoke(user: UserData) {
@@ -50,7 +65,7 @@ class GetCurrentUser(
 class GetAllUsersOrderedByName(
     private val userRepository: UserRepository
 ) {
-    operator fun invoke(): Flow<List<UserData>> {
+    suspend operator fun invoke(): Flow<List<UserData>> {
         return userRepository.getAllUsersOrderedByName()
     }
 }
@@ -58,7 +73,7 @@ class GetAllUsersOrderedByName(
 class SearchUsers(
     private val userRepository: UserRepository
 ) {
-    operator fun invoke(usernameEmail: String): Flow<List<UserData>> {
+    suspend operator fun invoke(usernameEmail: String): Flow<List<UserData>> {
         return userRepository.searchUsers(usernameEmail)
     }
 }

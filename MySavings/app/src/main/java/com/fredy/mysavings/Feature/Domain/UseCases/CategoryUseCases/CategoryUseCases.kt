@@ -1,4 +1,4 @@
-package com.fredy.mysavings.Feature.Domain.UseCases.AccountUseCases
+package com.fredy.mysavings.Feature.Domain.UseCases.CategoryUseCases
 
 import android.util.Log
 import co.yml.charts.common.extensions.isNotNull

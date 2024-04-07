@@ -3,22 +3,18 @@ package com.fredy.mysavings.ViewModels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fredy.mysavings.Feature.Data.Database.Model.Category
-import com.fredy.mysavings.Feature.Data.Database.Model.TrueRecord
 import com.fredy.mysavings.Feature.Data.Enum.RecordType
 import com.fredy.mysavings.Feature.Data.Enum.SortType
-import com.fredy.mysavings.Feature.Domain.Repository.CategoryRepository
-import com.fredy.mysavings.Feature.Domain.Repository.RecordRepository
-import com.fredy.mysavings.Feature.Domain.UseCases.AccountUseCases.CategoryUseCases
+import com.fredy.mysavings.Feature.Domain.UseCases.CategoryUseCases.CategoryUseCases
+import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.RecordUseCases
 import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.deletedCategory
 import com.fredy.mysavings.Util.transferCategory
-import com.fredy.mysavings.Util.transferIcon
 import com.fredy.mysavings.ViewModels.Event.CategoryEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flatMap
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
@@ -29,7 +25,7 @@ import javax.inject.Inject
 @HiltViewModel
 class CategoryViewModel @Inject constructor(
     private val categoryUseCases: CategoryUseCases,
-    private val recordRepository: RecordRepository
+    private val recordUseCases: RecordUseCases
 ): ViewModel() {
 
     private val _sortType = MutableStateFlow(
@@ -47,7 +43,7 @@ class CategoryViewModel @Inject constructor(
     )
 
     private val _records = _state.flatMapLatest {
-        recordRepository.getUserCategoryRecordsOrderedByDateTime(
+        recordUseCases.getUserCategoryRecordsOrderedByDateTime(
             it.category.categoryId,
             _sortType.value
         )
@@ -128,7 +124,7 @@ class CategoryViewModel @Inject constructor(
                     categoryUseCases.deleteCategory(
                         event.category
                     )
-                    recordRepository.updateRecordItemWithDeletedCategory(event.category)
+                    recordUseCases.updateRecordItemWithDeletedCategory(event.category)
                     event.onDeleteEffect()
                 }
             }

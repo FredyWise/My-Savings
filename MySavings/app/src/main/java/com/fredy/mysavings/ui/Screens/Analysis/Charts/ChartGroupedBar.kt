@@ -31,6 +31,7 @@ import kotlin.math.absoluteValue
 fun ChartGroupedBar(
     modifier: Modifier = Modifier,
     contentColor: Color = MaterialTheme.colorScheme.primary,
+    gridColor: Color = MaterialTheme.colorScheme.secondary,
     backgroundColor: Color = MaterialTheme.colorScheme.background,
     infoBackgroundColor: Color = MaterialTheme.colorScheme.background,
     infoColor: Color = MaterialTheme.colorScheme.onSecondary,
@@ -44,8 +45,8 @@ fun ChartGroupedBar(
     val xAxisData = AxisData.Builder().backgroundColor(
         backgroundColor
     ).axisLabelColor(
-        contentColor
-    ).axisLineColor(contentColor).axisStepSize(
+        gridColor
+    ).axisLineColor(gridColor).axisStepSize(
         30.dp
     ).bottomPadding(5.dp).startDrawPadding(1.dp)
         .labelData { index -> truncateString(groupBarData[index].label, 10) }.build()
@@ -54,7 +55,7 @@ fun ChartGroupedBar(
         backgroundColor
     ).axisLabelColor(
         contentColor
-    ).axisLineColor(contentColor).steps(
+    ).axisLineColor(gridColor).steps(
         step
     ).labelAndAxisLinePadding(20.dp).axisOffset(
         20.dp
@@ -64,10 +65,12 @@ fun ChartGroupedBar(
              isShortenToChar = true,
         )
     }.build()
+
     val colorPaletteList = listOf(
         expenseColor,
         incomeColor,
     )
+
     val legendsConfig = LegendsConfig(
         legendLabelList = listOf(
             LegendLabel(

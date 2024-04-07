@@ -9,11 +9,13 @@ import com.fredy.mysavings.Feature.Data.Database.Dao.CategoryDao
 import com.fredy.mysavings.Feature.Data.Database.Dao.CurrencyCacheDao
 import com.fredy.mysavings.Feature.Data.Database.Dao.CurrencyDao
 import com.fredy.mysavings.Feature.Data.Database.Dao.RecordDao
+import com.fredy.mysavings.Feature.Data.Database.Dao.UserDao
 import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.AccountDataSource
 import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.CategoryDataSource
-import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.CurrencyCacheDataSource
+import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.CurrencyRatesDataSource
 import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.CurrencyDataSource
 import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.RecordDataSource
+import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.UserDataSource
 import com.fredy.mysavings.Feature.Domain.Repository.AccountRepository
 import com.fredy.mysavings.Feature.Domain.Repository.AccountRepositoryImpl
 import com.fredy.mysavings.Feature.Domain.Repository.AuthRepository
@@ -58,7 +60,7 @@ object RepositoryModule {
         authRepository: AuthRepository,
         currencyApi: CurrencyApi,
         countryApi: CountryApi,
-        currencyCacheDataSource: CurrencyCacheDataSource,
+        currencyRatesDataSource: CurrencyRatesDataSource,
         currencyDataSource: CurrencyDataSource,
         currencyCacheDao: CurrencyCacheDao,
         currencyInfoCacheDao: CurrencyDao,
@@ -66,7 +68,7 @@ object RepositoryModule {
         authRepository,
         currencyApi,
         countryApi,
-        currencyCacheDataSource,
+        currencyRatesDataSource,
         currencyDataSource,
         currencyCacheDao,
         currencyInfoCacheDao
@@ -101,14 +103,10 @@ object RepositoryModule {
     @Provides
     @Singleton
     fun provideAccountRepository(
-        currencyRepository: CurrencyRepository,
-        authRepository: AuthRepository,
         accountDataSource: AccountDataSource,
         accountDao: AccountDao,
         firestore: FirebaseFirestore,
     ): AccountRepository = AccountRepositoryImpl(
-        currencyRepository,
-        authRepository,
         accountDataSource,
         accountDao,
         firestore,
@@ -117,21 +115,21 @@ object RepositoryModule {
     @Provides
     @Singleton
     fun provideCategoryRepository(
-        authRepository: AuthRepository,
         firestore: FirebaseFirestore,
         categoryDataSource: CategoryDataSource,
         categoryDao: CategoryDao,
     ): CategoryRepository = CategoryRepositoryImpl(
-        authRepository, categoryDataSource, categoryDao, firestore,
+         categoryDataSource, categoryDao, firestore,
     )
 
     @Provides
     @Singleton
     fun provideUserRepository(
-        firestore: FirebaseFirestore,
-        firebaseAuth: FirebaseAuth
+        firebaseAuth: FirebaseAuth,
+        userDataSource: UserDataSource,
+        userDao: UserDao
     ): UserRepository = UserRepositoryImpl(
-        firestore, firebaseAuth,
+        firebaseAuth,userDataSource, userDao
     )
 
     @Provides

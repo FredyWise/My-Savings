@@ -5,7 +5,8 @@ import co.yml.charts.common.extensions.isNotNull
 import com.fredy.mysavings.Feature.Data.Database.Model.Account
 import com.fredy.mysavings.Feature.Domain.Repository.AccountRepository
 import com.fredy.mysavings.Feature.Domain.Repository.AuthRepository
-import com.fredy.mysavings.Feature.Domain.Repository.CurrencyRepository
+import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.CurrencyUseCases
+import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.currencyConverter
 import com.fredy.mysavings.Feature.Mappers.getCurrencies
 import com.fredy.mysavings.Util.BalanceItem
 import com.fredy.mysavings.Util.Resource
@@ -103,7 +104,7 @@ class GetAccountsCurrencies(
 
 class GetAccountsTotalBalance(
     private val repository: AccountRepository,
-    private val currencyRepository: CurrencyRepository,
+    private val currencyUseCases: CurrencyUseCases,
     private val authRepository: AuthRepository
 ) {
     operator fun invoke(): Flow<BalanceItem> {
@@ -132,18 +133,9 @@ class GetAccountsTotalBalance(
         }
     }
 
-
-    private suspend fun currencyConverter(
-        amount: Double, from: String, to: String
-    ): Double {
-        return currencyRepository.convertCurrencyData(
-            amount, from, to
-        ).amount
-    }
-
     private suspend fun List<Account>.getTotalAccountBalance(userCurrency: String): Double {
         return this.sumOf { account ->
-            currencyConverter(
+            currencyUseCases.currencyConverter(
                 account.accountAmount,
                 account.accountCurrency,
                 userCurrency

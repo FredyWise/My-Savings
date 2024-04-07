@@ -2,10 +2,9 @@ package com.fredy.mysavings.ViewModels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.fredy.mysavings.Feature.Data.Database.Model.TrueRecord
 import com.fredy.mysavings.Feature.Domain.Repository.RecordRepository
+import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.RecordUseCases
 import com.fredy.mysavings.Util.Resource
-import com.fredy.mysavings.Util.map
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -17,10 +16,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-    private val recordRepository: RecordRepository,
+    private val recordUseCases: RecordUseCases,
 ): ViewModel() {
 
-    private val _trueRecordsResource = recordRepository.getAllRecords().stateIn(
+    private val _trueRecordsResource = recordUseCases.getAllRecords().stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(),
         Resource.Success(emptyList())

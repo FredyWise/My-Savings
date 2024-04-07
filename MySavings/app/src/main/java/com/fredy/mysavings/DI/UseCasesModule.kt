@@ -2,29 +2,40 @@ package com.fredy.mysavings.DI
 
 import com.fredy.mysavings.Feature.Domain.Repository.AccountRepository
 import com.fredy.mysavings.Feature.Domain.Repository.AuthRepository
+import com.fredy.mysavings.Feature.Domain.Repository.CSVRepository
 import com.fredy.mysavings.Feature.Domain.Repository.CategoryRepository
 import com.fredy.mysavings.Feature.Domain.Repository.CurrencyRepository
 import com.fredy.mysavings.Feature.Domain.Repository.RecordRepository
 import com.fredy.mysavings.Feature.Domain.Repository.UserRepository
 import com.fredy.mysavings.Feature.Domain.UseCases.AccountUseCases.AccountUseCases
-import com.fredy.mysavings.Feature.Domain.UseCases.AccountUseCases.CategoryUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.AccountUseCases.DeleteAccount
-import com.fredy.mysavings.Feature.Domain.UseCases.AccountUseCases.DeleteCategory
-import com.fredy.mysavings.Feature.Domain.UseCases.AccountUseCases.DeleteUser
 import com.fredy.mysavings.Feature.Domain.UseCases.AccountUseCases.GetAccount
 import com.fredy.mysavings.Feature.Domain.UseCases.AccountUseCases.GetAccounts
 import com.fredy.mysavings.Feature.Domain.UseCases.AccountUseCases.GetAccountsCurrencies
 import com.fredy.mysavings.Feature.Domain.UseCases.AccountUseCases.GetAccountsTotalBalance
-import com.fredy.mysavings.Feature.Domain.UseCases.AccountUseCases.GetAllUsersOrderedByName
-import com.fredy.mysavings.Feature.Domain.UseCases.AccountUseCases.GetCategory
-import com.fredy.mysavings.Feature.Domain.UseCases.AccountUseCases.GetCategoryMapOrderedByName
-import com.fredy.mysavings.Feature.Domain.UseCases.AccountUseCases.GetCurrentUser
-import com.fredy.mysavings.Feature.Domain.UseCases.AccountUseCases.GetUser
-import com.fredy.mysavings.Feature.Domain.UseCases.AccountUseCases.SearchUsers
 import com.fredy.mysavings.Feature.Domain.UseCases.AccountUseCases.UpsertAccount
-import com.fredy.mysavings.Feature.Domain.UseCases.AccountUseCases.UpsertCategory
-import com.fredy.mysavings.Feature.Domain.UseCases.AccountUseCases.UpsertUser
-import com.fredy.mysavings.Feature.Domain.UseCases.AccountUseCases.UserUseCases
+import com.fredy.mysavings.Feature.Domain.UseCases.AuthUseCases.AuthUseCases
+import com.fredy.mysavings.Feature.Domain.UseCases.AuthUseCases.GoogleSignIn
+import com.fredy.mysavings.Feature.Domain.UseCases.AuthUseCases.LoginUser
+import com.fredy.mysavings.Feature.Domain.UseCases.AuthUseCases.RegisterUser
+import com.fredy.mysavings.Feature.Domain.UseCases.AuthUseCases.SendOtp
+import com.fredy.mysavings.Feature.Domain.UseCases.AuthUseCases.SignOut
+import com.fredy.mysavings.Feature.Domain.UseCases.AuthUseCases.UpdateUserInformation
+import com.fredy.mysavings.Feature.Domain.UseCases.AuthUseCases.VerifyPhoneNumber
+import com.fredy.mysavings.Feature.Domain.UseCases.CSVUseCases.CSVUseCases
+import com.fredy.mysavings.Feature.Domain.UseCases.CSVUseCases.GetDBInfo
+import com.fredy.mysavings.Feature.Domain.UseCases.CSVUseCases.InputFromCSV
+import com.fredy.mysavings.Feature.Domain.UseCases.CSVUseCases.OutputToCSV
+import com.fredy.mysavings.Feature.Domain.UseCases.CategoryUseCases.CategoryUseCases
+import com.fredy.mysavings.Feature.Domain.UseCases.CategoryUseCases.DeleteCategory
+import com.fredy.mysavings.Feature.Domain.UseCases.CategoryUseCases.GetCategory
+import com.fredy.mysavings.Feature.Domain.UseCases.CategoryUseCases.GetCategoryMapOrderedByName
+import com.fredy.mysavings.Feature.Domain.UseCases.CategoryUseCases.UpsertCategory
+import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.ConvertCurrencyData
+import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.CurrencyUseCases
+import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.GetCurrencies
+import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.GetCurrencyRates
+import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.UpdateCurrency
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.DeleteRecordItem
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.GetAllRecords
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.GetAllTrueRecordsWithinSpecificTime
@@ -42,6 +53,14 @@ import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.RecordUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.UpdateRecordItemWithDeletedAccount
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.UpdateRecordItemWithDeletedCategory
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.UpsertRecordItem
+import com.fredy.mysavings.Feature.Domain.UseCases.UserUseCases.DeleteUser
+import com.fredy.mysavings.Feature.Domain.UseCases.UserUseCases.GetAllUsersOrderedByName
+import com.fredy.mysavings.Feature.Domain.UseCases.UserUseCases.GetCurrentUser
+import com.fredy.mysavings.Feature.Domain.UseCases.UserUseCases.GetUser
+import com.fredy.mysavings.Feature.Domain.UseCases.UserUseCases.InsertUser
+import com.fredy.mysavings.Feature.Domain.UseCases.UserUseCases.SearchUsers
+import com.fredy.mysavings.Feature.Domain.UseCases.UserUseCases.UpdateUser
+import com.fredy.mysavings.Feature.Domain.UseCases.UserUseCases.UserUseCases
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -55,7 +74,7 @@ object UseCasesModule {
     @Provides
     @Singleton
     fun provideAccountUseCases(
-        currencyRepository: CurrencyRepository,
+        currencyUseCases: CurrencyUseCases,
         accountRepository: AccountRepository,
         authRepository: AuthRepository,
     ): AccountUseCases = AccountUseCases(
@@ -65,7 +84,7 @@ object UseCasesModule {
         getAccountOrderedByName = GetAccounts(accountRepository, authRepository),
         getAccountsTotalBalance = GetAccountsTotalBalance(
             accountRepository,
-            currencyRepository,
+            currencyUseCases,
             authRepository
         ),
         getAccountsCurrencies = GetAccountsCurrencies(accountRepository, authRepository)
@@ -74,36 +93,61 @@ object UseCasesModule {
     @Provides
     @Singleton
     fun provideRecordUseCases(
-        recordRepository: RecordRepository
+        authRepository: AuthRepository,
+        recordRepository: RecordRepository,
+        accountRepository: AccountRepository,
+        categoryRepository: CategoryRepository,
+        currencyUseCases: CurrencyUseCases,
     ): RecordUseCases = RecordUseCases(
-        upsertRecordItem = UpsertRecordItem(recordRepository),
+        upsertRecordItem = UpsertRecordItem(recordRepository, authRepository),
         deleteRecordItem = DeleteRecordItem(recordRepository),
-        updateRecordItemWithDeletedAccount = UpdateRecordItemWithDeletedAccount(recordRepository),
-        updateRecordItemWithDeletedCategory = UpdateRecordItemWithDeletedCategory(recordRepository),
-        getRecordById = GetRecordById(recordRepository),
-        getAllTrueRecordsWithinSpecificTime = GetAllTrueRecordsWithinSpecificTime(recordRepository),
-        getAllRecords = GetAllRecords(recordRepository),
+        updateRecordItemWithDeletedAccount = UpdateRecordItemWithDeletedAccount(
+            recordRepository,
+            authRepository
+        ),
+        updateRecordItemWithDeletedCategory = UpdateRecordItemWithDeletedCategory(
+            recordRepository,
+            authRepository
+        ),
+        getRecordById = GetRecordById(recordRepository, currencyUseCases),
+        getAllTrueRecordsWithinSpecificTime = GetAllTrueRecordsWithinSpecificTime(
+            recordRepository,
+            authRepository
+        ),
+        getAllRecords = GetAllRecords(recordRepository, authRepository),
         getUserCategoryRecordsOrderedByDateTime = GetUserCategoryRecordsOrderedByDateTime(
-            recordRepository
+            recordRepository, authRepository
         ),
         getUserAccountRecordsOrderedByDateTime = GetUserAccountRecordsOrderedByDateTime(
-            recordRepository
+            recordRepository, authRepository
         ),
         getUserTrueRecordMapsFromSpecificTime = GetUserTrueRecordMapsFromSpecificTime(
-            recordRepository
+            recordRepository, authRepository, currencyUseCases
         ),
-        getUserRecordsFromSpecificTime = GetUserRecordsFromSpecificTime(recordRepository),
+        getUserRecordsFromSpecificTime = GetUserRecordsFromSpecificTime(
+            recordRepository,
+            authRepository,
+            currencyUseCases
+        ),
         getUserCategoriesWithAmountFromSpecificTime = GetUserCategoriesWithAmountFromSpecificTime(
-            recordRepository
+            recordRepository, categoryRepository, authRepository, currencyUseCases
         ),
         getUserAccountsWithAmountFromSpecificTime = GetUserAccountsWithAmountFromSpecificTime(
-            recordRepository
+            recordRepository, accountRepository, authRepository, currencyUseCases
         ),
-        getUserTotalAmountByType = GetUserTotalAmountByType(recordRepository),
+        getUserTotalAmountByType = GetUserTotalAmountByType(
+            recordRepository,
+            authRepository,
+            currencyUseCases
+        ),
         getUserTotalAmountByTypeFromSpecificTime = GetUserTotalAmountByTypeFromSpecificTime(
-            recordRepository
+            recordRepository, authRepository, currencyUseCases
         ),
-        getUserTotalRecordBalance = GetUserTotalRecordBalance(recordRepository)
+        getUserTotalRecordBalance = GetUserTotalRecordBalance(
+            recordRepository,
+            authRepository,
+            currencyUseCases
+        )
     )
 
     @Provides
@@ -111,14 +155,14 @@ object UseCasesModule {
     fun provideUserUseCases(
         userRepository: UserRepository
     ): UserUseCases = UserUseCases(
-        upsertUser = UpsertUser(userRepository),
+        insertUser = InsertUser(userRepository),
+        updateUser = UpdateUser(userRepository),
         deleteUser = DeleteUser(userRepository),
         getUser = GetUser(userRepository),
         getCurrentUser = GetCurrentUser(userRepository),
         getAllUsersOrderedByName = GetAllUsersOrderedByName(userRepository),
         searchUsers = SearchUsers(userRepository)
     )
-
 
 
     @Provides
@@ -135,4 +179,41 @@ object UseCasesModule {
             authRepository
         )
     )
+
+    @Provides
+    @Singleton
+    fun provideAuthUseCases(
+        authRepository: AuthRepository,
+    ): AuthUseCases = AuthUseCases(
+        loginUser = LoginUser(authRepository),
+        registerUser = RegisterUser(authRepository),
+        updateUserInformation = UpdateUserInformation(authRepository),
+        googleSignIn = GoogleSignIn(authRepository),
+        sendOtp = SendOtp(authRepository),
+        verifyPhoneNumber = VerifyPhoneNumber(authRepository),
+        signOut = SignOut(authRepository),
+    )
+
+    @Provides
+    @Singleton
+    fun provideCSVUseCases(
+        csvRepository: CSVRepository,
+    ): CSVUseCases = CSVUseCases(
+        outputToCSV = OutputToCSV(csvRepository),
+        inputFromCSV = InputFromCSV(csvRepository),
+        getDBInfo = GetDBInfo(csvRepository)
+    )
+
+    @Provides
+    @Singleton
+    fun provideCurrencyUseCases(
+        authRepository: AuthRepository,
+        currencyRepository: CurrencyRepository,
+    ): CurrencyUseCases = CurrencyUseCases(
+        updateCurrency = UpdateCurrency(currencyRepository),
+        getCurrencyRates = GetCurrencyRates(currencyRepository),
+        convertCurrencyData = ConvertCurrencyData(currencyRepository),
+        getCurrencies = GetCurrencies(currencyRepository, authRepository)
+    )
+
 }

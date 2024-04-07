@@ -7,14 +7,13 @@ import com.fredy.mysavings.Feature.Data.APIs.CurrencyModels.Response.Rates
 import com.fredy.mysavings.Feature.Data.Database.Model.Currency
 import com.fredy.mysavings.Feature.Data.Database.Model.UserData
 import com.fredy.mysavings.Feature.Mappers.changeBase
-import com.fredy.mysavings.Feature.Domain.Repository.CurrencyRepository
-import com.fredy.mysavings.Feature.Domain.Repository.UserRepository
+import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.CurrencyUseCases
+import com.fredy.mysavings.Feature.Domain.UseCases.UserUseCases.UserUseCases
 import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.ViewModels.Event.CurrencyEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -23,13 +22,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CurrencyViewModel @Inject constructor(
-    private val userRepository: UserRepository,
-    private val currencyRepository: CurrencyRepository
+    private val userUseCases: UserUseCases,
+    private val currencyUseCases: CurrencyUseCases
 ) : ViewModel() {
 
     init {
         viewModelScope.launch {
-            userRepository.getCurrentUser().collect { userData ->
+            userUseCases.getCurrentUser().collect { userData ->
                 userData.data?.let { user ->
                     _state.update {
                         it.copy(
@@ -41,7 +40,7 @@ class CurrencyViewModel @Inject constructor(
         }
     }
 
-    private val _currenciesResource = currencyRepository.getCurrencies().stateIn(
+    private val _currenciesResource = currencyUseCases.getCurrencies().stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(),
         Resource.Success(emptyList())
@@ -99,7 +98,7 @@ class CurrencyViewModel @Inject constructor(
                     viewModelScope.launch {
                         val user = _state.value.userData.copy(userCurrency = event.baseCurrency)
                         if (_state.value.userData.userCurrency != event.baseCurrency) {
-                            userRepository.upsertUser(user)
+                            userUseCases.updateUser(user)
                         }
                         _state.update {
                             it.copy(userData = user)
@@ -111,8 +110,8 @@ class CurrencyViewModel @Inject constructor(
                     _state.value.currency?.let {
                         if (_state.value.updatedValue.toDoubleOrNull().isNotNull()) {
                             val updatedValue = _state.value.updatedValue.toDouble()
-                            currencyRepository.updateCurrency(it.copy(value = updatedValue))
-                            _state.update { CurrencyState() }
+                            currencyUseCases.updateCurrency(it.copy(value = updatedValue))
+                            _state.update { it.copy(updatedValue = "") }
                         }
                     }
                 }
@@ -139,20 +138,14 @@ class CurrencyViewModel @Inject constructor(
             if (_state.value.fromValue.toDoubleOrNull()
                     .isNotNull() && _state.value.fromCurrency.isNotEmpty() && _state.value.toCurrency.isNotEmpty()
             ) {
-                currencyRepository.convertCurrency(
+                val result = currencyUseCases.convertCurrencyData(
                     _state.value.fromValue.toDouble(),
                     _state.value.fromCurrency,
                     _state.value.toCurrency
-                ).collectLatest { result ->
-                    when (result) {
-                        is Resource.Error -> {}
-                        is Resource.Loading -> {}
-                        is Resource.Success -> {
-                            _state.update {
-                                it.copy(toValue = result.data!!.amount.toString())
-                            }
-                        }
-                    }
+                )
+
+                _state.update {
+                    it.copy(toValue = result.amount.toString())
                 }
             }
         }

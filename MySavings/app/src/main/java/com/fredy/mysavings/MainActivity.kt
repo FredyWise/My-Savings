@@ -34,7 +34,11 @@ class MainActivity : ComponentActivity() {
             val authViewModel: AuthViewModel = hiltViewModel()
             val setting by viewModel.state.collectAsStateWithLifecycle()
             val state by authViewModel.state.collectAsStateWithLifecycle()
+
             if (setting.updated) {
+                if (!setting.autoLogin) {
+                    authViewModel.onEvent(AuthEvent.SignOut)
+                }
                 MySavingsTheme(state = setting) {
                     val navController = rememberNavController()
                     val startDestination =
@@ -45,13 +49,5 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.e(TAG, "onDestroy: start", )
-        val authViewModel by viewModels<AuthViewModel>()
-        if (!viewModel.state.value.autoLogin){
-            authViewModel.onEvent(AuthEvent.SignOut)
-            Log.e(TAG, "onDestroy: logout success", )
-        }
-    }
+
 }

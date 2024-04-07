@@ -15,8 +15,8 @@ interface CurrencyCacheDao {
     @Delete
     suspend fun deleteCurrencyCache(userData: RatesCache)
 
-    @Query("SELECT * FROM RatesCache WHERE base = :base")
-    suspend fun getCurrencyCache(base: String): RatesCache
+    @Query("SELECT * FROM RatesCache WHERE cacheId = :cacheId")
+    suspend fun getCurrencyCache(cacheId: String): RatesCache
 
 
 }

@@ -22,11 +22,10 @@ interface CategoryRepository {
     suspend fun deleteCategory(category: Category)
     fun getCategory(categoryId: String): Flow<Category>
     fun getUserCategories(userId:String): Flow<List<Category>>
-    fun getCategoryMapOrderedByName(): Flow<Resource<List<CategoryMap>>>
+//    fun getCategoryMapOrderedByName(): Flow<Resource<List<CategoryMap>>>
 }
 
 class CategoryRepositoryImpl @Inject constructor(
-    private val authRepository: AuthRepository,
     private val categoryDataSource: CategoryDataSource,
     private val categoryDao: CategoryDao,
     private val firestore: FirebaseFirestore,
@@ -37,16 +36,10 @@ class CategoryRepositoryImpl @Inject constructor(
 
     override suspend fun upsertCategory(category: Category): String {
         return withContext(Dispatchers.IO) {
-            val currentUserId = authRepository.getCurrentUser()!!.firebaseUserId
             val tempCategory = if (category.categoryId.isEmpty()) {
                 val newCategoryRef = categoryCollection.document()
                 category.copy(
                     categoryId = newCategoryRef.id,
-                    userIdFk = currentUserId
-                )
-            } else if (category.userIdFk.isEmpty()){
-                category.copy(
-                    userIdFk = currentUserId
                 )
             } else{
                 category
@@ -92,30 +85,5 @@ class CategoryRepositoryImpl @Inject constructor(
             }
         }
     }
-
-    override fun getCategoryMapOrderedByName(
-    ): Flow<Resource<List<CategoryMap>>> {
-        return flow {
-            emit(Resource.Loading())
-            val currentUser = authRepository.getCurrentUser()!!
-            val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
-
-            withContext(Dispatchers.IO) {
-                getUserCategories(
-                    userId
-                )
-            }.collect { categories ->
-                val data = categories.toCategoryMaps()
-                emit(Resource.Success(data))
-            }
-        }.catch { e ->
-            Log.i(
-                TAG,
-                "getCategoryMapOrderedByName.Error: $e"
-            )
-            emit(Resource.Error(e.message.toString()))
-        }
-    }
-
 
 }

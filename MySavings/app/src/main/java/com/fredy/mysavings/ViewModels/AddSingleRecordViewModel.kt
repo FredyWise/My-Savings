@@ -9,8 +9,8 @@ import com.fredy.mysavings.Feature.Data.Database.Model.Account
 import com.fredy.mysavings.Feature.Data.Database.Model.Category
 import com.fredy.mysavings.Feature.Data.Database.Model.Record
 import com.fredy.mysavings.Feature.Data.Enum.RecordType
-import com.fredy.mysavings.Feature.Domain.Repository.CurrencyRepository
-import com.fredy.mysavings.Feature.Domain.Repository.RecordRepository
+import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.CurrencyUseCases
+import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.RecordUseCases
 import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.isExpense
 import com.fredy.mysavings.Util.isTransfer
@@ -31,8 +31,8 @@ import kotlin.math.absoluteValue
 
 @HiltViewModel
 class AddSingleRecordViewModel @Inject constructor(
-    private val recordRepository: RecordRepository,
-    private val currencyRepository: CurrencyRepository,
+    private val recordUseCases: RecordUseCases,
+    private val currencyUseCase: CurrencyUseCases,
 ) : ViewModel() {
     var state by mutableStateOf(AddRecordState())
     var calcState by mutableStateOf(CalcState())
@@ -46,7 +46,7 @@ class AddSingleRecordViewModel @Inject constructor(
             is AddRecordEvent.SetId -> {
                 if (event.id != "-1" && state.isFirst) {
                     viewModelScope.launch {
-                        recordRepository.getRecordById(
+                        recordUseCases.getRecordById(
                             event.id
                         ).collectLatest {
                             state = state.copy(
@@ -81,11 +81,11 @@ class AddSingleRecordViewModel @Inject constructor(
                 val record = performRecordCalculation()
                 record?.let {
                     viewModelScope.launch {
-                        recordRepository.upsertRecordItem(
+                        recordUseCases.upsertRecordItem(
                             record
                         )
                     }
-                }?:return
+                } ?: return
 
                 resource.update {
                     Resource.Success("Record Data Successfully Added")
@@ -162,7 +162,7 @@ class AddSingleRecordViewModel @Inject constructor(
 
             is AddRecordEvent.ConvertCurrency -> {
                 viewModelScope.launch {
-                    val balanceItem = currencyRepository.convertCurrencyData(
+                    val balanceItem = currencyUseCase.convertCurrencyData(
                         calcState.number1.toDouble().absoluteValue,
                         state.fromAccount.accountCurrency,
                         state.toAccount.accountCurrency
@@ -179,7 +179,7 @@ class AddSingleRecordViewModel @Inject constructor(
         }
     }
 
-    private fun performRecordCalculation(): Record?{
+    private fun performRecordCalculation(): Record? {
         performCalculation()
         val recordId = state.recordId
         val accountIdFromFk = state.accountIdFromFk
@@ -217,7 +217,10 @@ class AddSingleRecordViewModel @Inject constructor(
             }
             return null
         }
-        if ((state.fromAccount.accountAmount < difference && isExpense(recordType)) || (state.fromAccount.accountAmount < difference && isTransfer(recordType) && fromAccountCurrency == toAccountCurrency)) {
+        if ((state.fromAccount.accountAmount < difference && isExpense(recordType)) || (state.fromAccount.accountAmount < difference && isTransfer(
+                recordType
+            ) && fromAccountCurrency == toAccountCurrency)
+        ) {
             resource.update {
                 Resource.Error(
                     "Account balance is not enough"

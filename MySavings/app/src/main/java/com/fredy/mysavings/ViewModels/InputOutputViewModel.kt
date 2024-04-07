@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fredy.mysavings.Feature.Data.Database.Model.TrueRecord
 import com.fredy.mysavings.Feature.Data.Enum.RecordType
-import com.fredy.mysavings.Feature.Domain.Repository.CSVRepository
-import com.fredy.mysavings.Feature.Domain.Repository.RecordRepository
+import com.fredy.mysavings.Feature.Domain.UseCases.CSVUseCases.CSVUseCases
+import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.RecordUseCases
 import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.formatDateYear
 import com.fredy.mysavings.ViewModels.Event.IOEvent
@@ -24,13 +24,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 class InputOutputViewModel @Inject constructor(
-    private val recordRepository: RecordRepository,
-    private val csvRepository: CSVRepository,
+    private val recordUseCases: RecordUseCases,
+    private val csvUseCases: CSVUseCases,
 ) : ViewModel() {
 
     init {
         viewModelScope.launch {
-            csvRepository.getDBInfoFlow()
+            csvUseCases.getDBInfo()
                 .collectLatest { dbInfo ->
                     _state.update {
                         it.copy(
@@ -46,7 +46,7 @@ class InputOutputViewModel @Inject constructor(
     )
 
     private val _trueRecordsWithinSpecificTime = _state.flatMapLatest { state ->
-        recordRepository.getAllTrueRecordsWithinSpecificTime(state.startDate, state.endDate)
+        recordUseCases.getAllTrueRecordsWithinSpecificTime(state.startDate, state.endDate)
     }.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(),
@@ -93,7 +93,7 @@ class InputOutputViewModel @Inject constructor(
                     }
                     state.value.run {
                         if (exportRecords.isNotEmpty()) {
-                            csvRepository.outputToCSV(
+                            csvUseCases.outputToCSV(
                                 event.uri,
                                 formatDateYear(startDate.toLocalDate()) + "- " + formatDateYear(
                                     endDate.toLocalDate()
@@ -105,7 +105,7 @@ class InputOutputViewModel @Inject constructor(
                 }
 
                 is IOEvent.OnImport -> {
-                    val importRecords = csvRepository.inputFromCSV(
+                    val importRecords = csvUseCases.inputFromCSV(
                         event.uri.path,
                     )
                     if (importRecords.isNotEmpty()) {
@@ -139,7 +139,7 @@ class InputOutputViewModel @Inject constructor(
 
                 IOEvent.OnAfterClickedImport -> {
                     _state.value.importRecords.forEach {
-                        recordRepository.upsertRecordItem(it.record)
+                        recordUseCases.upsertRecordItem(it.record)
                     }
                 }
             }

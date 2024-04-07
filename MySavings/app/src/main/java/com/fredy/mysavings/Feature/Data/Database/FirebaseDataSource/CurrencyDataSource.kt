@@ -52,7 +52,7 @@ class CurrencyDataSourceImpl @Inject constructor(
     override suspend fun getCurrencyByCode(code: String,userId:String): Currency {
         return try {
             currencyCollection.whereEqualTo("code", code).whereEqualTo(
-                "userIdFk", userId
+                "userId", userId
             ).get().await().toObjects<Currency>().firstOrNull()?: throw Exception(
                 "Currency Not Found"
             )
@@ -66,7 +66,7 @@ class CurrencyDataSourceImpl @Inject constructor(
         return withContext(Dispatchers.IO) {
             try {
                 currencyCollection.whereEqualTo(
-                    "userIdFk", userId
+                    "userId", userId
                 ).snapshots().map { it.toObjects() }
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to get currencies: ${e.message}")

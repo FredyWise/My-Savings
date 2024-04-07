@@ -150,18 +150,6 @@ class AuthRepositoryImpl @Inject constructor(
                                     }
                                 }
                         }
-//                        if (email.isNotEmpty() && email != user.email) {
-//                            user.verifyBeforeUpdateEmail(email)
-//                                .addOnCompleteListener { emailUpdateTask ->
-//                                    if (emailUpdateTask.isSuccessful) {
-//                                        Log.i(TAG, "Email address updated successfully")
-//                                        successMessage.add("Email")
-//                                    } else {
-//                                        Log.e(TAG, "Error updating email address")
-//                                        errorMessage.add("Updating Email")
-//                                    }
-//                                }
-//                        }
                     } else {
                         Log.e(TAG, "Re-authentication failed")
                         errorMessage.add(": Re-authentication failed")

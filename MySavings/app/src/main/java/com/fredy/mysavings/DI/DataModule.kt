@@ -14,12 +14,14 @@ import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.AccountDataS
 import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.AccountDataSourceImpl
 import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.CategoryDataSource
 import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.CategoryDataSourceImpl
-import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.CurrencyCacheDataSource
-import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.CurrencyCacheDataSourceImpl
+import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.CurrencyRatesDataSource
+import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.CurrencyRatesDataSourceImpl
 import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.CurrencyDataSource
 import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.CurrencyDataSourceImpl
 import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.RecordDataSource
 import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.RecordDataSourceImpl
+import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.UserDataSource
+import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.UserDataSourceImpl
 import com.fredy.mysavings.Feature.Data.Database.SavingsDatabase
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
@@ -87,13 +89,17 @@ object DataModule {
 
     @Provides
     @Singleton
-    fun provideCurrencyCacheDataSource(firestore: FirebaseFirestore): CurrencyCacheDataSource =
-        CurrencyCacheDataSourceImpl(firestore)
+    fun provideCurrencyCacheDataSource(firestore: FirebaseFirestore): CurrencyRatesDataSource =
+        CurrencyRatesDataSourceImpl(firestore)
 
     @Provides
     @Singleton
     fun provideCurrencyDataSource(firestore: FirebaseFirestore): CurrencyDataSource =
         CurrencyDataSourceImpl(firestore)
+    @Provides
+    @Singleton
+    fun provideUserDataSource(firestore: FirebaseFirestore): UserDataSource =
+        UserDataSourceImpl(firestore)
 
     @Provides
     @Singleton

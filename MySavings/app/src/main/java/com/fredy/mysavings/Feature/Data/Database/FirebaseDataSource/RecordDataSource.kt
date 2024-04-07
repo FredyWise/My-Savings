@@ -54,7 +54,7 @@ interface RecordDataSource {
     ): Flow<List<TrueRecord>>
 
 
-    suspend fun getUserFlowOfRecords(
+    suspend fun getUserRecordsFlow(
         userId: String
     ): Flow<List<Record>>
 
@@ -74,13 +74,7 @@ interface RecordDataSource {
 
     suspend fun getUserRecordsByTypeFromSpecificTime(
         userId: String,
-        recordType: RecordType,
-        startDate: LocalDateTime,
-        endDate: LocalDateTime
-    ): Flow<List<Record>>
-
-    suspend fun getUserRecordsByTypeNotEqualTransferFromSpecificTime(
-        userId: String,
+        recordTypes: List<RecordType>,
         startDate: LocalDateTime,
         endDate: LocalDateTime
     ): Flow<List<Record>>
@@ -286,7 +280,7 @@ class RecordDataSourceImpl @Inject constructor(
         }
     }
 
-    override suspend fun getUserFlowOfRecords(
+    override suspend fun getUserRecordsFlow(
         userId: String
     ): Flow<List<Record>> {
         return withContext(Dispatchers.IO) {
@@ -364,7 +358,7 @@ class RecordDataSourceImpl @Inject constructor(
 
     override suspend fun getUserRecordsByTypeFromSpecificTime(
         userId: String,
-        recordType: RecordType,
+        recordTypes: List<RecordType>,
         startDate: LocalDateTime,
         endDate: LocalDateTime
     ): Flow<List<Record>> {
@@ -372,66 +366,26 @@ class RecordDataSourceImpl @Inject constructor(
             try {
                 recordCollection.whereGreaterThanOrEqualTo(
                     "recordTimestamp",
-                    TimestampConverter.fromDateTime(
-                        startDate
-                    )
+                    TimestampConverter.fromDateTime(startDate)
                 ).whereLessThanOrEqualTo(
                     "recordTimestamp",
-                    TimestampConverter.fromDateTime(
-                        endDate
-                    )
+                    TimestampConverter.fromDateTime(endDate)
                 ).whereEqualTo(
                     "userIdFk", userId
-                ).whereEqualTo(
-                    "recordType", recordType
+                ).whereIn(
+                    "recordType", recordTypes
                 ).orderBy(
                     "recordTimestamp",
                     Query.Direction.DESCENDING
                 ).snapshots().map { it.toObjects() }
             } catch (e: Exception) {
-                Log.e(
-                    TAG,
-                    "getUserRecordsByTypeFromSpecificTime.Error: ${e.message}"
-                )
+                Log.e(TAG, "getUserRecordsByTypeFromSpecificTime.Error: ${e.message}")
                 throw e
             }
         }
     }
 
-    override suspend fun getUserRecordsByTypeNotEqualTransferFromSpecificTime(
-        userId: String,
-        startDate: LocalDateTime,
-        endDate: LocalDateTime
-    ): Flow<List<Record>> {
-        return withContext(Dispatchers.IO) {
-            try {
-                recordCollection.whereGreaterThanOrEqualTo(
-                    "recordTimestamp",
-                    TimestampConverter.fromDateTime(
-                        startDate
-                    )
-                ).whereLessThanOrEqualTo(
-                    "recordTimestamp",
-                    TimestampConverter.fromDateTime(
-                        endDate
-                    )
-                ).whereEqualTo(
-                    "userIdFk", userId
-                ).whereIn(
-                    "recordType", listOf(RecordType.Expense, RecordType.Income)
-                ).orderBy(
-                    "recordTimestamp",
-                    Query.Direction.DESCENDING
-                ).snapshots().map { it.toObjects() }
-            } catch (e: Exception) {
-                Log.e(
-                    TAG,
-                    "getUserRecordsByTypeFromSpecificTime.Error: ${e.message}"
-                )
-                throw e
-            }
-        }
-    }
+
 
     private val _records = MutableLiveData<List<Record>>()
     private val _accounts = MutableLiveData<List<Account>>()

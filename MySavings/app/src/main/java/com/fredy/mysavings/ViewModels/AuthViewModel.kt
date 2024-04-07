@@ -15,7 +15,7 @@ import com.fredy.mysavings.Feature.Data.Database.Model.UserData
 import com.fredy.mysavings.Feature.Data.Enum.AuthMethod
 import com.fredy.mysavings.Feature.Domain.Repository.AuthRepository
 import com.fredy.mysavings.Feature.Domain.Repository.SettingsRepository
-import com.fredy.mysavings.Feature.Domain.Repository.UserRepository
+import com.fredy.mysavings.Feature.Domain.UseCases.UserUseCases.UserUseCases
 import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.TAG
 import com.fredy.mysavings.ViewModels.Event.AuthEvent
@@ -35,9 +35,9 @@ import javax.inject.Inject
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val repository: AuthRepository,
+    private val authUseCases: AuthRepository,
     private val settingsRepository: SettingsRepository,
-    private val userRepository: UserRepository,
+    private val userUseCases: UserUseCases,
     private val currentUserData: UserData?,
 ) : ViewModel() {
 
@@ -61,7 +61,7 @@ class AuthViewModel @Inject constructor(
         when (event) {
             is AuthEvent.GoogleAuth -> {
                 viewModelScope.launch {
-                    repository.googleSignIn(event.credential).collect { result ->
+                    authUseCases.googleSignIn(event.credential).collect { result ->
                         if (result is Resource.Success) {
                             insertUser(result)
                             _state.update {
@@ -80,7 +80,7 @@ class AuthViewModel @Inject constructor(
 
             is AuthEvent.SendOtp -> {
                 viewModelScope.launch {
-                    repository.sendOtp(
+                    authUseCases.sendOtp(
                         event.context,
                         event.phoneNumber
                     ).collect { result ->
@@ -107,7 +107,7 @@ class AuthViewModel @Inject constructor(
 
             is AuthEvent.VerifyPhoneNumber -> {
                 viewModelScope.launch {
-                    repository.verifyPhoneNumber(
+                    authUseCases.verifyPhoneNumber(
                         event.context,
                         storedVerificationId.value,
                         event.code
@@ -130,7 +130,7 @@ class AuthViewModel @Inject constructor(
 
             is AuthEvent.LoginUser -> {
                 viewModelScope.launch {
-                    repository.loginUser(
+                    authUseCases.loginUser(
                         event.email,
                         event.password
                     ).collect { result ->
@@ -146,7 +146,7 @@ class AuthViewModel @Inject constructor(
 
             is AuthEvent.RegisterUser -> {
                 viewModelScope.launch {
-                    repository.registerUser(
+                    authUseCases.registerUser(
                         event.email,
                         event.password
                     ).collect { result ->
@@ -179,10 +179,9 @@ class AuthViewModel @Inject constructor(
                         } else {
                             profilePictureUrl
                         }
-                        repository.updateUserInformation(
+                        authUseCases.updateUserInformation(
                             profilePictureUrl?.toUri(),
                             event.username,
-//                            event.email,
                             event.oldPassword,
                             event.password
                         ).collectLatest { updateResource ->
@@ -195,7 +194,7 @@ class AuthViewModel @Inject constructor(
                                         userCurrency = userCurrency,
                                         profilePictureUrl = profilePictureUrl
                                     )
-                                    userRepository.upsertUser(user)
+                                    userUseCases.updateUser(user)
                                 }
 
                                 else -> {
@@ -211,7 +210,7 @@ class AuthViewModel @Inject constructor(
 
             AuthEvent.GetCurrentUser -> {
                 viewModelScope.launch {
-                    userRepository.getCurrentUser().collectLatest { currentUser ->
+                    userUseCases.getCurrentUser().collectLatest { currentUser ->
                         when (currentUser) {
                             is Resource.Success -> {
                                 currentUser.data?.let { user ->
@@ -236,7 +235,7 @@ class AuthViewModel @Inject constructor(
                     AuthState()
                 }
                 viewModelScope.launch {
-                    repository.signOut()
+                    authUseCases.signOut()
                 }
             }
 
@@ -315,7 +314,7 @@ class AuthViewModel @Inject constructor(
         photoUri: Uri = Uri.EMPTY
     ) {
         val user = result.data!!.user
-        val userData = user?.run {
+        user?.run {
             val profilePictureUrl = if (photoUri != Uri.EMPTY) {
                 uploadProfilePicture(
                     uid, photoUri
@@ -323,16 +322,16 @@ class AuthViewModel @Inject constructor(
             } else {
                 photoUrl.toString()
             }
-            UserData(
-                firebaseUserId = uid,
-                username = displayName,
-                emailOrPhone = email ?: phoneNumber,
-                profilePictureUrl = profilePictureUrl
+            userUseCases.insertUser(
+                UserData(
+                    firebaseUserId = uid,
+                    username = displayName,
+                    emailOrPhone = email ?: phoneNumber,
+                    profilePictureUrl = profilePictureUrl
+                )
             )
         }
-        userRepository.upsertUser(
-            userData!!
-        )
+
     }
 
     private suspend fun uploadProfilePicture(

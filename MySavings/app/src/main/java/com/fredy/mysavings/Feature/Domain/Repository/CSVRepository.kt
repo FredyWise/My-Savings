@@ -34,7 +34,7 @@ interface CSVRepository {
         delimiter: String = ","
     ): List<TrueRecord>
 
-    suspend fun getDBInfoFlow(): Flow<DBInfo>
+    suspend fun getDBInfo(): Flow<DBInfo>
 }
 
 class CSVRepositoryImpl(
@@ -83,7 +83,7 @@ class CSVRepositoryImpl(
         }
     }
 
-    override suspend fun getDBInfoFlow(): Flow<DBInfo> = flow {
+    override suspend fun getDBInfo(): Flow<DBInfo> = flow {
         val currentUserId = authRepository.getCurrentUser()!!.firebaseUserId
         val sumOfRecord = recordDataSource.getUserRecords(currentUserId)
         val sumOfAccount = recordDataSource.getUserAccounts(currentUserId).size

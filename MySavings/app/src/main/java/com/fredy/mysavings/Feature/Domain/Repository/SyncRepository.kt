@@ -48,7 +48,7 @@ class SyncRepositoryImpl @Inject constructor(
             val currentUser = firebaseAuth.currentUser
             currentUser?.let {
                 val userId = if (currentUser.isNotNull()) currentUser.uid else ""
-                val records = recordDataSource.getUserFlowOfRecords(userId).first()
+                val records = recordDataSource.getUserRecords(userId)
                 if (withDelete) {
                     recordDao.deleteAllRecords()
                 }

@@ -24,15 +24,13 @@ interface AccountRepository {
     suspend fun deleteAccount(account: Account)
     fun getAccount(accountId: String): Flow<Account>
     fun getUserAccounts(userId: String): Flow<List<Account>>
-    fun getAccountOrderedByName(): Flow<Resource<List<Account>>>
-    fun getAccountTotalBalance(): Flow<BalanceItem>
-    fun getAvailableCurrency(): Flow<List<String>>
+//    fun getAccountOrderedByName(): Flow<Resource<List<Account>>>
+//    fun getAccountTotalBalance(): Flow<BalanceItem>
+//    fun getAccountsCurrency(): Flow<List<String>>
 }
 
 
 class AccountRepositoryImpl @Inject constructor(
-    private val currencyRepository: CurrencyRepository,
-    private val authRepository: AuthRepository,
     private val accountDataSource: AccountDataSource,
     private val accountDao: AccountDao,
     private val firestore: FirebaseFirestore,
@@ -43,16 +41,10 @@ class AccountRepositoryImpl @Inject constructor(
 
     override suspend fun upsertAccount(account: Account):String {
         return withContext(Dispatchers.IO) {
-            val currentUserId = authRepository.getCurrentUser()!!.firebaseUserId
             val tempAccount = if (account.accountId.isEmpty()) {
                 val newAccountRef = accountCollection.document()
                 account.copy(
                     accountId = newAccountRef.id,
-                    userIdFk = currentUserId
-                )
-            } else if (account.userIdFk.isEmpty()){
-                account.copy(
-                    userIdFk = currentUserId
                 )
             } else{
                 account
@@ -97,87 +89,4 @@ class AccountRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getAccountOrderedByName(): Flow<Resource<List<Account>>> {
-        return flow {
-            emit(Resource.Loading())
-            val currentUser = authRepository.getCurrentUser()!!
-            val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
-            withContext(Dispatchers.IO) {
-                getUserAccounts(
-                    userId
-                ).map { accounts -> accounts.filter { it.accountName != deletedAccount.accountName } }
-            }.collect { data ->
-                emit(Resource.Success(data))
-            }
-        }.catch { e ->
-            Log.i(
-                TAG,
-                "getUserAccountOrderedByName.Error: $e"
-            )
-            emit(Resource.Error(e.message.toString()))
-        }
-    }
-
-    override fun getAccountTotalBalance(): Flow<BalanceItem> {
-        return flow {
-            val currentUser = authRepository.getCurrentUser()!!
-            val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
-            val userCurrency = currentUser.userCurrency
-
-            Log.i(
-                TAG,
-                "getUserAccountTotalBalance: $currentUser"
-            )
-            withContext(Dispatchers.IO) {
-                getUserAccounts(
-                    userId
-                )
-            }.collect { accounts ->
-                val totalAccountBalance = accounts.getTotalAccountBalance(userCurrency)
-                val data = BalanceItem(
-                    "Total Balance",
-                    totalAccountBalance,
-                    userCurrency
-                )
-                Log.i(
-                    TAG,
-                    "getUserAccountTotalBalance.data: $data"
-                )
-                emit(data)
-            }
-        }
-    }
-
-    override fun getAvailableCurrency(): Flow<List<String>> {
-        return flow {
-            val currentUser = authRepository.getCurrentUser()!!
-            val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
-
-            withContext(Dispatchers.IO) {
-                getUserAccounts(
-                    userId
-                ).map { it.getCurrencies() }
-            }.collect { data ->
-                emit(data)
-            }
-        }
-    }
-
-    private suspend fun currencyConverter(
-        amount: Double, from: String, to: String
-    ): Double {
-        return currencyRepository.convertCurrencyData(
-            amount, from, to
-        ).amount
-    }
-
-    private suspend fun List<Account>.getTotalAccountBalance(userCurrency: String): Double {
-        return this.sumOf { account ->
-            currencyConverter(
-                account.accountAmount,
-                account.accountCurrency,
-                userCurrency
-            )
-        }
-    }
 }

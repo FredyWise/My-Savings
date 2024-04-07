@@ -3,8 +3,7 @@ package com.fredy.mysavings.Feature.Data.Database
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.fredy.mysavings.Feature.Data.Database.Converter.CurrencyInfoResponseConverter
-import com.fredy.mysavings.Feature.Data.Database.Converter.CurrencyRatesConverter
+import com.fredy.mysavings.Feature.Data.Database.Converter.CurrencyRatesDoubleConverter
 import com.fredy.mysavings.Feature.Data.Database.Converter.CurrencyResponseConverter
 import com.fredy.mysavings.Feature.Data.Database.Converter.DateTimeConverter
 import com.fredy.mysavings.Feature.Data.Database.Converter.TimestampConverter
@@ -21,7 +20,7 @@ import com.fredy.mysavings.Feature.Data.Database.Model.RatesCache
 import com.fredy.mysavings.Feature.Data.Database.Model.Record
 import com.fredy.mysavings.Feature.Data.Database.Model.UserData
 
-@TypeConverters(value = [DateTimeConverter::class, TimestampConverter::class, CurrencyRatesConverter::class, CurrencyResponseConverter::class, CurrencyInfoResponseConverter::class])
+@TypeConverters(value = [DateTimeConverter::class, TimestampConverter::class, CurrencyRatesDoubleConverter::class, CurrencyResponseConverter::class])
 @Database(
     entities = [Record::class, Account::class, Category::class, UserData::class, RatesCache::class, Currency::class],
     version = 1,
