@@ -58,15 +58,13 @@ interface RecordRepository {
         endDate: LocalDateTime
     ): Flow<List<Record>>
 
-    suspend fun getUserRecords(userId: String): List<Record>
+    suspend fun getUserRecords(userId: String): Flow<List<Record>>
 
-    suspend fun getUserRecordsBytype(userId: String, recordType: RecordType): Flow<List<Record>>
+    suspend fun getUserRecordsByType(userId: String, recordType: RecordType): Flow<List<Record>>
 
 }
 
 class RecordRepositoryImpl @Inject constructor(
-    private val currencyUseCases: CurrencyRepository,
-    private val authRepository: AuthRepository,
     private val recordDataSource: RecordDataSource,
     private val recordDao: RecordDao,
     private val firestore: FirebaseFirestore,
@@ -114,9 +112,9 @@ class RecordRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getUserRecords(userId: String): List<Record> {
+    override suspend fun getUserRecords(userId: String): Flow<List<Record>> {
         return withContext(Dispatchers.IO) {
-            recordDataSource.getUserRecords(userId)
+            recordDataSource.getUserRecordsFlow(userId)
         }
     }
 
@@ -204,7 +202,7 @@ class RecordRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getUserRecordsBytype(
+    override suspend fun getUserRecordsByType(
         userId: String,
         recordType: RecordType,
     ): Flow<List<Record>> {

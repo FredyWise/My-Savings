@@ -2,6 +2,7 @@ package com.fredy.mysavings.ViewModels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.fredy.mysavings.Feature.Data.Database.Model.Record
 import com.fredy.mysavings.Feature.Data.Database.Model.TrueRecord
 import com.fredy.mysavings.Feature.Data.Enum.RecordType
 import com.fredy.mysavings.Feature.Domain.UseCases.CSVUseCases.CSVUseCases
@@ -146,13 +147,13 @@ class InputOutputViewModel @Inject constructor(
         }
     }
 
-    private fun calculateDBInfo(records: List<TrueRecord>): DBInfo {
-        val sumOfRecords: Int = records.size
-        val sumOfAccounts: Int = countUniqueAccounts(records)
-        val sumOfCategories: Int = countUniqueCategories(records)
-        val sumOfExpense: Int = countRecordsByType(records, RecordType.Expense)
-        val sumOfIncome: Int = countRecordsByType(records, RecordType.Income)
-        val sumOfTransfer: Int = countRecordsByType(records, RecordType.Transfer)
+    private fun calculateDBInfo(trueRecords: List<TrueRecord>): DBInfo {
+        val sumOfRecords: Int = trueRecords.size
+        val sumOfAccounts: Int = countUniqueAccounts(trueRecords)
+        val sumOfCategories: Int = countUniqueCategories(trueRecords)
+        val sumOfExpense: Int = countRecordsByType(trueRecords, RecordType.Expense)
+        val sumOfIncome: Int = countRecordsByType(trueRecords, RecordType.Income)
+        val sumOfTransfer: Int = countRecordsByType(trueRecords, RecordType.Transfer)
         return DBInfo(
             sumOfRecords = sumOfRecords,
             sumOfAccounts = sumOfAccounts,
@@ -164,11 +165,11 @@ class InputOutputViewModel @Inject constructor(
     }
 
     private fun countRecordsByType(trueRecords: List<TrueRecord>, recordType: RecordType): Int {
-        val uniqueRecordType = mutableSetOf<String>()
+        val uniqueRecordType = mutableSetOf<Record>()
 
         for (trueRecord in trueRecords) {
             if (trueRecord.record.recordType == recordType) {
-                uniqueRecordType.add(trueRecord.record.recordId)
+                uniqueRecordType.add(trueRecord.record)
             }
         }
 

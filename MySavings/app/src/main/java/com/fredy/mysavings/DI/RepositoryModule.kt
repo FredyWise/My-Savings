@@ -87,14 +87,10 @@ object RepositoryModule {
     @Provides
     @Singleton
     fun provideRecordRepository(
-        currencyRepository: CurrencyRepository,
         recordDataSource: RecordDataSource,
-        authRepository: AuthRepository,
         recordDao: RecordDao,
         firestore: FirebaseFirestore,
     ): RecordRepository = RecordRepositoryImpl(
-        currencyRepository,
-        authRepository,
         recordDataSource,
         recordDao,
         firestore,
@@ -144,12 +140,11 @@ object RepositoryModule {
     @Singleton
     fun provideCSVRepository(
         csvDao: CSVDao,
-        authRepository: AuthRepository,
         accountRepository: AccountRepository,
         recordDataSource: RecordDataSource,
         categoryRepository: CategoryRepository
     ): CSVRepository = CSVRepositoryImpl(
-        csvDao, authRepository, accountRepository, recordDataSource, categoryRepository
+        csvDao, accountRepository, recordDataSource, categoryRepository
     )
 
     @Provides

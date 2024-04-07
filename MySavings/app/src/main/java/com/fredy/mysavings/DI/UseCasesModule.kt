@@ -198,10 +198,14 @@ object UseCasesModule {
     @Singleton
     fun provideCSVUseCases(
         csvRepository: CSVRepository,
+        authRepository: AuthRepository,
+        recordRepository: RecordRepository,
+        accountRepository: AccountRepository,
+        categoryRepository: CategoryRepository,
     ): CSVUseCases = CSVUseCases(
         outputToCSV = OutputToCSV(csvRepository),
-        inputFromCSV = InputFromCSV(csvRepository),
-        getDBInfo = GetDBInfo(csvRepository)
+        inputFromCSV = InputFromCSV(csvRepository,authRepository),
+        getDBInfo = GetDBInfo(authRepository, recordRepository, accountRepository, categoryRepository)
     )
 
     @Provides

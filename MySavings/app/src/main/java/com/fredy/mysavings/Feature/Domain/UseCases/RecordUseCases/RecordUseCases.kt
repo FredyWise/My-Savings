@@ -33,6 +33,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
@@ -96,7 +97,7 @@ class UpdateRecordItemWithDeletedAccount(
         withContext(Dispatchers.IO) {
             val currentUser = authRepository.getCurrentUser()!!
             val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
-            val records = recordRepository.getUserRecords(userId)
+            val records = recordRepository.getUserRecords(userId).last()
             val tempRecords = records.filter {
                 it.accountIdFromFk == account.accountId || it.accountIdToFk == account.accountId
             }.map {
@@ -122,7 +123,7 @@ class UpdateRecordItemWithDeletedCategory(
         withContext(Dispatchers.IO) {
             val currentUser = authRepository.getCurrentUser()!!
             val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
-            val records = recordRepository.getUserRecords(userId)
+            val records = recordRepository.getUserRecords(userId).last()
             val tempRecords = records.filter {
                 it.categoryIdFk == category.categoryId
             }.map {
@@ -713,7 +714,7 @@ class GetUserTotalAmountByType(
 
                 )
             val records = withContext(Dispatchers.IO) {
-                recordRepository.getUserRecordsBytype(
+                recordRepository.getUserRecordsByType(
                     userId, recordType
                 ).map { it.getTotalRecordBalance(currencyUseCases, userCurrency) }
             }

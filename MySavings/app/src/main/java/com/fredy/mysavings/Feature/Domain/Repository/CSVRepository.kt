@@ -30,16 +30,14 @@ interface CSVRepository {
     )
 
     suspend fun inputFromCSV(
+        currentUserId: String,
         directory: String,
         delimiter: String = ","
     ): List<TrueRecord>
-
-    suspend fun getDBInfo(): Flow<DBInfo>
 }
 
 class CSVRepositoryImpl(
     private val csvDao: CSVDao,
-    private val authRepository: AuthRepository,
     private val accountRepository: AccountRepository,
     private val recordDataSource: RecordDataSource,
     private val categoryRepository: CategoryRepository,
@@ -57,13 +55,12 @@ class CSVRepositoryImpl(
     }
 
     override suspend fun inputFromCSV(
+        currentUserId:String,
         directory: String,
         delimiter: String
     ): List<TrueRecord> {
         return withContext(Dispatchers.IO) {
             val trueRecords = csvDao.inputFromCSV(directory, delimiter)
-            Log.e(TAG, "inputFromCSVRepo: $trueRecords")
-            val currentUserId = authRepository.getCurrentUser()!!.firebaseUserId
             val trueRecord = trueRecords.map {
                 Log.e(TAG, "inputFromCSVRepo: $it")
                 val accountIdFromFk = findAccountId(it.fromAccount, currentUserId)
@@ -83,26 +80,6 @@ class CSVRepositoryImpl(
         }
     }
 
-    override suspend fun getDBInfo(): Flow<DBInfo> = flow {
-        val currentUserId = authRepository.getCurrentUser()!!.firebaseUserId
-        val sumOfRecord = recordDataSource.getUserRecords(currentUserId)
-        val sumOfAccount = recordDataSource.getUserAccounts(currentUserId).size
-        val sumOfCategory = recordDataSource.getUserCategories(currentUserId).size
-        val sumOfExpense = sumOfRecord.sumOf { (if (isExpense(it.recordType)) 1 else 0).toInt() }
-        val sumOfIncome = sumOfRecord.sumOf { (if (isIncome(it.recordType)) 1 else 0).toInt() }
-        val sumOfTransfer = sumOfRecord.sumOf { (if (isTransfer(it.recordType)) 1 else 0).toInt() }
-
-        emit(
-            DBInfo(
-                sumOfRecords = sumOfRecord.size,
-                sumOfAccounts = sumOfAccount,
-                sumOfCategories = sumOfCategory,
-                sumOfExpense = sumOfExpense,
-                sumOfIncome = sumOfIncome,
-                sumOfTransfer = sumOfTransfer
-            )
-        )
-    }
 
 
     private fun TrueRecord.constructRecordsWithIds(
