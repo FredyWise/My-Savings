@@ -20,7 +20,7 @@ import com.fredy.mysavings.Feature.Mappers.getRateForCurrency
 import com.fredy.mysavings.Feature.Mappers.toCurrencyInfoItems
 import com.fredy.mysavings.Feature.Mappers.toRatesCache
 import com.fredy.mysavings.Util.BalanceItem
-import com.fredy.mysavings.Util.TAG
+import com.fredy.mysavings.Util.DefaultData.TAG
 import com.fredy.mysavings.Util.isCacheValid
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -179,8 +179,6 @@ class CurrencyRepositoryImpl @Inject constructor(
         currencyDao.upsertAllCurrencies(currencies)
         currencyDataSource.upsertAllCurrencyItem(currencies)
     }
-
-
 
 }
 

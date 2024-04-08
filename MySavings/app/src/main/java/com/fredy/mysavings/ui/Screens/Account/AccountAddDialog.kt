@@ -16,7 +16,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.fredy.mysavings.Util.accountIcons
+import com.fredy.mysavings.Util.DefaultData.accountIcons
 import com.fredy.mysavings.ViewModels.AccountState
 import com.fredy.mysavings.ViewModels.Event.AccountEvent
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.ChooseIcon

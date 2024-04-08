@@ -8,9 +8,9 @@ import com.fredy.mysavings.Feature.Data.Database.Model.Account
 import com.fredy.mysavings.Feature.Data.Database.Model.Category
 import com.fredy.mysavings.Feature.Data.Database.Model.Record
 import com.fredy.mysavings.Feature.Data.Database.Model.TrueRecord
-import com.fredy.mysavings.Util.TAG
-import com.fredy.mysavings.Util.deletedAccount
-import com.fredy.mysavings.Util.deletedCategory
+import com.fredy.mysavings.Util.DefaultData.TAG
+import com.fredy.mysavings.Util.DefaultData.deletedAccount
+import com.fredy.mysavings.Util.DefaultData.deletedCategory
 import com.fredy.mysavings.Util.isExpense
 import com.fredy.mysavings.Util.isIncome
 import com.fredy.mysavings.Util.isTransfer

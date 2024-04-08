@@ -17,7 +17,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.Feature.Data.Enum.RecordType
 import com.fredy.mysavings.Util.ActionWithName
-import com.fredy.mysavings.Util.categoryIcons
+import com.fredy.mysavings.Util.DefaultData.categoryIcons
 import com.fredy.mysavings.ViewModels.CategoryState
 import com.fredy.mysavings.ViewModels.Event.CategoryEvent
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.ChooseIcon

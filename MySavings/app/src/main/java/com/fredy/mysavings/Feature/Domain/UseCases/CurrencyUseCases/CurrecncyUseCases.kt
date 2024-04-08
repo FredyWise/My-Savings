@@ -13,7 +13,7 @@ import com.fredy.mysavings.Feature.Mappers.toCurrency
 import com.fredy.mysavings.Feature.Mappers.updateRatesUsingCode
 import com.fredy.mysavings.Util.BalanceItem
 import com.fredy.mysavings.Util.Resource
-import com.fredy.mysavings.Util.TAG
+import com.fredy.mysavings.Util.DefaultData.TAG
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch

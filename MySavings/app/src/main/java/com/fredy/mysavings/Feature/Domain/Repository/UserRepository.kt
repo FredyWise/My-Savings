@@ -5,7 +5,7 @@ import com.fredy.mysavings.Feature.Data.Database.Dao.UserDao
 import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.UserDataSource
 import com.fredy.mysavings.Feature.Data.Database.Model.UserData
 import com.fredy.mysavings.Util.Resource
-import com.fredy.mysavings.Util.TAG
+import com.fredy.mysavings.Util.DefaultData.TAG
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers

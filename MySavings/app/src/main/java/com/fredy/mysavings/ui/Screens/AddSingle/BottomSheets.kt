@@ -37,7 +37,7 @@ import com.fredy.mysavings.R
 import com.fredy.mysavings.Util.BalanceColor
 import com.fredy.mysavings.Util.formatBalanceAmount
 import com.fredy.mysavings.Util.isTransfer
-import com.fredy.mysavings.Util.savingsIcons
+import com.fredy.mysavings.Util.DefaultData.savingsIcons
 import com.fredy.mysavings.ViewModels.AccountState
 import com.fredy.mysavings.ViewModels.CategoryMap
 import com.fredy.mysavings.ViewModels.CategoryState

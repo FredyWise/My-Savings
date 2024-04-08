@@ -8,8 +8,8 @@ import com.fredy.mysavings.Feature.Data.Database.Model.Account
 import com.fredy.mysavings.Feature.Mappers.getCurrencies
 import com.fredy.mysavings.Util.BalanceItem
 import com.fredy.mysavings.Util.Resource
-import com.fredy.mysavings.Util.TAG
-import com.fredy.mysavings.Util.deletedAccount
+import com.fredy.mysavings.Util.DefaultData.TAG
+import com.fredy.mysavings.Util.DefaultData.deletedAccount
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -24,9 +24,6 @@ interface AccountRepository {
     suspend fun deleteAccount(account: Account)
     fun getAccount(accountId: String): Flow<Account>
     fun getUserAccounts(userId: String): Flow<List<Account>>
-//    fun getAccountOrderedByName(): Flow<Resource<List<Account>>>
-//    fun getAccountTotalBalance(): Flow<BalanceItem>
-//    fun getAccountsCurrency(): Flow<List<String>>
 }
 
 

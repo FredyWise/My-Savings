@@ -2,7 +2,7 @@ package com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource
 
 import android.util.Log
 import com.fredy.mysavings.Feature.Data.Database.Model.Currency
-import com.fredy.mysavings.Util.TAG
+import com.fredy.mysavings.Util.DefaultData.TAG
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.snapshots
 import com.google.firebase.firestore.toObjects
@@ -52,7 +52,7 @@ class CurrencyDataSourceImpl @Inject constructor(
     override suspend fun getCurrencyByCode(code: String,userId:String): Currency {
         return try {
             currencyCollection.whereEqualTo("code", code).whereEqualTo(
-                "userId", userId
+                "userIdFk", userId
             ).get().await().toObjects<Currency>().firstOrNull()?: throw Exception(
                 "Currency Not Found"
             )
@@ -66,7 +66,7 @@ class CurrencyDataSourceImpl @Inject constructor(
         return withContext(Dispatchers.IO) {
             try {
                 currencyCollection.whereEqualTo(
-                    "userId", userId
+                    "userIdFk", userId
                 ).snapshots().map { it.toObjects() }
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to get currencies: ${e.message}")

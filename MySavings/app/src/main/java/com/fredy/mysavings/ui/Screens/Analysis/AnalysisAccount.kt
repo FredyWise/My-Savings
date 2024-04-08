@@ -27,7 +27,7 @@ import co.yml.charts.ui.barchart.models.BarData
 import co.yml.charts.ui.barchart.models.GroupBar
 import com.fredy.mysavings.Util.BalanceColor
 import com.fredy.mysavings.Util.RecordTypeColor
-import com.fredy.mysavings.Util.deletedAccount
+import com.fredy.mysavings.Util.DefaultData.deletedAccount
 import com.fredy.mysavings.Util.formatBalanceAmount
 import com.fredy.mysavings.ViewModels.Event.RecordsEvent
 import com.fredy.mysavings.ViewModels.RecordState

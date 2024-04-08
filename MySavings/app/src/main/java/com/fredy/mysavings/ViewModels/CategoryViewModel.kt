@@ -8,8 +8,8 @@ import com.fredy.mysavings.Feature.Data.Enum.SortType
 import com.fredy.mysavings.Feature.Domain.UseCases.CategoryUseCases.CategoryUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.RecordUseCases
 import com.fredy.mysavings.Util.Resource
-import com.fredy.mysavings.Util.deletedCategory
-import com.fredy.mysavings.Util.transferCategory
+import com.fredy.mysavings.Util.DefaultData.deletedCategory
+import com.fredy.mysavings.Util.DefaultData.transferCategory
 import com.fredy.mysavings.ViewModels.Event.CategoryEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

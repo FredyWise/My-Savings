@@ -21,9 +21,9 @@ import com.fredy.mysavings.Feature.Mappers.filterTrueRecordCurrency
 import com.fredy.mysavings.Feature.Mappers.toRecordSortedMaps
 import com.fredy.mysavings.Util.BalanceItem
 import com.fredy.mysavings.Util.Resource
-import com.fredy.mysavings.Util.TAG
-import com.fredy.mysavings.Util.deletedAccount
-import com.fredy.mysavings.Util.deletedCategory
+import com.fredy.mysavings.Util.DefaultData.TAG
+import com.fredy.mysavings.Util.DefaultData.deletedAccount
+import com.fredy.mysavings.Util.DefaultData.deletedCategory
 import com.fredy.mysavings.Util.isExpense
 import com.fredy.mysavings.Util.isIncome
 import com.fredy.mysavings.Util.isTransfer

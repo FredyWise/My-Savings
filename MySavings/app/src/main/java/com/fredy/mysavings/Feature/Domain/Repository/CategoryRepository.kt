@@ -7,7 +7,7 @@ import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.CategoryData
 import com.fredy.mysavings.Feature.Data.Database.Model.Category
 import com.fredy.mysavings.Feature.Mappers.toCategoryMaps
 import com.fredy.mysavings.Util.Resource
-import com.fredy.mysavings.Util.TAG
+import com.fredy.mysavings.Util.DefaultData.TAG
 import com.fredy.mysavings.ViewModels.CategoryMap
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers

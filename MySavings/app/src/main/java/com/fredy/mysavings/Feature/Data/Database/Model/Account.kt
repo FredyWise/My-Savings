@@ -2,7 +2,7 @@ package com.fredy.mysavings.Feature.Data.Database.Model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.fredy.mysavings.Util.accountInitIcon
+import com.fredy.mysavings.Util.DefaultData.accountInitIcon
 
 @Entity
 data class Account(

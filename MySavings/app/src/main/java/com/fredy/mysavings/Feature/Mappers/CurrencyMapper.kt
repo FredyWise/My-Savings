@@ -12,7 +12,7 @@ import com.fredy.mysavings.Feature.Data.Database.Converter.CurrencyRatesDoubleCo
 import com.fredy.mysavings.Feature.Data.Database.Model.Currency
 import com.fredy.mysavings.Feature.Data.Database.Model.FirebaseRatesCache
 import com.fredy.mysavings.Feature.Data.Database.Model.RatesCache
-import com.fredy.mysavings.Util.TAG
+import com.fredy.mysavings.Util.DefaultData.TAG
 import com.google.firebase.Timestamp
 
 

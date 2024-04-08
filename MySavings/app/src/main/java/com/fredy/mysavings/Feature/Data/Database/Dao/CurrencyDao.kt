@@ -18,10 +18,10 @@ interface CurrencyDao {
     @Delete
     suspend fun deleteCurrency(currency: Currency)
 
-    @Query("SELECT * FROM Currency WHERE code = :code AND userId = :userId")
+    @Query("SELECT * FROM Currency WHERE code = :code AND userIdFk = :userId")
     suspend fun getCurrencyByCode(code: String,userId:String): Currency
 
-    @Query("SELECT * FROM Currency WHERE userId = :userId")
+    @Query("SELECT * FROM Currency WHERE userIdFk = :userId")
     fun getCurrencies(userId:String): Flow<List<Currency>>
 
 }

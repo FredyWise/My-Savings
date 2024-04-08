@@ -10,8 +10,8 @@ import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.currencyConv
 import com.fredy.mysavings.Feature.Mappers.getCurrencies
 import com.fredy.mysavings.Util.BalanceItem
 import com.fredy.mysavings.Util.Resource
-import com.fredy.mysavings.Util.TAG
-import com.fredy.mysavings.Util.deletedAccount
+import com.fredy.mysavings.Util.DefaultData.TAG
+import com.fredy.mysavings.Util.DefaultData.deletedAccount
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -113,20 +113,12 @@ class GetAccountsTotalBalance(
             val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
             val userCurrency = currentUser.userCurrency
 
-            Log.i(
-                TAG,
-                "getUserAccountTotalBalance: $currentUser"
-            )
             repository.getUserAccounts(userId).collect { accounts ->
                 val totalAccountBalance = accounts.getTotalAccountBalance(userCurrency)
                 val data = BalanceItem(
                     "Total Balance",
                     totalAccountBalance,
                     userCurrency
-                )
-                Log.i(
-                    TAG,
-                    "getUserAccountTotalBalance.data: $data"
                 )
                 emit(data)
             }

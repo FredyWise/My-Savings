@@ -76,6 +76,7 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
+    debugImplementation("androidx.compose.ui:ui-tooling")
     // Additional UI
     implementation("androidx.compose.foundation:foundation:1.6.1")
     // More UI elements
@@ -101,18 +102,13 @@ dependencies {
     // Unit and UI testing libraries
     // Local unit tests
     testImplementation ("androidx.test:core:1.5.0")
-//    testImplementation ("junit:junit:4.13.2")
+    testImplementation ("junit:junit:4.13.2")
     testImplementation ("androidx.arch.core:core-testing:2.2.0")
     testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.1")
     testImplementation ("com.google.truth:truth:1.1.3")
     testImplementation ("com.squareup.okhttp3:mockwebserver:4.9.1")
-    testImplementation ("io.mockk:mockk:1.10.5")
-    testImplementation("junit:junit:4.12")
-    testImplementation("junit:junit:4.12")
-    testImplementation("junit:junit:4.12")
-    testImplementation("junit:junit:4.12")
-    testImplementation("junit:junit:4.12")
-//    debugImplementation ("androidx.compose.ui:ui-test-manifest:1.6.5")
+    testImplementation("io.mockk:mockk:1.13.10")
+    debugImplementation ("androidx.compose.ui:ui-test-manifest:1.6.5")
 
     // Instrumentation tests
     androidTestImplementation ("com.google.dagger:hilt-android-testing:2.37")
@@ -121,19 +117,18 @@ dependencies {
     androidTestImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.1")
     androidTestImplementation ("androidx.arch.core:core-testing:2.2.0")
     androidTestImplementation ("com.google.truth:truth:1.1.3")
-//    androidTestImplementation ("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation ("androidx.test.ext:junit:1.1.5")
     androidTestImplementation ("androidx.test:core-ktx:1.5.0")
     androidTestImplementation ("com.squareup.okhttp3:mockwebserver:4.9.1")
-    androidTestImplementation ("io.mockk:mockk-android:1.10.5")
+    androidTestImplementation ("io.mockk:mockk-android:1.13.10")
     androidTestImplementation ("androidx.test:runner:1.5.2")
 
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:1.9.10")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     androidTestImplementation(platform("androidx.compose:compose-bom:2023.10.01"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
-    debugImplementation("androidx.compose.ui:ui-tooling")
-    debugImplementation("androidx.compose.ui:ui-test-manifest")
+//    debugImplementation("androidx.compose.ui:ui-test-manifest")
 
 
     // Additional functionalities like permissions, workers, image cropping
@@ -191,7 +186,7 @@ dependencies {
     implementation("com.google.dagger:hilt-android:2.50")
     kapt("com.google.dagger:hilt-android-compiler:2.50")
     kapt("androidx.hilt:hilt-compiler:1.1.0")
-    implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 
     // Paging
     implementation("androidx.paging:paging-runtime-ktx:3.2.1")

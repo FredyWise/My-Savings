@@ -22,76 +22,94 @@ data class SavingsIcon(
     val description: String,
 )
 
-val transferIcon = SavingsIcon(R.drawable.ic_exchange, "Transfer")
-val categoryInitIcon = SavingsIcon(R.drawable.ic_category_foreground, "Category")
-val accountInitIcon = SavingsIcon(R.drawable.ic_wallet_foreground, "Account")
-
-val accountIcons = listOf(
-    SavingsIcon(R.drawable.ic_mastercard, "Master Card"),
-    SavingsIcon(R.drawable.ic_visa, "Visa"),
-    SavingsIcon(R.drawable.ic_alipay, "Alipay"),
-    SavingsIcon(R.drawable.ic_gpay, "Google pay"),
-    SavingsIcon(R.drawable.ic_bit_coin, "Bit Coin"),
-    SavingsIcon(R.drawable.ic_line, "Line"),
-    SavingsIcon(R.drawable.ic_money_coin, "Coin"),
-    SavingsIcon(R.drawable.ic_money_paper, "Paper"),
-    SavingsIcon(R.drawable.ic_money_wallet, "Wallet"),
-    SavingsIcon(R.drawable.ic_piggy, "Piggy"),
-    SavingsIcon(R.drawable.ic_teller, "Teller"),
-    SavingsIcon(R.drawable.ic_wechat, "Wechat"),
-    SavingsIcon(R.drawable.ic_wallet, "Big Wallet"),
-    SavingsIcon(R.drawable.ic_paypal, "Pay Pal"),
-    SavingsIcon(R.drawable.ic_withdrawal, "Withdrawal"),
+data class ActionWithName(
+    val name: String, val action: () -> Unit
 )
 
-val categoryIcons = listOf(
-    SavingsIcon(R.drawable.ic_fruit, "Fruit"),
-    SavingsIcon(R.drawable.ic_beer, "Beer"),
-    SavingsIcon(R.drawable.ic_book, "Book"),
-    SavingsIcon(R.drawable.ic_jewelery, "Jewelery"),
-    SavingsIcon(R.drawable.ic_graduation, "Graduation"),
-    SavingsIcon(R.drawable.ic_cake, "Cake"),
-    SavingsIcon(R.drawable.ic_junk_food, "Junk Food"),
-    SavingsIcon(R.drawable.ic_makeup, "Make Up"),
-    SavingsIcon(R.drawable.ic_ramen_soup, "Food"),
-    SavingsIcon(R.drawable.ic_shoes, "Shoes"),
-    SavingsIcon(R.drawable.ic_sweets, "Sweets"),
-    SavingsIcon(R.drawable.ic_voucher, "Voucher"),
+data class ValueWithName<T>(
+    val name: String, val value: T
+)
+
+data class ToggleableInfo(
+    val isChecked: Boolean, val text: String
 )
 
 
-val accountIconsMap = accountIcons.plus(accountInitIcon).associateBy { it.description }
-val categoryIconsMap =
-    categoryIcons.plus(categoryInitIcon).plus(transferIcon).associateBy { it.description }
-val savingsIcons = accountIconsMap.plus(categoryIconsMap)
 
 
-val appIcon = SavingsIcon(R.drawable.ic_wallet_foreground, "Application Icon")
-val TAG = "BABI"
-val WebClientId = "895326687881-e2kh5jh12kjvpf9se1cehbeias0iuvmq.apps.googleusercontent.com"
+object DefaultData {
+    // icons
+
+    val appIcon = SavingsIcon(R.drawable.app_icon, "Application Icon")
+    val transferIcon = SavingsIcon(R.drawable.ic_exchange, "Transfer")
+    val categoryInitIcon = SavingsIcon(R.drawable.ic_category_foreground, "Category")
+    val accountInitIcon = SavingsIcon(R.drawable.ic_wallet_foreground, "Account")
+
+    val accountIcons = listOf(
+        SavingsIcon(R.drawable.ic_mastercard, "Master Card"),
+        SavingsIcon(R.drawable.ic_visa, "Visa"),
+        SavingsIcon(R.drawable.ic_alipay, "Alipay"),
+        SavingsIcon(R.drawable.ic_gpay, "Google pay"),
+        SavingsIcon(R.drawable.ic_bit_coin, "Bit Coin"),
+        SavingsIcon(R.drawable.ic_line, "Line"),
+        SavingsIcon(R.drawable.ic_money_coin, "Coin"),
+        SavingsIcon(R.drawable.ic_money_paper, "Paper"),
+        SavingsIcon(R.drawable.ic_money_wallet, "Wallet"),
+        SavingsIcon(R.drawable.ic_piggy, "Piggy"),
+        SavingsIcon(R.drawable.ic_teller, "Teller"),
+        SavingsIcon(R.drawable.ic_wechat, "Wechat"),
+        SavingsIcon(R.drawable.ic_wallet, "Big Wallet"),
+        SavingsIcon(R.drawable.ic_paypal, "Pay Pal"),
+        SavingsIcon(R.drawable.ic_withdrawal, "Withdrawal"),
+    )
+
+    val categoryIcons = listOf(
+        SavingsIcon(R.drawable.ic_fruit, "Fruit"),
+        SavingsIcon(R.drawable.ic_beer, "Beer"),
+        SavingsIcon(R.drawable.ic_book, "Book"),
+        SavingsIcon(R.drawable.ic_jewelery, "Jewelery"),
+        SavingsIcon(R.drawable.ic_graduation, "Graduation"),
+        SavingsIcon(R.drawable.ic_cake, "Cake"),
+        SavingsIcon(R.drawable.ic_junk_food, "Junk Food"),
+        SavingsIcon(R.drawable.ic_makeup, "Make Up"),
+        SavingsIcon(R.drawable.ic_ramen_soup, "Food"),
+        SavingsIcon(R.drawable.ic_shoes, "Shoes"),
+        SavingsIcon(R.drawable.ic_sweets, "Sweets"),
+        SavingsIcon(R.drawable.ic_voucher, "Voucher"),
+    )
 
 
-val transferCategory = Category(
-    categoryId = "transferCategory",
-    userIdFk = "0",
-    categoryName = RecordType.Transfer.name,
-    categoryType = RecordType.Transfer,
-    categoryIcon = transferIcon.image,
-    categoryIconDescription = transferIcon.description,
-)
-val deletedCategory = Category(
-    categoryId = "deletedCategory",
-    userIdFk = "0",
-    categoryName = "Deleted Category",
-    categoryType = RecordType.Transfer
-)
-val deletedAccount =
-    Account(
+    val accountIconsMap = accountIcons.plus(accountInitIcon).associateBy { it.description }
+    val categoryIconsMap =
+        categoryIcons.plus(categoryInitIcon).plus(transferIcon).associateBy { it.description }
+    val savingsIcons = accountIconsMap.plus(categoryIconsMap)
+
+    val TAG = "BABI"
+    val WebClientId = "895326687881-e2kh5jh12kjvpf9se1cehbeias0iuvmq.apps.googleusercontent.com"
+
+    val transferCategory = Category(
+        categoryId = "transferCategory",
+        userIdFk = "0",
+        categoryName = RecordType.Transfer.name,
+        categoryType = RecordType.Transfer,
+        categoryIcon = transferIcon.image,
+        categoryIconDescription = transferIcon.description,
+    )
+
+    val deletedCategory = Category(
+        categoryId = "deletedCategory",
+        userIdFk = "0",
+        categoryName = "Deleted Category",
+        categoryType = RecordType.Transfer
+    )
+
+    val deletedAccount = Account(
         accountId = "deletedAccount",
         userIdFk = "0",
         accountName = "Deleted Account",
         accountCurrency = "USD"
     )
+}
 
 //date
 val minDate = LocalDateTime.of(2000, 1, 1, 1, 1)
@@ -302,23 +320,4 @@ val currencyCodes = listOf(
     "ZWL"
 )
 
-data class ActionWithName(
-    val name: String, val action: () -> Unit
-)
-
-data class ValueWithName<T>(
-    val name: String, val value: T
-)
-
-data class ToggleableInfo(
-    val isChecked: Boolean, val text: String
-)
-
-fun <T, U> listConverter(
-    items: List<T>, convertFunction: (T) -> U
-): List<U> {
-    return items.map { item ->
-        convertFunction(item)
-    }
-}
 

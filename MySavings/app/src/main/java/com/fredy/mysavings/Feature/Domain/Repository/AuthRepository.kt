@@ -6,7 +6,7 @@ import android.util.Log
 import com.fredy.mysavings.Feature.Data.Database.Model.UserData
 import com.fredy.mysavings.MainActivity
 import com.fredy.mysavings.Util.Resource
-import com.fredy.mysavings.Util.TAG
+import com.fredy.mysavings.Util.DefaultData.TAG
 import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.AuthCredential

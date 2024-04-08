@@ -49,7 +49,7 @@ import androidx.navigation.NavHostController
 import com.fredy.mysavings.Feature.Data.Enum.AuthMethod
 import com.fredy.mysavings.R
 import com.fredy.mysavings.Util.Resource
-import com.fredy.mysavings.Util.TAG
+import com.fredy.mysavings.Util.DefaultData.TAG
 import com.fredy.mysavings.Util.isValidEmail
 import com.fredy.mysavings.Util.isValidLogin
 import com.fredy.mysavings.Util.isValidPhoneNumber

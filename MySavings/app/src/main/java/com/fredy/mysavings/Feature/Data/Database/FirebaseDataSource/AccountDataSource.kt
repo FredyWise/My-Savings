@@ -2,7 +2,7 @@ package com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource
 
 import android.util.Log
 import com.fredy.mysavings.Feature.Data.Database.Model.Account
-import com.fredy.mysavings.Util.TAG
+import com.fredy.mysavings.Util.DefaultData.TAG
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.snapshots
 import com.google.firebase.firestore.toObject

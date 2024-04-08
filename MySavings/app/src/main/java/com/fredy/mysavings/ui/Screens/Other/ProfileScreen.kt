@@ -51,7 +51,7 @@ import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.fredy.mysavings.Feature.Data.Database.Model.UserData
 import com.fredy.mysavings.Util.Resource
-import com.fredy.mysavings.Util.TAG
+import com.fredy.mysavings.Util.DefaultData.TAG
 import com.fredy.mysavings.Util.isValidEmailOrPhone
 import com.fredy.mysavings.Util.isValidPassword
 import com.fredy.mysavings.ViewModels.AuthState
