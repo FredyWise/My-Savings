@@ -3,7 +3,6 @@ package com.fredy.mysavings.Feature.Data.CSV
 import android.content.Context
 import android.os.Build
 import android.os.storage.StorageManager
-import android.util.Log
 import androidx.core.content.ContextCompat.getSystemService
 import com.fredy.mysavings.Feature.Data.Database.Converter.TimestampConverter
 import com.fredy.mysavings.Feature.Data.Database.Model.Account
@@ -11,7 +10,7 @@ import com.fredy.mysavings.Feature.Data.Database.Model.Category
 import com.fredy.mysavings.Feature.Data.Database.Model.Record
 import com.fredy.mysavings.Feature.Data.Database.Model.TrueRecord
 import com.fredy.mysavings.Feature.Data.Enum.RecordType
-import com.fredy.mysavings.Util.DefaultData.TAG
+import com.fredy.mysavings.Util.Log
 import com.fredy.mysavings.Util.formatBalanceAmount
 import com.fredy.mysavings.Util.formatDateYearTime
 import java.io.File
@@ -44,7 +43,7 @@ class CSVDaoImpl(private val context: Context) : CSVDao {
         delimiter: String
     ): List<TrueRecord> {
         return try {
-            Log.i(TAG, "inputFromCSV: Start")
+            Log.i("inputFromCSV: Start")
             val storageManager = getSystemService(context, StorageManager::class.java)!!
             val uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 storageManager.storageVolumes[0].directory?.path
@@ -62,7 +61,7 @@ class CSVDaoImpl(private val context: Context) : CSVDao {
                 reader.readCsv(delimiter)
             }
         } catch (e: IOException) {
-            Log.e(TAG, "Error reading CSV: $e")
+            Log.e("Error reading CSV: $e")
             emptyList()
         }
     }
@@ -74,8 +73,8 @@ class CSVDaoImpl(private val context: Context) : CSVDao {
         delimiter: String
     ) {
         try {
-            Log.i(TAG, "outputToCSV: Start")
-            Log.i(TAG, "outputToCSV: $trueRecords")
+            Log.i("outputToCSV: Start")
+            Log.i("outputToCSV: $trueRecords")
             val storageManager = getSystemService(context, StorageManager::class.java)!!
             val uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 storageManager.storageVolumes[0].directory?.path
@@ -89,31 +88,30 @@ class CSVDaoImpl(private val context: Context) : CSVDao {
                 )
             val filenameClean = filename.replace(" ", "")
 
-            val file = getUniqueFile(directoryPath,"$filenameClean.csv")
-            Log.i(TAG, "outputToCSV: $file")
+            val file = getUniqueFile(directoryPath, "$filenameClean.csv")
+            Log.i("outputToCSV: $file")
 
             FileWriter(file, false).use { writer ->
                 writer.writeCsv(trueRecords, delimiter)
             }
         } catch (e: IOException) {
-            Log.e(TAG, "Error writing CSV: $e")
+            Log.e("Error writing CSV: $e")
         }
     }
-
 
 
     private fun Reader.readCsv(delimiter: String): List<TrueRecord> {
         return this.useLines { lines ->
             val linesList = lines.toList()
-            Log.i(TAG, "readCsv: $linesList")
+            Log.i("readCsv: $linesList")
             val header = linesList.firstOrNull()?.split(delimiter) ?: emptyList()
             linesList.drop(1).mapNotNull { line ->
-                Log.e(TAG, "readCsv: $line")
+                Log.e("readCsv: $line")
                 val values = line.split(delimiter)
                 if (values.size == header.size) {
                     createTrueRecordFromValues(header, values)
                 } else {
-                    Log.w(TAG, "Skipping malformed CSV line: $line")
+                    Log.w("Skipping malformed CSV line: $line")
                     null
                 }
             }
@@ -157,11 +155,12 @@ class CSVDaoImpl(private val context: Context) : CSVDao {
             accountCurrency = senderAccountCurrency,
             accountIconDescription = senderAccountIconDescription
         )
-        val toAccount = if (recipientAccountName != null && recipientAccountIconDescription != null) Account(
-            accountName = recipientAccountName,
-            accountCurrency = recipientAccountCurrency,
-            accountIconDescription = recipientAccountIconDescription
-        ) else Account()
+        val toAccount =
+            if (recipientAccountName != null && recipientAccountIconDescription != null) Account(
+                accountName = recipientAccountName,
+                accountCurrency = recipientAccountCurrency,
+                accountIconDescription = recipientAccountIconDescription
+            ) else Account()
         val toCategory =
             if (recipientCategoryName != null && recipientCategoryIconDescription != null) Category(
                 categoryName = recipientCategoryName,

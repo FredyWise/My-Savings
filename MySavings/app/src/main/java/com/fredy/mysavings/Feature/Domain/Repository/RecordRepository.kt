@@ -1,6 +1,6 @@
 package com.fredy.mysavings.Feature.Domain.Repository
 
-import android.util.Log
+import com.fredy.mysavings.Util.Log
 import com.fredy.mysavings.Feature.Data.Database.Dao.RecordDao
 import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.RecordDataSource
 import com.fredy.mysavings.Feature.Data.Database.Model.Account
@@ -10,7 +10,7 @@ import com.fredy.mysavings.Feature.Data.Database.Model.TrueRecord
 import com.fredy.mysavings.Feature.Data.Enum.RecordType
 import com.fredy.mysavings.Feature.Data.Enum.SortType
 import com.fredy.mysavings.Feature.Mappers.toRecordSortedMaps
-import com.fredy.mysavings.Util.DefaultData.TAG
+
 import com.fredy.mysavings.ViewModels.RecordMap
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
@@ -77,7 +77,7 @@ class RecordRepositoryImpl @Inject constructor(
         record: Record
     ): String {
         return withContext(Dispatchers.IO) {
-            Log.i(TAG, "upsertRecordItem: $record")
+            Log.i("upsertRecordItem: $record")
             val tempRecord = if (record.recordId.isEmpty()) {
                 val newRecordRef = recordCollection.document()
                 record.copy(
@@ -106,7 +106,7 @@ class RecordRepositoryImpl @Inject constructor(
         record: Record
     ) {
         withContext(Dispatchers.IO) {
-            Log.i(TAG, "deleteRecordItem: $record")
+            Log.i("deleteRecordItem: $record")
             recordDataSource.deleteRecordItem(record)
             recordDao.deleteRecordItem(record)
         }
@@ -120,7 +120,7 @@ class RecordRepositoryImpl @Inject constructor(
 
 
     override suspend fun getRecordById(recordId: String): TrueRecord {
-        Log.i(TAG, "getRecordByIdRepo: $recordId")
+        Log.i("getRecordByIdRepo: $recordId")
         return withContext(Dispatchers.IO) {
             recordDataSource.getRecordById(
                 recordId

@@ -2,11 +2,10 @@ package com.fredy.mysavings.Feature.Domain.Repository
 
 import android.content.Context
 import android.net.Uri
-import android.util.Log
 import com.fredy.mysavings.Feature.Data.Database.Model.UserData
 import com.fredy.mysavings.MainActivity
+import com.fredy.mysavings.Util.Log
 import com.fredy.mysavings.Util.Resource
-import com.fredy.mysavings.Util.DefaultData.TAG
 import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.AuthCredential
@@ -110,7 +109,7 @@ class AuthRepositoryImpl @Inject constructor(
         password: String,
     ): Flow<Resource<String>> = flow {
         emit(Resource.Loading())
-        Log.i(TAG, "updateUserInformation: starting")
+        Log.i("updateUserInformation: starting")
         val successMessage = mutableListOf<String>()
         val errorMessage = mutableListOf<String>()
         val profileUpdates = UserProfileChangeRequest.Builder()
@@ -122,10 +121,10 @@ class AuthRepositoryImpl @Inject constructor(
         suspendCancellableCoroutine<Unit> { continuation ->
             user.updateProfile(profileUpdates).addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    Log.i(TAG, "Display name updated successfully")
+                    Log.i("Display name updated successfully")
                     successMessage.add("Display Name")
                 } else {
-                    Log.e(TAG, "Error updating display name")
+                    Log.e("Error updating display name")
                     errorMessage.add("Updating Display Name")
                 }
                 continuation.resume(Unit)
@@ -142,16 +141,16 @@ class AuthRepositoryImpl @Inject constructor(
                             user.updatePassword(password)
                                 .addOnCompleteListener { passwordUpdateTask ->
                                     if (passwordUpdateTask.isSuccessful) {
-                                        Log.i(TAG, "Password updated successfully")
+                                        Log.i("Password updated successfully")
                                         successMessage.add("Password")
                                     } else {
-                                        Log.e(TAG, "Error updating password")
+                                        Log.e("Error updating password")
                                         errorMessage.add("Updating Password")
                                     }
                                 }
                         }
                     } else {
-                        Log.e(TAG, "Re-authentication failed")
+                        Log.e("Re-authentication failed")
                         errorMessage.add(": Re-authentication failed")
                     }
                     continuation.resume(Unit)
@@ -173,7 +172,7 @@ class AuthRepositoryImpl @Inject constructor(
             } else Resource.Error("Unexpected Error")
         )
     }.catch { e ->
-        Log.e(TAG, "Error updating user information: ${e.message}")
+        Log.e("Error updating user information: ${e.message}")
         emit(Resource.Error("Error updating user information: ${e.message}"))
     }
 
@@ -200,7 +199,7 @@ class AuthRepositoryImpl @Inject constructor(
                 credential: PhoneAuthCredential
             ) {
                 Log.d(
-                    TAG, "verification completed"
+                    "verification completed"
                 )
                 firebaseAuth.signInWithCredential(
                     credential
@@ -210,10 +209,7 @@ class AuthRepositoryImpl @Inject constructor(
             override fun onVerificationFailed(
                 p0: FirebaseException
             ) {
-                Log.e(
-                    TAG,
-                    "verification failed: " + p0
-                )
+                Log.e("verification failed: " + p0)
                 p0.message?.let {
                     trySend(Resource.Error(it))
                 }
@@ -223,10 +219,7 @@ class AuthRepositoryImpl @Inject constructor(
                 verificationId: String,
                 token: PhoneAuthProvider.ForceResendingToken
             ) {
-                Log.d(
-                    TAG,
-                    "onCodeSent: " + verificationId
-                )
+                Log.d("onCodeSent: " + verificationId)
                 trySend(
                     Resource.Success(
                         verificationId
@@ -246,7 +239,7 @@ class AuthRepositoryImpl @Inject constructor(
         ).build()
 
         if (options != null) {
-            Log.d(TAG, options.toString())
+            Log.d(options.toString())
             PhoneAuthProvider.verifyPhoneNumber(
                 options
             )
@@ -279,7 +272,7 @@ class AuthRepositoryImpl @Inject constructor(
         try {
             oneTapClient.signOut().await()
             firebaseAuth.signOut()
-            Log.d(TAG, "signOut: " + firebaseAuth.currentUser)
+            Log.d("signOut: " + firebaseAuth.currentUser)
         } catch (e: Exception) {
             e.printStackTrace()
             if (e is CancellationException) throw e

@@ -1,11 +1,11 @@
 package com.fredy.mysavings.Feature.Domain.Repository
 
-import android.util.Log
+import com.fredy.mysavings.Util.Log
 import com.fredy.mysavings.Feature.Data.Database.Dao.UserDao
 import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.UserDataSource
 import com.fredy.mysavings.Feature.Data.Database.Model.UserData
 import com.fredy.mysavings.Util.Resource
-import com.fredy.mysavings.Util.DefaultData.TAG
+
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
@@ -63,7 +63,6 @@ class UserRepositoryImpl @Inject constructor(
         }
     }.catch { e ->
         Log.i(
-            TAG,
             "getCurrentUser.Error: $e"
         )
         emit(Resource.Error(e.message.toString()))

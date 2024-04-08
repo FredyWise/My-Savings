@@ -2,7 +2,7 @@
 
 package com.fredy.mysavings.ViewModels
 
-import android.util.Log
+import com.fredy.mysavings.Util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fredy.mysavings.Feature.Data.Database.Model.Record
@@ -20,7 +20,7 @@ import com.fredy.mysavings.Util.BalanceBar
 import com.fredy.mysavings.Util.BalanceItem
 import com.fredy.mysavings.Util.FilterState
 import com.fredy.mysavings.Util.Resource
-import com.fredy.mysavings.Util.DefaultData.TAG
+
 import com.fredy.mysavings.Util.map
 import com.fredy.mysavings.Util.minusDate
 import com.fredy.mysavings.Util.plusDate
@@ -342,7 +342,6 @@ class RecordViewModel @Inject constructor(
 
                 is RecordsEvent.SelectedCurrencies -> {
                     Log.i(
-                        TAG,
                         "onEvent: ${state.value.availableCurrency}"
                     )
                     _filterState.update {

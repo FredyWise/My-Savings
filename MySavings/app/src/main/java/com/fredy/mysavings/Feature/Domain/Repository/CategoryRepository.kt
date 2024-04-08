@@ -1,13 +1,13 @@
 package com.fredy.mysavings.Feature.Domain.Repository
 
-import android.util.Log
+import com.fredy.mysavings.Util.Log
 import co.yml.charts.common.extensions.isNotNull
 import com.fredy.mysavings.Feature.Data.Database.Dao.CategoryDao
 import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.CategoryDataSource
 import com.fredy.mysavings.Feature.Data.Database.Model.Category
 import com.fredy.mysavings.Feature.Mappers.toCategoryMaps
 import com.fredy.mysavings.Util.Resource
-import com.fredy.mysavings.Util.DefaultData.TAG
+
 import com.fredy.mysavings.ViewModels.CategoryMap
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers

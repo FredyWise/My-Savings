@@ -1,8 +1,8 @@
 package com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource
 
-import android.util.Log
+import com.fredy.mysavings.Util.Log
 import com.fredy.mysavings.Feature.Data.Database.Model.Currency
-import com.fredy.mysavings.Util.DefaultData.TAG
+
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.snapshots
 import com.google.firebase.firestore.toObjects
@@ -57,7 +57,7 @@ class CurrencyDataSourceImpl @Inject constructor(
                 "Currency Not Found"
             )
         } catch (e: Exception) {
-            Log.e(TAG, "Failed to get currency: ${e.message}")
+            Log.e("Failed to get currency: ${e.message}")
             throw e
         }
     }
@@ -69,7 +69,7 @@ class CurrencyDataSourceImpl @Inject constructor(
                     "userIdFk", userId
                 ).snapshots().map { it.toObjects() }
             } catch (e: Exception) {
-                Log.e(TAG, "Failed to get currencies: ${e.message}")
+                Log.e("Failed to get currencies: ${e.message}")
                 throw e
             }
         }

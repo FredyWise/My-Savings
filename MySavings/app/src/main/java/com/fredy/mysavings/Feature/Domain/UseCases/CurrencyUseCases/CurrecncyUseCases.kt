@@ -1,6 +1,6 @@
 package com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases
 
-import android.util.Log
+import com.fredy.mysavings.Util.Log
 import co.yml.charts.common.extensions.isNotNull
 import com.fredy.mysavings.Feature.Data.APIs.ApiCredentials
 import com.fredy.mysavings.Feature.Data.APIs.CurrencyModels.Response.Rates
@@ -13,7 +13,7 @@ import com.fredy.mysavings.Feature.Mappers.toCurrency
 import com.fredy.mysavings.Feature.Mappers.updateRatesUsingCode
 import com.fredy.mysavings.Util.BalanceItem
 import com.fredy.mysavings.Util.Resource
-import com.fredy.mysavings.Util.DefaultData.TAG
+
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -75,7 +75,6 @@ class GetCurrencyRates(
             )
         }.catch { e ->
             Log.e(
-                TAG,
                 "Failed to convert currency: $e"
             )
             emit(Resource.Error(e.message.toString()))
@@ -92,7 +91,6 @@ class ConvertCurrencyData(
         toCurrency: String
     ): BalanceItem {
         Log.i(
-            TAG,
             "convert: $amount$fromCurrency\nto: $toCurrency"
         )
         val tempFromCurrency = if (fromCurrency.contains(
@@ -117,7 +115,6 @@ class ConvertCurrencyData(
             )
         } catch (e: Exception) {
             Log.e(
-                TAG,
                 "Failed to convert currency: $e"
             )
             throw e
@@ -153,14 +150,14 @@ class GetCurrencies(
     operator fun invoke(): Flow<Resource<List<Currency>>> {
         return flow {
             emit(Resource.Loading())
-            Log.i(TAG, "getCurrencies: start")
+            Log.i("getCurrencies: start")
             val currentUser = authRepository.getCurrentUser()!!
             val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
 //            val cachedRates = currencyRepository.getRateResponse(ApiCredentials.CurrencyModels.BASE_CURRENCY)
             withContext(Dispatchers.IO) {
                 currencyRepository.getCurrencies(userId)
             }.collect { cachedData ->
-                Log.i(TAG, "getCurrencies: $cachedData")
+                Log.i("getCurrencies: $cachedData")
 
                 val result =
                     if (/*isCacheValid(cachedRates.cachedTime) && */cachedData.isNotEmpty()) {
@@ -168,12 +165,11 @@ class GetCurrencies(
                     } else {
                         makeCurrencies(userId)
                     }.sortedBy { it.name }
-                Log.i(TAG, "getCurrencies: $result")
+                Log.i("getCurrencies: $result")
                 emit(Resource.Success(result))
             }
         }.catch { e ->
             Log.e(
-                TAG,
                 "Failed to get currencies: $e"
             )
             emit(Resource.Error(e.message.toString()))
@@ -184,7 +180,7 @@ class GetCurrencies(
     private suspend fun makeCurrencies(userId: String): List<Currency> {
         val newCurrencies = currencyRepository.getInfo()
             .toCurrency(currencyRepository.getRateResponse().rates, userId)
-        Log.i(TAG, "getCurrenciesNew: $newCurrencies")
+        Log.i("getCurrenciesNew: $newCurrencies")
         currencyRepository.updateCurrencies(newCurrencies)
         return newCurrencies
     }

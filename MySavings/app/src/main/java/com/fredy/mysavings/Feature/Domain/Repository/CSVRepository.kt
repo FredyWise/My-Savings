@@ -1,14 +1,14 @@
 package com.fredy.mysavings.Feature.Domain.Repository
 
 
-import android.util.Log
+import com.fredy.mysavings.Util.Log
 import com.fredy.mysavings.Feature.Data.CSV.CSVDao
 import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.RecordDataSource
 import com.fredy.mysavings.Feature.Data.Database.Model.Account
 import com.fredy.mysavings.Feature.Data.Database.Model.Category
 import com.fredy.mysavings.Feature.Data.Database.Model.Record
 import com.fredy.mysavings.Feature.Data.Database.Model.TrueRecord
-import com.fredy.mysavings.Util.DefaultData.TAG
+
 import com.fredy.mysavings.Util.DefaultData.deletedAccount
 import com.fredy.mysavings.Util.DefaultData.deletedCategory
 import com.fredy.mysavings.Util.isExpense
@@ -62,7 +62,7 @@ class CSVRepositoryImpl(
         return withContext(Dispatchers.IO) {
             val trueRecords = csvDao.inputFromCSV(directory, delimiter)
             val trueRecord = trueRecords.map {
-                Log.e(TAG, "inputFromCSVRepo: $it")
+                Log.e("inputFromCSVRepo: $it")
                 val accountIdFromFk = findAccountId(it.fromAccount, currentUserId)
                 val accountIdToFk = findAccountId(it.toAccount, currentUserId)
                 val categoryIdFk = findCategoryId(it.toCategory, currentUserId)
@@ -75,7 +75,7 @@ class CSVRepositoryImpl(
                     userIdFk = currentUserId
                 )
             }
-            Log.e(TAG, "inputFromCSVRepo1: $trueRecord")
+            Log.e("inputFromCSVRepo1: $trueRecord")
             trueRecord
         }
     }

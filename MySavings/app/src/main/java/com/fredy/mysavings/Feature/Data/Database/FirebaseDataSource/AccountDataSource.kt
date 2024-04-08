@@ -1,8 +1,8 @@
 package com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource
 
-import android.util.Log
+import com.fredy.mysavings.Util.Log
 import com.fredy.mysavings.Feature.Data.Database.Model.Account
-import com.fredy.mysavings.Util.DefaultData.TAG
+
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.snapshots
 import com.google.firebase.firestore.toObject
@@ -48,7 +48,7 @@ class AccountDataSourceImpl @Inject constructor(
                     "Account Not Found"
                 )
         } catch (e: Exception) {
-            Log.e(TAG, "Failed to get account: ${e.message}")
+            Log.e("Failed to get account: ${e.message}")
             throw e
         }
     }
@@ -61,7 +61,7 @@ class AccountDataSourceImpl @Inject constructor(
 
             querySnapshot.map { it.toObjects()}
         } catch (e: Exception) {
-            Log.e(TAG, "Failed to get user accounts: $e")
+            Log.e("Failed to get user accounts: $e")
             throw e
         }
     }

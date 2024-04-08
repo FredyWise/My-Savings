@@ -1,8 +1,8 @@
 package com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource
 
-import android.util.Log
+import com.fredy.mysavings.Util.Log
 import com.fredy.mysavings.Feature.Data.Database.Model.UserData
-import com.fredy.mysavings.Util.DefaultData.TAG
+
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
@@ -48,7 +48,6 @@ class UserDataSourceImpl(
                 userCollection.document(userId).get().await().toObject<UserData>()
             } catch (e: Exception) {
                 Log.e(
-                    TAG,
                     "Failed to get user: ${e.message}"
                 )
                 throw e
@@ -67,7 +66,6 @@ class UserDataSourceImpl(
                 querySnapshot.map { it.toObjects<UserData>() }
             } catch (e: Exception) {
                 Log.e(
-                    TAG,
                     "Failed to get all user: $e"
                 )
                 throw e
@@ -94,7 +92,6 @@ class UserDataSourceImpl(
                 querySnapshot.map { it.toObjects<UserData>() }
             } catch (e: Exception) {
                 Log.e(
-                    TAG,
                     "Failed to get all user: $e"
                 )
                 throw e

@@ -208,7 +208,6 @@ class AccountViewModel @Inject constructor(
                         event.account
                     )
                     recordUseCases.updateRecordItemWithDeletedAccount(event.account)
-//                    onEvent(AccountEvent.UpdateAccount)
                     event.onDeleteEffect()
                 }
             }
@@ -240,7 +239,6 @@ class AccountViewModel @Inject constructor(
                     accountUseCases.upsertAccount(
                         deletedAccount
                     )
-//                    onEvent(AccountEvent.UpdateAccount)
                 }
                 _state.update {
                     AccountState(

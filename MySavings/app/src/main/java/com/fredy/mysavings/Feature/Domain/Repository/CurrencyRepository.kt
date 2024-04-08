@@ -1,6 +1,6 @@
 package com.fredy.mysavings.Feature.Domain.Repository
 
-import android.util.Log
+import com.fredy.mysavings.Util.Log
 import androidx.lifecycle.MutableLiveData
 import co.yml.charts.common.extensions.isNotNull
 import com.fredy.mysavings.Feature.Data.APIs.ApiCredentials
@@ -20,7 +20,7 @@ import com.fredy.mysavings.Feature.Mappers.getRateForCurrency
 import com.fredy.mysavings.Feature.Mappers.toCurrencyInfoItems
 import com.fredy.mysavings.Feature.Mappers.toRatesCache
 import com.fredy.mysavings.Util.BalanceItem
-import com.fredy.mysavings.Util.DefaultData.TAG
+
 import com.fredy.mysavings.Util.isCacheValid
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -54,7 +54,7 @@ class CurrencyRepositoryImpl @Inject constructor(
     private val _cachedCurrencyInfoResponse = MutableLiveData<List<CurrencyInfoItem>>()
     override suspend fun updateRates(cache: RatesCache) {
         withContext(Dispatchers.IO) {
-            Log.i(TAG, "updateRates: $cache")
+            Log.i("updateRates: $cache")
             _cachedRates.postValue(cache)
             currencyCacheDao.upsertCurrencyCache(cache)
             currencyRatesDataSource.upsertCurrencyRates(cache)
@@ -63,7 +63,7 @@ class CurrencyRepositoryImpl @Inject constructor(
 
     override suspend fun updateCurrency(currency: Currency) {
         withContext(Dispatchers.IO) {
-            Log.i(TAG, "updateCurrency: $currency")
+            Log.i("updateCurrency: $currency")
             currencyDataSource.upsertCurrency(currency)
             currencyDao.upsertCurrency(currency)
         }
@@ -73,7 +73,7 @@ class CurrencyRepositoryImpl @Inject constructor(
     // currency info private function
 
     override suspend fun getInfo(): List<CurrencyInfoItem> {
-        Log.i(TAG, "getInfo: start")
+        Log.i("getInfo: start")
 
         val result = withContext(Dispatchers.IO) {
             try {
@@ -81,7 +81,6 @@ class CurrencyRepositoryImpl @Inject constructor(
                 if (info.isNullOrEmpty()) {
                     val apiResult = getApiCurrencyInfoResponse()
                     Log.i(
-                        TAG,
                         "getApiCurrenciesInfo: $apiResult"
                     )
                     apiResult
@@ -91,7 +90,7 @@ class CurrencyRepositoryImpl @Inject constructor(
 
             } catch (e: Exception) {
                 Log.e(
-                    TAG, "Failed to fetch currencies info: $e"
+                    "Failed to fetch currencies info: $e"
                 )
                 throw e
             }
@@ -109,7 +108,7 @@ class CurrencyRepositoryImpl @Inject constructor(
     override suspend fun getRateResponse(
         base: String
     ): RatesCache {//we can use worker for this and maybe also for sincronizing data on room
-        Log.i(TAG, "getRates: start")
+        Log.i("getRates: start")
         val result = withContext(Dispatchers.IO) {
             val cachedUser = _currentUser.value
             val currentUser = if(cachedUser.isNotNull()) cachedUser!! else authRepository.getCurrentUser()!!
@@ -121,12 +120,11 @@ class CurrencyRepositoryImpl @Inject constructor(
             } else {
                 try {
                     val cachedData = getCachedRates(base + currentUserId)
-                    Log.i(TAG, "getRates: $cachedData")
+                    Log.i("getRates: $cachedData")
 
                     if (cachedData.isNotNull() && isCacheValid(cachedData!!.cachedTime)) {
                         val cachedResult = cachedData
                         Log.i(
-                            TAG,
                             "getCachedRates: $cachedResult"
                         )
                         cachedResult
@@ -134,21 +132,20 @@ class CurrencyRepositoryImpl @Inject constructor(
                         val apiResult = getApiRates(base)!!.toRatesCache(currentUserId)
                         updateRates(apiResult)
                         Log.i(
-                            TAG,
                             "getApiRates: $apiResult"
                         )
                         apiResult
                     }
                 } catch (e: Exception) {
                     Log.e(
-                        TAG, "Failed to fetch rates: $e"
+                        "Failed to fetch rates: $e"
                     )
                     throw e
                 }
             }
         }
         _cachedRates.postValue(result)
-        Log.i(TAG, "getRates: success")
+        Log.i("getRates: success")
         return result
     }
 

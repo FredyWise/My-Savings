@@ -35,8 +35,6 @@ data class ToggleableInfo(
 )
 
 
-
-
 object DefaultData {
     // icons
 
@@ -84,7 +82,7 @@ object DefaultData {
         categoryIcons.plus(categoryInitIcon).plus(transferIcon).associateBy { it.description }
     val savingsIcons = accountIconsMap.plus(categoryIconsMap)
 
-    val TAG = "BABI"
+
     val WebClientId = "895326687881-e2kh5jh12kjvpf9se1cehbeias0iuvmq.apps.googleusercontent.com"
 
     val transferCategory = Category(

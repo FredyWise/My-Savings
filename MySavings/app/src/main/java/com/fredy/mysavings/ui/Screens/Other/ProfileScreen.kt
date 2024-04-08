@@ -1,7 +1,7 @@
 package com.fredy.mysavings.ui.Screens.Other
 
 import android.net.Uri
-import android.util.Log
+import com.fredy.mysavings.Util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -51,7 +51,7 @@ import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.fredy.mysavings.Feature.Data.Database.Model.UserData
 import com.fredy.mysavings.Util.Resource
-import com.fredy.mysavings.Util.DefaultData.TAG
+
 import com.fredy.mysavings.Util.isValidEmailOrPhone
 import com.fredy.mysavings.Util.isValidPassword
 import com.fredy.mysavings.ViewModels.AuthState
@@ -101,7 +101,7 @@ fun ProfileScreen(
             },
         )
         LaunchedEffect(key1 = state.updateResource){
-            Log.e(TAG, "ProfileScreen: ${state.updateResource}", )
+            Log.e("ProfileScreen: ${state.updateResource}", )
             when(state.updateResource){
                 is Resource.Success -> {
                     val message = state.updateResource.data.orEmpty()

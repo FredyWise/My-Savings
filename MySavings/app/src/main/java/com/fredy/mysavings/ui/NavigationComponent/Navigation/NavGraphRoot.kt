@@ -1,7 +1,6 @@
 package com.fredy.mysavings.ui.NavigationComponent.Navigation
 
 import BulkAddScreen
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -27,7 +26,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
-import com.fredy.mysavings.Util.DefaultData.TAG
+import com.fredy.mysavings.Util.Log
 import com.fredy.mysavings.ViewModels.AccountViewModel
 import com.fredy.mysavings.ViewModels.AuthViewModel
 import com.fredy.mysavings.ViewModels.CurrencyViewModel
@@ -115,10 +114,7 @@ fun NavGraphRoot(
                     fadeOut()
                 },
             ) {
-                Log.d(
-                    TAG,
-                    "NavGraphRoot: BulkAdd",
-                )
+                Log.d("NavGraphRoot: BulkAdd")
                 BulkAddScreen(
                     modifier = Modifier.padding(
                         horizontal = 8.dp,
@@ -140,7 +136,7 @@ fun NavGraphRoot(
                     defaultValue = "-1"
                 })
             ) {
-                Log.d(TAG, "NavGraphRoot: Add")
+                Log.d("NavGraphRoot: Add")
                 val id = it.arguments?.getString("id") ?: "-1"
                 AddScreen(
                     modifier = Modifier.padding(

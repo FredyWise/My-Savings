@@ -1,6 +1,6 @@
 package com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource
 
-import android.util.Log
+import com.fredy.mysavings.Util.Log
 import androidx.lifecycle.MutableLiveData
 import com.fredy.mysavings.Feature.Data.Database.Converter.TimestampConverter
 import com.fredy.mysavings.Feature.Data.Database.Model.Account
@@ -9,7 +9,7 @@ import com.fredy.mysavings.Feature.Data.Database.Model.Record
 import com.fredy.mysavings.Feature.Data.Database.Model.TrueRecord
 import com.fredy.mysavings.Feature.Data.Enum.RecordType
 import com.fredy.mysavings.Feature.Mappers.toTrueRecords
-import com.fredy.mysavings.Util.DefaultData.TAG
+
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
@@ -131,7 +131,6 @@ class RecordDataSourceImpl @Inject constructor(
                 )
             } catch (e: Exception) {
                 Log.e(
-                    TAG,
                     "Failed to get record: ${e.message}"
                 )
                 throw e
@@ -160,7 +159,6 @@ class RecordDataSourceImpl @Inject constructor(
                 }
             } catch (e: Exception) {
                 Log.e(
-                    TAG,
                     "getUserTrueRecordFromSpecificTimeError: ${e.message}"
                 )
                 throw e
@@ -200,7 +198,6 @@ class RecordDataSourceImpl @Inject constructor(
                 }
             } catch (e: Exception) {
                 Log.e(
-                    TAG,
                     "getUserTrueRecordFromSpecificTimeError: ${e.message}"
                 )
                 throw e
@@ -233,7 +230,6 @@ class RecordDataSourceImpl @Inject constructor(
                 }
             } catch (e: Exception) {
                 Log.e(
-                    TAG,
                     "getUserCategoryRecordsOrderedByDateTimeError: ${e.message}"
                 )
                 throw e
@@ -272,7 +268,6 @@ class RecordDataSourceImpl @Inject constructor(
                 }
             } catch (e: Exception) {
                 Log.e(
-                    TAG,
                     "getUserAccountRecordsOrderedByDateTimeError: ${e.message}"
                 )
                 throw e
@@ -292,7 +287,6 @@ class RecordDataSourceImpl @Inject constructor(
                 querySnapshot.map { it.toObjects() }
             } catch (e: Exception) {
                 Log.e(
-                    TAG,
                     "getUserTotalAmountByTypeError: ${e.message}"
                 )
                 throw e
@@ -326,7 +320,6 @@ class RecordDataSourceImpl @Inject constructor(
                 querySnapshot.map { it.toObjects() }
             } catch (e: Exception) {
                 Log.e(
-                    TAG,
                     "getUserRecordsFromSpecificTime.Error: ${e.message}"
                 )
                 throw e
@@ -348,7 +341,6 @@ class RecordDataSourceImpl @Inject constructor(
 
             } catch (e: Exception) {
                 Log.e(
-                    TAG,
                     "getUserRecordsByType.Error: ${e.message}"
                 )
                 throw e
@@ -379,7 +371,7 @@ class RecordDataSourceImpl @Inject constructor(
                     Query.Direction.DESCENDING
                 ).snapshots().map { it.toObjects() }
             } catch (e: Exception) {
-                Log.e(TAG, "getUserRecordsByTypeFromSpecificTime.Error: ${e.message}")
+                Log.e("getUserRecordsByTypeFromSpecificTime.Error: ${e.message}")
                 throw e
             }
         }
@@ -524,7 +516,7 @@ class RecordDataSourceImpl @Inject constructor(
 //                    records.toTrueRecords(trueRecordComponentResult)
 //                }
 //            } catch (e: Exception) {
-//                Log.e(TAG, "getUserTrueRecordsError: ${e.message}")
+//                Log.e("getUserTrueRecordsError: ${e.message}")
 //                throw e
 //            }
 //        }
@@ -557,7 +549,7 @@ class RecordDataSourceImpl @Inject constructor(
 //                val recordFlow = query.snapshots().map { it.toObjects<Record>() }
 //                recordFlow
 //            } catch (e: Exception) {
-//                Log.e(TAG, "getUserRecordsError: ${e.message}")
+//                Log.e("getUserRecordsError: ${e.message}")
 //                throw e
 //            }
 //        }

@@ -1,13 +1,13 @@
 package com.fredy.mysavings.Feature.Domain.UseCases.CategoryUseCases
 
-import android.util.Log
+import com.fredy.mysavings.Util.Log
 import co.yml.charts.common.extensions.isNotNull
 import com.fredy.mysavings.Feature.Data.Database.Model.Category
 import com.fredy.mysavings.Feature.Domain.Repository.AuthRepository
 import com.fredy.mysavings.Feature.Domain.Repository.CategoryRepository
 import com.fredy.mysavings.Feature.Mappers.toCategoryMaps
 import com.fredy.mysavings.Util.Resource
-import com.fredy.mysavings.Util.DefaultData.TAG
+
 import com.fredy.mysavings.ViewModels.CategoryMap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -68,7 +68,6 @@ class GetCategoryMapOrderedByName(
             }
         }.catch { e ->
             Log.i(
-                TAG,
                 "getCategoryMapOrderedByName.Error: $e"
             )
             emit(Resource.Error(e.message.toString()))

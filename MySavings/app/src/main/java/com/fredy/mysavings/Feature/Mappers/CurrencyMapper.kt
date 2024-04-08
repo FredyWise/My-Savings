@@ -1,6 +1,6 @@
 package com.fredy.mysavings.Feature.Mappers
 
-import android.util.Log
+import com.fredy.mysavings.Util.Log
 import com.fredy.mysavings.Feature.Data.APIs.CountryModels.Response.Currencies
 import com.fredy.mysavings.Feature.Data.APIs.CountryModels.Response.CurrencyHelper
 import com.fredy.mysavings.Feature.Data.APIs.CountryModels.Response.CurrencyInfoItem
@@ -12,7 +12,7 @@ import com.fredy.mysavings.Feature.Data.Database.Converter.CurrencyRatesDoubleCo
 import com.fredy.mysavings.Feature.Data.Database.Model.Currency
 import com.fredy.mysavings.Feature.Data.Database.Model.FirebaseRatesCache
 import com.fredy.mysavings.Feature.Data.Database.Model.RatesCache
-import com.fredy.mysavings.Util.DefaultData.TAG
+
 import com.google.firebase.Timestamp
 
 
@@ -23,9 +23,9 @@ fun CurrencyInfoResponse.toCurrencyInfoItems(): List<CurrencyInfoItem> {
 fun List<CurrencyInfoItem>.toCurrency(rates: Rates, userId: String): List<Currency> {
     return this.toUsableCurrencyInfoItem().map {
         val currencyHelper = it.currencies
-        Log.e(TAG, "toCurrency1: $currencyHelper")
+        Log.e("toCurrency1: $currencyHelper")
         val ratesValue = rates.getRateForCurrency(it.code)!!.toDouble()
-        Log.e(TAG, "toCurrency2: $currencyHelper")
+        Log.e("toCurrency2: $currencyHelper")
         Currency(
             it.code + userId,
             it.code,
@@ -43,8 +43,8 @@ fun List<CurrencyInfoItem>.toUsableCurrencyInfoItem(): List<UsableCurrencyInfoIt
     return this.mapNotNull {
         if (it.currencies.toList().isNotEmpty()) {
             val currency = it.currencies.toList().first()
-            Log.e(TAG, "toCurrency: $currency")
-            Log.e(TAG, "toCurrency: ${it.currencies.getCurrencyCode(currency).toString()}")
+            Log.e("toCurrency: $currency")
+            Log.e("toCurrency: ${it.currencies.getCurrencyCode(currency).toString()}")
             UsableCurrencyInfoItem(
                 it.currencies.getCurrencyCode(currency).toString(),
                 currency,

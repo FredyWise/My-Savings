@@ -1,6 +1,5 @@
 package com.fredy.mysavings.Feature.Domain.UseCases.AccountUseCases
 
-import android.util.Log
 import co.yml.charts.common.extensions.isNotNull
 import com.fredy.mysavings.Feature.Data.Database.Model.Account
 import com.fredy.mysavings.Feature.Domain.Repository.AccountRepository
@@ -9,9 +8,9 @@ import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.CurrencyUseC
 import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.currencyConverter
 import com.fredy.mysavings.Feature.Mappers.getCurrencies
 import com.fredy.mysavings.Util.BalanceItem
-import com.fredy.mysavings.Util.Resource
-import com.fredy.mysavings.Util.DefaultData.TAG
 import com.fredy.mysavings.Util.DefaultData.deletedAccount
+import com.fredy.mysavings.Util.Log
+import com.fredy.mysavings.Util.Resource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -73,10 +72,7 @@ class GetAccounts(
                 emit(Resource.Success(data))
             }
         }.catch { e ->
-            Log.i(
-                TAG,
-                "getUserAccountOrderedByName.Error: $e"
-            )
+            Log.i("getUserAccountOrderedByName.Error: $e")
             emit(Resource.Error(e.message.toString()))
         }
     }

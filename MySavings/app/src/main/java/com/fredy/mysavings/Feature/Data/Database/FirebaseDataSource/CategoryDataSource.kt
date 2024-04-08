@@ -1,8 +1,8 @@
 package com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource
 
-import android.util.Log
+import com.fredy.mysavings.Util.Log
 import com.fredy.mysavings.Feature.Data.Database.Model.Category
-import com.fredy.mysavings.Util.DefaultData.TAG
+
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.snapshots
 import com.google.firebase.firestore.toObject
@@ -54,7 +54,6 @@ class CategoryDataSourceImpl @Inject constructor(
                     )
             } catch (e: Exception) {
                 Log.e(
-                    TAG,
                     "Failed to get category: ${e.message}"
                 )
                 throw e
@@ -73,7 +72,6 @@ class CategoryDataSourceImpl @Inject constructor(
                 querySnapshot.map { it.toObjects()}
             } catch (e: Exception) {
                 Log.e(
-                    TAG,
                     "Failed to get user categorys: $e"
                 )
                 throw e

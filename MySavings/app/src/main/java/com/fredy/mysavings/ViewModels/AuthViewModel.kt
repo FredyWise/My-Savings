@@ -5,7 +5,7 @@ import android.hardware.biometrics.BiometricPrompt
 import android.hardware.biometrics.BiometricPrompt.AuthenticationCallback
 import android.net.Uri
 import android.os.CancellationSignal
-import android.util.Log
+import com.fredy.mysavings.Util.Log
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
@@ -17,7 +17,7 @@ import com.fredy.mysavings.Feature.Domain.Repository.AuthRepository
 import com.fredy.mysavings.Feature.Domain.Repository.SettingsRepository
 import com.fredy.mysavings.Feature.Domain.UseCases.UserUseCases.UserUseCases
 import com.fredy.mysavings.Util.Resource
-import com.fredy.mysavings.Util.DefaultData.TAG
+
 import com.fredy.mysavings.ViewModels.Event.AuthEvent
 import com.google.firebase.Firebase
 import com.google.firebase.auth.AuthResult
@@ -273,7 +273,6 @@ class AuthViewModel @Inject constructor(
                                     errorCode, errString
                                 )
                                 Log.e(
-                                    TAG,
                                     "onAuthenticationError:\n error code:$errorCode\n $errString",
                                 )
                                 _state.update {

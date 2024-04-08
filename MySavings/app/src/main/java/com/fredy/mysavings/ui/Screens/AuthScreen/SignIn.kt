@@ -1,6 +1,6 @@
 package com.fredy.mysavings.ui.Screens.AuthScreen
 
-import android.util.Log
+import com.fredy.mysavings.Util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -49,7 +49,7 @@ import androidx.navigation.NavHostController
 import com.fredy.mysavings.Feature.Data.Enum.AuthMethod
 import com.fredy.mysavings.R
 import com.fredy.mysavings.Util.Resource
-import com.fredy.mysavings.Util.DefaultData.TAG
+
 import com.fredy.mysavings.Util.isValidEmail
 import com.fredy.mysavings.Util.isValidLogin
 import com.fredy.mysavings.Util.isValidPhoneNumber
@@ -118,7 +118,7 @@ fun SignIn(
                 )
             )
         } catch (it: ApiException) {
-            Log.e(TAG, "SignIn Error: " + it)
+            Log.e("SignIn Error: " + it)
             print(it)
         }
     }

@@ -1,30 +1,25 @@
 package com.fredy.mysavings.Feature.Domain.UseCases.AccountUseCases
 
-import com.fredy.mysavings.BaseTest
+import com.fredy.mysavings.BaseUseCaseTest
 import com.fredy.mysavings.Feature.Data.Database.Model.Account
 import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.CurrencyUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.currencyConverter
 import com.fredy.mysavings.Util.BalanceItem
 import com.fredy.mysavings.Util.Resource
-import io.mockk.MockKAnnotations
 import io.mockk.coEvery
-import io.mockk.every
 import io.mockk.mockkClass
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flatMap
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.flow.lastOrNull
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertNotEquals
 import org.junit.Before
 import org.junit.Test
-import org.mockito.Mockito.mock
 import kotlin.test.assertFailsWith
 
-class AccountUseCasesTest : BaseTest() {
+class AccountUseCasesTest : BaseUseCaseTest() {
 
     private lateinit var upsertAccount: UpsertAccount
     private lateinit var deleteAccount: DeleteAccount
@@ -32,16 +27,9 @@ class AccountUseCasesTest : BaseTest() {
     private lateinit var getAccounts: GetAccounts
     private lateinit var getAccountsCurrencies: GetAccountsCurrencies
     private lateinit var getAccountsTotalBalance: GetAccountsTotalBalance
-    private var mockCurrencyUseCases = mockkClass(CurrencyUseCases::class)
 
     @Before
     fun setUp() {
-        coEvery { mockCurrencyUseCases.convertCurrencyData(any(), any(), any()) } answers {
-            val amount = firstArg<Double>()
-            val currency = thirdArg<String>()
-            BalanceItem(amount = amount, currency = currency)
-        }
-
         upsertAccount = UpsertAccount(fakeAccountRepository, fakeAuthRepository)
         deleteAccount = DeleteAccount(fakeAccountRepository)
         getAccount = GetAccount(fakeAccountRepository)
@@ -51,7 +39,7 @@ class AccountUseCasesTest : BaseTest() {
     }
 
     @Test
-    fun `test upsert non-existent account`() = runBlocking {
+    fun `test upsert New account`() = runBlocking {
         val accountId = "testing"
         val account = Account(
             accountId = accountId,
@@ -164,13 +152,36 @@ class AccountUseCasesTest : BaseTest() {
         )
 
         fakeAccountRepository.upsertAccount(account)
+
         val retrievedAccount = getAccount(accountId = accountId).first()
 
         assertEquals(account, retrievedAccount)
     }
 
     @Test
-    fun `test GetAccounts`() = runBlocking {
+    fun `test get non-existent account`() {
+        runBlocking {
+            val accountId = "testing"
+            val account = Account(
+                accountId = accountId,
+                userIdFk = currentUser,
+                accountName = "Account a",
+                accountAmount = 100.0,
+                accountCurrency = "USD",
+                accountIcon = 0,
+                accountIconDescription = "Icon a"
+            )
+
+            fakeAccountRepository.deleteAccount(account)
+
+            assertFailsWith<NullPointerException> {
+                getAccount(accountId = accountId).first()
+            }
+        }
+    }
+
+    @Test
+    fun `Retrieve All User Accounts`() = runBlocking {
         val accountsFlow = getAccounts()
         val accountsResource = accountsFlow.last()
 
@@ -180,7 +191,7 @@ class AccountUseCasesTest : BaseTest() {
     }
 
     @Test
-    fun `test GetAccountsCurrencies`() = runBlocking {
+    fun `Retrieve Distinct Currencies From User Accounts`() = runBlocking {
         val currenciesFlow = getAccountsCurrencies()
         val currencies = currenciesFlow.last()
 
@@ -192,7 +203,7 @@ class AccountUseCasesTest : BaseTest() {
     }
 
     @Test
-    fun `test GetAccountsTotalBalance`() = runBlocking {
+    fun `Calculate Total Balance Across All User Accounts`() = runBlocking {
         val balanceItemFlow = getAccountsTotalBalance()
         val balanceItem = balanceItemFlow.last()
 
@@ -201,5 +212,6 @@ class AccountUseCasesTest : BaseTest() {
 
         assertEquals(expectedTotalBalance, balanceItem.amount)
     }
+
 
 }

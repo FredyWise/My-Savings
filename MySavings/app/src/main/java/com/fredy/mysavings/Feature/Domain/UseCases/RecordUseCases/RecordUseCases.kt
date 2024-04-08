@@ -1,6 +1,6 @@
 package com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases
 
-import android.util.Log
+import com.fredy.mysavings.Util.Log
 import co.yml.charts.common.extensions.isNotNull
 import com.fredy.mysavings.Feature.Data.Database.Model.Account
 import com.fredy.mysavings.Feature.Data.Database.Model.Category
@@ -21,7 +21,7 @@ import com.fredy.mysavings.Feature.Mappers.filterTrueRecordCurrency
 import com.fredy.mysavings.Feature.Mappers.toRecordSortedMaps
 import com.fredy.mysavings.Util.BalanceItem
 import com.fredy.mysavings.Util.Resource
-import com.fredy.mysavings.Util.DefaultData.TAG
+
 import com.fredy.mysavings.Util.DefaultData.deletedAccount
 import com.fredy.mysavings.Util.DefaultData.deletedCategory
 import com.fredy.mysavings.Util.isExpense
@@ -139,7 +139,7 @@ class GetRecordById(
     private val currencyUseCases: CurrencyUseCases
 ) {
     operator fun invoke(recordId: String): Flow<TrueRecord> {
-        Log.i(TAG, "getRecordById: $recordId")
+        Log.i("getRecordById: $recordId")
         return flow {
             val trueRecord = withContext(Dispatchers.IO) {
                 recordRepository.getRecordById(
@@ -159,7 +159,6 @@ class GetRecordById(
             )
         }.catch { e ->
             Log.i(
-                TAG,
                 "getRecordById.Error: $e"
             )
         }
@@ -182,7 +181,6 @@ class GetAllTrueRecordsWithinSpecificTime(
                 recordRepository.getUserTrueRecordsFromSpecificTime(userId, startDate, endDate)
             }.collect { data ->
                 Log.i(
-                    TAG,
                     "getAllTrueRecordsWithinSpecificTime.Data: $data"
                 )
                 emit(Resource.Success(data))
@@ -190,7 +188,6 @@ class GetAllTrueRecordsWithinSpecificTime(
 
         }.catch { e ->
             Log.i(
-                TAG,
                 "getAllTrueRecordsWithinSpecificTime.Error: $e"
             )
             emit(Resource.Error(e.message.toString()))
@@ -211,14 +208,12 @@ class GetAllRecords(
                 recordRepository.getRecordMaps(userId)
             }.collect { data ->
                 Log.i(
-                    TAG,
                     "getAllRecords.data: $data"
                 )
                 emit(Resource.Success(data))
             }
         }.catch { e ->
             Log.i(
-                TAG,
                 "getAllRecords.Error: $e"
             )
             emit(Resource.Error(e.message.toString()))
@@ -236,7 +231,6 @@ class GetUserCategoryRecordsOrderedByDateTime(
             val currentUser = authRepository.getCurrentUser()!!
             val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
             Log.i(
-                TAG,
                 "getUserCategoryRecordsOrderedByDateTime: $categoryId",
 
                 )
@@ -246,14 +240,12 @@ class GetUserCategoryRecordsOrderedByDateTime(
                 )
             }.collect { data ->
                 Log.i(
-                    TAG,
                     "getUserCategoryRecordsOrderedByDateTime.Data: $data"
                 )
                 emit(Resource.Success(data))
             }
         }.catch { e ->
             Log.i(
-                TAG,
                 "getUserCategoryRecordsOrderedByDateTime.Error: $e"
             )
             emit(Resource.Error(e.message.toString()))
@@ -271,7 +263,6 @@ class GetUserAccountRecordsOrderedByDateTime(
             val currentUser = authRepository.getCurrentUser()!!
             val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
             Log.i(
-                TAG,
                 "getUserAccountRecordsOrderedByDateTime: $accountId",
 
                 )
@@ -281,14 +272,12 @@ class GetUserAccountRecordsOrderedByDateTime(
                 )
             }.collect { data ->
                 Log.i(
-                    TAG,
                     "getUserAccountRecordsOrderedByDateTime.data: $data"
                 )
                 emit(Resource.Success(data))
             }
         }.catch { e ->
             Log.i(
-                TAG,
                 "getUserAccountRecordsOrderedByDateTime.Error: $e"
             )
             emit(Resource.Error(e.message.toString()))
@@ -314,7 +303,6 @@ class GetUserTrueRecordMapsFromSpecificTime(
             val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
             val userCurrency = currentUser.userCurrency
             Log.i(
-                TAG,
                 "getUserTrueRecordMapsFromSpecificTime: $startDate\n:\n$endDate,\ncurrency: $currency"
             )
             withContext(Dispatchers.IO) {
@@ -333,7 +321,6 @@ class GetUserTrueRecordMapsFromSpecificTime(
 
         }.catch { e ->
             Log.i(
-                TAG,
                 "getUserTrueRecordMapsFromSpecificTime.Error: $e"
             )
             emit(Resource.Error(e.message.toString()))
@@ -383,7 +370,6 @@ class GetUserRecordsFromSpecificTime(
             val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
             val userCurrency = currentUser.userCurrency
             Log.i(
-                TAG,
                 "getUserRecordsFromSpecificTime: $startDate\n:\n$endDate"
             )
             withContext(Dispatchers.IO) {
@@ -397,7 +383,6 @@ class GetUserRecordsFromSpecificTime(
                 val data = records.combineSameCurrencyData(sortType, userCurrency, useUserCurrency)
 
                 Log.i(
-                    TAG,
                     "getUserRecordsFromSpecificTime.Data: $data",
 
                     )
@@ -405,7 +390,6 @@ class GetUserRecordsFromSpecificTime(
             }
         }.catch { e ->
             Log.i(
-                TAG,
                 "getUserRecordsFromSpecificTime.Error: $e"
             )
             emit(Resource.Error(e.message.toString()))
@@ -483,7 +467,6 @@ class GetUserCategoriesWithAmountFromSpecificTime(
             val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
             val userCurrency = currentUser.userCurrency
             Log.i(
-                TAG,
                 "getUserCategoriesWithAmountFromSpecificTime: $currency\n$categoryType\n$startDate\n:\n$endDate"
             )
             val userCategories = categoryRepository.getUserCategories(
@@ -498,7 +481,6 @@ class GetUserCategoriesWithAmountFromSpecificTime(
                 ).map { it.filterRecordCurrency(currency) }
             }.collect { records ->
                 Log.i(
-                    TAG,
                     "getUserCategoriesWithAmountFromSpecificTime.Result: $records",
                 )
                 val data =
@@ -509,7 +491,6 @@ class GetUserCategoriesWithAmountFromSpecificTime(
                         useUserCurrency
                     )
                 Log.i(
-                    TAG,
                     "getUserCategoriesWithAmountFromSpecificTime.Data: $data",
 
                     )
@@ -517,7 +498,6 @@ class GetUserCategoriesWithAmountFromSpecificTime(
             }
         }.catch { e ->
             Log.i(
-                TAG,
                 "getUserCategoriesWithAmountFromSpecificTime.Error: $e"
             )
             emit(Resource.Error(e.message.toString()))
@@ -590,7 +570,6 @@ class GetUserAccountsWithAmountFromSpecificTime(
             val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
             val userCurrency = currentUser.userCurrency
             Log.i(
-                TAG,
                 "getUserAccountsWithAmountFromSpecificTime: \n$startDate\n:\n$endDate"
             )
             val userAccounts = accountRepository.getUserAccounts(
@@ -602,7 +581,6 @@ class GetUserAccountsWithAmountFromSpecificTime(
                 )
             }.collect { records ->
                 Log.i(
-                    TAG,
                     "getUserAccountsWithAmountFromSpecificTime.Result: $records",
                 )
                 val data = records.combineSameCurrencyAccount(
@@ -612,7 +590,6 @@ class GetUserAccountsWithAmountFromSpecificTime(
                     useUserCurrency
                 )
                 Log.i(
-                    TAG,
                     "getUserAccountsWithAmountFromSpecificTime.Data: $data",
 
                     )
@@ -620,7 +597,6 @@ class GetUserAccountsWithAmountFromSpecificTime(
             }
         }.catch { e ->
             Log.i(
-                TAG,
                 "getUserAccountsWithAmountFromSpecificTime.Error: $e"
             )
             emit(Resource.Error(e.message.toString()))
@@ -709,7 +685,6 @@ class GetUserTotalAmountByType(
             val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
             val userCurrency = currentUser.userCurrency
             Log.i(
-                TAG,
                 "getUserTotalAmountByType: $recordType",
 
                 )
@@ -726,7 +701,6 @@ class GetUserTotalAmountByType(
                     currency = userCurrency
                 )
                 Log.i(
-                    TAG,
                     "getUserTotalAmountByType.Result: $data",
 
                     )
@@ -734,7 +708,6 @@ class GetUserTotalAmountByType(
             }
         }.catch { e ->
             Log.i(
-                TAG,
                 "getUserTotalAmountByType.Error: $e"
             )
         }
@@ -756,7 +729,6 @@ class GetUserTotalAmountByTypeFromSpecificTime(
             val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
             val userCurrency = currentUser.userCurrency
             Log.i(
-                TAG,
                 "getUserTotalAmountByTypeFromSpecificTime: $recordType",
 
                 )
@@ -774,14 +746,12 @@ class GetUserTotalAmountByTypeFromSpecificTime(
                     currency = userCurrency
                 )
                 Log.i(
-                    TAG,
                     "getUserTotalAmountByTypeFromSpecificTime.Data: $data"
                 )
                 emit(data)
             }
         }.catch { e ->
             Log.i(
-                TAG,
                 "getUserTotalAmountByTypeFromSpecificTime.Error: $e"
             )
         }
@@ -799,7 +769,6 @@ class GetUserTotalRecordBalance(
             val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
             val userCurrency = currentUser.userCurrency
             Log.i(
-                TAG,
                 "getUserTotalRecordBalance: ",
 
                 )
@@ -817,7 +786,6 @@ class GetUserTotalRecordBalance(
                     currency = userCurrency
                 )
                 Log.i(
-                    TAG,
                     "getUserTotalRecordBalance.Data: $data",
 
                     )
@@ -825,7 +793,6 @@ class GetUserTotalRecordBalance(
             }
         }.catch { e ->
             Log.i(
-                TAG,
                 "getUserTotalRecordBalance.Error: $e"
             )
         }
