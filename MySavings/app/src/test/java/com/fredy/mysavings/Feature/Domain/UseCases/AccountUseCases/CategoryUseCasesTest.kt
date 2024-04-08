@@ -40,7 +40,7 @@ class CategoryUseCasesTest : BaseUseCaseTest() {
         val categoryId = "testing"
         val category = Category(
             categoryId = categoryId,
-            userIdFk = currentUser,
+            userIdFk = currentUserId,
             categoryName = "Category a",
             categoryIcon = 0,
             categoryIconDescription = "Icon a"
@@ -59,7 +59,7 @@ class CategoryUseCasesTest : BaseUseCaseTest() {
         val categoryId = "testing"
         val oldCategory = Category(
             categoryId = categoryId,
-            userIdFk = currentUser,
+            userIdFk = currentUserId,
             categoryName = "Category a",
             categoryIcon = 0,
             categoryIconDescription = "Icon a"
@@ -69,7 +69,7 @@ class CategoryUseCasesTest : BaseUseCaseTest() {
 
         val category = Category(
             categoryId = categoryId,
-            userIdFk = currentUser,
+            userIdFk = currentUserId,
             categoryName = "Category b",
             categoryIcon = 0,
             categoryIconDescription = "Icon b"
@@ -90,7 +90,7 @@ class CategoryUseCasesTest : BaseUseCaseTest() {
             val categoryId = "testing"
             val category = Category(
                 categoryId = categoryId,
-                userIdFk = currentUser,
+                userIdFk = currentUserId,
                 categoryName = "Category a",
                 categoryIcon = 0,
                 categoryIconDescription = "Icon a"
@@ -111,7 +111,7 @@ class CategoryUseCasesTest : BaseUseCaseTest() {
             val categoryId = "testing"
             val category = Category(
                 categoryId = categoryId,
-                userIdFk = currentUser,
+                userIdFk = currentUserId,
                 categoryName = "Category a",
                 categoryIcon = 0,
                 categoryIconDescription = "Icon a"
@@ -130,7 +130,7 @@ class CategoryUseCasesTest : BaseUseCaseTest() {
         val categoryId = "testing"
         val category = Category(
             categoryId = categoryId,
-            userIdFk = currentUser,
+            userIdFk = currentUserId,
             categoryName = "Category a",
             categoryIcon = 0,
             categoryIconDescription = "Icon a"
@@ -162,7 +162,7 @@ class CategoryUseCasesTest : BaseUseCaseTest() {
         assertTrue(categoryMapResource is Resource.Success)
         val categoryMaps = (categoryMapResource as Resource.Success).data!!
         assertEquals(
-            fakeCategoryRepository.getUserCategories(currentUser).first().size,
+            fakeCategoryRepository.getUserCategories(currentUserId).first().size,
             categoryMaps.sumOf { it.categories.size })
         assertEquals(listOf(RecordType.Income, RecordType.Expense).size, categoryMaps.size)
     }

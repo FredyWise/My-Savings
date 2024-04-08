@@ -301,7 +301,7 @@ class GetUserTrueRecordMapsFromSpecificTime(
             emit(Resource.Loading())
             val currentUser = authRepository.getCurrentUser()!!
             val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
-            val userCurrency = currentUser.userCurrency
+            val userCurrency = if (currency.isEmpty()) "" else currentUser.userCurrency
             Log.i(
                 "getUserTrueRecordMapsFromSpecificTime: $startDate\n:\n$endDate,\ncurrency: $currency"
             )
@@ -583,7 +583,7 @@ class GetUserAccountsWithAmountFromSpecificTime(
                 Log.i(
                     "getUserAccountsWithAmountFromSpecificTime.Result: $records",
                 )
-                val data = records.combineSameCurrencyAccount(
+                val data = records.toAccountWithAmount(
                     sortType,
                     userAccounts,
                     userCurrency,
@@ -604,7 +604,7 @@ class GetUserAccountsWithAmountFromSpecificTime(
     }
 
 
-    private suspend fun List<Record>.combineSameCurrencyAccount(
+    private suspend fun List<Record>.toAccountWithAmount(
         sortType: SortType = SortType.DESCENDING,
         userAccounts: List<Account>,
         userCurrency: String,

@@ -20,12 +20,15 @@ import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.GetUserTrueRec
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.UpdateRecordItemWithDeletedAccount
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.UpdateRecordItemWithDeletedCategory
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.UpsertRecordItem
+import com.fredy.mysavings.Feature.Mappers.filterRecordCurrency
+import com.fredy.mysavings.Feature.Mappers.filterTrueRecordCurrency
 import com.fredy.mysavings.Util.Resource
 import com.google.firebase.Timestamp
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.last
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertNotEquals
 import org.junit.Before
@@ -112,7 +115,7 @@ class RecordUseCasesTest : BaseUseCaseTest() {
             accountIdFromFk = "testAccountIdFrom",
             accountIdToFk = "testAccountIdTo",
             categoryIdFk = "testCategoryId",
-            userIdFk = currentUser,
+            userIdFk = currentUserId,
             recordTimestamp = Timestamp.now(),
             recordAmount = 100.0,
             recordCurrency = "USD",
@@ -135,7 +138,7 @@ class RecordUseCasesTest : BaseUseCaseTest() {
             accountIdFromFk = "testAccountIdFrom",
             accountIdToFk = "testAccountIdTo",
             categoryIdFk = "testCategoryId",
-            userIdFk = currentUser,
+            userIdFk = currentUserId,
             recordTimestamp = Timestamp.now(),
             recordAmount = 100.0,
             recordCurrency = "USD",
@@ -150,7 +153,7 @@ class RecordUseCasesTest : BaseUseCaseTest() {
             accountIdFromFk = "testAccountIdFrom",
             accountIdToFk = "testAccountIdTo",
             categoryIdFk = "testCategoryId",
-            userIdFk = currentUser,
+            userIdFk = currentUserId,
             recordTimestamp = Timestamp.now(),
             recordAmount = 200.0,
             recordCurrency = "USD",
@@ -175,7 +178,7 @@ class RecordUseCasesTest : BaseUseCaseTest() {
                 accountIdFromFk = "testAccountIdFrom",
                 accountIdToFk = "testAccountIdTo",
                 categoryIdFk = "testCategoryId",
-                userIdFk = currentUser,
+                userIdFk = currentUserId,
                 recordTimestamp = Timestamp.now(),
                 recordAmount = 100.0,
                 recordCurrency = "USD",
@@ -201,7 +204,7 @@ class RecordUseCasesTest : BaseUseCaseTest() {
                 accountIdFromFk = "testAccountIdFrom",
                 accountIdToFk = "testAccountIdTo",
                 categoryIdFk = "testCategoryId",
-                userIdFk = currentUser,
+                userIdFk = currentUserId,
                 recordTimestamp = Timestamp.now(),
                 recordAmount = 100.0,
                 recordCurrency = "USD",
@@ -224,7 +227,7 @@ class RecordUseCasesTest : BaseUseCaseTest() {
             accountIdFromFk = "testAccountIdFrom",
             accountIdToFk = "testAccountIdTo",
             categoryIdFk = "testCategoryId",
-            userIdFk = currentUser,
+            userIdFk = currentUserId,
             recordTimestamp = Timestamp.now(),
             recordAmount = 100.0,
             recordCurrency = "USD",
@@ -234,7 +237,7 @@ class RecordUseCasesTest : BaseUseCaseTest() {
 
         fakeRecordRepository.upsertRecordItem(record)
 
-        val retrievedRecord = getRecordById(recordId = recordId).first().record
+        val retrievedRecord = getRecordById(recordId = recordId).last().record
 
         assertEquals(record, retrievedRecord)
     }
@@ -262,7 +265,7 @@ class RecordUseCasesTest : BaseUseCaseTest() {
         val records = (recordsResource as Resource.Success).data!!
         assertEquals(
             fakeRecordRepository.getUserTrueRecordsFromSpecificTime(
-                currentUser,
+                currentUserId,
                 startDate,
                 endDate
             ).first().size, records.size
@@ -276,7 +279,7 @@ class RecordUseCasesTest : BaseUseCaseTest() {
 
         assertTrue(recordsResource is Resource.Success)
         val records = (recordsResource as Resource.Success).data!!
-        assertEquals(fakeRecordRepository.getRecordMaps(currentUser).first().size, records.size)
+        assertEquals(fakeRecordRepository.getRecordMaps(currentUserId).first().size, records.size)
     }
 
 
@@ -292,7 +295,7 @@ class RecordUseCasesTest : BaseUseCaseTest() {
         val records = (recordsResource as Resource.Success).data!!
         assertEquals(
             fakeRecordRepository.getUserCategoryRecordsOrderedByDateTime(
-                currentUser,
+                currentUserId,
                 categoryId,
                 sortType
             ).first().size, records.size
@@ -311,7 +314,7 @@ class RecordUseCasesTest : BaseUseCaseTest() {
         val records = (recordsResource as Resource.Success).data!!
         assertEquals(
             fakeRecordRepository.getUserAccountRecordsOrderedByDateTime(
-                currentUser,
+                currentUserId,
                 accountId,
                 sortType
             ).first().size, records.size
@@ -323,8 +326,8 @@ class RecordUseCasesTest : BaseUseCaseTest() {
         val startDate = LocalDateTime.now().minusDays(7)
         val endDate = LocalDateTime.now()
         val sortType = SortType.ASCENDING
-        val currency = listOf("USD")
-        val useUserCurrency = true
+        val currency = listOf(currentUserCurrency)
+        val useUserCurrency = false
 
         val recordsFlow = getUserTrueRecordMapsFromSpecificTime(
             startDate,
@@ -336,13 +339,14 @@ class RecordUseCasesTest : BaseUseCaseTest() {
         val recordsResource = recordsFlow.last()
 
         assertTrue(recordsResource is Resource.Success)
-        val records = (recordsResource as Resource.Success).data!!
+        val recordMaps = (recordsResource as Resource.Success).data!!
         assertEquals(
             fakeRecordRepository.getUserTrueRecordsFromSpecificTime(
-                currentUser,
+                currentUserId,
                 startDate,
                 endDate
-            ).first().size, records.size
+            ).first().filterTrueRecordCurrency(currency + currentUserCurrency).size, recordMaps.sumOf { it.records.size }
+
         )
     }
 
@@ -352,7 +356,7 @@ class RecordUseCasesTest : BaseUseCaseTest() {
         val sortType = SortType.ASCENDING
         val startDate = LocalDateTime.now().minusDays(7)
         val endDate = LocalDateTime.now()
-        val currency = listOf("USD")
+        val currency = emptyList<String>()
         val useUserCurrency = true
 
         val recordsFlow = getUserRecordsFromSpecificTime(
@@ -363,17 +367,20 @@ class RecordUseCasesTest : BaseUseCaseTest() {
             currency,
             useUserCurrency
         )
+
         val recordsResource = recordsFlow.last()
 
         assertTrue(recordsResource is Resource.Success)
         val records = (recordsResource as Resource.Success).data!!
         assertEquals(
             fakeRecordRepository.getUserRecordsByTypeFromSpecificTime(
-                currentUser,
+                currentUserId,
                 listOf(recordType),
                 startDate,
                 endDate
-            ).first().size, records.size
+            ).map { it.filterRecordCurrency(currency) }.last()
+                .distinctBy { it.recordDateTime.toLocalDate() }.size,
+            records.size
         )
     }
 
@@ -400,7 +407,7 @@ class RecordUseCasesTest : BaseUseCaseTest() {
         val categories = (categoriesResource as Resource.Success).data!!
         assertEquals(
             fakeRecordRepository.getUserRecordsByTypeFromSpecificTime(
-                currentUser,
+                currentUserId,
                 listOf(categoryType),
                 startDate,
                 endDate
@@ -413,7 +420,7 @@ class RecordUseCasesTest : BaseUseCaseTest() {
         val sortType = SortType.ASCENDING
         val startDate = LocalDateTime.now().minusDays(7)
         val endDate = LocalDateTime.now()
-        val useUserCurrency = true
+        val useUserCurrency = false
 
         val accountsFlow =
             getUserAccountsWithAmountFromSpecificTime(sortType, startDate, endDate, useUserCurrency)
@@ -422,11 +429,9 @@ class RecordUseCasesTest : BaseUseCaseTest() {
         assertTrue(accountsResource is Resource.Success)
         val accounts = (accountsResource as Resource.Success).data!!
         assertEquals(
-            fakeRecordRepository.getUserRecordsFromSpecificTime(
-                currentUser,
-                startDate,
-                endDate
-            ).first().size, accounts.size
+            fakeAccountRepository.getUserAccounts(
+                currentUserId,
+            ).last().size, accounts.size
         )
     }
 
@@ -438,7 +443,7 @@ class RecordUseCasesTest : BaseUseCaseTest() {
         val balance = balanceFlow.last()
 
         assertEquals(
-            fakeRecordRepository.getUserRecordsByType(currentUser, recordType).first()
+            fakeRecordRepository.getUserRecordsByType(currentUserId, recordType).first()
                 .sumOf { it.recordAmount }, balance.amount
         )
     }
@@ -454,7 +459,7 @@ class RecordUseCasesTest : BaseUseCaseTest() {
 
         assertEquals(
             fakeRecordRepository.getUserRecordsByTypeFromSpecificTime(
-                currentUser,
+                currentUserId,
                 listOf(recordType),
                 startDate,
                 endDate
@@ -472,8 +477,8 @@ class RecordUseCasesTest : BaseUseCaseTest() {
 
         assertEquals(
             fakeRecordRepository.getUserRecordsByTypeFromSpecificTime(
-                currentUser,
-                listOf(RecordType.Expense,RecordType.Income),
+                currentUserId,
+                listOf(RecordType.Expense, RecordType.Income),
                 startDate,
                 endDate
             ).first().sumOf { it.recordAmount }, balance.amount

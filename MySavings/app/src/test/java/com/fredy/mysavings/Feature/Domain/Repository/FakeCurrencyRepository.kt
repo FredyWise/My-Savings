@@ -38,7 +38,6 @@ class FakeCurrencyRepository : CurrencyRepository {
     }
 
     override suspend fun getInfo(): List<CurrencyInfoItem> {
-        // Implement this method according to your needs
         return emptyList()
     }
 }

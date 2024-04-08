@@ -15,6 +15,7 @@ import com.fredy.mysavings.Feature.Data.Database.Model.UserData
 import com.fredy.mysavings.Feature.Data.Enum.AuthMethod
 import com.fredy.mysavings.Feature.Domain.Repository.AuthRepository
 import com.fredy.mysavings.Feature.Domain.Repository.SettingsRepository
+import com.fredy.mysavings.Feature.Domain.UseCases.AuthUseCases.AuthUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.UserUseCases.UserUseCases
 import com.fredy.mysavings.Util.Resource
 

@@ -2,12 +2,8 @@ package com.fredy.mysavings.Feature.Domain.UseCases.AccountUseCases
 
 import com.fredy.mysavings.BaseUseCaseTest
 import com.fredy.mysavings.Feature.Data.Database.Model.Account
-import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.CurrencyUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.currencyConverter
-import com.fredy.mysavings.Util.BalanceItem
 import com.fredy.mysavings.Util.Resource
-import io.mockk.coEvery
-import io.mockk.mockkClass
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.flow.first
@@ -43,7 +39,7 @@ class AccountUseCasesTest : BaseUseCaseTest() {
         val accountId = "testing"
         val account = Account(
             accountId = accountId,
-            userIdFk = currentUser,
+            userIdFk = currentUserId,
             accountName = "Account a",
             accountAmount = 100.0,
             accountCurrency = "USD",
@@ -64,7 +60,7 @@ class AccountUseCasesTest : BaseUseCaseTest() {
         val accountId = "testing"
         val oldAccount = Account(
             accountId = accountId,
-            userIdFk = currentUser,
+            userIdFk = currentUserId,
             accountName = "Account a",
             accountAmount = 100.0,
             accountCurrency = "USD",
@@ -76,7 +72,7 @@ class AccountUseCasesTest : BaseUseCaseTest() {
 
         val account = Account(
             accountId = accountId,
-            userIdFk = currentUser,
+            userIdFk = currentUserId,
             accountName = "Account b",
             accountAmount = 100.0,
             accountCurrency = "IDR",
@@ -99,7 +95,7 @@ class AccountUseCasesTest : BaseUseCaseTest() {
             val accountId = "testing"
             val account = Account(
                 accountId = accountId,
-                userIdFk = currentUser,
+                userIdFk = currentUserId,
                 accountName = "Account a",
                 accountAmount = 100.0,
                 accountCurrency = "USD",
@@ -123,7 +119,7 @@ class AccountUseCasesTest : BaseUseCaseTest() {
             val accountId = "testing"
             val account = Account(
                 accountId = accountId,
-                userIdFk = currentUser,
+                userIdFk = currentUserId,
                 accountName = "Account a",
                 accountAmount = 100.0,
                 accountCurrency = "USD",
@@ -143,7 +139,7 @@ class AccountUseCasesTest : BaseUseCaseTest() {
         val accountId = "testing"
         val account = Account(
             accountId = accountId,
-            userIdFk = currentUser,
+            userIdFk = currentUserId,
             accountName = "Account a",
             accountAmount = 100.0,
             accountCurrency = "USD",
@@ -164,7 +160,7 @@ class AccountUseCasesTest : BaseUseCaseTest() {
             val accountId = "testing"
             val account = Account(
                 accountId = accountId,
-                userIdFk = currentUser,
+                userIdFk = currentUserId,
                 accountName = "Account a",
                 accountAmount = 100.0,
                 accountCurrency = "USD",
@@ -187,7 +183,7 @@ class AccountUseCasesTest : BaseUseCaseTest() {
 
         assertTrue(accountsResource is Resource.Success)
         val accounts = (accountsResource as Resource.Success).data!!
-        assertEquals(fakeAccountRepository.getUserAccounts(currentUser).first().size, accounts.size)
+        assertEquals(fakeAccountRepository.getUserAccounts(currentUserId).first().size, accounts.size)
     }
 
     @Test
@@ -195,7 +191,7 @@ class AccountUseCasesTest : BaseUseCaseTest() {
         val currenciesFlow = getAccountsCurrencies()
         val currencies = currenciesFlow.last()
 
-        val expectedCurrencies = fakeAccountRepository.getUserAccounts(currentUser).first()
+        val expectedCurrencies = fakeAccountRepository.getUserAccounts(currentUserId).first()
             .map { it.accountCurrency }
             .distinct()
 
@@ -207,8 +203,8 @@ class AccountUseCasesTest : BaseUseCaseTest() {
         val balanceItemFlow = getAccountsTotalBalance()
         val balanceItem = balanceItemFlow.last()
 
-        val expectedTotalBalance = fakeAccountRepository.getUserAccounts(currentUser).first()
-            .sumOf { mockCurrencyUseCases.currencyConverter(it.accountAmount, it.accountCurrency, currentUser) }
+        val expectedTotalBalance = fakeAccountRepository.getUserAccounts(currentUserId).first()
+            .sumOf { mockCurrencyUseCases.currencyConverter(it.accountAmount, it.accountCurrency, currentUserId) }
 
         assertEquals(expectedTotalBalance, balanceItem.amount)
     }

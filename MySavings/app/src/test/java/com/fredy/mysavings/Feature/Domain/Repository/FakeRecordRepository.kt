@@ -18,12 +18,18 @@ class FakeRecordRepository : RecordRepository {
 
     override suspend fun upsertRecordItem(record: Record): String {
         val existingRecord = records.find { it.recordId == record.recordId }
+        val existingTrueRecord = trueRecords.find { it.record.recordId == record.recordId }
         return if (existingRecord != null) {
             records.remove(existingRecord)
             records.add(record)
+            trueRecords.remove(existingTrueRecord)
+            trueRecords.add(TrueRecord(record))
             record.recordId
         } else {
-            record.recordId.also { records.add(record) }
+            record.recordId.also {
+                records.add(record)
+                trueRecords.add(TrueRecord(record))
+            }
         }
     }
 
@@ -32,6 +38,8 @@ class FakeRecordRepository : RecordRepository {
     }
 
     override suspend fun deleteRecordItem(record: Record) {
+        val existingTrueRecord = trueRecords.find { it.record.recordId == record.recordId }
+        trueRecords.remove(existingTrueRecord)
         records.remove(record)
     }
 
@@ -52,7 +60,9 @@ class FakeRecordRepository : RecordRepository {
     }
 
     override suspend fun getRecordMaps(userId: String): Flow<List<RecordMap>> {
-        return flow { emit(trueRecords.filter { it.record.userIdFk == userId }.toRecordSortedMaps()) }
+        return flow {
+            emit(trueRecords.filter { it.record.userIdFk == userId }.toRecordSortedMaps())
+        }
     }
 
     override suspend fun getUserCategoryRecordsOrderedByDateTime(
@@ -60,7 +70,10 @@ class FakeRecordRepository : RecordRepository {
         categoryId: String,
         sortType: SortType,
     ): Flow<List<RecordMap>> {
-        return flow { emit(trueRecords.filter { it.record.userIdFk == userId && it.record.categoryIdFk == categoryId }.toRecordSortedMaps(sortType)) }
+        return flow {
+            emit(trueRecords.filter { it.record.userIdFk == userId && it.record.categoryIdFk == categoryId }
+                .toRecordSortedMaps(sortType))
+        }
     }
 
     override suspend fun getUserAccountRecordsOrderedByDateTime(
@@ -68,7 +81,10 @@ class FakeRecordRepository : RecordRepository {
         accountId: String,
         sortType: SortType,
     ): Flow<List<RecordMap>> {
-        return flow { emit(trueRecords.filter { it.record.userIdFk == userId && ( it.record.accountIdToFk == accountId || it.record.accountIdFromFk == accountId)}.toRecordSortedMaps()) }
+        return flow {
+            emit(trueRecords.filter { it.record.userIdFk == userId && (it.record.accountIdToFk == accountId || it.record.accountIdFromFk == accountId) }
+                .toRecordSortedMaps())
+        }
     }
 
     override suspend fun getUserRecordsByTypeFromSpecificTime(
