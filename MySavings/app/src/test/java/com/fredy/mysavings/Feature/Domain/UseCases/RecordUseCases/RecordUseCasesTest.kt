@@ -1,25 +1,9 @@
-package com.fredy.mysavings.Feature.Domain.UseCases.AccountUseCases
+package com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases
 
 import com.fredy.mysavings.BaseUseCaseTest
 import com.fredy.mysavings.Feature.Data.Database.Model.Record
 import com.fredy.mysavings.Feature.Data.Enum.RecordType
 import com.fredy.mysavings.Feature.Data.Enum.SortType
-import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.DeleteRecordItem
-import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.GetAllRecords
-import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.GetAllTrueRecordsWithinSpecificTime
-import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.GetRecordById
-import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.GetUserAccountRecordsOrderedByDateTime
-import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.GetUserAccountsWithAmountFromSpecificTime
-import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.GetUserCategoriesWithAmountFromSpecificTime
-import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.GetUserCategoryRecordsOrderedByDateTime
-import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.GetUserRecordsFromSpecificTime
-import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.GetUserTotalAmountByType
-import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.GetUserTotalAmountByTypeFromSpecificTime
-import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.GetUserTotalRecordBalance
-import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.GetUserTrueRecordMapsFromSpecificTime
-import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.UpdateRecordItemWithDeletedAccount
-import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.UpdateRecordItemWithDeletedCategory
-import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.UpsertRecordItem
 import com.fredy.mysavings.Feature.Mappers.filterRecordCurrency
 import com.fredy.mysavings.Feature.Mappers.filterTrueRecordCurrency
 import com.fredy.mysavings.Util.Resource

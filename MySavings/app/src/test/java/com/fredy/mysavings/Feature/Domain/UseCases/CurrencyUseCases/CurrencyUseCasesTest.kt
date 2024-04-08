@@ -1,4 +1,4 @@
-package com.fredy.mysavings.Feature.Domain.UseCases.AccountUseCases
+package com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases
 
 import com.fredy.mysavings.BaseUseCaseTest
 import com.fredy.mysavings.Feature.Data.Database.Model.Account

@@ -1,12 +1,8 @@
-package com.fredy.mysavings.Feature.Domain.UseCases.AccountUseCases
+package com.fredy.mysavings.Feature.Domain.UseCases.CategoryUseCases
 
 import com.fredy.mysavings.BaseUseCaseTest
 import com.fredy.mysavings.Feature.Data.Database.Model.Category
 import com.fredy.mysavings.Feature.Data.Enum.RecordType
-import com.fredy.mysavings.Feature.Domain.UseCases.CategoryUseCases.DeleteCategory
-import com.fredy.mysavings.Feature.Domain.UseCases.CategoryUseCases.GetCategory
-import com.fredy.mysavings.Feature.Domain.UseCases.CategoryUseCases.GetCategoryMapOrderedByName
-import com.fredy.mysavings.Feature.Domain.UseCases.CategoryUseCases.UpsertCategory
 import com.fredy.mysavings.Util.Resource
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue

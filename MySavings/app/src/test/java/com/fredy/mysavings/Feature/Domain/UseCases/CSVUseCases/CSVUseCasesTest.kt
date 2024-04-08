@@ -1,9 +1,6 @@
-package com.fredy.mysavings.Feature.Domain.UseCases.AccountUseCases
+package com.fredy.mysavings.Feature.Domain.UseCases.CSVUseCases
 
 import com.fredy.mysavings.BaseUseCaseTest
-import com.fredy.mysavings.Feature.Domain.UseCases.CSVUseCases.GetDBInfo
-import com.fredy.mysavings.Feature.Domain.UseCases.CSVUseCases.InputFromCSV
-import com.fredy.mysavings.Feature.Domain.UseCases.CSVUseCases.OutputToCSV
 import com.fredy.mysavings.Util.isExpense
 import com.fredy.mysavings.Util.isIncome
 import com.fredy.mysavings.Util.isTransfer
