@@ -124,26 +124,28 @@ fun NavGraphRoot(
                 )
             }
             composable(
-                route = "${NavigationRoute.Add.route}/{id}",
+                route = "${NavigationRoute.Add.route}?recordId={recordId}",
                 enterTransition = {
                     fadeIn()
                 },
                 exitTransition = {
                     fadeOut()
                 },
-                arguments = listOf(navArgument("id") {
-                    type = NavType.StringType
-                    defaultValue = "-1"
-                })
+                arguments = listOf(
+                    navArgument(
+                        name = "recordId"
+                    ) {
+                        type = NavType.StringType
+                        defaultValue = "-1"
+                    },
+                )
             ) {
                 Log.d("NavGraphRoot: Add")
-                val id = it.arguments?.getString("id") ?: "-1"
                 AddScreen(
                     modifier = Modifier.padding(
                         horizontal = 8.dp,
                         vertical = 4.dp
                     ),
-                    id = id,
                     navigateUp = { navController.navigateUp() },
                 )
             }

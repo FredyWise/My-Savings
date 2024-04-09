@@ -53,7 +53,7 @@ abstract class BaseUseCaseTest {
 
     @Before
     fun init() {
-        Log
+        Log.setDebuggable(false)
         DefaultData
         MockKAnnotations.init(this)
         coEvery { mockCurrencyUseCases.convertCurrencyData(any(), any(), any()) } answers {

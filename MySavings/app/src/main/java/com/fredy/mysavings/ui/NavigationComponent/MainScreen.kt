@@ -188,7 +188,7 @@ fun MainScreen(
                         FloatingActionButton(
                             onClick = {
                                 rootNavController.navigate(
-                                    NavigationRoute.Add.route + "/-1"
+                                    NavigationRoute.Add.route
                                 )
                             },
                             backgroundColor = contentColor,

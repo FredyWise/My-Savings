@@ -3,6 +3,7 @@ package com.fredy.mysavings.ViewModels
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fredy.mysavings.Feature.Data.Database.Model.Account
@@ -33,6 +34,7 @@ import kotlin.math.absoluteValue
 class AddSingleRecordViewModel @Inject constructor(
     private val recordUseCases: RecordUseCases,
     private val currencyUseCase: CurrencyUseCases,
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     var state by mutableStateOf(AddRecordState())
     var calcState by mutableStateOf(CalcState())
@@ -41,39 +43,40 @@ class AddSingleRecordViewModel @Inject constructor(
         Resource.Loading()
     )
 
+    init {
+        savedStateHandle.get<String>("recordId")?.let { recordId ->
+            if (recordId != "-1") {
+                viewModelScope.launch {
+                    recordUseCases.getRecordById(
+                        recordId
+                    ).collectLatest {
+                        state = state.copy(
+                            fromAccount = it.fromAccount,
+                            toAccount = it.toAccount,
+                            toCategory = it.toCategory,
+                            recordId = it.record.recordId,
+                            accountIdFromFk = it.record.accountIdFromFk,
+                            accountIdToFk = it.record.accountIdToFk,
+                            categoryIdFk = it.record.categoryIdFk,
+                            recordDate = it.record.recordDateTime.toLocalDate(),
+                            recordTime = it.record.recordDateTime.toLocalTime(),
+                            recordAmount = it.record.recordAmount,
+                            recordCurrency = it.record.recordCurrency,
+                            recordType = it.record.recordType,
+                            recordNotes = it.record.recordNotes,
+                        )
+                        calcState = calcState.copy(
+                            number1 = it.record.recordAmount.absoluteValue.toString()
+                        )
+                    }
+                }
+            }
+        }
+    }
+
     fun onEvent(event: AddRecordEvent) {
         viewModelScope.launch {
             when (event) {
-                is AddRecordEvent.SetId -> {
-                    if (event.id != "-1" && state.isFirst) {
-                        viewModelScope.launch {
-                            recordUseCases.getRecordById(
-                                event.id
-                            ).collectLatest {
-                                state = state.copy(
-                                    fromAccount = it.fromAccount,
-                                    toAccount = it.toAccount,
-                                    toCategory = it.toCategory,
-                                    recordId = it.record.recordId,
-                                    accountIdFromFk = it.record.accountIdFromFk,
-                                    accountIdToFk = it.record.accountIdToFk,
-                                    categoryIdFk = it.record.categoryIdFk,
-                                    recordDate = it.record.recordDateTime.toLocalDate(),
-                                    recordTime = it.record.recordDateTime.toLocalTime(),
-                                    recordAmount = it.record.recordAmount,
-                                    recordCurrency = it.record.recordCurrency,
-                                    recordType = it.record.recordType,
-                                    recordNotes = it.record.recordNotes,
-                                    isFirst = !state.isFirst
-                                )
-                                calcState = calcState.copy(
-                                    number1 = it.record.recordAmount.absoluteValue.toString()
-                                )
-                            }
-                        }
-                    }
-                }
-
                 is AddRecordEvent.SaveRecord -> {
                     resource.update {
                         Resource.Loading()
@@ -476,7 +479,6 @@ data class AddRecordState(
     val recordCurrency: String = "",
     val recordNotes: String = "",
     val recordType: RecordType = RecordType.Expense,
-    val isFirst: Boolean = true,
     val isShowWarning: Boolean = false,
     val isAgreeToConvert: Boolean = false,
 )

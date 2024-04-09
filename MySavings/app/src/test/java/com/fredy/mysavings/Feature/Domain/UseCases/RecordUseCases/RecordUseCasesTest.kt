@@ -96,8 +96,8 @@ class RecordUseCasesTest : BaseUseCaseTest() {
         val recordId = "testing"
         val record = Record(
             recordId = recordId,
-            accountIdFromFk = "testAccountIdFrom",
-            accountIdToFk = "testAccountIdTo",
+            accountIdFromFk = "testAccountId",
+            accountIdToFk = "testAccountId",
             categoryIdFk = "testCategoryId",
             userIdFk = currentUserId,
             recordTimestamp = Timestamp.now(),
@@ -119,8 +119,8 @@ class RecordUseCasesTest : BaseUseCaseTest() {
         val recordId = "testing"
         val oldRecord = Record(
             recordId = recordId,
-            accountIdFromFk = "testAccountIdFrom",
-            accountIdToFk = "testAccountIdTo",
+            accountIdFromFk = "testAccountId",
+            accountIdToFk = "testAccountId",
             categoryIdFk = "testCategoryId",
             userIdFk = currentUserId,
             recordTimestamp = Timestamp.now(),
@@ -134,8 +134,8 @@ class RecordUseCasesTest : BaseUseCaseTest() {
 
         val record = Record(
             recordId = recordId,
-            accountIdFromFk = "testAccountIdFrom",
-            accountIdToFk = "testAccountIdTo",
+            accountIdFromFk = "testAccountId",
+            accountIdToFk = "testAccountId",
             categoryIdFk = "testCategoryId",
             userIdFk = currentUserId,
             recordTimestamp = Timestamp.now(),

@@ -48,7 +48,7 @@ fun RecordsScreen(
             },
             onEdit = {
                 rootNavController.navigate(
-                    NavigationRoute.Add.route + "/" + it.record.recordId
+                    "${NavigationRoute.Add.route}?recordId=${it.record.recordId}"
                 )
             },
         )
@@ -67,7 +67,7 @@ fun RecordsScreen(
                 errorMessage = resource.message ?: "",
                 onMessageClick = {
                     rootNavController.navigate(
-                        NavigationRoute.Add.route + "/-1"
+                        NavigationRoute.Add.route
                     )
                     isVisible.targetState = false
                 },

@@ -43,7 +43,7 @@ class FakeRecordRepository : RecordRepository {
         records.remove(record)
     }
 
-    override suspend fun getUserRecords(userId: String): Flow<List<Record>> {
+    override  fun getUserRecords(userId: String): Flow<List<Record>> {
         return flow { emit(records.filter { it.userIdFk == userId }) }
     }
 
@@ -59,13 +59,13 @@ class FakeRecordRepository : RecordRepository {
         return flow { emit(trueRecords.filter { it.record.userIdFk == userId && it.record.recordDateTime in startDate..endDate }) }
     }
 
-    override suspend fun getRecordMaps(userId: String): Flow<List<RecordMap>> {
+    override fun getRecordMaps(userId: String): Flow<List<RecordMap>> {
         return flow {
             emit(trueRecords.filter { it.record.userIdFk == userId }.toRecordSortedMaps())
         }
     }
 
-    override suspend fun getUserCategoryRecordsOrderedByDateTime(
+    override fun getUserCategoryRecordsOrderedByDateTime(
         userId: String,
         categoryId: String,
         sortType: SortType,
@@ -76,7 +76,7 @@ class FakeRecordRepository : RecordRepository {
         }
     }
 
-    override suspend fun getUserAccountRecordsOrderedByDateTime(
+    override fun getUserAccountRecordsOrderedByDateTime(
         userId: String,
         accountId: String,
         sortType: SortType,
@@ -87,7 +87,7 @@ class FakeRecordRepository : RecordRepository {
         }
     }
 
-    override suspend fun getUserRecordsByTypeFromSpecificTime(
+    override fun getUserRecordsByTypeFromSpecificTime(
         userId: String,
         recordType: List<RecordType>,
         startDate: LocalDateTime,
@@ -96,7 +96,7 @@ class FakeRecordRepository : RecordRepository {
         return flow { emit(records.filter { it.userIdFk == userId && it.recordType in recordType && it.recordDateTime in startDate..endDate }) }
     }
 
-    override suspend fun getUserRecordsFromSpecificTime(
+    override fun getUserRecordsFromSpecificTime(
         userId: String,
         startDate: LocalDateTime,
         endDate: LocalDateTime,
@@ -104,7 +104,7 @@ class FakeRecordRepository : RecordRepository {
         return flow { emit(records.filter { it.userIdFk == userId && it.recordDateTime in startDate..endDate }) }
     }
 
-    override suspend fun getUserRecordsByType(
+    override fun getUserRecordsByType(
         userId: String,
         recordType: RecordType,
     ): Flow<List<Record>> {

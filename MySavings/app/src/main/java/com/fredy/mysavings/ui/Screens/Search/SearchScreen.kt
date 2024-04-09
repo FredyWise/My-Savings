@@ -57,7 +57,7 @@ fun SearchScreen(
             },
             onEdit = {
                 rootNavController.navigate(
-                    NavigationRoute.Add.route + "/" + it.record.recordId
+                    "${NavigationRoute.Add.route}?recordId=${it.record.recordId}"
                 )
             },
         )
@@ -104,7 +104,7 @@ fun SearchScreen(
                         errorMessage = resource.message ?: "",
                         onMessageClick = {
                             rootNavController.navigate(
-                                NavigationRoute.Add.route + "/-1"
+                                NavigationRoute.Add.route
                             )
                         },
                     ) { data ->

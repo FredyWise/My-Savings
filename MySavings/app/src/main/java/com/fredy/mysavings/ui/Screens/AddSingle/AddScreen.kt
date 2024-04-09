@@ -69,7 +69,6 @@ import kotlinx.coroutines.launch
 fun AddScreen(
     modifier: Modifier = Modifier,
     onBackground: Color = MaterialTheme.colorScheme.onBackground,
-    id: String,
     navigateUp: () -> Unit,
     viewModel: AddSingleRecordViewModel = hiltViewModel(),
     categoryViewModel: CategoryViewModel = hiltViewModel(),
@@ -189,11 +188,6 @@ fun AddScreen(
                     )
                 )
             },
-        )
-    }
-    LaunchedEffect(key1 = id) {
-        viewModel.onEvent(
-            AddRecordEvent.SetId(id)
         )
     }
     LaunchedEffect(

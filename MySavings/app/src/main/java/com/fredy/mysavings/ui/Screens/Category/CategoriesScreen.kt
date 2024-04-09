@@ -68,7 +68,7 @@ fun CategoriesScreen(
             },
             onEdit = {
                 rootNavController.navigate(
-                    NavigationRoute.Add.route + "/" + it.record.recordId
+                    "${NavigationRoute.Add.route}?recordId=${it.record.recordId}"
                 )
             },
         )

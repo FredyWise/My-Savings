@@ -39,6 +39,7 @@ object DefaultData {
     // icons
 
     val appIcon = SavingsIcon(R.drawable.app_icon, "Application Icon")
+    val bookInitIcon = SavingsIcon(R.drawable.ic_book, "Book")
     val transferIcon = SavingsIcon(R.drawable.ic_exchange, "Transfer")
     val categoryInitIcon = SavingsIcon(R.drawable.ic_category_foreground, "Category")
     val accountInitIcon = SavingsIcon(R.drawable.ic_wallet_foreground, "Account")
