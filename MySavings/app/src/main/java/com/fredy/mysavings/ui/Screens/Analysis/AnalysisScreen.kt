@@ -11,6 +11,10 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.fredy.mysavings.Util.BalanceColor
 import com.fredy.mysavings.Util.RecordTypeColor
+import com.fredy.mysavings.ViewModels.AccountState
+import com.fredy.mysavings.ViewModels.CategoryState
+import com.fredy.mysavings.ViewModels.Event.AccountEvent
+import com.fredy.mysavings.ViewModels.Event.CategoryEvent
 import com.fredy.mysavings.ViewModels.Event.RecordsEvent
 import com.fredy.mysavings.ViewModels.RecordState
 import com.fredy.mysavings.ui.NavigationComponent.Navigation.AnalysisNavGraph
@@ -24,6 +28,10 @@ fun AnalysisScreen(
     rootNavController: NavHostController,
     state: RecordState,
     onEvent: (RecordsEvent) -> Unit,
+    categoryState: CategoryState,
+    categoryEvent: (CategoryEvent) -> Unit,
+    accountState: AccountState,
+    accountEvent: (AccountEvent) -> Unit,
 ) {
     val navController = rememberNavController()
     val currentBackStack by navController.currentBackStackEntryAsState()
@@ -51,6 +59,10 @@ fun AnalysisScreen(
             navController = navController,
             state = state,
             onEvent = onEvent,
+            categoryState = categoryState,
+            categoryEvent = categoryEvent,
+            accountState = accountState,
+            accountEvent = accountEvent
         )
 
     }

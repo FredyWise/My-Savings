@@ -1,5 +1,6 @@
 package com.fredy.mysavings.ui.Screens.Analysis
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,6 +17,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
@@ -27,10 +30,12 @@ import co.yml.charts.ui.barchart.models.BarData
 import co.yml.charts.ui.barchart.models.GroupBar
 import com.fredy.mysavings.Util.BalanceColor
 import com.fredy.mysavings.Util.RecordTypeColor
-import com.fredy.mysavings.Util.DefaultData.deletedAccount
 import com.fredy.mysavings.Util.formatBalanceAmount
+import com.fredy.mysavings.ViewModels.AccountState
+import com.fredy.mysavings.ViewModels.Event.AccountEvent
 import com.fredy.mysavings.ViewModels.Event.RecordsEvent
 import com.fredy.mysavings.ViewModels.RecordState
+import com.fredy.mysavings.ui.Screens.Account.AccountDetailBottomSheet
 import com.fredy.mysavings.ui.Screens.Analysis.Charts.ChartGroupedBar
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.ResourceHandler
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleEntityItem
@@ -41,9 +46,23 @@ fun AnalysisAccount(
     modifier: Modifier = Modifier,
     state: RecordState,
     onEvent: (RecordsEvent) -> Unit,
+    accountState: AccountState,
+    accountEvent: (AccountEvent) -> Unit,
 ) {
     val expenseColor by remember { mutableStateOf(BalanceColor.Expense) }
     val incomeColor by remember { mutableStateOf(BalanceColor.Income) }
+
+
+    var isSheetOpen by rememberSaveable {
+        mutableStateOf(false)
+    }
+    AccountDetailBottomSheet(
+        isSheetOpen = isSheetOpen,
+        onCloseBottomSheet = { isSheetOpen = it },
+        state = accountState,
+        recordEvent = onEvent
+    )
+
     state.resourceData.accountsWithAmountResource.let { resource ->
         ResourceHandler(
             resource = resource,
@@ -79,7 +98,7 @@ fun AnalysisAccount(
                                             )
                                         }",
 
-                                    ),
+                                        ),
                                     BarData(
                                         Point(
                                             (index + 1).toFloat(),
@@ -108,6 +127,10 @@ fun AnalysisAccount(
                         )
                     )
                     SimpleEntityItem(
+                        modifier = Modifier.clickable {
+                            accountEvent(AccountEvent.GetAccountDetail(item.account))
+                            isSheetOpen = true
+                        },
                         icon = item.account.accountIcon,
                         iconDescription = item.account.accountIconDescription,
                         iconModifier = Modifier

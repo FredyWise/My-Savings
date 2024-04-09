@@ -62,11 +62,17 @@ fun HomeNavGraph(
             },
         ) {
             val state by recordViewModel.state.collectAsStateWithLifecycle()
+            val categoryState by categoryViewModel.state.collectAsStateWithLifecycle()
+            val accountState by accountViewModel.state.collectAsStateWithLifecycle()
 
             AnalysisScreen(
                 rootNavController = rootNavController,
                 state = state,
                 onEvent = recordViewModel::onEvent,
+                categoryState = categoryState,
+                categoryEvent = categoryViewModel::onEvent,
+                accountState = accountState,
+                accountEvent = accountViewModel::onEvent
             )
         }
         composable(

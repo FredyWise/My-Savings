@@ -1,12 +1,7 @@
 package com.fredy.mysavings.ui.NavigationComponent
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -34,10 +29,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -51,7 +45,6 @@ import com.fredy.mysavings.Util.formatRangeOfDate
 import com.fredy.mysavings.ViewModels.AccountViewModel
 import com.fredy.mysavings.ViewModels.CategoryViewModel
 import com.fredy.mysavings.ViewModels.Event.RecordsEvent
-import com.fredy.mysavings.ViewModels.RecordState
 import com.fredy.mysavings.ViewModels.RecordViewModel
 import com.fredy.mysavings.ui.NavigationComponent.Navigation.HomeNavGraph
 import com.fredy.mysavings.ui.NavigationComponent.Navigation.NavigationRoute
@@ -59,8 +52,10 @@ import com.fredy.mysavings.ui.NavigationComponent.Navigation.bottomBarScreens
 import com.fredy.mysavings.ui.NavigationComponent.Navigation.drawerScreens
 import com.fredy.mysavings.ui.NavigationComponent.Navigation.navigateSingleTopTo
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleWarningDialog
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @Composable
 fun MainScreen(
     modifier: Modifier = Modifier,
@@ -76,7 +71,7 @@ fun MainScreen(
 ) {
 
     val state by recordViewModel.state.collectAsStateWithLifecycle()
-    val onEvent= recordViewModel::onEvent
+    val onEvent = recordViewModel::onEvent
     val navController = rememberNavController()
     val scaffoldState = rememberScaffoldState()
 //    var offsetX by remember { mutableStateOf(0f) }
@@ -185,31 +180,31 @@ fun MainScreen(
 //                    Column(
 //                        horizontalAlignment = Alignment.CenterHorizontally,
 //                    ) {
-                        FloatingActionButton(
-                            onClick = {
-                                rootNavController.navigate(
-                                    NavigationRoute.Add.route
-                                )
-                            },
-                            backgroundColor = contentColor,
-                            modifier = Modifier.border(
-                                1.dp,
-                                MaterialTheme.colorScheme.secondary.copy(
-                                    0.3f
-                                ),
-                                CircleShape
-                            ),
-                        ) {
-                            Icon(
+            FloatingActionButton(
+                onClick = {
+                    rootNavController.navigate(
+                        NavigationRoute.Add.route
+                    )
+                },
+                backgroundColor = contentColor,
+                modifier = Modifier.border(
+                    1.dp,
+                    MaterialTheme.colorScheme.secondary.copy(
+                        0.3f
+                    ),
+                    CircleShape
+                ),
+            ) {
+                Icon(
 //                                NavigationRoute.Add.icon,
-                                Icons.Default.Add,
-                                modifier = Modifier.size(
-                                    30.dp
-                                ),
-                                tint = onContentColor,
-                                contentDescription = ""
-                            )
-                        }
+                    Icons.Default.Add,
+                    modifier = Modifier.size(
+                        30.dp
+                    ),
+                    tint = onContentColor,
+                    contentDescription = ""
+                )
+            }
 //                        Spacer(
 //                            modifier = Modifier.height(
 //                                8.dp
@@ -282,96 +277,101 @@ fun MainScreen(
 //                    detectVerticalDragGestures()
 //                },
         ) {
-            AppBar(
-                backgroundColor = contentColor,
-                contentColor = onContentColor,
-                onNavigationIconClick = {
-                    scope.launch {
-                        scaffoldState.drawerState.open()
-                    }
-                },
-                onProfilePictureClick = {
-                    rootNavController.navigate(
-                        NavigationRoute.Profile.route
-                    )
-                },
-                currentUser = currentUser
-            )
-            MainFilterAppBar(
-                modifier = modifier,
-                onShowAppBar = currentScreen == NavigationRoute.Records || currentScreen == NavigationRoute.Analysis ,
-                selectedDate = state.filterState.selectedDate,
-                onDateChange = {
-                    onEvent(
-                        RecordsEvent.ChangeDate(it)
-                    )
-                },
-                selectedDateFormat = formatRangeOfDate(
-                    state.filterState.selectedDate,
-                    state.filterState.filterType
-                ),
-                isChoosingFilter = state.isChoosingFilter,
-                selectedFilter = state.filterState.filterType.name,
-                checkboxesFilter = state.availableCurrency,
-                selectedCheckbox = state.selectedCheckbox,
-                onDismissFilterDialog = {
-                    onEvent(RecordsEvent.HideFilterDialog)
-                },
-                onSelectFilter = {
-                    onEvent(
-                        RecordsEvent.FilterRecord(it)
-                    )
-                },
-                onSelectCheckboxFilter = {
-                    onEvent(
-                        RecordsEvent.SelectedCurrencies(it)
-                    )
-                },
-                balanceBar = state.balanceBar,
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Outlined.Search,
-                        contentDescription = "",
-                        tint = MaterialTheme.colorScheme.onSurface,
-                    )
-                },
-                trailingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.FilterList,
-                        contentDescription = "",
-                        tint = MaterialTheme.colorScheme.onSurface,
-                    )
-                },
-                sortType = state.filterState.sortType,
-                showTotal = state.filterState.showTotal,
-                carryOn = state.filterState.carryOn,
-                useUserCurrency = state.filterState.useUserCurrency,
-                onUserCurrencyChange = { onEvent(RecordsEvent.ToggleUserCurrency) },
-                onShowTotalChange = { onEvent(RecordsEvent.ToggleShowTotal) },
-                onCarryOnChange = { onEvent(RecordsEvent.ToggleCarryOn) },
-                onShortChange = { onEvent(RecordsEvent.ToggleSortType) },
-                onPrevious = { onEvent(RecordsEvent.ShowPreviousList) },
-                onNext = { onEvent(RecordsEvent.ShowNextList) },
-                onLeadingIconClick = {
-                    rootNavController.navigate(
-                        NavigationRoute.Search.route
-                    )
-                },
-                onTrailingIconClick = {
-                    onEvent(RecordsEvent.ShowFilterDialog)
-                },
+            Column(
+                modifier = Modifier
+                    .shadow(elevation = 4.dp, clip = true)
             ) {
-                HomeNavGraph(
-                    rootNavController = rootNavController,
-                    navController = navController,
-                    recordViewModel = recordViewModel,
-                    accountViewModel = accountViewModel,
-                    categoryViewModel = categoryViewModel,
-                    modifier = Modifier.padding(
-                        innerPadding
+                AppBar(
+                    backgroundColor = contentColor,
+                    contentColor = onContentColor,
+                    onNavigationIconClick = {
+                        scope.launch {
+                            scaffoldState.drawerState.open()
+                        }
+                    },
+                    onProfilePictureClick = {
+                        rootNavController.navigate(
+                            NavigationRoute.Profile.route
+                        )
+                    },
+                    currentUser = currentUser
+                )
+                MainFilterAppBar(
+                    modifier = modifier,
+                    onShowAppBar = currentScreen == NavigationRoute.Records || currentScreen == NavigationRoute.Analysis,
+                    selectedDate = state.filterState.selectedDate,
+                    onDateChange = {
+                        onEvent(
+                            RecordsEvent.ChangeDate(it)
+                        )
+                    },
+                    selectedDateFormat = formatRangeOfDate(
+                        state.filterState.selectedDate,
+                        state.filterState.filterType
                     ),
+                    isChoosingFilter = state.isChoosingFilter,
+                    selectedFilter = state.filterState.filterType.name,
+                    checkboxesFilter = state.availableCurrency,
+                    selectedCheckbox = state.selectedCheckbox,
+                    onDismissFilterDialog = {
+                        onEvent(RecordsEvent.HideFilterDialog)
+                    },
+                    onSelectFilter = {
+                        onEvent(
+                            RecordsEvent.FilterRecord(it)
+                        )
+                    },
+                    onSelectCheckboxFilter = {
+                        onEvent(
+                            RecordsEvent.SelectedCurrencies(it)
+                        )
+                    },
+                    balanceBar = state.balanceBar,
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Outlined.Search,
+                            contentDescription = "",
+                            tint = MaterialTheme.colorScheme.onSurface,
+                        )
+                    },
+                    trailingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.FilterList,
+                            contentDescription = "",
+                            tint = MaterialTheme.colorScheme.onSurface,
+                        )
+                    },
+                    sortType = state.filterState.sortType,
+                    showTotal = state.filterState.showTotal,
+                    carryOn = state.filterState.carryOn,
+                    useUserCurrency = state.filterState.useUserCurrency,
+                    onUserCurrencyChange = { onEvent(RecordsEvent.ToggleUserCurrency) },
+                    onShowTotalChange = { onEvent(RecordsEvent.ToggleShowTotal) },
+                    onCarryOnChange = { onEvent(RecordsEvent.ToggleCarryOn) },
+                    onShortChange = { onEvent(RecordsEvent.ToggleSortType) },
+                    onPrevious = { onEvent(RecordsEvent.ShowPreviousList) },
+                    onNext = { onEvent(RecordsEvent.ShowNextList) },
+                    onLeadingIconClick = {
+                        rootNavController.navigate(
+                            NavigationRoute.Search.route
+                        )
+                    },
+                    onTrailingIconClick = {
+                        onEvent(RecordsEvent.ShowFilterDialog)
+                    },
                 )
             }
+            HomeNavGraph(
+                rootNavController = rootNavController,
+                navController = navController,
+                recordViewModel = recordViewModel,
+                accountViewModel = accountViewModel,
+                categoryViewModel = categoryViewModel,
+                modifier = Modifier.padding(
+                    innerPadding
+                ),
+            )
+
         }
     }
 }

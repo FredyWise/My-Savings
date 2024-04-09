@@ -2,21 +2,15 @@ package com.fredy.mysavings.ui.Screens.Account
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -24,24 +18,20 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.fredy.mysavings.Feature.Data.Database.Model.Account
 import com.fredy.mysavings.R
-import com.fredy.mysavings.Util.formatBalanceAmount
-import com.fredy.mysavings.Util.formatTime
-import com.fredy.mysavings.Util.isTransfer
 import com.fredy.mysavings.ViewModels.AccountState
 import com.fredy.mysavings.ViewModels.Event.AccountEvent
 import com.fredy.mysavings.ViewModels.Event.RecordsEvent
 import com.fredy.mysavings.ViewModels.RecordState
 import com.fredy.mysavings.ui.NavigationComponent.Navigation.NavigationRoute
 import com.fredy.mysavings.ui.Screens.Record.RecordDialog
-import com.fredy.mysavings.ui.Screens.ZCommonComponent.DetailAppBar
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.ResourceHandler
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SearchBar
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleButton
-import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleEntityItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -75,87 +65,16 @@ fun AccountsScreen(
             },
         )
     }
-    val sheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = true
-    )
     var isSheetOpen by rememberSaveable {
         mutableStateOf(false)
     }
-    if (isSheetOpen) {
-        ModalBottomSheet(
-            modifier = Modifier.padding(top = 24.dp),
-            sheetState = sheetState,
-            containerColor = MaterialTheme.colorScheme.surface,
-            onDismissRequest = {
-                isSheetOpen = false
-            },
-            dragHandle = {},
-        ) {
-            DetailAppBar(
-                title = "Account details",
-                resource = state.recordMapsResource,
-                icon = state.account.accountIcon,
-                iconDescription = state.account.accountIconDescription,
-                itemName = state.account.accountName,
-                itemInfo = formatBalanceAmount(
-                    state.account.accountAmount,
-                    state.accountCurrency,
-                ),
-                onNavigationIconClick = {
-                    isSheetOpen = false
-                },
-            ) { item, onBackgroundColor, balanceColor ->
-                SimpleEntityItem(
-                    modifier = Modifier
-                        .padding(
-                            vertical = 4.dp
-                        )
-                        .clickable {
-                            recordEvent(
-                                RecordsEvent.ShowDialog(item)
-                            )
-                        },
-                    iconModifier = Modifier
-                        .size(
-                            40.dp
-                        )
-                        .clip(
-                            shape = CircleShape
-                        ),
-                    icon = item.toCategory.categoryIcon,
-                    iconDescription = item.toCategory.categoryIconDescription,
-                    endContent = {
-                        Text(
-                            text = formatTime(
-                                item.record.recordDateTime.toLocalTime()
-                            ),
-                            color = onBackgroundColor,
-                            style = MaterialTheme.typography.titleLarge
-                        )
-                    },
-                ) {
-                    Text(
-                        text = if (isTransfer(item.record.recordType)) {
-                            item.fromAccount.accountName + " -> " + item.toAccount.accountName
-                        } else item.toCategory.categoryName,
-                        color = onBackgroundColor,
-                        style = MaterialTheme.typography.titleLarge,
-                        maxLines = 1
-                    )
-                    Text(
-                        text = formatBalanceAmount(
-                            item.record.recordAmount,
-                            item.record.recordCurrency,
-                            true
-                        ),
-                        color = balanceColor,
-                        style = MaterialTheme.typography.titleLarge,
-                        maxLines = 1
-                    )
-                }
-            }
-        }
-    }
+    AccountDetailBottomSheet(
+        isSheetOpen = isSheetOpen,
+        onCloseBottomSheet = { isSheetOpen = it },
+        state = state,
+        recordEvent = recordEvent
+    )
+
     Column(modifier = modifier) {
         if (state.isAddingAccount) {
             AccountAddDialog(
@@ -167,6 +86,7 @@ fun AccountsScreen(
         AccountHeader(
             modifier = Modifier
                 .height(150.dp)
+                .shadow(elevation = 4.dp, shape = MaterialTheme.shapes.large, clip = true)
                 .padding(
                     vertical = 4.dp
                 )

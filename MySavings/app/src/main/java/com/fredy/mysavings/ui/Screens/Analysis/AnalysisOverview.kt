@@ -1,6 +1,7 @@
 package com.fredy.mysavings.ui.Screens.Analysis
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,14 +15,16 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Text
 import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,18 +40,34 @@ import com.fredy.mysavings.Util.defaultColors
 import com.fredy.mysavings.Util.formatBalanceAmount
 import com.fredy.mysavings.Util.isExpense
 import com.fredy.mysavings.Util.isIncome
+import com.fredy.mysavings.ViewModels.CategoryState
+import com.fredy.mysavings.ViewModels.Event.CategoryEvent
 import com.fredy.mysavings.ViewModels.Event.RecordsEvent
 import com.fredy.mysavings.ViewModels.RecordState
 import com.fredy.mysavings.ui.Screens.Analysis.Charts.ChartSlimDonutWithTitle
+import com.fredy.mysavings.ui.Screens.Category.CategoryDetailBottomSheet
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.ResourceHandler
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleEntityItem
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AnalysisOverview(
     modifier: Modifier = Modifier,
     state: RecordState,
     onEvent: (RecordsEvent) -> Unit,
+    categoryState: CategoryState,
+    categoryEvent: (CategoryEvent) -> Unit,
 ) {
+    var isSheetOpen by rememberSaveable {
+        mutableStateOf(false)
+    }
+    CategoryDetailBottomSheet(
+        isSheetOpen = isSheetOpen,
+        onCloseBottomSheet = { isSheetOpen = it },
+        recordEvent = onEvent,
+        state = categoryState
+    )
+
     state.resourceData.categoriesWithAmountResource.let { resource ->
         ResourceHandler(
             resource = resource,
@@ -63,10 +82,10 @@ fun AnalysisOverview(
         ) { data ->
             val items = if (isExpense(data.first().category.categoryType)) data else data.reversed()
             val totalAmount = if (isExpense(data.first().category.categoryType)) {
-                    state.balanceBar.expense.amount
-                } else if (isIncome(data.first().category.categoryType)) {
-                    state.balanceBar.income.amount
-                } else state.balanceBar.transfer.amount
+                state.balanceBar.expense.amount
+            } else if (isIncome(data.first().category.categoryType)) {
+                state.balanceBar.income.amount
+            } else state.balanceBar.transfer.amount
             val contentColor = RecordTypeColor(recordType = data.first().category.categoryType)
             val colors = (if (isExpense(items.first().category.categoryType)) defaultColors
             else defaultColors.reversed()).subList(
@@ -155,6 +174,14 @@ fun AnalysisOverview(
                         )
                     )
                     SimpleEntityItem(
+                        modifier = Modifier.clickable {
+                            categoryEvent(
+                                CategoryEvent.GetCategoryDetail(
+                                    item.category
+                                )
+                            )
+                            isSheetOpen = true
+                        },
                         icon = item.category.categoryIcon,
                         iconDescription = item.category.categoryIconDescription,
                         iconModifier = Modifier

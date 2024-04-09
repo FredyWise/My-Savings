@@ -51,13 +51,10 @@ fun DetailAppBar(
     backgroundColor: Color = MaterialTheme.colorScheme.surface,
     onBackgroundColor: Color = MaterialTheme.colorScheme.onSurface,
     title: String,
-    icon: Int,
-    iconDescription: String,
-    itemName: String,
-    itemInfo: String,
     resource: Resource<List<RecordMap>>,
     onEmptyMessageClick: () -> Unit = {},
     onNavigationIconClick: () -> Unit,
+    additionalAppbar: @Composable () -> Unit,
     content: @Composable (item: TrueRecord, itemColor: Color, balanceColor:Color) -> Unit,
 ) {
     Column(
@@ -94,41 +91,7 @@ fun DetailAppBar(
                 style = MaterialTheme.typography.headlineSmall
             )
         }
-        SimpleEntityItem(
-            modifier = Modifier.padding(8.dp),
-            icon = icon,
-            iconModifier = Modifier
-                .size(
-                    55.dp
-                )
-                .clip(
-                    shape = MaterialTheme.shapes.small
-                ),
-            iconDescription = iconDescription
-        ) {
-            Text(
-                text = itemName,
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
-                color = onBackgroundColor,
-                modifier = Modifier.padding(
-                    vertical = 3.dp
-                ),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-            Text(
-                text = itemInfo,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-                color = onBackgroundColor,
-                modifier = Modifier.padding(
-                    vertical = 3.dp
-                ),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-        }
+        additionalAppbar()
         ResourceHandler(
             resource = resource,
             nullOrEmptyMessage = "You haven't made any Record using this account yet",
@@ -148,7 +111,6 @@ fun DetailAppBar(
             ) {
                 item {
                     Row(modifier = Modifier
-                        .padding(bottom = 8.dp)
                         .padding(horizontal = 8.dp)) {
                         Text(text = "Total of: " + recordMaps.sumOf { it.records.size } + " records")
                     }

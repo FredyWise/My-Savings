@@ -3,9 +3,7 @@ package com.fredy.mysavings.ui.NavigationComponent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -50,7 +48,6 @@ fun MainFilterAppBar(
     onTrailingIconClick: () -> Unit,
     leadingIcon: @Composable () -> Unit = {},
     trailingIcon: @Composable () -> Unit = {},
-    content: @Composable () -> Unit,
 ) {
     val displayedBalance = mutableListOf(
         balanceBar.expense,
@@ -83,38 +80,35 @@ fun MainFilterAppBar(
             },
         )
     }
-    Column(modifier = modifier) {
-        AnimatedVisibility(
-            modifier = modifier,
-            visible = onShowAppBar,
-            enter = slideInVertically(
-                initialOffsetY = { fullHeight -> -fullHeight },
-            ) +fadeIn(animationSpec = tween(300)),
-        ) {
-            Column {
-                DisplayBar(
-                    selectedDate = selectedDate,
-                    onDateChange = {
-                        onDateChange(it)
-                    },
-                    selectedTitle = selectedDateFormat,
-                    onPrevious = onPrevious,
-                    onNext = onNext,
-                    onLeadingIconClick = onLeadingIconClick,
-                    onTrailingIconClick = onTrailingIconClick,
-                    leadingIcon = leadingIcon,
-                    trailingIcon = trailingIcon,
-                )
-                BalanceBar(
-                    modifier = Modifier
-                        .background(
-                            MaterialTheme.colorScheme.surface
-                        )
-                        .padding(vertical = 5.dp),
-                    amountBars = displayedBalance
-                )
-            }
+    AnimatedVisibility(
+        modifier = modifier,
+        visible = onShowAppBar,
+        enter = slideInVertically(
+            initialOffsetY = { fullHeight -> -fullHeight },
+        ) + fadeIn(animationSpec = tween(300)),
+    ) {
+        Column {
+            DisplayBar(
+                selectedDate = selectedDate,
+                onDateChange = {
+                    onDateChange(it)
+                },
+                selectedTitle = selectedDateFormat,
+                onPrevious = onPrevious,
+                onNext = onNext,
+                onLeadingIconClick = onLeadingIconClick,
+                onTrailingIconClick = onTrailingIconClick,
+                leadingIcon = leadingIcon,
+                trailingIcon = trailingIcon,
+            )
+            BalanceBar(
+                modifier = Modifier
+                    .background(
+                        MaterialTheme.colorScheme.surface
+                    )
+                    .padding(vertical = 5.dp),
+                amountBars = displayedBalance
+            )
         }
-        content()
     }
 }
