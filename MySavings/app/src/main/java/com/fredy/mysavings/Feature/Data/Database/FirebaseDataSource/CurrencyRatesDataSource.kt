@@ -23,21 +23,22 @@ class CurrencyRatesDataSourceImpl @Inject constructor(
     )
 
     override suspend fun upsertCurrencyRates(
-        currency: RatesCache
+        rates: RatesCache
     ) {
+        val ratesCache =rates.toFireBaseRatesCache()
         currencyRatesCollection.document(
-            currency.cacheId
+            ratesCache.cacheId
         ).set(
-            currency.toFireBaseRatesCache()
+            ratesCache
         )
     }
 
-    override suspend fun deleteCurrencyRates(currency: RatesCache) {
-        currencyRatesCollection.document(currency.cacheId).delete()
+    override suspend fun deleteCurrencyRates(cache: RatesCache) {
+        currencyRatesCollection.document(cache.cacheId).delete()
     }
 
-    override suspend fun getCurrencyRates(base: String): RatesCache? {
-        return currencyRatesCollection.document(base).get().await().toObject<FirebaseRatesCache>()?.toRatesCache()
+    override suspend fun getCurrencyRates(cacheId: String): RatesCache? {
+        return currencyRatesCollection.document(cacheId).get().await().toObject<FirebaseRatesCache>()?.toRatesCache()
 
     }
 }

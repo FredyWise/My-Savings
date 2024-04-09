@@ -150,6 +150,7 @@ object RepositoryModule {
     @Provides
     @Singleton
     fun provideSyncRepository(
+        @ApplicationContext context: Context,
         accountDataSource: AccountDataSource,
         accountDao: AccountDao,
         categoryDataSource: CategoryDataSource,
@@ -158,6 +159,7 @@ object RepositoryModule {
         recordDao: RecordDao,
         firebaseAuth: FirebaseAuth
     ): SyncRepository = SyncRepositoryImpl(
+        context,
         accountDataSource,
         accountDao,
         categoryDataSource,

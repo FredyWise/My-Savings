@@ -64,10 +64,11 @@ class GetCategoryMapOrderedByName(
                 categoryRepository.getUserCategories(userId)
             }.collect { categories ->
                 val data = categories.toCategoryMaps()
+                Log.i("getCategoryMapOrderedByName.Data: $data")
                 emit(Resource.Success(data))
             }
         }.catch { e ->
-            Log.i(
+            Log.e(
                 "getCategoryMapOrderedByName.Error: $e"
             )
             emit(Resource.Error(e.message.toString()))

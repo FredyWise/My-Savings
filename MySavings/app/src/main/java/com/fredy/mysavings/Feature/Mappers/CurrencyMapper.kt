@@ -75,6 +75,7 @@ fun CurrencyResponse.toRatesCache(userId: String): RatesCache = RatesCache(
 
 fun RatesCache.toFireBaseRatesCache(): FirebaseRatesCache{
     return FirebaseRatesCache(
+        cacheId = cacheId,
         base = base,
         date = date,
         rates = CurrencyRatesDoubleConverter.fromRates(rates),
@@ -86,6 +87,7 @@ fun RatesCache.toFireBaseRatesCache(): FirebaseRatesCache{
 
 fun FirebaseRatesCache.toRatesCache(): RatesCache{
     return RatesCache(
+        cacheId = cacheId,
         base = base,
         date = date,
         rates = CurrencyRatesDoubleConverter.toRates(rates),

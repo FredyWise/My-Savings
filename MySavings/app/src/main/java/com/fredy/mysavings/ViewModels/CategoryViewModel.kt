@@ -151,12 +151,6 @@ class CategoryViewModel @Inject constructor(
                     categoryUseCases.upsertCategory(
                         category
                     )
-                    categoryUseCases.upsertCategory(
-                        transferCategory
-                    )
-                    categoryUseCases.upsertCategory(
-                        deletedCategory
-                    )
                 }
                 _state.update { CategoryState() }
             }

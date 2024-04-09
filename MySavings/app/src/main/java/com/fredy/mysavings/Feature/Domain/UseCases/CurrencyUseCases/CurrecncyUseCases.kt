@@ -13,6 +13,7 @@ import com.fredy.mysavings.Feature.Mappers.toCurrency
 import com.fredy.mysavings.Feature.Mappers.updateRatesUsingCode
 import com.fredy.mysavings.Util.BalanceItem
 import com.fredy.mysavings.Util.Resource
+import com.fredy.mysavings.Util.isCacheValid
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -37,17 +38,17 @@ suspend fun CurrencyUseCases.currencyConverter(
 }
 
 class UpdateCurrency(
-    private val currencyRepository: CurrencyRepository
+    private val currencyRepository: CurrencyRepository,
 ) {
     suspend operator fun invoke(currency: Currency) {
         withContext(Dispatchers.IO) {
             currencyRepository.updateCurrency(currency)
-            syncRates(currency,ApiCredentials.CurrencyModels.BASE_CURRENCY)
+            syncRates(currency)
         }
     }
 
-    private suspend fun syncRates(currency: Currency, base: String) {
-        val response = currencyRepository.getRateResponse(base)
+    private suspend fun syncRates(currency: Currency) {
+        val response = currencyRepository.getRateResponse()
         val tempRates = response.copy(
             rates = response.rates.updateRatesUsingCode(
                 currency.code,
@@ -57,7 +58,6 @@ class UpdateCurrency(
         currencyRepository.updateRates(
             tempRates
         )
-
     }
 }
 
@@ -153,14 +153,14 @@ class GetCurrencies(
             Log.i("getCurrencies: start")
             val currentUser = authRepository.getCurrentUser()!!
             val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
-//            val cachedRates = currencyRepository.getRateResponse(ApiCredentials.CurrencyModels.BASE_CURRENCY)
+            val cachedRates = currencyRepository.getRateResponse()
             withContext(Dispatchers.IO) {
                 currencyRepository.getCurrencies(userId)
             }.collect { cachedData ->
                 Log.i("getCurrencies: $cachedData")
 
                 val result =
-                    if (/*isCacheValid(cachedRates.cachedTime) && */cachedData.isNotEmpty()) {
+                    if (isCacheValid(cachedRates.cachedTime) && cachedData.isNotEmpty()) {
                         cachedData
                     } else {
                         makeCurrencies(userId)

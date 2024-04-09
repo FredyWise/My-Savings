@@ -14,12 +14,14 @@ import com.fredy.mysavings.Feature.Domain.Repository.AccountRepository
 import com.fredy.mysavings.Feature.Domain.Repository.AccountWithAmountType
 import com.fredy.mysavings.Feature.Domain.Repository.CategoryWithAmount
 import com.fredy.mysavings.Feature.Domain.Repository.SettingsRepository
+import com.fredy.mysavings.Feature.Domain.Repository.SyncRepository
 import com.fredy.mysavings.Feature.Domain.UseCases.AccountUseCases.AccountUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.RecordUseCases
 import com.fredy.mysavings.Util.BalanceBar
 import com.fredy.mysavings.Util.BalanceItem
 import com.fredy.mysavings.Util.FilterState
 import com.fredy.mysavings.Util.Resource
+import com.fredy.mysavings.Util.isInternetConnected
 
 import com.fredy.mysavings.Util.map
 import com.fredy.mysavings.Util.minusDate
@@ -47,6 +49,7 @@ class RecordViewModel @Inject constructor(
     private val recordUseCases: RecordUseCases,
     private val accountUseCases: AccountUseCases,
     private val settingsRepository: SettingsRepository,
+    private val syncRepository: SyncRepository,
 ) : ViewModel() {
     init {
         viewModelScope.launch {
@@ -57,6 +60,7 @@ class RecordViewModel @Inject constructor(
 //                    }
 //                }
 //            }
+            syncRepository.syncAll()
             accountUseCases.getAccountsCurrencies().collect { currency ->
                 _state.update {
                     it.copy(selectedCheckbox = currency)

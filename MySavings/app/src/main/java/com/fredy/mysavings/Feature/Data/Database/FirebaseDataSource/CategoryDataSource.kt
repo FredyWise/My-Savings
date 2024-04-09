@@ -72,7 +72,7 @@ class CategoryDataSourceImpl @Inject constructor(
                 querySnapshot.map { it.toObjects()}
             } catch (e: Exception) {
                 Log.e(
-                    "Failed to get user categorys: $e"
+                    "Failed to get user categories: $e"
                 )
                 throw e
             }

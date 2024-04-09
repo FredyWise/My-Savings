@@ -5,7 +5,7 @@ import io.grpc.android.BuildConfig
 
 object Log {
     private const val TAG = "BABI"
-    private var isDebuggable = BuildConfig.DEBUG
+    private var isDebuggable = true
 
     fun setDebuggable(debuggable: Boolean) {
         isDebuggable = debuggable

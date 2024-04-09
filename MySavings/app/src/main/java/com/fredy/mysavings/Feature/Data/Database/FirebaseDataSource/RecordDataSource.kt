@@ -198,7 +198,7 @@ class RecordDataSourceImpl @Inject constructor(
                 }
             } catch (e: Exception) {
                 Log.e(
-                    "getUserTrueRecordFromSpecificTimeError: ${e.message}"
+                    "getUserTrueRecordFromSpecificTimeDS.Error: ${e.message}"
                 )
                 throw e
             }
@@ -377,8 +377,6 @@ class RecordDataSourceImpl @Inject constructor(
         }
     }
 
-
-
     private val _records = MutableLiveData<List<Record>>()
     private val _accounts = MutableLiveData<List<Account>>()
     private val _categories = MutableLiveData<List<Category>>()
@@ -387,17 +385,15 @@ class RecordDataSourceImpl @Inject constructor(
     override suspend fun getUserRecords(
         userId: String
     ): List<Record> {
-        val records = _records.value ?: recordCollection.whereEqualTo(
+        return recordCollection.whereEqualTo(
             "userIdFk", userId
-        ).get().await().toObjects()
-        _records.postValue(records)
-        return records
+        ).get().await().toObjects<Record>()
     }
 
     override suspend fun getUserAccounts(
         userId: String
     ): List<Account> {
-        val accounts = _accounts.value ?: (Firebase.firestore.collection(
+        return (Firebase.firestore.collection(
             "account"
         ).whereEqualTo(
             "userIdFk", userId
@@ -406,14 +402,12 @@ class RecordDataSourceImpl @Inject constructor(
         ).whereEqualTo(
             "userIdFk", "0"
         ).get().await().toObjects<Account>())
-        _accounts.postValue(accounts)
-        return accounts
     }
 
     override suspend fun getUserCategories(
         userId: String
-    ) : List<Category> {
-        val categories = _categories.value ?: (Firebase.firestore.collection(
+    ): List<Category> {
+        return (Firebase.firestore.collection(
             "category"
         ).whereEqualTo(
             "userIdFk", userId
@@ -422,8 +416,6 @@ class RecordDataSourceImpl @Inject constructor(
         ).whereEqualTo(
             "userIdFk", "0"
         ).get().await().toObjects<Category>())
-        _categories.postValue(categories)
-        return categories
     }
 
     private suspend fun getTrueRecord(record: Record) = coroutineScope {

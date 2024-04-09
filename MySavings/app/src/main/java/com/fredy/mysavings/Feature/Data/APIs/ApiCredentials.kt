@@ -3,9 +3,9 @@ package com.fredy.mysavings.Feature.Data.APIs
 sealed class ApiCredentials{
     object CurrencyModels{
         const val BASE_URL = "https://api.apilayer.com/"
-        const val API_KEY = "ENXX0mTPZmDfoYwXTFQff6UN8ruMJTOH"
+        const val API_KEY = "UBRTLRTJyilUycEIKmgt2AdgymP45YmU"
         const val GET_LATEST = "/exchangerates_data/latest"
-        const val CACHE_EXPIRATION_DAYS = 1
+        const val CACHE_EXPIRATION_DAYS = 10
         const val BASE_CURRENCY = "USD"
     }
     object TextCorrectionModels{

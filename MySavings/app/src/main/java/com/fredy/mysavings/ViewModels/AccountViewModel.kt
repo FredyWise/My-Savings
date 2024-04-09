@@ -236,9 +236,6 @@ class AccountViewModel @Inject constructor(
                     accountUseCases.upsertAccount(
                         account
                     )
-                    accountUseCases.upsertAccount(
-                        deletedAccount
-                    )
                 }
                 _state.update {
                     AccountState(

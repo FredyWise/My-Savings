@@ -19,6 +19,7 @@ data class RatesCache(
 
 
 data class FirebaseRatesCache(
+    val cacheId: String = "",
     val base: String = "",
     val date: String = "",
     val rates: String = "",

@@ -36,7 +36,6 @@ import javax.inject.Inject
 class SettingViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val settingsRepository: SettingsRepository,
-    private val syncRepository: SyncRepository,
 ) : ViewModel() {
     init {
         viewModelScope.launch {
@@ -46,9 +45,6 @@ class SettingViewModel @Inject constructor(
                 _state.update {
                     savedState
                 }
-            }
-            if (isInternetConnected(context)) {
-                syncRepository.syncAll()
             }
         }
     }

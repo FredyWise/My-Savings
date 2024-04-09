@@ -42,138 +42,139 @@ class AddSingleRecordViewModel @Inject constructor(
     )
 
     fun onEvent(event: AddRecordEvent) {
-        when (event) {
-            is AddRecordEvent.SetId -> {
-                if (event.id != "-1" && state.isFirst) {
-                    viewModelScope.launch {
-                        recordUseCases.getRecordById(
-                            event.id
-                        ).collectLatest {
-                            state = state.copy(
-                                fromAccount = it.fromAccount,
-                                toAccount = it.toAccount,
-                                toCategory = it.toCategory,
-                                recordId = it.record.recordId,
-                                accountIdFromFk = it.record.accountIdFromFk,
-                                accountIdToFk = it.record.accountIdToFk,
-                                categoryIdFk = it.record.categoryIdFk,
-                                recordDate = it.record.recordDateTime.toLocalDate(),
-                                recordTime = it.record.recordDateTime.toLocalTime(),
-                                recordAmount = it.record.recordAmount,
-                                recordCurrency = it.record.recordCurrency,
-                                recordType = it.record.recordType,
-                                recordNotes = it.record.recordNotes,
-                                isFirst = !state.isFirst
-                            )
-                            calcState = calcState.copy(
-                                number1 = it.record.recordAmount.absoluteValue.toString()
-                            )
+        viewModelScope.launch {
+            when (event) {
+                is AddRecordEvent.SetId -> {
+                    if (event.id != "-1" && state.isFirst) {
+                        viewModelScope.launch {
+                            recordUseCases.getRecordById(
+                                event.id
+                            ).collectLatest {
+                                state = state.copy(
+                                    fromAccount = it.fromAccount,
+                                    toAccount = it.toAccount,
+                                    toCategory = it.toCategory,
+                                    recordId = it.record.recordId,
+                                    accountIdFromFk = it.record.accountIdFromFk,
+                                    accountIdToFk = it.record.accountIdToFk,
+                                    categoryIdFk = it.record.categoryIdFk,
+                                    recordDate = it.record.recordDateTime.toLocalDate(),
+                                    recordTime = it.record.recordDateTime.toLocalTime(),
+                                    recordAmount = it.record.recordAmount,
+                                    recordCurrency = it.record.recordCurrency,
+                                    recordType = it.record.recordType,
+                                    recordNotes = it.record.recordNotes,
+                                    isFirst = !state.isFirst
+                                )
+                                calcState = calcState.copy(
+                                    number1 = it.record.recordAmount.absoluteValue.toString()
+                                )
+                            }
                         }
                     }
                 }
-            }
 
-            is AddRecordEvent.SaveRecord -> {
-                resource.update {
-                    Resource.Loading()
-                }
+                is AddRecordEvent.SaveRecord -> {
+                    resource.update {
+                        Resource.Loading()
+                    }
 
-                val record = performRecordCalculation()
-                record?.let {
-                    viewModelScope.launch {
+                    val record = performRecordCalculation()
+                    record?.let {
                         recordUseCases.upsertRecordItem(
                             record
                         )
-                    }
-                } ?: return
 
-                resource.update {
-                    Resource.Success("Record Data Successfully Added")
+                    } ?: return@launch
+
+                    resource.update {
+                        Resource.Success("Record Data Successfully Added")
+                    }
+
+                    state = AddRecordState()
+                    event.sideEffect()
                 }
 
-                state = AddRecordState()
-                event.sideEffect()
-            }
-
-            is AddRecordEvent.AccountIdFromFk -> {
-                state = state.copy(
-                    recordCurrency = event.fromAccount.accountCurrency,
-                    accountIdFromFk = event.fromAccount.accountId,
-                    fromAccount = event.fromAccount
-                )
-            }
-
-            is AddRecordEvent.AccountIdToFk -> {
-                state = state.copy(
-                    accountIdToFk = event.toAccount.accountId,
-                    toAccount = event.toAccount
-                )
-            }
-
-            is AddRecordEvent.CategoryIdFk -> {
-                state = state.copy(
-                    categoryIdFk = event.toCategory.categoryId,
-                    toCategory = event.toCategory
-                )
-            }
-
-            is AddRecordEvent.RecordDate -> {
-                state = state.copy(
-                    recordDate = event.date
-                )
-            }
-
-            is AddRecordEvent.RecordTime -> {
-                state = state.copy(
-                    recordTime = event.time
-                )
-            }
-
-            is AddRecordEvent.RecordAmount -> {//useless
-                state = state.copy(
-                    recordAmount = calcState.number1.toDouble()//useless
-                )
-            }
-
-            is AddRecordEvent.RecordCurrency -> {//useless
-                state = state.copy(
-                    recordCurrency = event.currency
-                )
-            }
-
-            is AddRecordEvent.RecordTypes -> {
-                state = state.copy(
-                    recordType = event.recordType,
-                    toCategory = Category()
-                )
-            }
-
-            is AddRecordEvent.RecordNotes -> {
-                state = state.copy(
-                    recordNotes = event.notes
-                )
-            }
-
-            is AddRecordEvent.DismissWarning -> {
-                state = state.copy(
-                    isShowWarning = false
-                )
-            }
-
-            is AddRecordEvent.ConvertCurrency -> {
-                viewModelScope.launch {
-                    val balanceItem = currencyUseCase.convertCurrencyData(
-                        calcState.number1.toDouble().absoluteValue,
-                        state.fromAccount.accountCurrency,
-                        state.toAccount.accountCurrency
-                    )
-                    calcState = calcState.copy(
-                        number1 = balanceItem.amount.toString()
-                    )
+                is AddRecordEvent.AccountIdFromFk -> {
                     state = state.copy(
-                        recordCurrency = balanceItem.currency,
-                        isAgreeToConvert = true
+                        recordCurrency = event.fromAccount.accountCurrency,
+                        accountIdFromFk = event.fromAccount.accountId,
+                        fromAccount = event.fromAccount
                     )
+                }
+
+                is AddRecordEvent.AccountIdToFk -> {
+                    state = state.copy(
+                        accountIdToFk = event.toAccount.accountId,
+                        toAccount = event.toAccount
+                    )
+                }
+
+                is AddRecordEvent.CategoryIdFk -> {
+                    state = state.copy(
+                        categoryIdFk = event.toCategory.categoryId,
+                        toCategory = event.toCategory
+                    )
+                }
+
+                is AddRecordEvent.RecordDate -> {
+                    state = state.copy(
+                        recordDate = event.date
+                    )
+                }
+
+                is AddRecordEvent.RecordTime -> {
+                    state = state.copy(
+                        recordTime = event.time
+                    )
+                }
+
+                is AddRecordEvent.RecordAmount -> {//useless
+                    state = state.copy(
+                        recordAmount = calcState.number1.toDouble()//useless
+                    )
+                }
+
+                is AddRecordEvent.RecordCurrency -> {//useless
+                    state = state.copy(
+                        recordCurrency = event.currency
+                    )
+                }
+
+                is AddRecordEvent.RecordTypes -> {
+                    state = state.copy(
+                        recordType = event.recordType,
+                        toCategory = Category()
+                    )
+                }
+
+                is AddRecordEvent.RecordNotes -> {
+                    state = state.copy(
+                        recordNotes = event.notes
+                    )
+                }
+
+                is AddRecordEvent.DismissWarning -> {
+                    state = state.copy(
+                        isShowWarning = false
+                    )
+                }
+
+                is AddRecordEvent.ConvertCurrency -> {
+                    viewModelScope.launch {
+                        val balanceItem = currencyUseCase.convertCurrencyData(
+                            calcState.number1.toDouble().absoluteValue,
+                            state.fromAccount.accountCurrency,
+                            state.toAccount.accountCurrency
+                        )
+                        calcState = calcState.copy(
+                            number1 = balanceItem.amount.toString()
+                        )
+                        state = state.copy(
+                            recordCurrency = balanceItem.currency,
+                            isAgreeToConvert = true
+                        )
+                    }
                 }
             }
         }

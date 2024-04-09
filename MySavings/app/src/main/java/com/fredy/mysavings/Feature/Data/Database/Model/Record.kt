@@ -23,6 +23,7 @@ data class Record(
 ){
     val recordDateTime: LocalDateTime
         get() = TimestampConverter.toDateTime(recordTimestamp)
+//        set(value) { TimestampConverter.fromDateTime(value) }
     constructor(
         recordId: String,
         accountIdFromFk: String,

@@ -3,12 +3,14 @@ package com.fredy.mysavings.ViewModels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.yml.charts.common.extensions.isNotNull
+import com.fredy.mysavings.Feature.Data.APIs.ApiCredentials
 import com.fredy.mysavings.Feature.Data.APIs.CurrencyModels.Response.Rates
 import com.fredy.mysavings.Feature.Data.Database.Model.Currency
 import com.fredy.mysavings.Feature.Data.Database.Model.UserData
 import com.fredy.mysavings.Feature.Mappers.changeBase
 import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.CurrencyUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.UserUseCases.UserUseCases
+import com.fredy.mysavings.Util.Log
 import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.ViewModels.Event.CurrencyEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -107,10 +109,20 @@ class CurrencyViewModel @Inject constructor(
                 }
 
                 CurrencyEvent.SaveCurrency -> {
-                    _state.value.currency?.let {
+                    _state.value.currency?.let { currency ->
                         if (_state.value.updatedValue.toDoubleOrNull().isNotNull()) {
-                            val updatedValue = _state.value.updatedValue.toDouble()
-                            currencyUseCases.updateCurrency(it.copy(value = updatedValue))
+                            val value = _state.value.updatedValue.toDouble()
+                            val userCurrency = _state.value.userData.userCurrency
+                            val updatedValue = if (userCurrency == ApiCredentials.CurrencyModels.BASE_CURRENCY) {
+                                value
+                            } else {
+                                currencyUseCases.convertCurrencyData(
+                                    1.0,
+                                    ApiCredentials.CurrencyModels.BASE_CURRENCY,
+                                    userCurrency
+                                ).amount*value
+                            }
+                            currencyUseCases.updateCurrency(currency.copy(value = updatedValue))
                             _state.update { it.copy(updatedValue = "") }
                         }
                     }

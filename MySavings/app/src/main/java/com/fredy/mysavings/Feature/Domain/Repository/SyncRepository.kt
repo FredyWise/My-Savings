@@ -1,5 +1,6 @@
 package com.fredy.mysavings.Feature.Domain.Repository
 
+import android.content.Context
 import co.yml.charts.common.extensions.isNotNull
 import com.fredy.mysavings.Feature.Data.Database.Dao.AccountDao
 import com.fredy.mysavings.Feature.Data.Database.Dao.CategoryDao
@@ -7,6 +8,10 @@ import com.fredy.mysavings.Feature.Data.Database.Dao.RecordDao
 import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.AccountDataSource
 import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.CategoryDataSource
 import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.RecordDataSource
+import com.fredy.mysavings.Util.DefaultData.deletedAccount
+import com.fredy.mysavings.Util.DefaultData.deletedCategory
+import com.fredy.mysavings.Util.DefaultData.transferCategory
+import com.fredy.mysavings.Util.isInternetConnected
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -21,6 +26,7 @@ interface SyncRepository {
 }
 
 class SyncRepositoryImpl @Inject constructor(
+    private val context: Context,
     private val accountDataSource: AccountDataSource,
     private val accountDao: AccountDao,
     private val categoryDataSource: CategoryDataSource,
@@ -34,6 +40,12 @@ class SyncRepositoryImpl @Inject constructor(
             val currentUser = firebaseAuth.currentUser
             currentUser?.let {
                 val userId = if (currentUser.isNotNull()) currentUser.uid else ""
+                accountDataSource.upsertAccountItem(
+                    deletedAccount.copy(
+                        accountId = deletedAccount.accountId + userId,
+                        userIdFk = userId
+                    )
+                )
                 val accounts = accountDataSource.getUserAccounts(userId).first()
                 if (withDelete) {
                     accountDao.deleteAllAccounts()
@@ -62,6 +74,18 @@ class SyncRepositoryImpl @Inject constructor(
             val currentUser = firebaseAuth.currentUser
             currentUser?.let {
                 val userId = if (currentUser.isNotNull()) currentUser.uid else ""
+                categoryDataSource.upsertCategoryItem(
+                    deletedCategory.copy(
+                        categoryId = deletedCategory.categoryId + userId,
+                        userIdFk = userId
+                    )
+                )
+                categoryDataSource.upsertCategoryItem(
+                    transferCategory.copy(
+                        categoryId = transferCategory.categoryId + userId,
+                        userIdFk = userId
+                    )
+                )
                 val categories = categoryDataSource.getUserCategoriesOrderedByName(userId).first()
                 if (withDelete) {
                     categoryDao.deleteAllCategories()
@@ -72,9 +96,11 @@ class SyncRepositoryImpl @Inject constructor(
     }
 
     override suspend fun syncAll(withDelete: Boolean) {
-        syncRecords(withDelete)
-        syncAccounts(withDelete)
-        syncCategory(withDelete)
+        if (isInternetConnected(context)) {
+            syncRecords(withDelete)
+            syncAccounts(withDelete)
+            syncCategory(withDelete)
+        }
     }
 
 }

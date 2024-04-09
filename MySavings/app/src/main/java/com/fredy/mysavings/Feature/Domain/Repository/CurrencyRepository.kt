@@ -1,6 +1,5 @@
 package com.fredy.mysavings.Feature.Domain.Repository
 
-import com.fredy.mysavings.Util.Log
 import androidx.lifecycle.MutableLiveData
 import co.yml.charts.common.extensions.isNotNull
 import com.fredy.mysavings.Feature.Data.APIs.ApiCredentials
@@ -8,7 +7,6 @@ import com.fredy.mysavings.Feature.Data.APIs.CountryModels.CountryApi
 import com.fredy.mysavings.Feature.Data.APIs.CountryModels.Response.CurrencyInfoItem
 import com.fredy.mysavings.Feature.Data.APIs.CurrencyModels.CurrencyApi
 import com.fredy.mysavings.Feature.Data.APIs.CurrencyModels.Response.CurrencyResponse
-import com.fredy.mysavings.Feature.Data.APIs.CurrencyModels.Response.Rates
 import com.fredy.mysavings.Feature.Data.Database.Dao.CurrencyCacheDao
 import com.fredy.mysavings.Feature.Data.Database.Dao.CurrencyDao
 import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.CurrencyDataSource
@@ -16,11 +14,9 @@ import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.CurrencyRate
 import com.fredy.mysavings.Feature.Data.Database.Model.Currency
 import com.fredy.mysavings.Feature.Data.Database.Model.RatesCache
 import com.fredy.mysavings.Feature.Data.Database.Model.UserData
-import com.fredy.mysavings.Feature.Mappers.getRateForCurrency
 import com.fredy.mysavings.Feature.Mappers.toCurrencyInfoItems
 import com.fredy.mysavings.Feature.Mappers.toRatesCache
-import com.fredy.mysavings.Util.BalanceItem
-
+import com.fredy.mysavings.Util.Log
 import com.fredy.mysavings.Util.isCacheValid
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -111,7 +107,8 @@ class CurrencyRepositoryImpl @Inject constructor(
         Log.i("getRates: start")
         val result = withContext(Dispatchers.IO) {
             val cachedUser = _currentUser.value
-            val currentUser = if(cachedUser.isNotNull()) cachedUser!! else authRepository.getCurrentUser()!!
+            val currentUser =
+                if (cachedUser.isNotNull()) cachedUser!! else authRepository.getCurrentUser()!!
             _currentUser.postValue(currentUser)
             val currentUserId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
             val rates = _cachedRates.value
@@ -123,13 +120,13 @@ class CurrencyRepositoryImpl @Inject constructor(
                     Log.i("getRates: $cachedData")
 
                     if (cachedData.isNotNull() && isCacheValid(cachedData!!.cachedTime)) {
-                        val cachedResult = cachedData
                         Log.i(
-                            "getCachedRates: $cachedResult"
+                            "getCachedRates: $cachedData"
                         )
-                        cachedResult
+                        cachedData
                     } else {
                         val apiResult = getApiRates(base)!!.toRatesCache(currentUserId)
+                        _cachedRates.postValue(apiResult)
                         updateRates(apiResult)
                         Log.i(
                             "getApiRates: $apiResult"
@@ -144,7 +141,7 @@ class CurrencyRepositoryImpl @Inject constructor(
                 }
             }
         }
-        _cachedRates.postValue(result)
+
         Log.i("getRates: success")
         return result
     }

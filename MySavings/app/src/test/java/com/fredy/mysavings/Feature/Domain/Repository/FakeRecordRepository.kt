@@ -51,7 +51,7 @@ class FakeRecordRepository : RecordRepository {
         return trueRecords.find { it.record.recordId == recordId }!!
     }
 
-    override suspend fun getUserTrueRecordsFromSpecificTime(
+    override fun getUserTrueRecordsFromSpecificTime(
         userId: String,
         startDate: LocalDateTime,
         endDate: LocalDateTime,
