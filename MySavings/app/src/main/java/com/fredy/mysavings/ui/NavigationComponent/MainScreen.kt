@@ -120,7 +120,7 @@ fun MainScreen(
             },
             onEdit = {
                 rootNavController.navigate(
-                    "${NavigationRoute.Add.route}?recordId=${it.record.recordId}"
+                    "${NavigationRoute.Add.route}?recordId=${it.record.recordId}&bookId=${it.record.bookIdFk}"
                 )
             },
         )
@@ -206,7 +206,7 @@ fun MainScreen(
             FloatingActionButton(
                 onClick = {
                     rootNavController.navigate(
-                        NavigationRoute.Add.route
+                        "${NavigationRoute.Add.route}?bookId=${state.filterState.currentBook?.bookId}"
                     )
                 },
                 backgroundColor = contentColor,

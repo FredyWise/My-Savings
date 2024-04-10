@@ -5,8 +5,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -45,13 +43,14 @@ fun RecordsScreen(
                 errorMessage = resource.message ?: "",
                 onMessageClick = {
                     rootNavController.navigate(
-                        NavigationRoute.Add.route
+                        "${NavigationRoute.Add.route}?bookId=${state.filterState.currentBook?.bookId}"
                     )
                     isVisible.targetState = false
                 },
             ) { data ->
                 RecordBody(
-                    trueRecordMaps = data,
+                    bookMaps = data,
+                    state = state,
                     onEvent = onEvent
                 )
             }

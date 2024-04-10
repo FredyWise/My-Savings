@@ -13,8 +13,14 @@ interface BookDao {
     @Upsert
     suspend fun upsertBookItem(book: Book)
 
+    @Upsert
+    suspend fun upsertAllBookItem(books: List<Book>)
+
     @Delete
     suspend fun deleteBookItem(book: Book)
+
+    @Query("DELETE FROM book")
+    suspend fun deleteAllBooks()
 
     @Query(
         "SELECT * FROM book " +

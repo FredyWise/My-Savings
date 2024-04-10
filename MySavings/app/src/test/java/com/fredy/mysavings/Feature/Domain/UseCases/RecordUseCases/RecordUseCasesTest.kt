@@ -329,7 +329,7 @@ class RecordUseCasesTest : BaseUseCaseTest() {
                 currentUserId,
                 startDate,
                 endDate
-            ).first().filterTrueRecordCurrency(currency + currentUserCurrency).size, recordMaps.sumOf { it.records.size }
+            ).first().filterTrueRecordCurrency(currency + currentUserCurrency).size, recordMaps.sumOf { it.recordMaps.size }
 
         )
     }

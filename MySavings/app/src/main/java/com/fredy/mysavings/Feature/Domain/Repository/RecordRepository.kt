@@ -25,7 +25,7 @@ interface RecordRepository {
     suspend fun upsertAllRecordItems(records: List<Record>)
     suspend fun deleteRecordItem(record: Record)
     suspend fun getRecordById(recordId: String): TrueRecord
-    fun getRecordMaps(userId: String): Flow<List<RecordMap>>
+    fun getRecordMaps(userId: String): Flow<List<TrueRecord>>
     fun getUserTrueRecordsFromSpecificTime(
         userId: String,
         startDate: LocalDateTime,
@@ -148,12 +148,12 @@ class RecordRepositoryImpl @Inject constructor(
     }
 
 
-    override fun getRecordMaps(userId: String): Flow<List<RecordMap>> {
+    override fun getRecordMaps(userId: String): Flow<List<TrueRecord>> {
         Log.i("getRecordMapsRepo: $userId")
         return flow {
             recordDataSource.getUserTrueRecords(userId).collect { records ->
                 Log.i("getRecordMapsRepo.Data: $records")
-                emit(records.toRecordSortedMaps())
+                emit(records)
             }
         }
     }

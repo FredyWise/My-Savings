@@ -18,6 +18,7 @@ import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.CurrencyUseC
 import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.currencyConverter
 import com.fredy.mysavings.Feature.Mappers.filterRecordCurrency
 import com.fredy.mysavings.Feature.Mappers.filterTrueRecordCurrency
+import com.fredy.mysavings.Feature.Mappers.toBookSortedMaps
 import com.fredy.mysavings.Feature.Mappers.toRecordSortedMaps
 import com.fredy.mysavings.Util.BalanceItem
 import com.fredy.mysavings.Util.DefaultData.deletedAccount
@@ -28,6 +29,7 @@ import com.fredy.mysavings.Util.isExpense
 import com.fredy.mysavings.Util.isIncome
 import com.fredy.mysavings.Util.isTransfer
 import com.fredy.mysavings.Util.minDate
+import com.fredy.mysavings.ViewModels.BookMap
 import com.fredy.mysavings.ViewModels.RecordMap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -206,14 +208,18 @@ class GetAllTrueRecordsWithinSpecificTime(
 class GetAllRecords(
     private val recordRepository: RecordRepository,
     private val authRepository: AuthRepository,
+    private val bookRepository: BookRepository
 ) {
-    operator fun invoke(): Flow<Resource<List<RecordMap>>> {
+    operator fun invoke(): Flow<Resource<List<BookMap>>> {
         return flow {
             emit(Resource.Loading())
             val currentUser = authRepository.getCurrentUser()!!
             val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
 
-            recordRepository.getRecordMaps(userId).collect { data ->
+            val books = bookRepository.getUserBooks(userId).first()
+
+            recordRepository.getRecordMaps(userId).collect { records ->
+                val data = books.toBookSortedMaps(records)
                 Log.i(
                     "getAllRecords.data: $data"
                 )
@@ -303,7 +309,7 @@ class GetUserTrueRecordMapsFromSpecificTime( // main screen
         sortType: SortType,
         currency: List<String>,
         useUserCurrency: Boolean
-    ): Flow<Resource<List<RecordMap>>> {
+    ): Flow<Resource<List<BookMap>>> {
         return flow {
             emit(Resource.Loading())
             val currentUser = authRepository.getCurrentUser()!!
@@ -313,16 +319,18 @@ class GetUserTrueRecordMapsFromSpecificTime( // main screen
                 "getUserTrueRecordMapsFromSpecificTime: $startDate\n:\n$endDate,\ncurrency: $currency"
             )
 
-            val books = bookRepository.getUserBooks(userId).firstOrNull()
+            val books = bookRepository.getUserBooks(userId).first()
 
             recordRepository.getUserTrueRecordsFromSpecificTime(
                 userId,
                 startDate,
                 endDate,
             ).map { records ->
-                records.convertRecordCurrency(userCurrency, useUserCurrency)
-                    .filterTrueRecordCurrency(currency + userCurrency)
-                    .toRecordSortedMaps(sortType)
+                books.toBookSortedMaps(
+                    records.convertRecordCurrency(userCurrency, useUserCurrency)
+                        .filterTrueRecordCurrency(currency + userCurrency),
+                    sortType
+                )
             }.collect { data ->
                 emit(Resource.Success(data))
             }

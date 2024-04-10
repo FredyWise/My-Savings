@@ -124,7 +124,7 @@ fun NavGraphRoot(
                 )
             }
             composable(
-                route = "${NavigationRoute.Add.route}?recordId={recordId}",
+                route = "${NavigationRoute.Add.route}?recordId={recordId}&bookId={bookId}",
                 enterTransition = {
                     fadeIn()
                 },
@@ -134,6 +134,12 @@ fun NavGraphRoot(
                 arguments = listOf(
                     navArgument(
                         name = "recordId"
+                    ) {
+                        type = NavType.StringType
+                        defaultValue = "-1"
+                    },
+                    navArgument(
+                        name = "bookId"
                     ) {
                         type = NavType.StringType
                         defaultValue = "-1"

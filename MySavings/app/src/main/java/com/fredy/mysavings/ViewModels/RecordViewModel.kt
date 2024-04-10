@@ -251,7 +251,7 @@ class RecordViewModel @Inject constructor(
             resourceData = resourceData,
             availableCurrency = availableCurrency,
             balanceBar = balanceBar,
-            filterState = filterState
+            filterState = filterState.copy(currentBook = resourceData.recordMapsResource.data?.firstOrNull()?.book)
         )
     }.stateIn(
         viewModelScope,
@@ -313,7 +313,6 @@ class RecordViewModel @Inject constructor(
                         recordUseCases.deleteRecordItem(
                             event.record
                         )
-//                        onEvent(RecordsEvent.UpdateRecord)
                     }
                 }
 
@@ -420,14 +419,14 @@ data class RecordMap(
 
 data class BookMap(
     val book: Book,
-    val records: List<RecordMap>
+    val recordMaps: List<RecordMap>
 )
 
 data class ResourceData(
     val categoriesWithAmountResource: Resource<List<CategoryWithAmount>> = Resource.Loading(),
     val accountsWithAmountResource: Resource<List<AccountWithAmountType>> = Resource.Loading(),
     val recordsWithinTimeResource: Resource<List<Record>> = Resource.Loading(),
-    val recordMapsResource: Resource<List<RecordMap>> = Resource.Loading(),
+    val recordMapsResource: Resource<List<BookMap>> = Resource.Loading(),
 )
 
 

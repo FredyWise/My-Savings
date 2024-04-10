@@ -2,6 +2,7 @@ package com.fredy.mysavings.Util
 
 import android.graphics.Color
 import com.fredy.mysavings.Feature.Data.Database.Model.Account
+import com.fredy.mysavings.Feature.Data.Database.Model.Book
 import com.fredy.mysavings.Feature.Data.Database.Model.Category
 import com.fredy.mysavings.Feature.Data.Enum.RecordType
 import com.fredy.mysavings.R
@@ -108,6 +109,8 @@ object DefaultData {
         accountName = "Deleted Account",
         accountCurrency = "USD"
     )
+
+    val defaultBook = Book()
 }
 
 //date

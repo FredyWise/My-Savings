@@ -12,10 +12,11 @@ import com.fredy.mysavings.Feature.Data.Database.Model.Record
 import com.fredy.mysavings.Feature.Data.Enum.RecordType
 import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.CurrencyUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.RecordUseCases
+import com.fredy.mysavings.Util.DefaultData.transferCategory
+import com.fredy.mysavings.Util.Log
 import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.isExpense
 import com.fredy.mysavings.Util.isTransfer
-import com.fredy.mysavings.Util.DefaultData.transferCategory
 import com.fredy.mysavings.ViewModels.Event.AddRecordEvent
 import com.fredy.mysavings.ViewModels.Event.CalcEvent
 import com.fredy.mysavings.ViewModels.Event.CalcOperation
@@ -44,33 +45,36 @@ class AddSingleRecordViewModel @Inject constructor(
     )
 
     init {
-        savedStateHandle.get<String>("recordId")?.let { recordId ->
-            if (recordId != "-1") {
-                viewModelScope.launch {
-                    recordUseCases.getRecordById(
-                        recordId
-                    ).collectLatest {
-                        state = state.copy(
-                            fromAccount = it.fromAccount,
-                            toAccount = it.toAccount,
-                            toCategory = it.toCategory,
-                            recordId = it.record.recordId,
-                            accountIdFromFk = it.record.accountIdFromFk,
-                            accountIdToFk = it.record.accountIdToFk,
-                            categoryIdFk = it.record.categoryIdFk,
-                            recordDate = it.record.recordDateTime.toLocalDate(),
-                            recordTime = it.record.recordDateTime.toLocalTime(),
-                            recordAmount = it.record.recordAmount,
-                            recordCurrency = it.record.recordCurrency,
-                            recordType = it.record.recordType,
-                            recordNotes = it.record.recordNotes,
-                        )
-                        calcState = calcState.copy(
-                            number1 = it.record.recordAmount.absoluteValue.toString()
-                        )
+        savedStateHandle.get<String>("bookId")?.let {bookId ->
+            savedStateHandle.get<String>("recordId")?.let { recordId ->
+                if (recordId != "-1") {
+                    viewModelScope.launch {
+                        recordUseCases.getRecordById(
+                            recordId
+                        ).collectLatest {
+                            state = state.copy(
+                                fromAccount = it.fromAccount,
+                                toAccount = it.toAccount,
+                                toCategory = it.toCategory,
+                                recordId = it.record.recordId,
+                                accountIdFromFk = it.record.accountIdFromFk,
+                                accountIdToFk = it.record.accountIdToFk,
+                                categoryIdFk = it.record.categoryIdFk,
+                                recordDate = it.record.recordDateTime.toLocalDate(),
+                                recordTime = it.record.recordDateTime.toLocalTime(),
+                                recordAmount = it.record.recordAmount,
+                                recordCurrency = it.record.recordCurrency,
+                                recordType = it.record.recordType,
+                                recordNotes = it.record.recordNotes,
+                            )
+                            calcState = calcState.copy(
+                                number1 = it.record.recordAmount.absoluteValue.toString()
+                            )
+                        }
                     }
                 }
             }
+            state = state.copy(bookIdFk = bookId)
         }
     }
 

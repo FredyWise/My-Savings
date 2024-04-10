@@ -121,7 +121,7 @@ object UseCasesModule {
             recordRepository,
             authRepository
         ),
-        getAllRecords = GetAllRecords(recordRepository, authRepository),
+        getAllRecords = GetAllRecords(recordRepository, authRepository, bookRepository),
         getUserCategoryRecordsOrderedByDateTime = GetUserCategoryRecordsOrderedByDateTime(
             recordRepository, authRepository
         ),
@@ -129,7 +129,7 @@ object UseCasesModule {
             recordRepository, authRepository
         ),
         getUserTrueRecordMapsFromSpecificTime = GetUserTrueRecordMapsFromSpecificTime(
-            recordRepository, authRepository, currencyUseCases,bookRepository
+            recordRepository, authRepository, currencyUseCases, bookRepository
         ),
         getUserRecordsFromSpecificTime = GetUserRecordsFromSpecificTime(
             recordRepository,
@@ -227,8 +227,13 @@ object UseCasesModule {
         categoryRepository: CategoryRepository,
     ): CSVUseCases = CSVUseCases(
         outputToCSV = OutputToCSV(csvRepository),
-        inputFromCSV = InputFromCSV(csvRepository,authRepository),
-        getDBInfo = GetDBInfo(authRepository, recordRepository, accountRepository, categoryRepository)
+        inputFromCSV = InputFromCSV(csvRepository, authRepository),
+        getDBInfo = GetDBInfo(
+            authRepository,
+            recordRepository,
+            accountRepository,
+            categoryRepository
+        )
     )
 
     @Provides

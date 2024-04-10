@@ -57,7 +57,7 @@ fun SearchScreen(
             },
             onEdit = {
                 rootNavController.navigate(
-                    "${NavigationRoute.Add.route}?recordId=${it.record.recordId}"
+                    "${NavigationRoute.Add.route}?recordId=${it.record.recordId}&bookId=${it.record.bookIdFk}"
                 )
             },
         )
@@ -104,12 +104,13 @@ fun SearchScreen(
                         errorMessage = resource.message ?: "",
                         onMessageClick = {
                             rootNavController.navigate(
-                                NavigationRoute.Add.route
+                                "${NavigationRoute.Add.route}?bookId=${recordState.filterState.currentBook?.bookId}"
                             )
                         },
                     ) { data ->
                         RecordBody(
-                            trueRecordMaps = data,
+                            bookMaps = data,
+                            state = recordState,
                             onEvent = onEvent
                         )
                     }

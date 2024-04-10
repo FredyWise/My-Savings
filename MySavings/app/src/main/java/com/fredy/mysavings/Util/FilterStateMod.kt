@@ -1,5 +1,6 @@
 package com.fredy.mysavings.Util
 
+import com.fredy.mysavings.Feature.Data.Database.Model.Book
 import com.fredy.mysavings.Feature.Data.Enum.FilterType
 import com.fredy.mysavings.Feature.Data.Enum.RecordType
 import com.fredy.mysavings.Feature.Data.Enum.SortType
@@ -16,6 +17,7 @@ data class FilterState(
     val carryOn: Boolean = true,
     val showTotal: Boolean = true,
     val useUserCurrency: Boolean = false,
+    val currentBook: Book? = null,
     val currencies: List<String> = emptyList(),
     val selectedDate: LocalDate = LocalDate.now(),
     val start: LocalDateTime = LocalDateTime.of(

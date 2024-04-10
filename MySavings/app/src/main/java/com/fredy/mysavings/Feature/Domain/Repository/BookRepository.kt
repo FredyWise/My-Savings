@@ -15,7 +15,6 @@ interface BookRepository {
     suspend fun deleteBook(book: Book)
     fun getBook(bookId: String): Flow<Book>
     fun getUserBooks(userId: String): Flow<List<Book>>
-//    fun getBookMapOrderedByName(): Flow<Resource<List<BookMap>>>
 }
 
 class BookRepositoryImpl @Inject constructor(

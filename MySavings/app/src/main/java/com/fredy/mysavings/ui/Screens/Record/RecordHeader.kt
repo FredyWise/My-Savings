@@ -3,10 +3,11 @@ package com.fredy.mysavings.ui.Screens.Record
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Icon
@@ -23,22 +24,22 @@ import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.Feature.Data.Database.Model.Book
 import com.fredy.mysavings.R
 import com.fredy.mysavings.Util.DefaultData
-import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleEntityItem
+import com.fredy.mysavings.ViewModels.BookMap
 
 @Composable
 fun RecordHeader(
     modifier: Modifier = Modifier,
     textColor: Color = MaterialTheme.colorScheme.onBackground,
-    items: List<Book>,
+    items: List<BookMap>,
     onBookClicked: (Book) -> Unit,
-    onAddBook: ()->Unit,
+    onAddBook: () -> Unit,
 ) {
-    LazyRow(modifier = modifier.fillMaxWidth()){
-        items(items){ item ->
+    LazyRow(modifier = modifier.fillMaxWidth().padding(horizontal = 8.dp)) {
+        items(items) { item ->
             Column(
                 modifier = Modifier
                     .clickable {
-                        onBookClicked(item)
+                        onBookClicked(item.book)
                     }
                     .padding(
                         vertical = 4.dp
@@ -49,26 +50,27 @@ fun RecordHeader(
                 Icon(
                     modifier = Modifier
                         .size(
-                            65.dp
+                            55.dp
                         )
                         .clip(
                             shape = MaterialTheme.shapes.extraLarge
                         ),
                     painter = painterResource(
-                        id = DefaultData.savingsIcons[item.bookIconDescription]?.image
-                            ?: item.bookIcon
+                        id = DefaultData.savingsIcons[item.book.bookIconDescription]?.image
+                            ?: item.book.bookIcon
                     ),
-                    contentDescription = item.bookIconDescription,
+                    contentDescription = item.book.bookIconDescription,
                     tint = Color.Unspecified
                 )
                 Text(
-                    text = item.bookName,
-                    style = MaterialTheme.typography.titleLarge,
+                    text = item.book.bookName,
+                    style = MaterialTheme.typography.titleMedium,
                     color = textColor,
                     textAlign = TextAlign.Center,
                     maxLines = 1
                 )
             }
+            Spacer(modifier = Modifier.width(8.dp))
         }
         item {
             Column(
@@ -85,7 +87,7 @@ fun RecordHeader(
                 Icon(
                     modifier = Modifier
                         .size(
-                            65.dp
+                            55.dp
                         )
                         .clip(
                             shape = MaterialTheme.shapes.extraLarge
@@ -97,8 +99,8 @@ fun RecordHeader(
                     tint = Color.Unspecified
                 )
                 Text(
-                    text = "Add Category",
-                    style = MaterialTheme.typography.titleLarge,
+                    text = "Add New Book",
+                    style = MaterialTheme.typography.titleMedium,
                     color = textColor,
                 )
             }

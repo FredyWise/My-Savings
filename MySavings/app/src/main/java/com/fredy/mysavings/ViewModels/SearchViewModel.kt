@@ -2,7 +2,7 @@ package com.fredy.mysavings.ViewModels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.fredy.mysavings.Feature.Domain.Repository.RecordRepository
+import com.fredy.mysavings.Feature.Data.Database.Model.Book
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.RecordUseCases
 import com.fredy.mysavings.Util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,7 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SearchViewModel @Inject constructor(
     private val recordUseCases: RecordUseCases,
-): ViewModel() {
+) : ViewModel() {
 
     private val _trueRecordsResource = recordUseCases.getAllRecords().stateIn(
         viewModelScope,
@@ -36,27 +36,32 @@ class SearchViewModel @Inject constructor(
             )
         }
     }.combine(_trueRecordsResource) { state, trueRecordsResource ->
-        when(trueRecordsResource){
+        when (trueRecordsResource) {
             is Resource.Success -> {
                 val searchQuery = state.searchQuery
                 if (searchQuery.isBlank()) {
                     trueRecordsResource
                 } else {
-                    Resource.Success(trueRecordsResource.data!!.map { recordMap ->
-                        recordMap.copy(records = recordMap.records.filter {
-                            it.record.doesMatchSearchQuery(
-                                searchQuery
-                            ) || it.fromAccount.doesMatchSearchQuery(
-                                searchQuery
-                            ) || it.toAccount.doesMatchSearchQuery(
-                                searchQuery
-                            ) || it.toCategory.doesMatchSearchQuery(
-                                searchQuery
-                            )
-                        })
-                    }.filter { it.records.isNotEmpty() })
+                    Resource.Success(trueRecordsResource.data!!.map { bookMap ->
+                        bookMap.copy(recordMaps = bookMap.recordMaps.map { recordMap ->
+                            recordMap.copy(records = recordMap.records.filter {
+                                it.record.doesMatchSearchQuery(
+                                    searchQuery
+                                ) || it.fromAccount.doesMatchSearchQuery(
+                                    searchQuery
+                                ) || it.toAccount.doesMatchSearchQuery(
+                                    searchQuery
+                                ) || it.toCategory.doesMatchSearchQuery(
+                                    searchQuery
+                                )
+                            })
+                        }.filter { it.records.isNotEmpty() }
+
+                        )
+                    })
                 }
             }
+
             is Resource.Error -> Resource.Error(trueRecordsResource.message.toString())
             is Resource.Loading -> Resource.Loading()
         }
@@ -96,7 +101,8 @@ class SearchViewModel @Inject constructor(
 }
 
 data class SearchState(
-    val trueRecordsResource: Resource<List<RecordMap>> = Resource.Loading(),
+    val trueRecordsResource: Resource<List<BookMap>> = Resource.Loading(),
+//    val selectedBook: Book = Book(),
     val isSearching: Boolean = false,
     val searchQuery: String = "",
 )

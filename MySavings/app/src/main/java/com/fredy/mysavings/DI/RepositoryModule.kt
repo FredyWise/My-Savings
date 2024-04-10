@@ -14,8 +14,8 @@ import com.fredy.mysavings.Feature.Data.Database.Dao.UserDao
 import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.AccountDataSource
 import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.BookDataSource
 import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.CategoryDataSource
-import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.CurrencyRatesDataSource
 import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.CurrencyDataSource
+import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.CurrencyRatesDataSource
 import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.RecordDataSource
 import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.UserDataSource
 import com.fredy.mysavings.Feature.Domain.Repository.AccountRepository
@@ -119,7 +119,7 @@ object RepositoryModule {
         categoryDataSource: CategoryDataSource,
         categoryDao: CategoryDao,
     ): CategoryRepository = CategoryRepositoryImpl(
-         categoryDataSource, categoryDao, firestore,
+        categoryDataSource, categoryDao, firestore,
     )
 
     @Provides
@@ -129,7 +129,7 @@ object RepositoryModule {
         bookDataSource: BookDataSource,
         bookDao: BookDao,
     ): BookRepository = BookRepositoryImpl(
-         bookDataSource, bookDao, firestore,
+        bookDataSource, bookDao, firestore,
     )
 
     @Provides
@@ -139,7 +139,7 @@ object RepositoryModule {
         userDataSource: UserDataSource,
         userDao: UserDao
     ): UserRepository = UserRepositoryImpl(
-        firebaseAuth,userDataSource, userDao
+        firebaseAuth, userDataSource, userDao
     )
 
     @Provides
@@ -169,6 +169,8 @@ object RepositoryModule {
         accountDao: AccountDao,
         categoryDataSource: CategoryDataSource,
         categoryDao: CategoryDao,
+        bookDataSource: BookDataSource,
+        bookDao: BookDao,
         recordDataSource: RecordDataSource,
         recordDao: RecordDao,
         firebaseAuth: FirebaseAuth
@@ -178,6 +180,8 @@ object RepositoryModule {
         accountDao,
         categoryDataSource,
         categoryDao,
+        bookDataSource,
+        bookDao,
         recordDataSource,
         recordDao,
         firebaseAuth,
