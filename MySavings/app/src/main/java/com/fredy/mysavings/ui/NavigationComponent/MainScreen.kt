@@ -51,6 +51,7 @@ import com.fredy.mysavings.ui.NavigationComponent.Navigation.NavigationRoute
 import com.fredy.mysavings.ui.NavigationComponent.Navigation.bottomBarScreens
 import com.fredy.mysavings.ui.NavigationComponent.Navigation.drawerScreens
 import com.fredy.mysavings.ui.NavigationComponent.Navigation.navigateSingleTopTo
+import com.fredy.mysavings.ui.Screens.Record.RecordDialog
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleWarningDialog
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
@@ -102,6 +103,28 @@ fun MainScreen(
         },
         warningText = "Are You Sure Want to Log Out?"
     )
+    state.trueRecord?.let {
+        RecordDialog(
+            trueRecord = it,
+            onSaveClicked = { record ->
+                onEvent(
+                    RecordsEvent.DeleteRecord(
+                        record
+                    )
+                )
+            },
+            onDismissDialog = {
+                onEvent(
+                    RecordsEvent.HideDialog
+                )
+            },
+            onEdit = {
+                rootNavController.navigate(
+                    "${NavigationRoute.Add.route}?recordId=${it.record.recordId}"
+                )
+            },
+        )
+    }
     Scaffold(
         modifier = modifier,
         backgroundColor = backgroundColor,

@@ -31,28 +31,6 @@ fun RecordsScreen(
             false
         ).apply { targetState = true }
     }
-    state.trueRecord?.let {
-        RecordDialog(
-            trueRecord = it,
-            onSaveClicked = { record ->
-                onEvent(
-                    RecordsEvent.DeleteRecord(
-                        record
-                    )
-                )
-            },
-            onDismissDialog = {
-                onEvent(
-                    RecordsEvent.HideDialog
-                )
-            },
-            onEdit = {
-                rootNavController.navigate(
-                    "${NavigationRoute.Add.route}?recordId=${it.record.recordId}"
-                )
-            },
-        )
-    }
     AnimatedVisibility(
         modifier = modifier,
         visibleState = isVisible,

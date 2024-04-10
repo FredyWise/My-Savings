@@ -40,31 +40,31 @@ fun AccountsScreen(
     rootNavController: NavHostController,
     state: AccountState,
     onEvent: (AccountEvent) -> Unit,
-    recordState: RecordState,
+//    recordState: RecordState,
     recordEvent: (RecordsEvent) -> Unit,
 ) {
-    recordState.trueRecord?.let {
-        RecordDialog(
-            trueRecord = it,
-            onSaveClicked = { record ->
-                recordEvent(
-                    RecordsEvent.DeleteRecord(
-                        record
-                    )
-                )
-            },
-            onDismissDialog = {
-                recordEvent(
-                    RecordsEvent.HideDialog
-                )
-            },
-            onEdit = {
-                rootNavController.navigate(
-                    "${NavigationRoute.Add.route}?recordId=${it.record.recordId}"
-                )
-            },
-        )
-    }
+//    recordState.trueRecord?.let {
+//        RecordDialog(
+//            trueRecord = it,
+//            onSaveClicked = { record ->
+//                recordEvent(
+//                    RecordsEvent.DeleteRecord(
+//                        record
+//                    )
+//                )
+//            },
+//            onDismissDialog = {
+//                recordEvent(
+//                    RecordsEvent.HideDialog
+//                )
+//            },
+//            onEdit = {
+//                rootNavController.navigate(
+//                    "${NavigationRoute.Add.route}?recordId=${it.record.recordId}"
+//                )
+//            },
+//        )
+//    }
     var isSheetOpen by rememberSaveable {
         mutableStateOf(false)
     }

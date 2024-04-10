@@ -85,14 +85,14 @@ fun HomeNavGraph(
             },
         ) {
             val state by accountViewModel.state.collectAsStateWithLifecycle()
-            val recordState by recordViewModel.state.collectAsStateWithLifecycle()
+//            val recordState by recordViewModel.state.collectAsStateWithLifecycle()
 
             AccountsScreen(
                 modifier = Modifier.padding(8.dp),
                 rootNavController = rootNavController,
                 state = state,
                 onEvent = accountViewModel::onEvent,
-                recordState = recordState,
+//                recordState = recordState,
                 recordEvent = recordViewModel::onEvent,
             )
         }
@@ -106,14 +106,14 @@ fun HomeNavGraph(
             },
         ) {
             val state by categoryViewModel.state.collectAsStateWithLifecycle()
-            val recordState by recordViewModel.state.collectAsStateWithLifecycle()
+//            val recordState by recordViewModel.state.collectAsStateWithLifecycle()
 
             CategoriesScreen(
                 modifier = Modifier.padding(8.dp),
                 rootNavController = rootNavController,
                 state = state,
                 onEvent = categoryViewModel::onEvent,
-                recordState = recordState,
+//                recordState = recordState,
                 recordEvent = recordViewModel::onEvent,
             )
         }

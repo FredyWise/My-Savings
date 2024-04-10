@@ -226,36 +226,70 @@ fun RecordDialog(
                             color = onSurface,
                             style = MaterialTheme.typography.titleLarge,
                         )
-                        SimpleEntityItem(
-                            modifier = Modifier
-                                .padding(4.dp)
-                                .clip(
-                                    MaterialTheme.shapes.medium
+                        if (isTransfer(trueRecord.record.recordType)) {
+                            SimpleEntityItem(
+                                modifier = Modifier
+                                    .padding(4.dp)
+                                    .clip(
+                                        MaterialTheme.shapes.medium
+                                    )
+                                    .border(
+                                        width = 2.dp,
+                                        color = balanceColor,
+                                        shape = MaterialTheme.shapes.medium
+                                    )
+                                    .background(
+                                        surface
+                                    )
+                                    .padding(8.dp),
+                                icon = trueRecord.toAccount.accountIcon,
+                                iconModifier = Modifier
+                                    .size(
+                                        35.dp
+                                    )
+                                    .clip(
+                                        shape = MaterialTheme.shapes.medium
+                                    ),
+                                iconDescription = trueRecord.toAccount.accountId,
+                                contentWeight = 0.3f,
+                            ) {
+                                Text(
+                                    text = trueRecord.toAccount.accountName,
+                                    color = onSurface
                                 )
-                                .border(
-                                    width = 2.dp,
-                                    color = balanceColor,
-                                    shape = MaterialTheme.shapes.medium
+                            }
+                        }else{
+                            SimpleEntityItem(
+                                modifier = Modifier
+                                    .padding(4.dp)
+                                    .clip(
+                                        MaterialTheme.shapes.medium
+                                    )
+                                    .border(
+                                        width = 2.dp,
+                                        color = balanceColor,
+                                        shape = MaterialTheme.shapes.medium
+                                    )
+                                    .background(
+                                        surface
+                                    )
+                                    .padding(8.dp),
+                                icon = trueRecord.toCategory.categoryIcon,
+                                iconModifier = Modifier
+                                    .size(
+                                        35.dp
+                                    )
+                                    .clip(
+                                        shape = MaterialTheme.shapes.medium
+                                    ),
+                                iconDescription = trueRecord.toCategory.categoryIconDescription,
+                                contentWeight = 0.3f,
+                            ) {
+                                Text(
+                                    text = trueRecord.toCategory.categoryName,
+                                    color = onSurface
                                 )
-                                .background(
-                                    surface
-                                )
-                                .padding(8.dp),
-                            icon = trueRecord.toCategory.categoryIcon,
-                            iconModifier = Modifier
-                                .size(
-                                    35.dp
-                                )
-                                .clip(
-                                    shape = MaterialTheme.shapes.medium
-                                ),
-                            iconDescription = trueRecord.toCategory.categoryIconDescription,
-                            contentWeight = 0.3f,
-                        ) {
-                            Text(
-                                text = trueRecord.toCategory.categoryName,
-                                color = onSurface
-                            )
+                            }
                         }
                     }
                     Text(
