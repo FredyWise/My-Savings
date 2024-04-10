@@ -456,7 +456,7 @@ class RecordUseCasesTest : BaseUseCaseTest() {
         val startDate = LocalDateTime.now().minusDays(7)
         val endDate = LocalDateTime.now()
 
-        val balanceFlow = getUserTotalRecordBalance(startDate, endDate)
+        val balanceFlow = getUserTotalRecordBalance(true,startDate, endDate)
         val balance = balanceFlow.last()
 
         assertEquals(

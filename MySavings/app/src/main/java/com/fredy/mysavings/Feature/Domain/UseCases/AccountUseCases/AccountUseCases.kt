@@ -66,7 +66,7 @@ class GetAccounts(
             withContext(Dispatchers.IO) {
                 repository.getUserAccounts(
                     userId
-                ).map { accounts -> accounts.filter { it.accountName != deletedAccount.accountName } }
+                ).map { accounts -> accounts.filter { it.accountId != deletedAccount.accountId + userId } }
             }.collect { data ->
                 Log.i("getUserAccountOrderedByName.Data: $data")
                 emit(Resource.Success(data))

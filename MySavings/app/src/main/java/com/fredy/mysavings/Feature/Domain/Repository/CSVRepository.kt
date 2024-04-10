@@ -17,6 +17,7 @@ import com.fredy.mysavings.Util.isTransfer
 import com.fredy.mysavings.ViewModels.DBInfo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
 
@@ -101,7 +102,7 @@ class CSVRepositoryImpl(
     }
 
     private suspend fun findRecordId(record: Record, userId: String): String {
-        val records = recordDataSource.getUserRecords(userId)
+        val records = recordDataSource.getUserRecords(userId).first()
         return records.singleOrNull { it.compareTo(record) }?.recordId ?: ""
     }
 
@@ -115,13 +116,13 @@ class CSVRepositoryImpl(
     }
 
     private suspend fun findAccountId(account: Account, userId: String): String {
-        val accounts = recordDataSource.getUserAccounts(userId)
-        val accountId = if (!account.compareTo(deletedAccount)) {
+        val accounts = accountRepository.getUserAccounts(userId).first()
+        val accountId = if (account.accountId != deletedAccount.accountId + userId) {
             accounts.firstOrNull {
                 it.compareTo(account)
             }?.accountId ?: accountRepository.upsertAccount(account.copy(userIdFk = userId))
         } else {
-            deletedAccount.accountId
+            deletedAccount.accountId + userId
         }
         return accountId
     }
@@ -133,13 +134,13 @@ class CSVRepositoryImpl(
     }
 
     private suspend fun findCategoryId(category: Category, userId: String): String {
-        val categories = recordDataSource.getUserCategories(userId)
-        val categoryId = if (!category.compareTo(deletedCategory)) {
+        val categories = categoryRepository.getUserCategories(userId).first()
+        val categoryId = if (category.categoryId != deletedCategory.categoryId + userId) {
             categories.firstOrNull {
                 it.compareTo(category)
             }?.categoryId ?: categoryRepository.upsertCategory(category.copy(userIdFk = userId))
         } else {
-            deletedCategory.categoryId
+            deletedCategory.categoryId + userId
         }
         return categoryId
     }

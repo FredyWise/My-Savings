@@ -7,10 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fredy.mysavings.Feature.Data.Database.Model.Record
 import com.fredy.mysavings.Feature.Data.Database.Model.TrueRecord
-import com.fredy.mysavings.Feature.Data.Enum.GraphType
 import com.fredy.mysavings.Feature.Data.Enum.RecordType
 import com.fredy.mysavings.Feature.Data.Enum.SortType
-import com.fredy.mysavings.Feature.Domain.Repository.AccountRepository
 import com.fredy.mysavings.Feature.Domain.Repository.AccountWithAmountType
 import com.fredy.mysavings.Feature.Domain.Repository.CategoryWithAmount
 import com.fredy.mysavings.Feature.Domain.Repository.SettingsRepository
@@ -21,7 +19,6 @@ import com.fredy.mysavings.Util.BalanceBar
 import com.fredy.mysavings.Util.BalanceItem
 import com.fredy.mysavings.Util.FilterState
 import com.fredy.mysavings.Util.Resource
-import com.fredy.mysavings.Util.isInternetConnected
 
 import com.fredy.mysavings.Util.map
 import com.fredy.mysavings.Util.minusDate
@@ -39,7 +36,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-import java.time.LocalDateTime
 import javax.inject.Inject
 
 
@@ -82,71 +78,11 @@ class RecordViewModel @Inject constructor(
         emptyList()
     )
 
-    private val _categoriesWithAmount = _filterState.flatMapLatest { filterState ->
-        filterState.map { start, end, recordType, sortType, currencies, useUserCurrency ->
-            recordUseCases.getUserCategoriesWithAmountFromSpecificTime(
-                recordType,
-                sortType,
-                start,
-                end,
-                currencies,
-                useUserCurrency
-            )
-        }
-    }.stateIn(
-        viewModelScope,
-        SharingStarted.WhileSubscribed(),
-        Resource.Success(emptyList())
-    )
-
-    private val _accountsWithAmount = _filterState.flatMapLatest { filterState ->
-        filterState.map { start, end, _, sortType, _, useUserCurrency ->
-            recordUseCases.getUserAccountsWithAmountFromSpecificTime(
-                sortType,
-                start,
-                end,
-                useUserCurrency
-            )
-        }
-    }.stateIn(
-        viewModelScope,
-        SharingStarted.WhileSubscribed(),
-        Resource.Success(emptyList())
-    )
-
-    private val _recordsWithinSpecificTime = _filterState.flatMapLatest { filterState ->
-        filterState.map { start, end, recordType, sortType, currencies, useUserCurrency ->
-            recordUseCases.getUserRecordsFromSpecificTime(
-                recordType,
-                sortType,
-                start,
-                end,
-                currencies,
-                useUserCurrency,
-            )
-        }
-    }.stateIn(
-        viewModelScope,
-        SharingStarted.WhileSubscribed(),
-        Resource.Success(emptyList())
-    )
-
-    private val _recordResource = _filterState.flatMapLatest { filterState ->
-        filterState.map { start, end, _, sortType, currencies, useUserCurrency ->
-            recordUseCases.getUserTrueRecordMapsFromSpecificTime(
-                start, end, sortType, currencies, useUserCurrency
-            )
-        }
-    }.stateIn(
-        viewModelScope,
-        SharingStarted.WhileSubscribed(),
-        Resource.Success(emptyList())
-    )
-
     private val _totalBalance = _filterState.flatMapLatest { filterState ->
         filterState.map { start, end, _, _, _, _ ->
             recordUseCases.getUserTotalRecordBalance(
-                if (filterState.carryOn) LocalDateTime.of(2000, 1, 1, 1, 1) else start,
+                filterState.carryOn,
+                start,
                 end
             )
         }
@@ -215,6 +151,66 @@ class RecordViewModel @Inject constructor(
         BalanceBar()
     )
 
+    private val _categoriesWithAmount = _filterState.flatMapLatest { filterState ->
+        filterState.map { start, end, recordType, sortType, currencies, useUserCurrency ->
+            recordUseCases.getUserCategoriesWithAmountFromSpecificTime(
+                recordType,
+                sortType,
+                start,
+                end,
+                currencies,
+                useUserCurrency
+            )
+        }
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(),
+        Resource.Success(emptyList())
+    )
+
+    private val _accountsWithAmount = _filterState.flatMapLatest { filterState ->
+        filterState.map { start, end, _, sortType, _, useUserCurrency ->
+            recordUseCases.getUserAccountsWithAmountFromSpecificTime(
+                sortType,
+                start,
+                end,
+                useUserCurrency
+            )
+        }
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(),
+        Resource.Success(emptyList())
+    )
+
+    private val _recordsWithinSpecificTime = _filterState.flatMapLatest { filterState ->
+        filterState.map { start, end, recordType, sortType, currencies, useUserCurrency ->
+            recordUseCases.getUserRecordsFromSpecificTime(
+                recordType,
+                sortType,
+                start,
+                end,
+                currencies,
+                useUserCurrency,
+            )
+        }
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(),
+        Resource.Success(emptyList())
+    )
+
+    private val _recordResource = _filterState.flatMapLatest { filterState ->
+        filterState.map { start, end, _, sortType, currencies, useUserCurrency ->
+            recordUseCases.getUserTrueRecordMapsFromSpecificTime(
+                start, end, sortType, currencies, useUserCurrency
+            )
+        }
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(),
+        Resource.Success(emptyList())
+    )
 
     private val _resourceData = MutableStateFlow(
         ResourceData()
@@ -406,7 +402,6 @@ class RecordViewModel @Inject constructor(
 
 data class RecordState(
     val resourceData: ResourceData = ResourceData(),
-    val graphType: GraphType = GraphType.SlimDonut,
     val trueRecord: TrueRecord? = null,
     val availableCurrency: List<String> = listOf(),
     val selectedCheckbox: List<String> = listOf(),

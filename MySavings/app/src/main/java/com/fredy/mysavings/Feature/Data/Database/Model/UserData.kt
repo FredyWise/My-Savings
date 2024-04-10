@@ -8,7 +8,8 @@ data class UserData(
     @PrimaryKey
     val firebaseUserId: String = "",
     val username: String? = null,
-    val emailOrPhone: String? = null,
+    val email: String? = null,
+    val phone: String? = null,
     val profilePictureUrl: String? = null,
     val userCurrency: String = "USD",
 )

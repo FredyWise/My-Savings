@@ -22,7 +22,7 @@ interface UserDao {
     @Query("SELECT * FROM UserData ORDER BY username ASC")
     fun getAllUsersOrderedByName(): Flow<List<UserData>>
 
-    @Query("SELECT * FROM UserData WHERE username LIKE :usernameEmail OR emailOrPhone LIKE :usernameEmail ORDER BY username ASC")
+    @Query("SELECT * FROM UserData WHERE username LIKE :usernameEmail OR email LIKE :usernameEmail OR phone LIKE :usernameEmail ORDER BY username ASC")
     fun searchUsers(usernameEmail: String): Flow<List<UserData>>
 
     @Query("DELETE FROM UserData")

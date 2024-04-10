@@ -1,6 +1,5 @@
 package com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource
 
-import com.fredy.mysavings.Util.Log
 import androidx.lifecycle.MutableLiveData
 import com.fredy.mysavings.Feature.Data.Database.Converter.TimestampConverter
 import com.fredy.mysavings.Feature.Data.Database.Model.Account
@@ -9,7 +8,7 @@ import com.fredy.mysavings.Feature.Data.Database.Model.Record
 import com.fredy.mysavings.Feature.Data.Database.Model.TrueRecord
 import com.fredy.mysavings.Feature.Data.Enum.RecordType
 import com.fredy.mysavings.Feature.Mappers.toTrueRecords
-
+import com.fredy.mysavings.Util.Log
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
@@ -54,13 +53,10 @@ interface RecordDataSource {
     ): Flow<List<TrueRecord>>
 
 
-    suspend fun getUserRecordsFlow(
+    suspend fun getUserRecords(
         userId: String
     ): Flow<List<Record>>
 
-    suspend fun getUserRecords(
-        userId: String
-    ): List<Record>
 
     suspend fun getUserRecordsFromSpecificTime(
         userId: String,
@@ -275,7 +271,7 @@ class RecordDataSourceImpl @Inject constructor(
         }
     }
 
-    override suspend fun getUserRecordsFlow(
+    override suspend fun getUserRecords(
         userId: String
     ): Flow<List<Record>> {
         return withContext(Dispatchers.IO) {
@@ -377,18 +373,9 @@ class RecordDataSourceImpl @Inject constructor(
         }
     }
 
-    private val _records = MutableLiveData<List<Record>>()
     private val _accounts = MutableLiveData<List<Account>>()
     private val _categories = MutableLiveData<List<Category>>()
 
-
-    override suspend fun getUserRecords(
-        userId: String
-    ): List<Record> {
-        return recordCollection.whereEqualTo(
-            "userIdFk", userId
-        ).get().await().toObjects<Record>()
-    }
 
     override suspend fun getUserAccounts(
         userId: String

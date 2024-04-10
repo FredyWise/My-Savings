@@ -128,17 +128,21 @@ class ConvertCurrencyData(
         toCurrency: String,
         rates: Rates
     ): Double {
-        val toBaseRate = rates.getRateForCurrency(
-            toCurrency
-        )?.toDouble() ?: throw IllegalArgumentException(
-            "Currency '$toCurrency' not found in rates."
-        )
-        val fromBaseRate = rates.getRateForCurrency(
-            fromCurrency
-        )?.toDouble() ?: throw IllegalArgumentException(
-            "Currency '$fromCurrency' not found in rates."
-        )
-        return amount * (toBaseRate / fromBaseRate)
+        if (fromCurrency != toCurrency) {
+            val toBaseRate = rates.getRateForCurrency(
+                toCurrency
+            )?.toDouble() ?: throw IllegalArgumentException(
+                "Currency '$toCurrency' not found in rates."
+            )
+            val fromBaseRate = rates.getRateForCurrency(
+                fromCurrency
+            )?.toDouble() ?: throw IllegalArgumentException(
+                "Currency '$fromCurrency' not found in rates."
+            )
+            return amount * (toBaseRate / fromBaseRate)
+        }else{
+            return amount
+        }
     }
 }
 

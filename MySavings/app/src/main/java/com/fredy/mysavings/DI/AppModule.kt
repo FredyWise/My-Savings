@@ -57,7 +57,7 @@ object AppModule {
             UserData(
                 firebaseUserId = uid,
                 username = displayName,
-                emailOrPhone = email,
+                email = email,
                 profilePictureUrl = photoUrl.toString()
             )
         }

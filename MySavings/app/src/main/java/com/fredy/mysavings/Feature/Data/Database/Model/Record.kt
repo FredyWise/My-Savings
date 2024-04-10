@@ -15,6 +15,7 @@ data class Record(
     val accountIdToFk: String = "",
     val categoryIdFk: String = "",
     val userIdFk: String = "",
+//    val bookId: String = "",
     val recordTimestamp: Timestamp = Timestamp.now(),
     val recordAmount: Double = 0.0,
     val recordCurrency: String = "",

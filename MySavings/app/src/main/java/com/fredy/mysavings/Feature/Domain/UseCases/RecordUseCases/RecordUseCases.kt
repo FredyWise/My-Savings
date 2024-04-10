@@ -26,6 +26,7 @@ import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.isExpense
 import com.fredy.mysavings.Util.isIncome
 import com.fredy.mysavings.Util.isTransfer
+import com.fredy.mysavings.Util.minDate
 import com.fredy.mysavings.ViewModels.RecordMap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -48,12 +49,12 @@ data class RecordUseCases(
     val getUserCategoryRecordsOrderedByDateTime: GetUserCategoryRecordsOrderedByDateTime, // category
     val getUserAccountRecordsOrderedByDateTime: GetUserAccountRecordsOrderedByDateTime, // account
     val getUserTrueRecordMapsFromSpecificTime: GetUserTrueRecordMapsFromSpecificTime, // record main screen
-    val getUserRecordsFromSpecificTime: GetUserRecordsFromSpecificTime,
-    val getUserCategoriesWithAmountFromSpecificTime: GetUserCategoriesWithAmountFromSpecificTime,
-    val getUserAccountsWithAmountFromSpecificTime: GetUserAccountsWithAmountFromSpecificTime,
+    val getUserRecordsFromSpecificTime: GetUserRecordsFromSpecificTime, //analysis flow
+    val getUserCategoriesWithAmountFromSpecificTime: GetUserCategoriesWithAmountFromSpecificTime,//analysis overview
+    val getUserAccountsWithAmountFromSpecificTime: GetUserAccountsWithAmountFromSpecificTime,//analysis account
     val getUserTotalAmountByType: GetUserTotalAmountByType,
     val getUserTotalAmountByTypeFromSpecificTime: GetUserTotalAmountByTypeFromSpecificTime,
-    val getUserTotalRecordBalance: GetUserTotalRecordBalance
+    val getUserTotalRecordBalance: GetUserTotalRecordBalance // balance bar total balance
 )
 
 private suspend fun List<Record>.getTotalRecordBalance(
@@ -758,7 +759,7 @@ class GetUserTotalRecordBalance(
     private val authRepository: AuthRepository,
     private val currencyUseCases: CurrencyUseCases
 ) {
-    operator fun invoke(startDate: LocalDateTime, endDate: LocalDateTime): Flow<BalanceItem> {
+    operator fun invoke(isCaryOn:Boolean, startDate: LocalDateTime, endDate: LocalDateTime): Flow<BalanceItem> {
         return flow {
             val currentUser = authRepository.getCurrentUser()!!
             val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
@@ -767,7 +768,7 @@ class GetUserTotalRecordBalance(
             recordRepository.getUserRecordsByTypeFromSpecificTime(
                 userId,
                 listOf(RecordType.Expense, RecordType.Income),
-                startDate,
+                if (isCaryOn) minDate else startDate,
                 endDate
             ).map { it.getTotalRecordBalance(currencyUseCases, userCurrency) }
                 .collect { recordTotalAmount ->

@@ -15,9 +15,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,11 +22,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import co.yml.charts.common.model.Point
 import com.fredy.mysavings.R
-import com.fredy.mysavings.Util.BalanceColor
 import com.fredy.mysavings.Util.RecordTypeColor
 import com.fredy.mysavings.Util.formatBalanceAmount
 import com.fredy.mysavings.Util.formatDateDay
-import com.fredy.mysavings.Util.formatRangeOfDate
 import com.fredy.mysavings.Util.isExpense
 import com.fredy.mysavings.Util.isFilterTypeMonthBelow
 import com.fredy.mysavings.Util.isIncome
@@ -61,13 +56,14 @@ fun AnalysisFlow(
                 )
             },
         ) { data ->
-            val totalAmount = if (isExpense(data.first().recordType)) {
+            val recordType = state.filterState.recordType
+            val totalAmount = if (isExpense(recordType)) {
                 state.balanceBar.expense.amount
-            } else if (isIncome(data.first().recordType)) {
+            } else if (isIncome(recordType)) {
                 state.balanceBar.income.amount
             } else state.balanceBar.transfer.amount
-            val items = if (isExpense(data.first().recordType)) data else data.reversed()
-            val contentColor = RecordTypeColor(recordType = data.first().recordType)
+            val items = if (isExpense(recordType)) data else data.reversed()
+            val contentColor = RecordTypeColor(recordType = recordType)
             LazyColumn(modifier = modifier) {
                 item {
                     Box(
@@ -79,7 +75,7 @@ fun AnalysisFlow(
                     ) {
                         ChartLine(
                             contentColor = contentColor,
-                            infoColor = RecordTypeColor(recordType = state.filterState.recordType),
+                            infoColor = RecordTypeColor(recordType = recordType),
                             pointsData = items.map { item ->
                                 val date =
                                     if (state.filterState.isFilterTypeMonthBelow()) item.recordDateTime.dayOfMonth.toFloat() else item.recordDateTime.dayOfYear.toFloat()
@@ -101,18 +97,19 @@ fun AnalysisFlow(
                                 onEvent(
                                     RecordsEvent.ToggleRecordType
                                 )
-                            },){
+                            },
+                    ) {
                         Text(
-                            text = "Total " + state.filterState.recordType.name + ": " ,
+                            text = "Total " + recordType.name + ": ",
                             color = onBackgroundColor,
                             fontWeight = FontWeight.Bold,
                             style = MaterialTheme.typography.titleLarge
                         )
                         Text(
-                            text =  formatBalanceAmount(
+                            text = formatBalanceAmount(
                                 totalAmount
                             ),
-                            color = RecordTypeColor(recordType = state.filterState.recordType),
+                            color = RecordTypeColor(recordType = recordType),
                             fontWeight = FontWeight.Bold,
                             style = MaterialTheme.typography.titleLarge
                         )
@@ -172,6 +169,7 @@ fun AnalysisFlow(
                 }
                 item { Spacer(modifier = Modifier.height(75.dp)) }
             }
+
         }
     }
 }

@@ -101,6 +101,7 @@ fun CurrencyScreen(
                     ),
                 resource = state.currenciesResource,
                 isNullOrEmpty = { it.isNullOrEmpty() },
+                nullOrEmptyMessage = "You need to be online first",
                 onMessageClick = { },
             ) { data ->
                 LazyColumn() {

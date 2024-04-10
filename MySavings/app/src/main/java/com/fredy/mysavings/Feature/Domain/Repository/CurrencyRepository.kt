@@ -103,7 +103,7 @@ class CurrencyRepositoryImpl @Inject constructor(
     // rates private functions
     override suspend fun getRateResponse(
         base: String
-    ): RatesCache {//we can use worker for this and maybe also for sincronizing data on room
+    ): RatesCache {
         Log.i("getRates: start")
         val result = withContext(Dispatchers.IO) {
             val cachedUser = _currentUser.value

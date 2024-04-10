@@ -1,5 +1,6 @@
 package com.fredy.mysavings.ui.Screens.Analysis
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -80,14 +81,15 @@ fun AnalysisOverview(
                 )
             },
         ) { data ->
-            val items = if (isExpense(data.first().category.categoryType)) data else data.reversed()
-            val totalAmount = if (isExpense(data.first().category.categoryType)) {
+            val recordType = state.filterState.recordType
+            val items = if (isExpense(recordType)) data.reversed() else data
+            val totalAmount = if (isExpense(recordType)) {
                 state.balanceBar.expense.amount
-            } else if (isIncome(data.first().category.categoryType)) {
+            } else if (isIncome(recordType)) {
                 state.balanceBar.income.amount
             } else state.balanceBar.transfer.amount
-            val contentColor = RecordTypeColor(recordType = data.first().category.categoryType)
-            val colors = (if (isExpense(items.first().category.categoryType)) defaultColors
+            val contentColor = RecordTypeColor(recordType = recordType)
+            val colors = (if (isExpense(recordType)) defaultColors
             else defaultColors.reversed()).subList(
                 0,
                 items.size,

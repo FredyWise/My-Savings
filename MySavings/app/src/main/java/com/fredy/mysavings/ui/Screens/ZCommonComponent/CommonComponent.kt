@@ -1,10 +1,13 @@
 package com.fredy.mysavings.ui.Screens.ZCommonComponent
 
 import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -40,7 +43,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -65,6 +67,7 @@ import coil.compose.AsyncImage
 import com.fredy.mysavings.Util.ActionWithName
 import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.SavingsIcon
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -87,25 +90,31 @@ fun <T> ResourceHandler(
     var showEmptyMessage by remember {
         mutableStateOf(false)
     }
+    var job: Job? = null
 
     fun debounce(resource: Resource<T>) {
-        scope.launch {
-            delay(1500L)
-            if (resource is Resource.Loading) {
-                showCircularProgressIndicator = resource is Resource.Loading
-            }
+        job?.cancel()
+        job = scope.launch {
             if (resource is Resource.Success) {
-                showEmptyMessage = resource is Resource.Success
+                showCircularProgressIndicator = false
+                delay(500L)
+                showEmptyMessage = true
+            }
+            if (resource is Resource.Loading) {
+                showEmptyMessage = false
+                delay(1000L)
+                showCircularProgressIndicator = true
             }
         }
+    }
+
+    if (resource is Resource.Loading || resource is Resource.Success) {
+        debounce(resource)
     }
     Box(
         modifier = modifier,
         contentAlignment = Alignment.TopCenter
     ) {
-        LaunchedEffect(key1 = resource) {
-            debounce(resource)
-        }
         when (resource) {
             is Resource.Error -> {
                 Toast.makeText(
@@ -120,7 +129,11 @@ fun <T> ResourceHandler(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    if (showCircularProgressIndicator) {
+                    AnimatedVisibility(
+                        visible = showCircularProgressIndicator,
+                        enter = fadeIn(animationSpec = tween(100)),
+                        exit = fadeOut(animationSpec = tween(100))
+                    ) {
                         CircularProgressIndicator(
                             modifier = Modifier.size(
                                 40.dp
@@ -135,15 +148,17 @@ fun <T> ResourceHandler(
             is Resource.Success -> {
                 resource.data.let {
                     if (!isNullOrEmpty(it)) {
-                        it?.let {
-                            content(it)
-                        }
+                        content(it!!)
                     } else {
                         Box(
                             modifier = Modifier.fillMaxSize(),
                             contentAlignment = Alignment.Center
                         ) {
-                            if (showEmptyMessage) {
+                            AnimatedVisibility(
+                                visible = showEmptyMessage,
+                                enter = fadeIn(animationSpec = tween(200)),
+                                exit = fadeOut(animationSpec = tween(200))
+                            ) {
                                 Text(
                                     text = nullOrEmptyMessage,
                                     modifier = Modifier
@@ -159,9 +174,8 @@ fun <T> ResourceHandler(
                                     style = MaterialTheme.typography.titleLarge,
                                     color = MaterialTheme.colorScheme.onBackground,
                                 )
-                            } else {
-
                             }
+
                         }
                     }
                 }
@@ -478,7 +492,7 @@ fun AsyncImageHandler(
     imageVectorColor: Color = MaterialTheme.colorScheme.onSurface,
 
     ) {
-    if (!imageUrl.isNullOrEmpty() && !imageUrl.contains("null",true) ) {
+    if (!imageUrl.isNullOrEmpty() && !imageUrl.contains("null", true)) {
         AsyncImage(
             model = imageUrl,
             contentDescription = contentDescription,

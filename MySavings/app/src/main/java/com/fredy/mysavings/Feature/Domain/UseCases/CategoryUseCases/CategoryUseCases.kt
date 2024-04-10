@@ -6,6 +6,8 @@ import com.fredy.mysavings.Feature.Data.Database.Model.Category
 import com.fredy.mysavings.Feature.Domain.Repository.AuthRepository
 import com.fredy.mysavings.Feature.Domain.Repository.CategoryRepository
 import com.fredy.mysavings.Feature.Mappers.toCategoryMaps
+import com.fredy.mysavings.Util.DefaultData.deletedCategory
+import com.fredy.mysavings.Util.DefaultData.transferCategory
 import com.fredy.mysavings.Util.Resource
 
 import com.fredy.mysavings.ViewModels.CategoryMap
@@ -13,6 +15,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
 data class CategoryUseCases(
@@ -62,7 +65,7 @@ class GetCategoryMapOrderedByName(
 
             withContext(Dispatchers.IO) {
                 categoryRepository.getUserCategories(userId)
-            }.collect { categories ->
+            }.map { categories -> categories.filter { it.categoryId != deletedCategory.categoryId + userId || it.categoryId != transferCategory.categoryId + userId } }.collect { categories ->
                 val data = categories.toCategoryMaps()
                 Log.i("getCategoryMapOrderedByName.Data: $data")
                 emit(Resource.Success(data))

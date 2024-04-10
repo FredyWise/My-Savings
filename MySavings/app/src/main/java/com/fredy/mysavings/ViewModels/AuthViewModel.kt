@@ -191,7 +191,8 @@ class AuthViewModel @Inject constructor(
                                     val user = UserData(
                                         firebaseUserId = firebaseUserId,
                                         username = event.username,
-                                        emailOrPhone = emailOrPhone,//event.email,
+                                        email = email,
+                                        phone = phone,
                                         userCurrency = userCurrency,
                                         profilePictureUrl = profilePictureUrl
                                     )
@@ -205,7 +206,6 @@ class AuthViewModel @Inject constructor(
                         }
                     }
                     onEvent(AuthEvent.GetCurrentUser)
-
                 }
             }
 
@@ -326,7 +326,8 @@ class AuthViewModel @Inject constructor(
                 UserData(
                     firebaseUserId = uid,
                     username = displayName,
-                    emailOrPhone = email ?: phoneNumber,
+                    email = email,
+                    phone = phoneNumber,
                     profilePictureUrl = profilePictureUrl
                 )
             )

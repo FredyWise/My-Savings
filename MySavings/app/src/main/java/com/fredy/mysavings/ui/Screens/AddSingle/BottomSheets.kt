@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -38,6 +39,7 @@ import com.fredy.mysavings.Util.BalanceColor
 import com.fredy.mysavings.Util.formatBalanceAmount
 import com.fredy.mysavings.Util.isTransfer
 import com.fredy.mysavings.Util.DefaultData.savingsIcons
+import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.ViewModels.AccountState
 import com.fredy.mysavings.ViewModels.CategoryMap
 import com.fredy.mysavings.ViewModels.CategoryState
@@ -72,93 +74,102 @@ fun AddBottomSheet(
             onDismissModal(false)
         },
     ) {
-        accountState.accountResource.let { resource ->
-            ResourceHandler(
-                resource = resource,
-                nullOrEmptyMessage = "You Didn't Have Any Account Yet",
-                isNullOrEmpty = { it.isNullOrEmpty() },
-                errorMessage = resource.message ?: "",
-                onMessageClick = {
-                    onEventAccount(
-                        AccountEvent.ShowDialog(
-                            Account(
-                                accountName = ""
+        if (isLeading || isTransfer(recordType)) {
+            accountState.accountResource.let { resource ->
+                ResourceHandler(
+                    modifier = if (resource is Resource.Loading || resource.data.isNullOrEmpty()) Modifier.fillMaxHeight(
+                        0.5f
+                    ) else Modifier,
+                    resource = resource,
+                    nullOrEmptyMessage = "You Didn't Have Any Account Yet",
+                    isNullOrEmpty = { it.isNullOrEmpty() },
+                    errorMessage = resource.message ?: "",
+                    onMessageClick = {
+                        onEventAccount(
+                            AccountEvent.ShowDialog(
+                                Account(
+                                    accountName = ""
+                                )
                             )
                         )
-                    )
-                },
-            ) { data ->
-                if (isLeading) {
-                    AccountBottomSheet(
-                        accounts = data,
-                        onSelectAccount = {
-                            onSelectFromAccount(it)
-                            onDismissModal(false)
-                        },
-                        onAddAccount = {
-                            onEventAccount(
-                                AccountEvent.ShowDialog(
-                                    Account(
-                                        accountName = ""
+                    },
+                ) { data ->
+                    if (isLeading) {
+                        AccountBottomSheet(
+                            accounts = data,
+                            onSelectAccount = {
+                                onSelectFromAccount(it)
+                                onDismissModal(false)
+                            },
+                            onAddAccount = {
+                                onEventAccount(
+                                    AccountEvent.ShowDialog(
+                                        Account(
+                                            accountName = ""
+                                        )
                                     )
                                 )
-                            )
-                        },
-                    )
-                } else if (isTransfer(recordType)) {
-                    AccountBottomSheet(
-                        accounts = data,
-                        onSelectAccount = {
-                            onSelectToAccount(it)
-                            onDismissModal(false)
-                        },
-                        onAddAccount = {
-                            onEventAccount(
-                                AccountEvent.ShowDialog(
-                                    Account(
-                                        accountName = ""
+                            },
+                        )
+                    } else if (isTransfer(recordType)) {
+                        AccountBottomSheet(
+                            accounts = data,
+                            onSelectAccount = {
+                                onSelectToAccount(it)
+                                onDismissModal(false)
+                            },
+                            onAddAccount = {
+                                onEventAccount(
+                                    AccountEvent.ShowDialog(
+                                        Account(
+                                            accountName = ""
+                                        )
                                     )
                                 )
-                            )
-                        },
-                    )
+                            },
+                        )
+                    }
                 }
             }
-        }
-        categoryState.categoryResource.let { resource ->
-            ResourceHandler(
-                resource = resource,
-                nullOrEmptyMessage = "You Didn't Have Any Categories Yet",
-                isNullOrEmpty = { it.isNullOrEmpty() },
-                errorMessage = resource.message ?: "",
-                onMessageClick = {
-                    onEventCategory(
-                        CategoryEvent.ShowDialog(
-                            Category(
-                                categoryName = ""
-                            )
-                        )
-                    )
-                },
-            ) { data ->
-                if (!isTransfer(recordType) && !isLeading) {
-                    CategoryBottomSheet(
-                        categoryMaps = data,
-                        recordType = recordType,
-                        onSelectCategory = {
-                            onSelectCategory(it)
-                            onDismissModal(false)
-                        },
-                        onAddCategory = {
-                            onEventCategory(
-                                CategoryEvent.ShowDialog(
-                                    Category(
-                                        categoryName = ""
-                                    )
+        }else {
+            categoryState.categoryResource.let { resource ->
+                ResourceHandler(
+                    modifier = if (resource is Resource.Loading || resource.data.isNullOrEmpty()) Modifier.fillMaxHeight(
+                        0.5f
+                    ) else Modifier,
+                    resource = resource,
+                    nullOrEmptyMessage = "You Didn't Have Any Categories Yet",
+                    isNullOrEmpty = { it.isNullOrEmpty() },
+                    errorMessage = resource.message ?: "",
+                    onMessageClick = {
+                        onEventCategory(
+                            CategoryEvent.ShowDialog(
+                                Category(
+                                    categoryName = ""
                                 )
                             )
-                        },
-                    )
+                        )
+                    },
+                ) { data ->
+                    if (!isTransfer(recordType)) {
+                        CategoryBottomSheet(
+                            categoryMaps = data,
+                            recordType = recordType,
+                            onSelectCategory = {
+                                onSelectCategory(it)
+                                onDismissModal(false)
+                            },
+                            onAddCategory = {
+                                onEventCategory(
+                                    CategoryEvent.ShowDialog(
+                                        Category(
+                                            categoryName = ""
+                                        )
+                                    )
+                                )
+                            },
+                        )
+                    }
                 }
             }
         }

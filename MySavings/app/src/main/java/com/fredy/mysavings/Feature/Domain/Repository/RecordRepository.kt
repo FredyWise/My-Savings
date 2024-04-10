@@ -139,7 +139,7 @@ class RecordRepositoryImpl @Inject constructor(
     override fun getUserRecords(userId: String): Flow<List<Record>> {
         Log.i("getUserRecordsRepo: $userId")
         return flow {
-            recordDataSource.getUserRecordsFlow(userId).collect {
+            recordDataSource.getUserRecords(userId).collect {
                 Log.i("getUserRecordsRepo.Data: $it")
                 emit(it)
             }
