@@ -15,32 +15,35 @@ data class Record(
     val accountIdToFk: String = "",
     val categoryIdFk: String = "",
     val userIdFk: String = "",
-//    val bookId: String = "",
+    val bookIdFk: String = "",
     val recordTimestamp: Timestamp = Timestamp.now(),
     val recordAmount: Double = 0.0,
     val recordCurrency: String = "",
     val recordType: RecordType = RecordType.Expense,
     val recordNotes: String = "",
-){
+) {
     val recordDateTime: LocalDateTime
         get() = TimestampConverter.toDateTime(recordTimestamp)
-//        set(value) { TimestampConverter.fromDateTime(value) }
+    //        set(value) { TimestampConverter.fromDateTime(value) }
+
     constructor(
         recordId: String,
         accountIdFromFk: String,
         accountIdToFk: String,
         categoryIdFk: String,
+        bookId: String,
         recordDateTime: LocalDateTime,
         recordAmount: Double,
         recordCurrency: String,
         recordType: RecordType,
         recordNotes: String,
-    ): this(
+    ) : this(
         recordId,
         accountIdFromFk,
         accountIdToFk,
         categoryIdFk,
         "",
+        bookId,
         TimestampConverter.fromDateTime(recordDateTime),
         recordAmount,
         recordCurrency,

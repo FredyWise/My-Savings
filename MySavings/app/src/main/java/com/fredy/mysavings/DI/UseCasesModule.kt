@@ -2,6 +2,7 @@ package com.fredy.mysavings.DI
 
 import com.fredy.mysavings.Feature.Domain.Repository.AccountRepository
 import com.fredy.mysavings.Feature.Domain.Repository.AuthRepository
+import com.fredy.mysavings.Feature.Domain.Repository.BookRepository
 import com.fredy.mysavings.Feature.Domain.Repository.CSVRepository
 import com.fredy.mysavings.Feature.Domain.Repository.CategoryRepository
 import com.fredy.mysavings.Feature.Domain.Repository.CurrencyRepository
@@ -22,6 +23,11 @@ import com.fredy.mysavings.Feature.Domain.UseCases.AuthUseCases.SendOtp
 import com.fredy.mysavings.Feature.Domain.UseCases.AuthUseCases.SignOut
 import com.fredy.mysavings.Feature.Domain.UseCases.AuthUseCases.UpdateUserInformation
 import com.fredy.mysavings.Feature.Domain.UseCases.AuthUseCases.VerifyPhoneNumber
+import com.fredy.mysavings.Feature.Domain.UseCases.BookUseCases.BookUseCases
+import com.fredy.mysavings.Feature.Domain.UseCases.BookUseCases.DeleteBook
+import com.fredy.mysavings.Feature.Domain.UseCases.BookUseCases.GetBook
+import com.fredy.mysavings.Feature.Domain.UseCases.BookUseCases.GetBooksOrderedByName
+import com.fredy.mysavings.Feature.Domain.UseCases.BookUseCases.UpsertBook
 import com.fredy.mysavings.Feature.Domain.UseCases.CSVUseCases.CSVUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.CSVUseCases.GetDBInfo
 import com.fredy.mysavings.Feature.Domain.UseCases.CSVUseCases.InputFromCSV
@@ -98,6 +104,7 @@ object UseCasesModule {
         accountRepository: AccountRepository,
         categoryRepository: CategoryRepository,
         currencyUseCases: CurrencyUseCases,
+        bookRepository: BookRepository,
     ): RecordUseCases = RecordUseCases(
         upsertRecordItem = UpsertRecordItem(recordRepository, authRepository),
         deleteRecordItem = DeleteRecordItem(recordRepository),
@@ -122,7 +129,7 @@ object UseCasesModule {
             recordRepository, authRepository
         ),
         getUserTrueRecordMapsFromSpecificTime = GetUserTrueRecordMapsFromSpecificTime(
-            recordRepository, authRepository, currencyUseCases
+            recordRepository, authRepository, currencyUseCases,bookRepository
         ),
         getUserRecordsFromSpecificTime = GetUserRecordsFromSpecificTime(
             recordRepository,
@@ -176,6 +183,22 @@ object UseCasesModule {
         getCategory = GetCategory(categoryRepository),
         getCategoryMapOrderedByName = GetCategoryMapOrderedByName(
             categoryRepository,
+            authRepository
+        )
+    )
+
+
+    @Provides
+    @Singleton
+    fun provideBookUseCases(
+        authRepository: AuthRepository,
+        bookRepository: BookRepository
+    ): BookUseCases = BookUseCases(
+        upsertBook = UpsertBook(bookRepository, authRepository),
+        deleteBook = DeleteBook(bookRepository),
+        getBook = GetBook(bookRepository),
+        getBooksOrderedByName = GetBooksOrderedByName(
+            bookRepository,
             authRepository
         )
     )

@@ -8,12 +8,14 @@ import com.fredy.mysavings.Feature.Data.Database.Converter.CurrencyResponseConve
 import com.fredy.mysavings.Feature.Data.Database.Converter.DateTimeConverter
 import com.fredy.mysavings.Feature.Data.Database.Converter.TimestampConverter
 import com.fredy.mysavings.Feature.Data.Database.Dao.AccountDao
+import com.fredy.mysavings.Feature.Data.Database.Dao.BookDao
 import com.fredy.mysavings.Feature.Data.Database.Dao.CategoryDao
 import com.fredy.mysavings.Feature.Data.Database.Dao.CurrencyCacheDao
 import com.fredy.mysavings.Feature.Data.Database.Dao.CurrencyDao
 import com.fredy.mysavings.Feature.Data.Database.Dao.RecordDao
 import com.fredy.mysavings.Feature.Data.Database.Dao.UserDao
 import com.fredy.mysavings.Feature.Data.Database.Model.Account
+import com.fredy.mysavings.Feature.Data.Database.Model.Book
 import com.fredy.mysavings.Feature.Data.Database.Model.Category
 import com.fredy.mysavings.Feature.Data.Database.Model.Currency
 import com.fredy.mysavings.Feature.Data.Database.Model.RatesCache
@@ -22,7 +24,7 @@ import com.fredy.mysavings.Feature.Data.Database.Model.UserData
 
 @TypeConverters(value = [DateTimeConverter::class, TimestampConverter::class, CurrencyRatesDoubleConverter::class, CurrencyResponseConverter::class])
 @Database(
-    entities = [Record::class, Account::class, Category::class, UserData::class, RatesCache::class, Currency::class],
+    entities = [Record::class, Account::class, Category::class, UserData::class, RatesCache::class, Currency::class, Book::class],
     version = 1,
 //    exportSchema = true,
 //    autoMigrations = [
@@ -36,6 +38,7 @@ abstract class SavingsDatabase : RoomDatabase() {
     abstract val recordDao: RecordDao
     abstract val accountDao: AccountDao
     abstract val categoryDao: CategoryDao
+    abstract val bookDao: BookDao
     abstract val userDao: UserDao
     abstract val currencyCache: CurrencyCacheDao
     abstract val currency: CurrencyDao

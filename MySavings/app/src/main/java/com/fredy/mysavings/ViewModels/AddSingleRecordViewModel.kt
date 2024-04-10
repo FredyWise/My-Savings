@@ -189,6 +189,7 @@ class AddSingleRecordViewModel @Inject constructor(
         val accountIdFromFk = state.accountIdFromFk
         var accountIdToFk = state.accountIdToFk
         var categoryIdToFk = state.categoryIdFk
+        val bookIdFk = state.bookIdFk
         val recordDateTime = state.recordDate.atTime(
             state.recordTime
         )
@@ -200,6 +201,7 @@ class AddSingleRecordViewModel @Inject constructor(
         val recordNotes = state.recordNotes
         val previousAmount = state.previousAmount.absoluteValue
         var difference = state.recordAmount.absoluteValue
+
         if (recordId == "") {
             difference = calculationResult
         } else {
@@ -221,6 +223,7 @@ class AddSingleRecordViewModel @Inject constructor(
             }
             return null
         }
+
         if ((state.fromAccount.accountAmount < difference && isExpense(recordType)) || (state.fromAccount.accountAmount < difference && isTransfer(
                 recordType
             ) && fromAccountCurrency == toAccountCurrency)
@@ -232,6 +235,7 @@ class AddSingleRecordViewModel @Inject constructor(
             }
             return null
         }
+
         if ((recordType != state.toCategory.categoryType && !isTransfer(
                 recordType
             ))
@@ -243,6 +247,7 @@ class AddSingleRecordViewModel @Inject constructor(
             }
             return null
         }
+
         if (isTransfer(recordType)) {
             if (state.fromAccount.accountAmount < difference && fromAccountCurrency != toAccountCurrency) {
                 resource.update {
@@ -292,6 +297,7 @@ class AddSingleRecordViewModel @Inject constructor(
             accountIdFromFk = accountIdFromFk,
             accountIdToFk = accountIdToFk,
             categoryIdFk = categoryIdToFk,
+            bookId = bookIdFk,
             recordDateTime = recordDateTime,
             recordAmount = calculationResult,
             recordCurrency = recordCurrency,
@@ -471,6 +477,7 @@ data class AddRecordState(
     val accountIdToFk: String? = null,
     val toAccount: Account = Account(),
     val categoryIdFk: String? = null,
+    val bookIdFk: String = "",
     val toCategory: Category = Category(),
     val recordDate: LocalDate = LocalDate.now(),
     val recordTime: LocalTime = LocalTime.now(),

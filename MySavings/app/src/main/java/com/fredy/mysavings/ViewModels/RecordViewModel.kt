@@ -5,6 +5,7 @@ package com.fredy.mysavings.ViewModels
 import com.fredy.mysavings.Util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.fredy.mysavings.Feature.Data.Database.Model.Book
 import com.fredy.mysavings.Feature.Data.Database.Model.Record
 import com.fredy.mysavings.Feature.Data.Database.Model.TrueRecord
 import com.fredy.mysavings.Feature.Data.Enum.RecordType
@@ -254,7 +255,7 @@ class RecordViewModel @Inject constructor(
         )
     }.stateIn(
         viewModelScope,
-        SharingStarted.Eagerly,
+        SharingStarted.WhileSubscribed(),
         RecordState()
     )
 
@@ -415,6 +416,11 @@ data class RecordState(
 data class RecordMap(
     val recordDate: LocalDate,
     val records: List<TrueRecord>
+)
+
+data class BookMap(
+    val book: Book,
+    val records: List<RecordMap>
 )
 
 data class ResourceData(

@@ -10,6 +10,7 @@ import com.fredy.mysavings.Feature.Data.Enum.SortType
 import com.fredy.mysavings.Feature.Domain.Repository.AccountRepository
 import com.fredy.mysavings.Feature.Domain.Repository.AccountWithAmountType
 import com.fredy.mysavings.Feature.Domain.Repository.AuthRepository
+import com.fredy.mysavings.Feature.Domain.Repository.BookRepository
 import com.fredy.mysavings.Feature.Domain.Repository.CategoryRepository
 import com.fredy.mysavings.Feature.Domain.Repository.CategoryWithAmount
 import com.fredy.mysavings.Feature.Domain.Repository.RecordRepository
@@ -32,6 +33,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.flow.map
@@ -289,10 +291,11 @@ class GetUserAccountRecordsOrderedByDateTime(
     }
 }
 
-class GetUserTrueRecordMapsFromSpecificTime(
+class GetUserTrueRecordMapsFromSpecificTime( // main screen
     private val recordRepository: RecordRepository,
     private val authRepository: AuthRepository,
-    private val currencyUseCases: CurrencyUseCases
+    private val currencyUseCases: CurrencyUseCases,
+    private val bookRepository: BookRepository,
 ) {
     operator fun invoke(
         startDate: LocalDateTime,
@@ -309,6 +312,8 @@ class GetUserTrueRecordMapsFromSpecificTime(
             Log.i(
                 "getUserTrueRecordMapsFromSpecificTime: $startDate\n:\n$endDate,\ncurrency: $currency"
             )
+
+            val books = bookRepository.getUserBooks(userId).firstOrNull()
 
             recordRepository.getUserTrueRecordsFromSpecificTime(
                 userId,

@@ -5,6 +5,7 @@ import androidx.room.Room
 import com.fredy.mysavings.Feature.Data.CSV.CSVDao
 import com.fredy.mysavings.Feature.Data.CSV.CSVDaoImpl
 import com.fredy.mysavings.Feature.Data.Database.Dao.AccountDao
+import com.fredy.mysavings.Feature.Data.Database.Dao.BookDao
 import com.fredy.mysavings.Feature.Data.Database.Dao.CategoryDao
 import com.fredy.mysavings.Feature.Data.Database.Dao.CurrencyCacheDao
 import com.fredy.mysavings.Feature.Data.Database.Dao.CurrencyDao
@@ -12,6 +13,8 @@ import com.fredy.mysavings.Feature.Data.Database.Dao.RecordDao
 import com.fredy.mysavings.Feature.Data.Database.Dao.UserDao
 import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.AccountDataSource
 import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.AccountDataSourceImpl
+import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.BookDataSource
+import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.BookDataSourceImpl
 import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.CategoryDataSource
 import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.CategoryDataSourceImpl
 import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.CurrencyRatesDataSource
@@ -60,6 +63,11 @@ object DataModule {
 
     @Provides
     @Singleton
+    fun provideBookDao(savingsDatabase: SavingsDatabase): BookDao =
+        savingsDatabase.bookDao
+
+    @Provides
+    @Singleton
     fun provideUserDao(savingsDatabase: SavingsDatabase): UserDao = savingsDatabase.userDao
 
     @Provides
@@ -86,6 +94,11 @@ object DataModule {
     @Singleton
     fun provideCategoryDataSource(firestore: FirebaseFirestore): CategoryDataSource =
         CategoryDataSourceImpl(firestore)
+
+    @Provides
+    @Singleton
+    fun provideBookDataSource(firestore: FirebaseFirestore): BookDataSource =
+        BookDataSourceImpl(firestore)
 
     @Provides
     @Singleton

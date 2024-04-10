@@ -5,12 +5,14 @@ import com.fredy.mysavings.Feature.Data.APIs.CountryModels.CountryApi
 import com.fredy.mysavings.Feature.Data.APIs.CurrencyModels.CurrencyApi
 import com.fredy.mysavings.Feature.Data.CSV.CSVDao
 import com.fredy.mysavings.Feature.Data.Database.Dao.AccountDao
+import com.fredy.mysavings.Feature.Data.Database.Dao.BookDao
 import com.fredy.mysavings.Feature.Data.Database.Dao.CategoryDao
 import com.fredy.mysavings.Feature.Data.Database.Dao.CurrencyCacheDao
 import com.fredy.mysavings.Feature.Data.Database.Dao.CurrencyDao
 import com.fredy.mysavings.Feature.Data.Database.Dao.RecordDao
 import com.fredy.mysavings.Feature.Data.Database.Dao.UserDao
 import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.AccountDataSource
+import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.BookDataSource
 import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.CategoryDataSource
 import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.CurrencyRatesDataSource
 import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.CurrencyDataSource
@@ -20,6 +22,8 @@ import com.fredy.mysavings.Feature.Domain.Repository.AccountRepository
 import com.fredy.mysavings.Feature.Domain.Repository.AccountRepositoryImpl
 import com.fredy.mysavings.Feature.Domain.Repository.AuthRepository
 import com.fredy.mysavings.Feature.Domain.Repository.AuthRepositoryImpl
+import com.fredy.mysavings.Feature.Domain.Repository.BookRepository
+import com.fredy.mysavings.Feature.Domain.Repository.BookRepositoryImpl
 import com.fredy.mysavings.Feature.Domain.Repository.CSVRepository
 import com.fredy.mysavings.Feature.Domain.Repository.CSVRepositoryImpl
 import com.fredy.mysavings.Feature.Domain.Repository.CategoryRepository
@@ -116,6 +120,16 @@ object RepositoryModule {
         categoryDao: CategoryDao,
     ): CategoryRepository = CategoryRepositoryImpl(
          categoryDataSource, categoryDao, firestore,
+    )
+
+    @Provides
+    @Singleton
+    fun provideBookRepository(
+        firestore: FirebaseFirestore,
+        bookDataSource: BookDataSource,
+        bookDao: BookDao,
+    ): BookRepository = BookRepositoryImpl(
+         bookDataSource, bookDao, firestore,
     )
 
     @Provides

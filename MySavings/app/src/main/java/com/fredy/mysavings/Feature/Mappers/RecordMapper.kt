@@ -1,13 +1,15 @@
 package com.fredy.mysavings.Feature.Mappers
 
 import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.RecordDataSourceImpl.TrueRecordComponentResult
+import com.fredy.mysavings.Feature.Data.Database.Model.Book
 import com.fredy.mysavings.Feature.Data.Database.Model.Record
 import com.fredy.mysavings.Feature.Data.Database.Model.TrueRecord
 import com.fredy.mysavings.Feature.Data.Enum.SortType
+import com.fredy.mysavings.ViewModels.BookMap
 import com.fredy.mysavings.ViewModels.RecordMap
 
-fun List<Record>.toTrueRecords(trueRecordComponentResult: TrueRecordComponentResult):List<TrueRecord>{
-    return this.map { record->
+fun List<Record>.toTrueRecords(trueRecordComponentResult: TrueRecordComponentResult): List<TrueRecord> {
+    return this.map { record ->
         TrueRecord(
             record = record,
             fromAccount = trueRecordComponentResult.fromAccount.single { it.accountId == record.accountIdFromFk },
@@ -17,7 +19,7 @@ fun List<Record>.toTrueRecords(trueRecordComponentResult: TrueRecordComponentRes
     }
 }
 
-fun List<Record>.filterRecordCurrency(currency:List<String>):List<Record>{
+fun List<Record>.filterRecordCurrency(currency: List<String>): List<Record> {
     return this.filter {
         currency.contains(
             it.recordCurrency
@@ -25,20 +27,36 @@ fun List<Record>.filterRecordCurrency(currency:List<String>):List<Record>{
     }
 }
 
-fun List<TrueRecord>.toRecordSortedMaps(sortType: SortType = SortType.DESCENDING):List<RecordMap>{
+fun List<TrueRecord>.toRecordSortedMaps(sortType: SortType = SortType.DESCENDING): List<RecordMap> {
     return this.groupBy {
         it.record.recordDateTime.toLocalDate()
     }.toSortedMap(when (sortType) {
         SortType.ASCENDING -> compareBy { it }
         SortType.DESCENDING -> compareByDescending { it }
-    } ).map {
+    }).map {
         RecordMap(
             recordDate = it.key,
             records = it.value
         )
     }
 }
-fun List<TrueRecord>.filterTrueRecordCurrency(currency:List<String>):List<TrueRecord>{
+
+fun List<TrueRecord>.toBookSortedMaps(
+    books: List<Book>,
+    sortType: SortType = SortType.DESCENDING
+): List<BookMap> {
+    return this.groupBy {
+        it.record.bookIdFk
+    }.toSortedMap().map {
+        BookMap(
+            book = books.first { book -> book.bookId == it.key },
+            records = it.value.toRecordSortedMaps(sortType)
+        )
+    }
+}
+
+
+fun List<TrueRecord>.filterTrueRecordCurrency(currency: List<String>): List<TrueRecord> {
     return this.filter {
         currency.contains(
             it.record.recordCurrency
