@@ -17,7 +17,7 @@ data class FilterState(
     val carryOn: Boolean = true,
     val showTotal: Boolean = true,
     val useUserCurrency: Boolean = false,
-    val currentBook: Book? = null,
+    val currentBook: Book = Book(),
     val currencies: List<String> = emptyList(),
     val selectedDate: LocalDate = LocalDate.now(),
     val start: LocalDateTime = LocalDateTime.of(
@@ -44,7 +44,7 @@ fun FilterState.isFilterTypeMonthBelow(): Boolean{
     }
 }
 
-fun <T> FilterState.map(target: (start: LocalDateTime, end: LocalDateTime, RecordType, SortType, currencies: List<String>, useUserCurrency: Boolean) -> T): T {
+fun <T> FilterState.map(target: (start: LocalDateTime, end: LocalDateTime, RecordType, SortType, currencies: List<String>, useUserCurrency: Boolean, currentBook:Book) -> T): T {
     return when (filterType) {
         FilterType.Daily -> target(
             start,
@@ -52,7 +52,8 @@ fun <T> FilterState.map(target: (start: LocalDateTime, end: LocalDateTime, Recor
             recordType,
             sortType,
             currencies,
-            useUserCurrency
+            useUserCurrency,
+            currentBook,
         )
 
         FilterType.Weekly -> target(
@@ -61,7 +62,8 @@ fun <T> FilterState.map(target: (start: LocalDateTime, end: LocalDateTime, Recor
             recordType,
             sortType,
             currencies,
-            useUserCurrency
+            useUserCurrency,
+            currentBook,
         )
 
         FilterType.Monthly -> target(
@@ -70,7 +72,8 @@ fun <T> FilterState.map(target: (start: LocalDateTime, end: LocalDateTime, Recor
             recordType,
             sortType,
             currencies,
-            useUserCurrency
+            useUserCurrency,
+            currentBook,
         )
 
         FilterType.Per3Months -> target(
@@ -79,7 +82,8 @@ fun <T> FilterState.map(target: (start: LocalDateTime, end: LocalDateTime, Recor
             recordType,
             sortType,
             currencies,
-            useUserCurrency
+            useUserCurrency,
+            currentBook,
         )
 
         FilterType.Per6Months -> target(
@@ -88,7 +92,8 @@ fun <T> FilterState.map(target: (start: LocalDateTime, end: LocalDateTime, Recor
             recordType,
             sortType,
             currencies,
-            useUserCurrency
+            useUserCurrency,
+            currentBook,
         )
 
         FilterType.Yearly -> target(
@@ -97,7 +102,8 @@ fun <T> FilterState.map(target: (start: LocalDateTime, end: LocalDateTime, Recor
             recordType,
             sortType,
             currencies,
-            useUserCurrency
+            useUserCurrency,
+            currentBook,
         )
     }
 }

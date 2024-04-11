@@ -21,32 +21,32 @@ class UpsertBook(
     private val repository: BookRepository,
     private val authRepository: AuthRepository
 ) {
-    suspend operator fun invoke(category: Book): String {
+    suspend operator fun invoke(book: Book): String {
         val currentUser = authRepository.getCurrentUser()!!
         val currentUserId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
-        return repository.upsertBook(category.copy(userIdFk = currentUserId))
+        return repository.upsertBook(book.copy(userIdFk = currentUserId))
     }
 }
 
 class DeleteBook(
     private val repository: BookRepository
 ) {
-    suspend operator fun invoke(category: Book) {
-        repository.deleteBook(category)
+    suspend operator fun invoke(book: Book) {
+        repository.deleteBook(book)
     }
 }
 
 class GetBook(
     private val repository: BookRepository
 ) {
-    operator fun invoke(categoryId: String): Flow<Book> {
-        return repository.getBook(categoryId)
+    operator fun invoke(bookId: String): Flow<Book> {
+        return repository.getBook(bookId)
     }
 }
 
 
 class GetUserBooks(
-    private val categoryRepository: BookRepository,
+    private val bookRepository: BookRepository,
     private val authRepository: AuthRepository
 ) {
     operator fun invoke(): Flow<Resource<List<Book>>> {
@@ -55,7 +55,7 @@ class GetUserBooks(
             val currentUser = authRepository.getCurrentUser()!!
             val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
 
-            categoryRepository.getUserBooks(userId).collect { books ->
+            bookRepository.getUserBooks(userId).collect { books ->
                 Log.i("getBooksOrderedByName.Data: $books")
                 emit(Resource.Success(books))
             }

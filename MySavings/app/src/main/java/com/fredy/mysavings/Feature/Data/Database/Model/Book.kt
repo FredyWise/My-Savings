@@ -12,4 +12,15 @@ data class Book(
     val bookName: String = "DefaultBook",
     val bookIcon: Int = DefaultData.bookInitIcon.image,
     val bookIconDescription: String = DefaultData.bookInitIcon.description,
-)
+){
+    fun doesMatchSearchQuery(query: String): Boolean {
+        val matchingCombinations = listOf(
+            "$bookName",
+            "${bookName.first()}",
+        )
+
+        return matchingCombinations.any {
+            it.contains(query, ignoreCase = true)
+        }
+    }
+}

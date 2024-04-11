@@ -2,6 +2,7 @@ package com.fredy.mysavings.Feature.Data.Database.Model
 
 import androidx.room.Embedded
 import androidx.room.Relation
+
 data class TrueRecord(
     @Embedded val record: Record = Record(),
     @Relation(
@@ -16,4 +17,12 @@ data class TrueRecord(
         parentColumn = "categoryIdFk",
         entityColumn = "categoryId"
     ) val toCategory: Category = Category(),
-)
+) {
+    fun doesMatchSearchQuery(query: String): Boolean {
+        return record.doesMatchSearchQuery(query) ||
+                fromAccount.doesMatchSearchQuery(query) ||
+                toAccount.doesMatchSearchQuery(query) ||
+                toCategory.doesMatchSearchQuery(query)
+    }
+
+}

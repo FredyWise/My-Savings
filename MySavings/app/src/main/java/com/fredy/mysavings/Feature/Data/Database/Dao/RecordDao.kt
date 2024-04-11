@@ -10,6 +10,7 @@ import com.fredy.mysavings.Feature.Data.Enum.RecordType
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDateTime
 
+
 @Dao
 interface RecordDao {
     @Upsert
@@ -20,6 +21,9 @@ interface RecordDao {
 
     @Delete
     suspend fun deleteRecordItem(recordItem: Record)
+
+    @Delete
+    suspend fun deleteAllRecordItemInList(records: List<Record>)
 
     @Query("DELETE FROM record")
     suspend fun deleteAllRecords()

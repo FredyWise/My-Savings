@@ -2,8 +2,11 @@ package com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases
 
 import co.yml.charts.common.extensions.isNotNull
 import com.fredy.mysavings.Feature.Data.Database.Model.Account
+import com.fredy.mysavings.Feature.Data.Database.Model.Book
+import com.fredy.mysavings.Feature.Data.Database.Model.BookMap
 import com.fredy.mysavings.Feature.Data.Database.Model.Category
 import com.fredy.mysavings.Feature.Data.Database.Model.Record
+import com.fredy.mysavings.Feature.Data.Database.Model.RecordMap
 import com.fredy.mysavings.Feature.Data.Database.Model.TrueRecord
 import com.fredy.mysavings.Feature.Data.Enum.RecordType
 import com.fredy.mysavings.Feature.Data.Enum.SortType
@@ -29,8 +32,6 @@ import com.fredy.mysavings.Util.isExpense
 import com.fredy.mysavings.Util.isIncome
 import com.fredy.mysavings.Util.isTransfer
 import com.fredy.mysavings.Util.minDate
-import com.fredy.mysavings.ViewModels.BookMap
-import com.fredy.mysavings.ViewModels.RecordMap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -45,6 +46,7 @@ data class RecordUseCases(
     val deleteRecordItem: DeleteRecordItem,
     val updateRecordItemWithDeletedAccount: UpdateRecordItemWithDeletedAccount,
     val updateRecordItemWithDeletedCategory: UpdateRecordItemWithDeletedCategory,
+    val updateRecordItemWithDeletedBook: UpdateRecordItemWithDeletedBook,
     val getRecordById: GetRecordById,
     val getAllTrueRecordsWithinSpecificTime: GetAllTrueRecordsWithinSpecificTime, //io
     val getAllRecords: GetAllRecords, //search
@@ -143,6 +145,25 @@ class UpdateRecordItemWithDeletedCategory(
     }
 }
 
+class UpdateRecordItemWithDeletedBook(
+    private val recordRepository: RecordRepository,
+    private val authRepository: AuthRepository,
+) {
+    suspend operator fun invoke(book: Book) {
+        withContext(Dispatchers.IO) {
+            Log.d("startDelBook")
+            val currentUser = authRepository.getCurrentUser()!!
+            val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
+            val records = recordRepository.getUserRecords(userId).first()
+            Log.d("$records")
+            val tempRecords = records.filter {
+                it.bookIdFk == book.bookId
+            }
+            recordRepository.deleteAllRecordItems(tempRecords)
+        }
+    }
+}
+
 class GetRecordById(
     private val recordRepository: RecordRepository,
     private val currencyUseCases: CurrencyUseCases
@@ -206,15 +227,19 @@ class GetAllTrueRecordsWithinSpecificTime(
 class GetAllRecords(
     private val recordRepository: RecordRepository,
     private val authRepository: AuthRepository,
+    private val bookRepository: BookRepository
 ) {
-    operator fun invoke(): Flow<Resource<List<RecordMap>>> {
+    operator fun invoke(): Flow<Resource<List<BookMap>>> {
         return flow {
             emit(Resource.Loading())
             val currentUser = authRepository.getCurrentUser()!!
             val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
 
-            recordRepository.getRecordMaps(userId).collect { records ->
-                val data = records.toRecordSortedMaps()
+            val books = bookRepository.getUserBooks(userId).first()
+
+            recordRepository.getRecordMaps(userId).map {
+                books.toBookSortedMaps(it)
+            }.collect { data ->
                 Log.i(
                     "getAllRecords.data: $data"
                 )
@@ -304,7 +329,8 @@ class GetUserTrueRecordMapsFromSpecificTime(
         endDate: LocalDateTime,
         sortType: SortType,
         currency: List<String>,
-        useUserCurrency: Boolean
+        useUserCurrency: Boolean,
+        book: Book,
     ): Flow<Resource<List<BookMap>>> {
         return flow {
             emit(Resource.Loading())
@@ -322,8 +348,9 @@ class GetUserTrueRecordMapsFromSpecificTime(
                 startDate,
                 endDate,
             ).map { records ->
-                records.convertRecordCurrency(userCurrency, useUserCurrency)
+                records.filter { it.record.bookIdFk == book.bookId }
                     .filterTrueRecordCurrency(currency + userCurrency)
+                    .convertRecordCurrency(userCurrency, useUserCurrency)
             }.collect { data ->
                 val bookMap = books.toBookSortedMaps(data, sortType)
                 Log.i("getUserTrueRecordMapsFromSpecificTime.Data: $bookMap")
@@ -373,7 +400,8 @@ class GetUserRecordsFromSpecificTime(
         startDate: LocalDateTime,
         endDate: LocalDateTime,
         currency: List<String>,
-        useUserCurrency: Boolean
+        useUserCurrency: Boolean,
+        book: Book,
     ): Flow<Resource<List<Record>>> {
         return flow {
             emit(Resource.Loading())
@@ -389,9 +417,11 @@ class GetUserRecordsFromSpecificTime(
                 listOf(recordType),
                 startDate,
                 endDate,
-            ).map { it.filterRecordCurrency(currency) }.collect { records ->
-                val data = records.combineSameCurrencyData(sortType, userCurrency, useUserCurrency)
-
+            ).map { records ->
+                records.filter { it.bookIdFk == book.bookId }
+                    .filterRecordCurrency(currency)
+                    .combineSameCurrencyData(sortType, userCurrency, useUserCurrency)
+            }.collect { data ->
                 Log.i(
                     "getUserRecordsFromSpecificTime.Data: $data",
 
@@ -469,7 +499,8 @@ class GetUserCategoriesWithAmountFromSpecificTime(
         startDate: LocalDateTime,
         endDate: LocalDateTime,
         currency: List<String>,
-        useUserCurrency: Boolean
+        useUserCurrency: Boolean,
+        book: Book,
     ): Flow<Resource<List<CategoryWithAmount>>> {
         return flow {
             emit(Resource.Loading())
@@ -488,17 +519,16 @@ class GetUserCategoriesWithAmountFromSpecificTime(
                 listOf(categoryType),
                 startDate,
                 endDate,
-            ).map { it.filterRecordCurrency(currency) }.collect { records ->
-                Log.i(
-                    "getUserCategoriesWithAmountFromSpecificTime.Result: $records",
-                )
-                val data =
-                    records.combineSameCurrencyCategory(
+            ).map { records ->
+                records.filter { it.bookIdFk == book.bookId }
+                    .filterRecordCurrency(currency)
+                    .combineSameCurrencyCategory(
                         sortType,
                         userCategories,
                         userCurrency,
                         useUserCurrency
                     )
+            }.collect { data ->
                 Log.i(
                     "getUserCategoriesWithAmountFromSpecificTime.Data: $data",
 
@@ -570,7 +600,8 @@ class GetUserAccountsWithAmountFromSpecificTime(
         sortType: SortType,
         startDate: LocalDateTime,
         endDate: LocalDateTime,
-        useUserCurrency: Boolean
+        useUserCurrency: Boolean,
+        book: Book
     ): Flow<Resource<List<AccountWithAmountType>>> {
         return flow {
             emit(Resource.Loading())
@@ -586,17 +617,16 @@ class GetUserAccountsWithAmountFromSpecificTime(
 
             recordRepository.getUserRecordsFromSpecificTime(
                 userId, startDate, endDate
-            ).collect { records ->
-                Log.i(
-                    "getUserAccountsWithAmountFromSpecificTime.Result: $records",
-                )
-                val data = records.toAccountWithAmount(
-                    sortType,
-                    userId,
-                    userAccounts,
-                    userCurrency,
-                    useUserCurrency
-                )
+            ).map { records ->
+                records.filter { it.bookIdFk == book.bookId }
+                    .toAccountWithAmount(
+                        sortType,
+                        userId,
+                        userAccounts,
+                        userCurrency,
+                        useUserCurrency
+                    )
+            }.collect { data ->
                 Log.i(
                     "getUserAccountsWithAmountFromSpecificTime.Data: $data",
 
@@ -697,11 +727,11 @@ class GetUserTotalAmountByType(
                 "getUserTotalAmountByType: $recordType",
 
                 )
-            val records = recordRepository.getUserRecordsByType(
+            recordRepository.getUserRecordsByType(
                 userId, recordType
-            ).map { it.getTotalRecordBalance(currencyUseCases, userCurrency) }
-
-            records.collect { recordTotalAmount ->
+            ).map {
+                it.getTotalRecordBalance(currencyUseCases, userCurrency)
+            }.collect { recordTotalAmount ->
                 val data = BalanceItem(
                     name = "${recordType.name}: ",
                     amount = recordTotalAmount,
@@ -729,7 +759,8 @@ class GetUserTotalAmountByTypeFromSpecificTime(
     operator fun invoke(
         recordType: RecordType,
         startDate: LocalDateTime,
-        endDate: LocalDateTime
+        endDate: LocalDateTime,
+        book: Book,
     ): Flow<BalanceItem> {
         return flow {
             val currentUser = authRepository.getCurrentUser()!!
@@ -742,18 +773,20 @@ class GetUserTotalAmountByTypeFromSpecificTime(
                 listOf(recordType),
                 startDate,
                 endDate
-            ).map { it.getTotalRecordBalance(currencyUseCases, userCurrency) }
-                .collect { recordTotalAmount ->
-                    val data = BalanceItem(
-                        name = "${recordType.name}: ",
-                        amount = recordTotalAmount,
-                        currency = userCurrency
-                    )
-                    Log.i(
-                        "getUserTotalAmountByTypeFromSpecificTime.Data: $data"
-                    )
-                    emit(data)
-                }
+            ).map {
+                it.filter { it.bookIdFk == book.bookId }
+                    .getTotalRecordBalance(currencyUseCases, userCurrency)
+            }.collect { recordTotalAmount ->
+                val data = BalanceItem(
+                    name = "${recordType.name}: ",
+                    amount = recordTotalAmount,
+                    currency = userCurrency
+                )
+                Log.i(
+                    "getUserTotalAmountByTypeFromSpecificTime.Data: $data"
+                )
+                emit(data)
+            }
         }.catch { e ->
             Log.e(
                 "getUserTotalAmountByTypeFromSpecificTime.Error: $e"
@@ -770,7 +803,8 @@ class GetUserTotalRecordBalance(
     operator fun invoke(
         isCaryOn: Boolean,
         startDate: LocalDateTime,
-        endDate: LocalDateTime
+        endDate: LocalDateTime,
+        book: Book,
     ): Flow<BalanceItem> {
         return flow {
             val currentUser = authRepository.getCurrentUser()!!
@@ -782,19 +816,21 @@ class GetUserTotalRecordBalance(
                 listOf(RecordType.Expense, RecordType.Income),
                 if (isCaryOn) minDate else startDate,
                 endDate
-            ).map { it.getTotalRecordBalance(currencyUseCases, userCurrency) }
-                .collect { recordTotalAmount ->
-                    val data = BalanceItem(
-                        name = "Balance: ",
-                        amount = recordTotalAmount,
-                        currency = userCurrency
-                    )
-                    Log.i(
-                        "getUserTotalRecordBalance.Data: $data",
+            ).map { records ->
+                records.filter { it.bookIdFk == book.bookId }
+                    .getTotalRecordBalance(currencyUseCases, userCurrency)
+            }.collect { recordTotalAmount ->
+                val data = BalanceItem(
+                    name = "Balance: ",
+                    amount = recordTotalAmount,
+                    currency = userCurrency
+                )
+                Log.i(
+                    "getUserTotalRecordBalance.Data: $data",
 
-                        )
-                    emit(data)
-                }
+                    )
+                emit(data)
+            }
         }.catch { e ->
             Log.e(
                 "getUserTotalRecordBalance.Error: $e"

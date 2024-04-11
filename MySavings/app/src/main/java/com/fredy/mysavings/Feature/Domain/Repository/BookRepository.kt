@@ -50,9 +50,7 @@ class BookRepositoryImpl @Inject constructor(
 
     override suspend fun deleteBook(book: Book) {
         withContext(Dispatchers.IO) {
-            bookDataSource.deleteBookItem(
-                book
-            )
+            bookDataSource.deleteBookItem(book)
             bookDao.deleteBookItem(book)
         }
     }

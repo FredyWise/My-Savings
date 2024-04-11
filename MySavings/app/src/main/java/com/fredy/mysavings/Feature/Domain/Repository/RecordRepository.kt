@@ -10,7 +10,7 @@ import com.fredy.mysavings.Feature.Data.Enum.RecordType
 import com.fredy.mysavings.Feature.Data.Enum.SortType
 import com.fredy.mysavings.Feature.Mappers.toRecordSortedMaps
 import com.fredy.mysavings.Util.Log
-import com.fredy.mysavings.ViewModels.RecordMap
+import com.fredy.mysavings.Feature.Data.Database.Model.RecordMap
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -24,6 +24,7 @@ interface RecordRepository {
     suspend fun upsertRecordItem(record: Record): String
     suspend fun upsertAllRecordItems(records: List<Record>)
     suspend fun deleteRecordItem(record: Record)
+    suspend fun deleteAllRecordItems(records: List<Record>)
     suspend fun getRecordById(recordId: String): TrueRecord
     fun getRecordMaps(userId: String): Flow<List<TrueRecord>>
     fun getUserTrueRecordsFromSpecificTime(
@@ -112,6 +113,13 @@ class RecordRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun deleteAllRecordItems(records: List<Record>) {
+        return withContext(Dispatchers.IO) {
+            Log.i("upsertAllRecordItemsRepo: $records")
+            recordDataSource.deleteAllRecordItemInList(records)
+            recordDao.deleteAllRecordItemInList(records)
+        }
+    }
 
     override suspend fun getRecordById(recordId: String): TrueRecord {
         Log.i("getRecordByIdRepo: $recordId")

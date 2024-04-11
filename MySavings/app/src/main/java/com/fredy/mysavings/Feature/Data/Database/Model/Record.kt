@@ -56,7 +56,9 @@ data class Record(
         val matchingCombinations = listOf(
             "$recordDateTime",
             "$recordAmount",
+            "${recordType.name}",
             "$recordCurrency",
+            "$recordNotes",
         )
 
         return matchingCombinations.any {

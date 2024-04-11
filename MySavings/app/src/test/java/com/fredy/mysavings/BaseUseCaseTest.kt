@@ -1,6 +1,7 @@
 package com.fredy.mysavings
 
 import com.fredy.mysavings.Feature.Data.Database.Model.Account
+import com.fredy.mysavings.Feature.Data.Database.Model.Book
 import com.fredy.mysavings.Feature.Data.Database.Model.Category
 import com.fredy.mysavings.Feature.Data.Database.Model.Currency
 import com.fredy.mysavings.Feature.Data.Database.Model.Record
@@ -9,6 +10,7 @@ import com.fredy.mysavings.Feature.Data.Database.Model.UserData
 import com.fredy.mysavings.Feature.Data.Enum.RecordType
 import com.fredy.mysavings.Feature.Domain.Repository.FakeAccountRepository
 import com.fredy.mysavings.Feature.Domain.Repository.FakeAuthRepository
+import com.fredy.mysavings.Feature.Domain.Repository.FakeBookRepository
 import com.fredy.mysavings.Feature.Domain.Repository.FakeCSVRepository
 import com.fredy.mysavings.Feature.Domain.Repository.FakeCategoryRepository
 import com.fredy.mysavings.Feature.Domain.Repository.FakeCurrencyRepository
@@ -36,11 +38,13 @@ abstract class BaseUseCaseTest {
 
     protected lateinit var fakeAccountRepository: FakeAccountRepository
     protected lateinit var fakeCategoryRepository: FakeCategoryRepository
+    protected lateinit var fakeBookRepository: FakeBookRepository
     protected lateinit var fakeCurrencyRepository: FakeCurrencyRepository
     protected lateinit var fakeAuthRepository: FakeAuthRepository
     protected lateinit var fakeRecordRepository: FakeRecordRepository
     protected lateinit var fakeCSVRepository: FakeCSVRepository
     protected val currentUserId = "User1"
+    protected val bookTestId = "Book1"
     protected val currentUserCurrency = "USD"
     protected var mockCurrencyUseCases = mockkClass(CurrencyUseCases::class)
 
@@ -114,6 +118,28 @@ abstract class BaseUseCaseTest {
     }
 
     @Before
+    fun fakeBookRepositorySetUp() {
+        fakeBookRepository = FakeBookRepository()
+
+        val categoriesToInsert = mutableListOf<Book>()
+        ('a'..'z').forEachIndexed { index, c ->
+            categoriesToInsert.add(
+                Book(
+                    bookId = "Book${index + 1}",
+                    userIdFk = currentUserId,
+                    bookName = "Book $c",
+                    bookIcon = index,
+                    bookIconDescription = "Icon $c"
+                )
+            )
+        }
+        categoriesToInsert.shuffle()
+        runBlocking {
+            categoriesToInsert.forEach { fakeBookRepository.upsertBook(it) }
+        }
+    }
+
+    @Before
     fun fakeCurrencyRepositorySetUp() {
         fakeCurrencyRepository = FakeCurrencyRepository()
 
@@ -147,7 +173,8 @@ abstract class BaseUseCaseTest {
             UserData(
                 firebaseUserId = currentUserId,
                 username = "Username 1",
-                emailOrPhone = "user1@example.com",
+                email = "user1@example.com",
+                phone = "+621234567890",
                 profilePictureUrl = "null",
                 userCurrency = currentUserCurrency,
             )
@@ -172,6 +199,7 @@ abstract class BaseUseCaseTest {
                     accountIdToFk = accounts[index + 1].accountId,
                     categoryIdFk = categories[index + 1].categoryId,
                     userIdFk = currentUserId,
+                    bookIdFk = bookTestId,
                     recordTimestamp = randomTimestamp(),
                     recordAmount = (index + 1) * 1000.0,
                     recordCurrency = if (index % 2 == 0) "USD" else "EUR",

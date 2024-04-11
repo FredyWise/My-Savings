@@ -2,6 +2,7 @@ package com.fredy.mysavings.ui.NavigationComponent.Navigation
 
 import BulkAddScreen
 import android.widget.Toast
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
@@ -29,6 +30,7 @@ import androidx.navigation.navArgument
 import com.fredy.mysavings.Util.Log
 import com.fredy.mysavings.ViewModels.AccountViewModel
 import com.fredy.mysavings.ViewModels.AuthViewModel
+import com.fredy.mysavings.ViewModels.BookViewModel
 import com.fredy.mysavings.ViewModels.CurrencyViewModel
 import com.fredy.mysavings.ViewModels.Event.AccountEvent
 import com.fredy.mysavings.ViewModels.Event.AuthEvent
@@ -82,6 +84,7 @@ fun NavGraphRoot(
             ) { entry ->
                 val recordViewModel = entry.sharedViewModel<RecordViewModel>(navController)
                 val accountViewModel = entry.sharedViewModel<AccountViewModel>(navController)
+                val bookViewModel = entry.sharedViewModel<BookViewModel>(navController)
                 val currencyViewModel = entry.sharedViewModel<CurrencyViewModel>(navController)
                 val state by authViewModel.state.collectAsStateWithLifecycle()
                 val context = LocalContext.current
@@ -89,6 +92,7 @@ fun NavGraphRoot(
                     rootNavController = navController,
                     recordViewModel = recordViewModel,
                     accountViewModel = accountViewModel,
+                    bookViewModel = bookViewModel,
                     signOut = {
                         authViewModel.onEvent(
                             AuthEvent.SignOut
@@ -246,11 +250,13 @@ fun NavGraphRoot(
                 exitTransition = {
                     fadeOut()
                 },
-            ) {
+            ) {entry ->
                 val viewModel: SearchViewModel = hiltViewModel()
                 val state by viewModel.state.collectAsStateWithLifecycle()
-                val recordViewModel: RecordViewModel = hiltViewModel()
+                val recordViewModel = entry.sharedViewModel<RecordViewModel>(navController)
                 val recordState by recordViewModel.state.collectAsStateWithLifecycle()
+                val bookViewModel = entry.sharedViewModel<BookViewModel>(navController)
+                val bookState by bookViewModel.state.collectAsStateWithLifecycle()
 
                 SearchScreen(
                     title = NavigationRoute.Search.title,
@@ -258,7 +264,9 @@ fun NavGraphRoot(
                     state = state,
                     onSearch = viewModel::onSearch,
                     recordState = recordState,
-                    onEvent = recordViewModel::onEvent
+                    onEvent = recordViewModel::onEvent,
+                    bookState = bookState,
+                    bookEvent = bookViewModel::onEvent
                 )
             }
         }

@@ -19,6 +19,7 @@ data class Category(
         val matchingCombinations = listOf(
             "$categoryName",
             "${categoryName.first()}",
+            "${categoryType.name}",
         )
 
         return matchingCombinations.any {

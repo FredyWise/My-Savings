@@ -15,6 +15,6 @@ sealed interface BookEvent {
     data class ShowDialog(val book: Book): BookEvent
     object HideDialog: BookEvent
     data class DeleteBook(val book: Book, val onDeleteEffect: ()->Unit): BookEvent
-    data class GetBookDetail(val book: Book): BookEvent
+//    data class GetBookDetail(val book: Book): BookEvent
 
 }

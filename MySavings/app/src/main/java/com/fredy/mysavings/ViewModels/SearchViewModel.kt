@@ -2,6 +2,8 @@ package com.fredy.mysavings.ViewModels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.fredy.mysavings.Feature.Data.Database.Model.BookMap
+import com.fredy.mysavings.Feature.Data.Database.Model.RecordMap
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.RecordUseCases
 import com.fredy.mysavings.Util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -41,19 +43,9 @@ class SearchViewModel @Inject constructor(
                 if (searchQuery.isBlank()) {
                     trueRecordsResource
                 } else {
-                    Resource.Success(trueRecordsResource.data!!.map { recordMap ->
-                        recordMap.copy(records = recordMap.records.filter {
-                            it.record.doesMatchSearchQuery(
-                                searchQuery
-                            ) || it.fromAccount.doesMatchSearchQuery(
-                                searchQuery
-                            ) || it.toAccount.doesMatchSearchQuery(
-                                searchQuery
-                            ) || it.toCategory.doesMatchSearchQuery(
-                                searchQuery
-                            )
-                        })
-                    }.filter { it.records.isNotEmpty() })
+                    Resource.Success(trueRecordsResource.data!!.filter {
+                        it.doesMatchSearchQuery(searchQuery)
+                    }.filter { it.recordMaps.isNotEmpty() })
                 }
             }
 
@@ -96,7 +88,7 @@ class SearchViewModel @Inject constructor(
 }
 
 data class SearchState(
-    val trueRecordsResource: Resource<List<RecordMap>> = Resource.Loading(),
+    val trueRecordsResource: Resource<List<BookMap>> = Resource.Loading(),
     val isSearching: Boolean = false,
     val searchQuery: String = "",
 )

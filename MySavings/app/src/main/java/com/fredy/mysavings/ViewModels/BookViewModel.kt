@@ -61,6 +61,7 @@ class BookViewModel @Inject constructor(
                         bookName = event.book.bookName,
                         bookIconDescription = event.book.bookIconDescription,
                         bookIcon = event.book.bookIcon,
+                        book = event.book,
                         isAddingBook = true
                     )
                 }
@@ -79,7 +80,7 @@ class BookViewModel @Inject constructor(
                     bookUseCases.deleteBook(
                         event.book
                     )
-//                    recordUseCases.updateRecordItemWithDeletedBook(event.book)
+                    recordUseCases.updateRecordItemWithDeletedBook(event.book)
                     event.onDeleteEffect()
                 }
             }
@@ -125,13 +126,14 @@ class BookViewModel @Inject constructor(
                 }
             }
 
-            is BookEvent.GetBookDetail -> {
-                _state.update {
-                    it.copy(
-                        book = event.book
-                    )
-                }
-            }
+//            is BookEvent.GetBookDetail -> {
+//                _state.update {
+//                    it.copy(
+//                        book = event.book
+//                    )
+//                }
+//            }
+//
 //            is BookEvent.SortBook -> {
 //                _sortType.value = event.sortType
 //            }

@@ -5,7 +5,7 @@ import com.fredy.mysavings.Feature.Data.Database.Model.TrueRecord
 import com.fredy.mysavings.Feature.Data.Enum.RecordType
 import com.fredy.mysavings.Feature.Data.Enum.SortType
 import com.fredy.mysavings.Feature.Mappers.toRecordSortedMaps
-import com.fredy.mysavings.ViewModels.RecordMap
+import com.fredy.mysavings.Feature.Data.Database.Model.RecordMap
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import java.time.LocalDateTime
@@ -43,6 +43,12 @@ class FakeRecordRepository : RecordRepository {
         records.remove(record)
     }
 
+    override suspend fun deleteAllRecordItems(records: List<Record>) {
+        records.forEach {
+            deleteRecordItem(it)
+        }
+    }
+
     override  fun getUserRecords(userId: String): Flow<List<Record>> {
         return flow { emit(records.filter { it.userIdFk == userId }) }
     }
@@ -59,9 +65,9 @@ class FakeRecordRepository : RecordRepository {
         return flow { emit(trueRecords.filter { it.record.userIdFk == userId && it.record.recordDateTime in startDate..endDate }) }
     }
 
-    override fun getRecordMaps(userId: String): Flow<List<RecordMap>> {
+    override fun getRecordMaps(userId: String): Flow<List<TrueRecord>> {
         return flow {
-            emit(trueRecords.filter { it.record.userIdFk == userId }.toRecordSortedMaps())
+            emit(trueRecords.filter { it.record.userIdFk == userId })
         }
     }
 

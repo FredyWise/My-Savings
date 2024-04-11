@@ -57,6 +57,7 @@ import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.GetUserTotalRe
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.GetUserTrueRecordMapsFromSpecificTime
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.RecordUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.UpdateRecordItemWithDeletedAccount
+import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.UpdateRecordItemWithDeletedBook
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.UpdateRecordItemWithDeletedCategory
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.UpsertRecordItem
 import com.fredy.mysavings.Feature.Domain.UseCases.UserUseCases.DeleteUser
@@ -116,12 +117,16 @@ object UseCasesModule {
             recordRepository,
             authRepository
         ),
+        updateRecordItemWithDeletedBook = UpdateRecordItemWithDeletedBook(
+            recordRepository,
+            authRepository
+        ),
         getRecordById = GetRecordById(recordRepository, currencyUseCases),
         getAllTrueRecordsWithinSpecificTime = GetAllTrueRecordsWithinSpecificTime(
             recordRepository,
             authRepository
         ),
-        getAllRecords = GetAllRecords(recordRepository, authRepository),
+        getAllRecords = GetAllRecords(recordRepository, authRepository,bookRepository),
         getUserCategoryRecordsOrderedByDateTime = GetUserCategoryRecordsOrderedByDateTime(
             recordRepository, authRepository
         ),
@@ -155,7 +160,7 @@ object UseCasesModule {
             authRepository,
             currencyUseCases
         )
-    )
+     )
 
     @Provides
     @Singleton

@@ -29,8 +29,10 @@ import javax.inject.Inject
 
 interface RecordDataSource {
     suspend fun upsertRecordItem(record: Record)
-    suspend fun deleteRecordItem(record: Record)
     suspend fun upsertAllRecordItem(records: List<Record>)
+    suspend fun deleteRecordItem(record: Record)
+
+    suspend fun deleteAllRecordItemInList(records: List<Record>)
     suspend fun getRecordById(recordId: String): TrueRecord
     suspend fun getUserTrueRecords(
         userId: String,
@@ -111,6 +113,14 @@ class RecordDataSourceImpl @Inject constructor(
         recordCollection.document(
             record.recordId
         ).delete()
+    }
+
+    override suspend fun deleteAllRecordItemInList(records: List<Record>) {
+        records.forEach { record ->
+            recordCollection.document(record.recordId)
+                .delete()
+        }
+
     }
 
     override suspend fun getRecordById(recordId: String): TrueRecord {

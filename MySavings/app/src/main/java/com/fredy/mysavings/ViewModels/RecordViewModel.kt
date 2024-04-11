@@ -4,7 +4,7 @@ package com.fredy.mysavings.ViewModels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.fredy.mysavings.Feature.Data.Database.Model.Book
+import com.fredy.mysavings.Feature.Data.Database.Model.BookMap
 import com.fredy.mysavings.Feature.Data.Database.Model.Record
 import com.fredy.mysavings.Feature.Data.Database.Model.TrueRecord
 import com.fredy.mysavings.Feature.Data.Enum.RecordType
@@ -37,7 +37,6 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 import javax.inject.Inject
 
 
@@ -64,7 +63,7 @@ class RecordViewModel @Inject constructor(
                 when (bookResource) {
                     is Resource.Success -> {
                         _filterState.update {
-                            it.copy(currentBook = bookResource.data?.firstOrNull())
+                            it.copy(currentBook = bookResource.data!!.first())
                         }
                     }
 
@@ -93,11 +92,12 @@ class RecordViewModel @Inject constructor(
     )
 
     private val _totalBalance = _filterState.flatMapLatest { filterState ->
-        filterState.map { start, end, _, _, _, _ ->
+        filterState.map { start, end, _, _, _, _, currentBook ->
             recordUseCases.getUserTotalRecordBalance(
                 filterState.carryOn,
                 start,
-                end
+                end,
+                currentBook
             )
         }
     }.stateIn(
@@ -107,9 +107,9 @@ class RecordViewModel @Inject constructor(
     )
 
     private val _totalExpense = _filterState.flatMapLatest { filterState ->
-        filterState.map { start, end, _, _, _, _ ->
+        filterState.map { start, end, _, _, _, _, currentBook ->
             recordUseCases.getUserTotalAmountByTypeFromSpecificTime(
-                RecordType.Expense, start, end
+                RecordType.Expense, start, end, currentBook
             )
         }
     }.stateIn(
@@ -119,9 +119,9 @@ class RecordViewModel @Inject constructor(
     )
 
     private val _totalIncome = _filterState.flatMapLatest { filterState ->
-        filterState.map { start, end, _, _, _, _ ->
+        filterState.map { start, end, _, _, _, _, currentBook ->
             recordUseCases.getUserTotalAmountByTypeFromSpecificTime(
-                RecordType.Income, start, end
+                RecordType.Income, start, end, currentBook
             )
         }
     }.stateIn(
@@ -131,9 +131,9 @@ class RecordViewModel @Inject constructor(
     )
 
     private val _totalTransfer = _filterState.flatMapLatest { filterState ->
-        filterState.map { start, end, _, _, _, _ ->
+        filterState.map { start, end, _, _, _, _, currentBook ->
             recordUseCases.getUserTotalAmountByTypeFromSpecificTime(
-                RecordType.Transfer, start, end
+                RecordType.Transfer, start, end, currentBook
             )
         }
     }.stateIn(
@@ -166,14 +166,15 @@ class RecordViewModel @Inject constructor(
     )
 
     private val _categoriesWithAmount = _filterState.flatMapLatest { filterState ->
-        filterState.map { start, end, recordType, sortType, currencies, useUserCurrency ->
+        filterState.map { start, end, recordType, sortType, currencies, useUserCurrency, currentBook ->
             recordUseCases.getUserCategoriesWithAmountFromSpecificTime(
                 recordType,
                 sortType,
                 start,
                 end,
                 currencies,
-                useUserCurrency
+                useUserCurrency,
+                currentBook
             )
         }
     }.stateIn(
@@ -183,12 +184,13 @@ class RecordViewModel @Inject constructor(
     )
 
     private val _accountsWithAmount = _filterState.flatMapLatest { filterState ->
-        filterState.map { start, end, _, sortType, _, useUserCurrency ->
+        filterState.map { start, end, _, sortType, _, useUserCurrency, currentBook ->
             recordUseCases.getUserAccountsWithAmountFromSpecificTime(
                 sortType,
                 start,
                 end,
-                useUserCurrency
+                useUserCurrency,
+                currentBook,
             )
         }
     }.stateIn(
@@ -198,7 +200,7 @@ class RecordViewModel @Inject constructor(
     )
 
     private val _recordsWithinSpecificTime = _filterState.flatMapLatest { filterState ->
-        filterState.map { start, end, recordType, sortType, currencies, useUserCurrency ->
+        filterState.map { start, end, recordType, sortType, currencies, useUserCurrency, currentBook ->
             recordUseCases.getUserRecordsFromSpecificTime(
                 recordType,
                 sortType,
@@ -206,6 +208,7 @@ class RecordViewModel @Inject constructor(
                 end,
                 currencies,
                 useUserCurrency,
+                currentBook
             )
         }
     }.stateIn(
@@ -215,9 +218,9 @@ class RecordViewModel @Inject constructor(
     )
 
     private val _recordResource = _filterState.flatMapLatest { filterState ->
-        filterState.map { start, end, _, sortType, currencies, useUserCurrency ->
+        filterState.map { start, end, _, sortType, currencies, useUserCurrency, currentBook ->
             recordUseCases.getUserTrueRecordMapsFromSpecificTime(
-                start, end, sortType, currencies, useUserCurrency
+                start, end, sortType, currencies, useUserCurrency, currentBook
             )
         }
     }.stateIn(
@@ -428,16 +431,6 @@ data class RecordState(
     val filterState: FilterState = FilterState(),
     val isSearching: Boolean = false,
     val searchQuery: String = "",
-)
-
-data class RecordMap(
-    val recordDate: LocalDate,
-    val records: List<TrueRecord>
-)
-
-data class BookMap(
-    val book: Book,
-    val recordMaps: List<RecordMap>
 )
 
 data class ResourceData(

@@ -5,8 +5,8 @@ import com.fredy.mysavings.Feature.Data.Database.Model.Book
 import com.fredy.mysavings.Feature.Data.Database.Model.Record
 import com.fredy.mysavings.Feature.Data.Database.Model.TrueRecord
 import com.fredy.mysavings.Feature.Data.Enum.SortType
-import com.fredy.mysavings.ViewModels.BookMap
-import com.fredy.mysavings.ViewModels.RecordMap
+import com.fredy.mysavings.Feature.Data.Database.Model.BookMap
+import com.fredy.mysavings.Feature.Data.Database.Model.RecordMap
 
 fun List<Record>.toTrueRecords(trueRecordComponentResult: TrueRecordComponentResult): List<TrueRecord> {
     return this.map { record ->

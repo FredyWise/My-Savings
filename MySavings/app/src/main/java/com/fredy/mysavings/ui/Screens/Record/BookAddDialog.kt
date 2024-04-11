@@ -56,7 +56,7 @@ fun BookAddDialog(
                     )
                 )
             },
-            warningText = "Are You Sure Want to Delete This Book?"
+            warningText = "Are You Sure Want to Delete This Book? \nall record inside the book will also be deleted!!"
         )
         SimpleDialog(
             modifier = modifier,

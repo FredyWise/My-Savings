@@ -59,7 +59,7 @@ fun RecordsScreen(
             ResourceHandler(
                 resource = resource,
                 nullOrEmptyMessage = "There is no record on this date yet",
-                isNullOrEmpty = { bookMaps -> bookMaps!!.all { it.recordMaps.isEmpty() } },
+                isNullOrEmpty = { bookMaps -> bookMaps?.find { it.book == state.filterState.currentBook }?.recordMaps.isNullOrEmpty() },
                 errorMessage = resource.message ?: "",
                 onMessageClick = {
                     rootNavController.navigate(

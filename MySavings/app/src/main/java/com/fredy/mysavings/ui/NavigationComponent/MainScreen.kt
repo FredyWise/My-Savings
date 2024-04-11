@@ -68,7 +68,7 @@ fun MainScreen(
     recordViewModel: RecordViewModel,
     accountViewModel: AccountViewModel,
     categoryViewModel: CategoryViewModel = hiltViewModel(),
-    bookViewModel: BookViewModel = hiltViewModel(),
+    bookViewModel: BookViewModel,
     currentUser: UserData?,
     signOut: () -> Unit,
 ) {
