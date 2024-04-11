@@ -10,10 +10,10 @@ import com.fredy.mysavings.Feature.Data.Database.Model.Account
 import com.fredy.mysavings.Feature.Data.Database.Model.Category
 import com.fredy.mysavings.Feature.Data.Database.Model.Record
 import com.fredy.mysavings.Feature.Data.Enum.RecordType
+import com.fredy.mysavings.Feature.Domain.UseCases.BookUseCases.BookUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.CurrencyUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.RecordUseCases
 import com.fredy.mysavings.Util.DefaultData.transferCategory
-import com.fredy.mysavings.Util.Log
 import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.isExpense
 import com.fredy.mysavings.Util.isTransfer
@@ -45,10 +45,10 @@ class AddSingleRecordViewModel @Inject constructor(
     )
 
     init {
-        savedStateHandle.get<String>("bookId")?.let {bookId ->
-            savedStateHandle.get<String>("recordId")?.let { recordId ->
-                if (recordId != "-1") {
-                    viewModelScope.launch {
+        viewModelScope.launch {
+            savedStateHandle.get<String>("bookId")?.let { bookId ->
+                savedStateHandle.get<String>("recordId")?.let { recordId ->
+                    if (recordId != "-1") {
                         recordUseCases.getRecordById(
                             recordId
                         ).collectLatest {
@@ -73,8 +73,8 @@ class AddSingleRecordViewModel @Inject constructor(
                         }
                     }
                 }
+                state = state.copy(bookIdFk = bookId)
             }
-            state = state.copy(bookIdFk = bookId)
         }
     }
 

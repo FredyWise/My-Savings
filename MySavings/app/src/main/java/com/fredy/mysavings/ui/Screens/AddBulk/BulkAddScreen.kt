@@ -1,4 +1,3 @@
-
 import android.Manifest
 import android.net.Uri
 import android.widget.Toast
@@ -168,9 +167,11 @@ fun BulkAddScreen(
     if (isSheetOpen) {
         AddBottomSheet(
             sheetState = sheetState,
-            onDismissModal = { scope.launch {
-                isSheetOpen = it
-            } },
+            onDismissModal = {
+                scope.launch {
+                    isSheetOpen = it
+                }
+            },
             isLeading = isLeading,
             recordType = state.recordType,
             accountState = accountState,
@@ -200,19 +201,15 @@ fun BulkAddScreen(
             }
         )
     }
+    AccountAddDialog(
+        state = accountState,
+        onEvent = accountViewModel::onEvent
+    )
+    CategoryAddDialog(
+        state = categoryState,
+        onEvent = categoryViewModel::onEvent
+    )
 
-    if (accountState.isAddingAccount) {
-        AccountAddDialog(
-            state = accountState,
-            onEvent = accountViewModel::onEvent
-        )
-    }
-    if (categoryState.isAddingCategory) {
-        CategoryAddDialog(
-            state = categoryState,
-            onEvent = categoryViewModel::onEvent
-        )
-    }
     Column(
         modifier = modifier
             .fillMaxSize(),

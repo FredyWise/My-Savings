@@ -2,9 +2,12 @@ package com.fredy.mysavings.ui.Screens.ZCommonComponent
 
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -80,8 +83,16 @@ fun <T> ResourceHandler(
     errorMessage: String = "",
     nullOrEmptyMessage: String = "",
     onMessageClick: () -> Unit,
+    enterTransition: EnterTransition = fadeIn(),
+    exitTransition: ExitTransition = fadeOut(),
     content: @Composable (T) -> Unit,
 ) {
+    val key = resource.hashCode()
+    val isVisible = remember(key) {
+        MutableTransitionState(
+            false
+        ).apply { targetState = true }
+    }
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     var showCircularProgressIndicator by remember {
@@ -111,75 +122,75 @@ fun <T> ResourceHandler(
     if (resource is Resource.Loading || resource is Resource.Success) {
         debounce(resource)
     }
-    Box(
-        modifier = modifier,
-        contentAlignment = Alignment.TopCenter
+    AnimatedVisibility(
+        visibleState = isVisible,
+        enter = enterTransition,
+        exit = exitTransition,
     ) {
-        when (resource) {
-            is Resource.Error -> {
-                Toast.makeText(
-                    context,
-                    errorMessage,
-                    Toast.LENGTH_LONG
-                ).show()
-            }
+        Box(
+            modifier = modifier,
+            contentAlignment = Alignment.TopCenter
+        ) {
+            when (resource) {
+                is Resource.Error -> {
+                    Toast.makeText(
+                        context,
+                        errorMessage,
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
 
-            is Resource.Loading -> {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    AnimatedVisibility(
-                        visible = showCircularProgressIndicator,
-                        enter = fadeIn(animationSpec = tween(100)),
-                        exit = fadeOut(animationSpec = tween(100))
+                is Resource.Loading -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
                     ) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(
-                                40.dp
-                            ),
-                            strokeWidth = 4.dp,
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
+                        if (showCircularProgressIndicator) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(
+                                    40.dp
+                                ),
+                                strokeWidth = 4.dp,
+                                color = MaterialTheme.colorScheme.onBackground
+                            )
+                        }
                     }
                 }
-            }
 
-            is Resource.Success -> {
-                resource.data.let {
-                    if (!isNullOrEmpty(it)) {
-                        content(it!!)
-                    } else {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            AnimatedVisibility(
-                                visible = showEmptyMessage,
-                                enter = fadeIn(animationSpec = tween(200)),
-                                exit = fadeOut(animationSpec = tween(200))
+                is Resource.Success -> {
+                    resource.data.let {
+                        if (!isNullOrEmpty(it)) {
+                            content(it!!)
+                        } else {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
                             ) {
-                                Text(
-                                    text = nullOrEmptyMessage,
-                                    modifier = Modifier
-                                        .clip(
-                                            MaterialTheme.shapes.medium
-                                        )
-                                        .clickable {
-                                            onMessageClick()
-                                        }
-                                        .padding(
-                                            20.dp
-                                        ),
-                                    style = MaterialTheme.typography.titleLarge,
-                                    color = MaterialTheme.colorScheme.onBackground,
-                                )
-                            }
+                                if (showEmptyMessage) {
+                                    Text(
+                                        text = nullOrEmptyMessage,
+                                        modifier = Modifier
+                                            .clip(
+                                                MaterialTheme.shapes.medium
+                                            )
+                                            .clickable {
+                                                onMessageClick()
+                                                isVisible.targetState = false
+                                            }
+                                            .padding(
+                                                20.dp
+                                            ),
+                                        style = MaterialTheme.typography.titleLarge,
+                                        color = MaterialTheme.colorScheme.onBackground,
+                                    )
+                                }
 
+                            }
                         }
                     }
                 }
             }
+
         }
     }
 

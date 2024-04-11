@@ -31,108 +31,110 @@ fun AccountAddDialog(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
-    SimpleDialog(
-        modifier = modifier,
-        dismissOnSave = false,
-        title = if (state.accountId.isEmpty()) "Add New Account" else "Update Account",
-        onDismissRequest = { onEvent(AccountEvent.HideDialog) },
-        onSaveClicked = {
-            if (state.accountName.isBlank() || state.accountAmount.isBlank() || state.accountCurrency.isBlank() || state.accountIconDescription.isBlank()) {
-                Toast.makeText(
-                    context,
-                    "Please Fill All Required Information!!",
-                    Toast.LENGTH_LONG
-                ).show()
-            }else {
-                onEvent(AccountEvent.SaveAccount)
-                onSaveEffect()
-                onEvent(AccountEvent.HideDialog)
-            }
-        },
-    ) {
-        TextField(
-            value = state.accountAmount,
-            onValueChange = {
-                if (it.isEmpty() || it.matches(
-                        Regex("^(\\d+\\.?\\d*|\\d*\\.\\d+)$")
-                    )
-                ) {
+    if (state.isAddingAccount) {
+        SimpleDialog(
+            modifier = modifier,
+            dismissOnSave = false,
+            title = if (state.accountId.isEmpty()) "Add New Account" else "Update Account",
+            onDismissRequest = { onEvent(AccountEvent.HideDialog) },
+            onSaveClicked = {
+                if (state.accountName.isBlank() || state.accountAmount.isBlank() || state.accountCurrency.isBlank() || state.accountIconDescription.isBlank()) {
+                    Toast.makeText(
+                        context,
+                        "Please Fill All Required Information!!",
+                        Toast.LENGTH_LONG
+                    ).show()
+                } else {
+                    onEvent(AccountEvent.SaveAccount)
+                    onSaveEffect()
+                    onEvent(AccountEvent.HideDialog)
+                }
+            },
+        ) {
+            TextField(
+                value = state.accountAmount,
+                onValueChange = {
+                    if (it.isEmpty() || it.matches(
+                            Regex("^(\\d+\\.?\\d*|\\d*\\.\\d+)$")
+                        )
+                    ) {
+                        onEvent(
+                            AccountEvent.AccountAmount(
+                                it
+                            )
+                        )
+                    }
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        vertical = 8.dp
+                    ),
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Decimal,
+                    imeAction = ImeAction.Done
+                ),
+                keyboardActions = KeyboardActions(
+                    onNext = {
+                        KeyboardActions.Default.onNext
+                    }),
+                label = {
+                    Text(text = if (state.accountId.isEmpty()) "Initial Amount" else "Current Amount")
+                },
+                placeholder = {
+                    Text(text = "0")
+                },
+            )
+            CurrencyDropdown(
+                menuModifier = Modifier,
+                selectedText = state.accountCurrency,
+                onClick = {
                     onEvent(
-                        AccountEvent.AccountAmount(
+                        AccountEvent.AccountCurrency(
                             it
                         )
                     )
-                }
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    vertical = 8.dp
-                ),
-            keyboardOptions = KeyboardOptions.Default.copy(
-                keyboardType = KeyboardType.Decimal,
-                imeAction = ImeAction.Done
-            ),
-            keyboardActions = KeyboardActions(
-                onNext = {
-                    KeyboardActions.Default.onNext
-                }),
-            label = {
-                Text(text = if (state.accountId.isEmpty()) "Initial Amount" else "Current Amount")
-            },
-            placeholder = {
-                Text(text = "0")
-            },
-        )
-        CurrencyDropdown(
-            menuModifier = Modifier,
-            selectedText = state.accountCurrency,
-            onClick = {
-                onEvent(
-                    AccountEvent.AccountCurrency(
-                        it
+                },
+            )
+            TextField(
+                value = state.accountName,
+                onValueChange = {
+                    onEvent(
+                        AccountEvent.AccountName(it)
                     )
-                )
-            },
-        )
-        TextField(
-            value = state.accountName,
-            onValueChange = {
-                onEvent(
-                    AccountEvent.AccountName(it)
-                )
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    vertical = 8.dp
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        vertical = 8.dp
+                    ),
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Done
                 ),
-            keyboardOptions = KeyboardOptions.Default.copy(
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Done
-            ),
-            keyboardActions = KeyboardActions(
-                onDone = {
-                    KeyboardActions.Default.onDone
-                }),
-            label = {
-                Text(text = "Name")
-            },
-            placeholder = {
-                Text(text = "Account Name")
-            },
-        )
-        ChooseIcon(
-            icons = accountIcons, onClick = {
-                onEvent(
-                    AccountEvent.AccountIcon(
-                        icon = it.image,
-                        iconDescription = it.description,
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        KeyboardActions.Default.onDone
+                    }),
+                label = {
+                    Text(text = "Name")
+                },
+                placeholder = {
+                    Text(text = "Account Name")
+                },
+            )
+            ChooseIcon(
+                icons = accountIcons, onClick = {
+                    onEvent(
+                        AccountEvent.AccountIcon(
+                            icon = it.image,
+                            iconDescription = it.description,
+                        )
                     )
-                )
-            }, iconModifier = Modifier.clip(
-                shape = CircleShape
-            ), selectedIcon = state.accountIcon
-        )
+                }, iconModifier = Modifier.clip(
+                    shape = CircleShape
+                ), selectedIcon = state.accountIcon
+            )
+        }
     }
 }

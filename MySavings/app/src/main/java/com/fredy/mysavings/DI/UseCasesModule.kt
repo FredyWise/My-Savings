@@ -26,7 +26,7 @@ import com.fredy.mysavings.Feature.Domain.UseCases.AuthUseCases.VerifyPhoneNumbe
 import com.fredy.mysavings.Feature.Domain.UseCases.BookUseCases.BookUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.BookUseCases.DeleteBook
 import com.fredy.mysavings.Feature.Domain.UseCases.BookUseCases.GetBook
-import com.fredy.mysavings.Feature.Domain.UseCases.BookUseCases.GetBooksOrderedByName
+import com.fredy.mysavings.Feature.Domain.UseCases.BookUseCases.GetUserBooks
 import com.fredy.mysavings.Feature.Domain.UseCases.BookUseCases.UpsertBook
 import com.fredy.mysavings.Feature.Domain.UseCases.CSVUseCases.CSVUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.CSVUseCases.GetDBInfo
@@ -121,7 +121,7 @@ object UseCasesModule {
             recordRepository,
             authRepository
         ),
-        getAllRecords = GetAllRecords(recordRepository, authRepository, bookRepository),
+        getAllRecords = GetAllRecords(recordRepository, authRepository),
         getUserCategoryRecordsOrderedByDateTime = GetUserCategoryRecordsOrderedByDateTime(
             recordRepository, authRepository
         ),
@@ -197,7 +197,7 @@ object UseCasesModule {
         upsertBook = UpsertBook(bookRepository, authRepository),
         deleteBook = DeleteBook(bookRepository),
         getBook = GetBook(bookRepository),
-        getBooksOrderedByName = GetBooksOrderedByName(
+        getUserBooks = GetUserBooks(
             bookRepository,
             authRepository
         )

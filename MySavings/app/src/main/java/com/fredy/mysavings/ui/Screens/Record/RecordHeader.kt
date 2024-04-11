@@ -1,6 +1,8 @@
 package com.fredy.mysavings.ui.Screens.Record
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -26,21 +28,34 @@ import com.fredy.mysavings.R
 import com.fredy.mysavings.Util.DefaultData
 import com.fredy.mysavings.ViewModels.BookMap
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun RecordHeader(
     modifier: Modifier = Modifier,
     textColor: Color = MaterialTheme.colorScheme.onBackground,
-    items: List<BookMap>,
+    items: List<Book>,
     onBookClicked: (Book) -> Unit,
-    onAddBook: () -> Unit,
+    onBookLongPress: (Book) -> Unit,
+    onAddBook: (Book) -> Unit,
 ) {
-    LazyRow(modifier = modifier.fillMaxWidth().padding(horizontal = 8.dp)) {
+    LazyRow(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp)
+    ) {
         items(items) { item ->
             Column(
                 modifier = Modifier
-                    .clickable {
-                        onBookClicked(item.book)
-                    }
+                    .width(80.dp)
+                    .clip(MaterialTheme.shapes.medium)
+                    .combinedClickable(
+                        onLongClick = {
+                            onBookLongPress(item)
+                        },
+                        onClick = {
+                            onBookClicked(item)
+                        },
+                    )
                     .padding(
                         vertical = 4.dp
                     ),
@@ -51,20 +66,17 @@ fun RecordHeader(
                     modifier = Modifier
                         .size(
                             55.dp
-                        )
-                        .clip(
-                            shape = MaterialTheme.shapes.extraLarge
                         ),
                     painter = painterResource(
-                        id = DefaultData.savingsIcons[item.book.bookIconDescription]?.image
-                            ?: item.book.bookIcon
+                        id = DefaultData.savingsIcons[item.bookIconDescription]?.image
+                            ?: item.bookIcon
                     ),
-                    contentDescription = item.book.bookIconDescription,
+                    contentDescription = item.bookIconDescription,
                     tint = Color.Unspecified
                 )
                 Text(
-                    text = item.book.bookName,
-                    style = MaterialTheme.typography.titleMedium,
+                    text = item.bookName,
+                    style = MaterialTheme.typography.titleSmall,
                     color = textColor,
                     textAlign = TextAlign.Center,
                     maxLines = 1
@@ -75,8 +87,10 @@ fun RecordHeader(
         item {
             Column(
                 modifier = Modifier
+                    .width(80.dp)
+                    .clip(MaterialTheme.shapes.medium)
                     .clickable {
-                        onAddBook()
+                        onAddBook(Book(bookName = ""))
                     }
                     .padding(
                         vertical = 4.dp
@@ -88,9 +102,6 @@ fun RecordHeader(
                     modifier = Modifier
                         .size(
                             55.dp
-                        )
-                        .clip(
-                            shape = MaterialTheme.shapes.extraLarge
                         ),
                     painter = painterResource(
                         R.drawable.ic_add_foreground
@@ -99,9 +110,11 @@ fun RecordHeader(
                     tint = Color.Unspecified
                 )
                 Text(
-                    text = "Add New Book",
-                    style = MaterialTheme.typography.titleMedium,
+                    text = "Add Book",
+                    style = MaterialTheme.typography.titleSmall,
                     color = textColor,
+                    textAlign = TextAlign.Center,
+                    maxLines = 1
                 )
             }
         }

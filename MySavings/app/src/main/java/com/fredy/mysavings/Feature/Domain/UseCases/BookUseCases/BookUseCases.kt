@@ -1,23 +1,20 @@
 package com.fredy.mysavings.Feature.Domain.UseCases.BookUseCases
 
-import com.fredy.mysavings.Util.Log
 import co.yml.charts.common.extensions.isNotNull
 import com.fredy.mysavings.Feature.Data.Database.Model.Book
 import com.fredy.mysavings.Feature.Domain.Repository.AuthRepository
 import com.fredy.mysavings.Feature.Domain.Repository.BookRepository
+import com.fredy.mysavings.Util.Log
 import com.fredy.mysavings.Util.Resource
-
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.withContext
 
 data class BookUseCases(
     val upsertBook: UpsertBook,
     val deleteBook: DeleteBook,
     val getBook: GetBook,
-    val getBooksOrderedByName: GetBooksOrderedByName
+    val getUserBooks: GetUserBooks
 )
 
 class UpsertBook(
@@ -48,7 +45,7 @@ class GetBook(
 }
 
 
-class GetBooksOrderedByName(
+class GetUserBooks(
     private val categoryRepository: BookRepository,
     private val authRepository: AuthRepository
 ) {
@@ -58,9 +55,7 @@ class GetBooksOrderedByName(
             val currentUser = authRepository.getCurrentUser()!!
             val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
 
-            withContext(Dispatchers.IO) {
-                categoryRepository.getUserBooks(userId)
-            }.collect { books ->
+            categoryRepository.getUserBooks(userId).collect { books ->
                 Log.i("getBooksOrderedByName.Data: $books")
                 emit(Resource.Success(books))
             }

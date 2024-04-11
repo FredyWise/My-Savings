@@ -35,9 +35,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
@@ -208,18 +206,15 @@ class GetAllTrueRecordsWithinSpecificTime(
 class GetAllRecords(
     private val recordRepository: RecordRepository,
     private val authRepository: AuthRepository,
-    private val bookRepository: BookRepository
 ) {
-    operator fun invoke(): Flow<Resource<List<BookMap>>> {
+    operator fun invoke(): Flow<Resource<List<RecordMap>>> {
         return flow {
             emit(Resource.Loading())
             val currentUser = authRepository.getCurrentUser()!!
             val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
 
-            val books = bookRepository.getUserBooks(userId).first()
-
             recordRepository.getRecordMaps(userId).collect { records ->
-                val data = books.toBookSortedMaps(records)
+                val data = records.toRecordSortedMaps()
                 Log.i(
                     "getAllRecords.data: $data"
                 )
@@ -297,7 +292,8 @@ class GetUserAccountRecordsOrderedByDateTime(
     }
 }
 
-class GetUserTrueRecordMapsFromSpecificTime( // main screen
+class GetUserTrueRecordMapsFromSpecificTime(
+    // main screen
     private val recordRepository: RecordRepository,
     private val authRepository: AuthRepository,
     private val currencyUseCases: CurrencyUseCases,
@@ -326,13 +322,12 @@ class GetUserTrueRecordMapsFromSpecificTime( // main screen
                 startDate,
                 endDate,
             ).map { records ->
-                books.toBookSortedMaps(
-                    records.convertRecordCurrency(userCurrency, useUserCurrency)
-                        .filterTrueRecordCurrency(currency + userCurrency),
-                    sortType
-                )
+                records.convertRecordCurrency(userCurrency, useUserCurrency)
+                    .filterTrueRecordCurrency(currency + userCurrency)
             }.collect { data ->
-                emit(Resource.Success(data))
+                val bookMap = books.toBookSortedMaps(data, sortType)
+                Log.i("getUserTrueRecordMapsFromSpecificTime.Data: $bookMap")
+                emit(Resource.Success(bookMap))
             }
 
         }.catch { e ->
@@ -772,7 +767,11 @@ class GetUserTotalRecordBalance(
     private val authRepository: AuthRepository,
     private val currencyUseCases: CurrencyUseCases
 ) {
-    operator fun invoke(isCaryOn:Boolean, startDate: LocalDateTime, endDate: LocalDateTime): Flow<BalanceItem> {
+    operator fun invoke(
+        isCaryOn: Boolean,
+        startDate: LocalDateTime,
+        endDate: LocalDateTime
+    ): Flow<BalanceItem> {
         return flow {
             val currentUser = authRepository.getCurrentUser()!!
             val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""

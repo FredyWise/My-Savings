@@ -72,7 +72,7 @@ class BookDataSourceImpl @Inject constructor(
                 querySnapshot.map { it.toObjects()}
             } catch (e: Exception) {
                 Log.e(
-                    "Failed to get user categories: $e"
+                    "Failed to get user books: $e"
                 )
                 throw e
             }

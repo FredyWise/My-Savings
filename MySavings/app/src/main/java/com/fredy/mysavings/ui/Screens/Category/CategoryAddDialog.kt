@@ -32,89 +32,91 @@ fun CategoryAddDialog(
     onEvent: (CategoryEvent) -> Unit
 ) {
     val context = LocalContext.current
-    SimpleDialog(
-        modifier = modifier,
-        dismissOnSave = false,
-        title = if (state.categoryId.isEmpty()) "Add New Category" else "Update Category",
-        onDismissRequest = { onEvent(CategoryEvent.HideDialog) },
-        onSaveClicked = {
-            if (state.categoryName.isBlank() || state.categoryIcon == 0 || state.categoryIconDescription.isBlank()) {
-                Toast.makeText(
-                    context,
-                    "Please Fill All Required Information!!",
-                    Toast.LENGTH_LONG
-                ).show()
-            }else {
-                onEvent(CategoryEvent.SaveCategory)
-                onSaveEffect()
-                onEvent(CategoryEvent.HideDialog)
-            }
-        },
-    ) {
-        TypeRadioButton(
-            selectedName = state.categoryType.name,
-            radioButtons = listOf(
-                ActionWithName(
-                    name = RecordType.Expense.name,
-                    action = {
-                        onEvent(
-                            CategoryEvent.CategoryTypes(
-                                RecordType.Expense
+    if (state.isAddingCategory) {
+        SimpleDialog(
+            modifier = modifier,
+            dismissOnSave = false,
+            title = if (state.categoryId.isEmpty()) "Add New Category" else "Update Category",
+            onDismissRequest = { onEvent(CategoryEvent.HideDialog) },
+            onSaveClicked = {
+                if (state.categoryName.isBlank() || state.categoryIcon == 0 || state.categoryIconDescription.isBlank()) {
+                    Toast.makeText(
+                        context,
+                        "Please Fill All Required Information!!",
+                        Toast.LENGTH_LONG
+                    ).show()
+                } else {
+                    onEvent(CategoryEvent.SaveCategory)
+                    onSaveEffect()
+                    onEvent(CategoryEvent.HideDialog)
+                }
+            },
+        ) {
+            TypeRadioButton(
+                selectedName = state.categoryType.name,
+                radioButtons = listOf(
+                    ActionWithName(
+                        name = RecordType.Expense.name,
+                        action = {
+                            onEvent(
+                                CategoryEvent.CategoryTypes(
+                                    RecordType.Expense
+                                )
                             )
-                        )
-                    },
-                ), ActionWithName(
-                    name = RecordType.Income.name,
-                    action = {
-                        onEvent(
-                            CategoryEvent.CategoryTypes(
-                                RecordType.Income
+                        },
+                    ), ActionWithName(
+                        name = RecordType.Income.name,
+                        action = {
+                            onEvent(
+                                CategoryEvent.CategoryTypes(
+                                    RecordType.Income
+                                )
                             )
-                        )
-                    },
+                        },
+                    )
                 )
             )
-        )
-        TextField(
-            value = state.categoryName,
-            onValueChange = {
-                onEvent(
-                    CategoryEvent.CategoryName(
-                        it
+            TextField(
+                value = state.categoryName,
+                onValueChange = {
+                    onEvent(
+                        CategoryEvent.CategoryName(
+                            it
+                        )
                     )
-                )
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    vertical = 8.dp
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        vertical = 8.dp
+                    ),
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Done
                 ),
-            keyboardOptions = KeyboardOptions.Default.copy(
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Done
-            ),
-            keyboardActions = KeyboardActions(
-                onDone = {
-                    KeyboardActions.Default.onDone
-                }),
-            label = {
-                Text(text = "Name")
-            },
-            placeholder = {
-                Text(text = "Category Name")
-            },
-        )
-        ChooseIcon(
-            icons = categoryIcons, onClick = {
-                onEvent(
-                    CategoryEvent.CategoryIcon(
-                        icon = it.image,
-                        iconDescription = it.description
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        KeyboardActions.Default.onDone
+                    }),
+                label = {
+                    Text(text = "Name")
+                },
+                placeholder = {
+                    Text(text = "Category Name")
+                },
+            )
+            ChooseIcon(
+                icons = categoryIcons, onClick = {
+                    onEvent(
+                        CategoryEvent.CategoryIcon(
+                            icon = it.image,
+                            iconDescription = it.description
+                        )
                     )
-                )
-            }, iconModifier = Modifier.clip(
-                shape = CircleShape
-            ), selectedIcon = state.categoryIcon
-        )
+                }, iconModifier = Modifier.clip(
+                    shape = CircleShape
+                ), selectedIcon = state.categoryIcon
+            )
+        }
     }
 }

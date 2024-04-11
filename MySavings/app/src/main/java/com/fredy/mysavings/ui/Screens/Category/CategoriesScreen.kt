@@ -23,9 +23,6 @@ import com.fredy.mysavings.R
 import com.fredy.mysavings.ViewModels.CategoryState
 import com.fredy.mysavings.ViewModels.Event.CategoryEvent
 import com.fredy.mysavings.ViewModels.Event.RecordsEvent
-import com.fredy.mysavings.ViewModels.RecordState
-import com.fredy.mysavings.ui.NavigationComponent.Navigation.NavigationRoute
-import com.fredy.mysavings.ui.Screens.Record.RecordDialog
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.ResourceHandler
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SearchBar
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleButton
@@ -72,13 +69,12 @@ fun CategoriesScreen(
         state = state
     )
 
-    if (state.isAddingCategory) {
-        CategoryAddDialog(
-            state = state, onEvent = onEvent, onSaveEffect = {
-                recordEvent(RecordsEvent.UpdateRecord)
-            }
-        )
-    }
+    CategoryAddDialog(
+        state = state, onEvent = onEvent, onSaveEffect = {
+            recordEvent(RecordsEvent.UpdateRecord)
+        }
+    )
+
     Column(modifier = modifier) {
         SearchBar(
             searchText = state.searchQuery,

@@ -13,6 +13,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.fredy.mysavings.ViewModels.AccountViewModel
+import com.fredy.mysavings.ViewModels.BookViewModel
 import com.fredy.mysavings.ViewModels.CategoryViewModel
 import com.fredy.mysavings.ViewModels.RecordViewModel
 import com.fredy.mysavings.ui.Screens.Account.AccountsScreen
@@ -29,6 +30,7 @@ fun HomeNavGraph(
     recordViewModel: RecordViewModel,
     accountViewModel: AccountViewModel,
     categoryViewModel: CategoryViewModel,
+    bookViewModel: BookViewModel,
 ) {
     NavHost(
         navController = navController,
@@ -45,11 +47,14 @@ fun HomeNavGraph(
             },
         ) {
             val state by recordViewModel.state.collectAsStateWithLifecycle()
+            val bookState by bookViewModel.state.collectAsStateWithLifecycle()
 
             RecordsScreen(
                 rootNavController = rootNavController,
                 state = state,
                 onEvent = recordViewModel::onEvent,
+                bookState = bookState,
+                bookEvent = bookViewModel::onEvent
             )
         }
         composable(

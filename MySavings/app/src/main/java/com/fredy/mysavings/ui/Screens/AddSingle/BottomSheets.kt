@@ -374,6 +374,8 @@ fun CategoryBottomSheet(
                         text = "Add Category",
                         style = MaterialTheme.typography.titleLarge,
                         color = textColor,
+                        textAlign = TextAlign.Center,
+                        maxLines = 1
                     )
                 }
             }

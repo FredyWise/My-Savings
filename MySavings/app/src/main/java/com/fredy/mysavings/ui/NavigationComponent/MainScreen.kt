@@ -43,6 +43,7 @@ import androidx.navigation.compose.rememberNavController
 import com.fredy.mysavings.Feature.Data.Database.Model.UserData
 import com.fredy.mysavings.Util.formatRangeOfDate
 import com.fredy.mysavings.ViewModels.AccountViewModel
+import com.fredy.mysavings.ViewModels.BookViewModel
 import com.fredy.mysavings.ViewModels.CategoryViewModel
 import com.fredy.mysavings.ViewModels.Event.RecordsEvent
 import com.fredy.mysavings.ViewModels.RecordViewModel
@@ -67,6 +68,7 @@ fun MainScreen(
     recordViewModel: RecordViewModel,
     accountViewModel: AccountViewModel,
     categoryViewModel: CategoryViewModel = hiltViewModel(),
+    bookViewModel: BookViewModel = hiltViewModel(),
     currentUser: UserData?,
     signOut: () -> Unit,
 ) {
@@ -387,12 +389,13 @@ fun MainScreen(
             HomeNavGraph(
                 rootNavController = rootNavController,
                 navController = navController,
-                recordViewModel = recordViewModel,
-                accountViewModel = accountViewModel,
-                categoryViewModel = categoryViewModel,
                 modifier = Modifier.padding(
                     innerPadding
                 ),
+                recordViewModel = recordViewModel,
+                accountViewModel = accountViewModel,
+                categoryViewModel = categoryViewModel,
+                bookViewModel = bookViewModel,
             )
 
         }

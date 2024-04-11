@@ -142,7 +142,8 @@ fun NavGraphRoot(
                         name = "bookId"
                     ) {
                         type = NavType.StringType
-                        defaultValue = "-1"
+                        defaultValue = null
+                        nullable = true
                     },
                 )
             ) {

@@ -74,15 +74,13 @@ fun AccountsScreen(
         state = state,
         recordEvent = recordEvent
     )
+    AccountAddDialog(
+        state = state, onEvent = onEvent, onSaveEffect = {
+            recordEvent(RecordsEvent.UpdateRecord)
+        }
+    )
 
     Column(modifier = modifier) {
-        if (state.isAddingAccount) {
-            AccountAddDialog(
-                state = state, onEvent = onEvent, onSaveEffect = {
-                    recordEvent(RecordsEvent.UpdateRecord)
-                }
-            )
-        }
         AccountHeader(
             modifier = Modifier
                 .height(150.dp)

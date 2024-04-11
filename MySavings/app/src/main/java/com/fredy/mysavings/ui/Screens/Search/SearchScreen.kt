@@ -1,6 +1,5 @@
 package com.fredy.mysavings.ui.Search
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -34,12 +33,6 @@ fun SearchScreen(
     recordState: RecordState,
     onEvent: (RecordsEvent) -> Unit
 ) {
-    val key = state.trueRecordsResource.hashCode()
-    val isVisible = remember(key) {
-        MutableTransitionState(
-            false
-        ).apply { targetState = true }
-    }
     recordState.trueRecord?.let {
         RecordDialog(
             trueRecord = it,
@@ -80,42 +73,37 @@ fun SearchScreen(
                 )
             },
         ) {
-            AnimatedVisibility(
-                modifier = modifier,
-                visibleState = isVisible,
-                enter = slideInVertically(
-                    animationSpec = tween(
-                        durationMillis = 500
-                    ),
-                    initialOffsetY = { fullHeight -> fullHeight },
-                ) + fadeIn(),
-                exit = slideOutVertically(
-                    animationSpec = tween(
-                        durationMillis = 500
-                    ),
-                    targetOffsetY = { fullHeight -> fullHeight },
-                ) + fadeOut()
-            ) {
-                state.trueRecordsResource.let { resource ->
-                    ResourceHandler(
-                        resource = resource,
-                        nullOrEmptyMessage = "You didn't have any records yet",
-                        isNullOrEmpty = { it.isNullOrEmpty() },
-                        errorMessage = resource.message ?: "",
-                        onMessageClick = {
-                            rootNavController.navigate(
-                                "${NavigationRoute.Add.route}?bookId=${recordState.filterState.currentBook?.bookId}"
-                            )
-                        },
-                    ) { data ->
-                        RecordBody(
-                            bookMaps = data,
-                            state = recordState,
-                            onEvent = onEvent
+            state.trueRecordsResource.let { resource ->
+                ResourceHandler(
+                    resource = resource,
+                    nullOrEmptyMessage = "You didn't have any records yet",
+                    isNullOrEmpty = { it.isNullOrEmpty() },
+                    errorMessage = resource.message ?: "",
+                    onMessageClick = {
+                        rootNavController.navigate(
+                            "${NavigationRoute.Add.route}?bookId=${recordState.filterState.currentBook?.bookId}"
                         )
-                    }
+                    },
+                    enterTransition = slideInVertically(
+                        animationSpec = tween(
+                            durationMillis = 500
+                        ),
+                        initialOffsetY = { fullHeight -> fullHeight },
+                    ) + fadeIn(),
+                    exitTransition = slideOutVertically(
+                        animationSpec = tween(
+                            durationMillis = 500
+                        ),
+                        targetOffsetY = { fullHeight -> fullHeight },
+                    ) + fadeOut()
+                ) { data ->
+                    RecordBody(
+                        recordMaps = data,
+                        onEvent = onEvent,
+                    )
                 }
             }
         }
+
     }
 }

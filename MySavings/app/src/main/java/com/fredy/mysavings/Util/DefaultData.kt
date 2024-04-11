@@ -78,6 +78,8 @@ object DefaultData {
         SavingsIcon(R.drawable.ic_voucher, "Voucher"),
     )
 
+    val allSavingsIcons = accountIcons + categoryIcons
+
 
     val accountIconsMap = accountIcons.plus(accountInitIcon).associateBy { it.description }
     val categoryIconsMap =

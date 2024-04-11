@@ -1,5 +1,6 @@
 package com.fredy.mysavings.ViewModels.Event
 
+import com.fredy.mysavings.Feature.Data.Database.Model.Book
 import com.fredy.mysavings.Feature.Data.Database.Model.Record
 import com.fredy.mysavings.Feature.Data.Database.Model.TrueRecord
 import com.fredy.mysavings.Feature.Data.Enum.FilterType
@@ -22,5 +23,6 @@ sealed interface RecordsEvent {
     object ToggleCarryOn : RecordsEvent
     data class DeleteRecord(val record: Record) : RecordsEvent
     object UpdateRecord : RecordsEvent
+    data class ClickBook(val book: Book) : RecordsEvent
 
 }

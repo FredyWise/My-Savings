@@ -2,7 +2,6 @@
 
 package com.fredy.mysavings.ViewModels
 
-import com.fredy.mysavings.Util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fredy.mysavings.Feature.Data.Database.Model.Book
@@ -15,12 +14,13 @@ import com.fredy.mysavings.Feature.Domain.Repository.CategoryWithAmount
 import com.fredy.mysavings.Feature.Domain.Repository.SettingsRepository
 import com.fredy.mysavings.Feature.Domain.Repository.SyncRepository
 import com.fredy.mysavings.Feature.Domain.UseCases.AccountUseCases.AccountUseCases
+import com.fredy.mysavings.Feature.Domain.UseCases.BookUseCases.BookUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.RecordUseCases
 import com.fredy.mysavings.Util.BalanceBar
 import com.fredy.mysavings.Util.BalanceItem
 import com.fredy.mysavings.Util.FilterState
+import com.fredy.mysavings.Util.Log
 import com.fredy.mysavings.Util.Resource
-
 import com.fredy.mysavings.Util.map
 import com.fredy.mysavings.Util.minusDate
 import com.fredy.mysavings.Util.plusDate
@@ -31,6 +31,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
@@ -45,6 +46,7 @@ import javax.inject.Inject
 class RecordViewModel @Inject constructor(
     private val recordUseCases: RecordUseCases,
     private val accountUseCases: AccountUseCases,
+    private val bookUseCases: BookUseCases,
     private val settingsRepository: SettingsRepository,
     private val syncRepository: SyncRepository,
 ) : ViewModel() {
@@ -58,12 +60,23 @@ class RecordViewModel @Inject constructor(
 //                }
 //            }
             syncRepository.syncAll()
-            accountUseCases.getAccountsCurrencies().collect { currency ->
-                _state.update {
-                    it.copy(selectedCheckbox = currency)
+            bookUseCases.getUserBooks().collectLatest { bookResource ->
+                when (bookResource) {
+                    is Resource.Success -> {
+                        _filterState.update {
+                            it.copy(currentBook = bookResource.data?.firstOrNull())
+                        }
+                    }
+
+                    else -> {}
                 }
-                _filterState.update {
-                    it.copy(currencies = currency)
+                accountUseCases.getAccountsCurrencies().collect { currency ->
+                    _state.update {
+                        it.copy(selectedCheckbox = currency)
+                    }
+                    _filterState.update {
+                        it.copy(currencies = currency)
+                    }
                 }
             }
         }
@@ -251,7 +264,7 @@ class RecordViewModel @Inject constructor(
             resourceData = resourceData,
             availableCurrency = availableCurrency,
             balanceBar = balanceBar,
-            filterState = filterState.copy(currentBook = resourceData.recordMapsResource.data?.firstOrNull()?.book)
+            filterState = filterState
         )
     }.stateIn(
         viewModelScope,
@@ -395,6 +408,11 @@ class RecordViewModel @Inject constructor(
                     }
                 }
 
+                is RecordsEvent.ClickBook -> {
+                    _filterState.update {
+                        it.copy(currentBook = event.book)
+                    }
+                }
             }
         }
     }

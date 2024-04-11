@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -59,8 +60,10 @@ fun SimpleWarningDialog(
             },
         ) {
             Text(
+                modifier = Modifier.fillMaxWidth(),
                 text = warningText,
-                style = MaterialTheme.typography.titleLarge
+                style = MaterialTheme.typography.titleLarge,
+                textAlign = TextAlign.Center
             )
         }
     }
@@ -109,16 +112,20 @@ fun SimpleDialog(
     saveName: String = "Save",
     onDismissRequest: () -> Unit,
     onSaveClicked: () -> Unit,
+    additionalExitButton: @Composable () -> Unit = {},
     content: @Composable () -> Unit,
 ) {
     AlertDialog(
         modifier = modifier,
         title = {
-            Text(
-                modifier = Modifier.fillMaxWidth(),
-                text = title,
-                textAlign = TextAlign.Center
-            )
+            Box {
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = title,
+                    textAlign = TextAlign.Center
+                )
+                additionalExitButton()
+            }
         },
         text = {
             Column(
@@ -147,7 +154,7 @@ fun SimpleDialog(
                     onClick = onDismissRequest,
                 ) {
                     Text(
-                        modifier = Modifier.padding(8.dp),
+                        modifier = Modifier.padding(vertical = 6.dp),
                         style = MaterialTheme.typography.titleMedium,
                         text = cancelName
                     )
@@ -176,7 +183,7 @@ fun SimpleDialog(
                     },
                 ) {
                     Text(
-                        modifier = Modifier.padding(8.dp),
+                        modifier = Modifier.padding(vertical = 6.dp),
                         style = MaterialTheme.typography.titleMedium,
                         text = saveName
                     )

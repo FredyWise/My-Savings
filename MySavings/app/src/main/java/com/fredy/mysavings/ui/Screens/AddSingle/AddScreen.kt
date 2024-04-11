@@ -267,12 +267,11 @@ fun AddScreen(
             }
         )
     }
-    if (accountState.isAddingAccount) {
         AccountAddDialog(
             state = accountState,
             onEvent = accountViewModel::onEvent
         )
-    }
+
     if (categoryState.isAddingCategory) {
         if (state.recordType != categoryState.categoryType) {
             categoryViewModel.onEvent(

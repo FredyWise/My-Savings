@@ -50,18 +50,14 @@ class SyncRepositoryImpl @Inject constructor(
             currentUser?.let {
                 val userId = if (currentUser.isNotNull()) currentUser.uid else ""
                 try {
-                    val books = bookDataSource.getUserBooksOrderedByName(userId)
+                    val books = bookDataSource.getUserBooksOrderedByName(userId).first()
                     if (withDelete) {
                         bookDao.deleteAllBooks()
                     }
-                    bookDao.upsertAllBookItem(books.first())
+                    bookDao.upsertAllBookItem(books)
                 }catch (e:Exception){
-                    val bookCollection = FirebaseFirestore.getInstance().collection(
-                        "book"
-                    )
-                    val newBookRef = bookCollection.document()
                     val tempBook = defaultBook.copy(
-                        bookId = newBookRef.id,
+                        bookId = userId,
                         userIdFk = userId
                     )
                     bookDataSource.upsertBookItem(

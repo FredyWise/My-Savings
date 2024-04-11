@@ -3,6 +3,7 @@ package com.fredy.mysavings.Feature.Domain.Repository
 import com.fredy.mysavings.Feature.Data.Database.Dao.BookDao
 import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.BookDataSource
 import com.fredy.mysavings.Feature.Data.Database.Model.Book
+import com.fredy.mysavings.Util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -73,6 +74,7 @@ class BookRepositoryImpl @Inject constructor(
                     userId
                 )
             }.collect { data ->
+                Log.i("getUserBooksRepo.Data: $data")
                 emit(data)
             }
         }
