@@ -41,7 +41,7 @@ class SearchViewModel @Inject constructor(
             is Resource.Success -> {
                 val searchQuery = state.searchQuery
                 if (searchQuery.isBlank()) {
-                    trueRecordsResource
+                    Resource.Success(trueRecordsResource.data!!.filter { it.recordMaps.isNotEmpty() })
                 } else {
                     Resource.Success(trueRecordsResource.data!!.filter {
                         it.doesMatchSearchQuery(searchQuery)
