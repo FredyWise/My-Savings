@@ -3,9 +3,12 @@ package com.fredy.mysavings.Feature.Domain.UseCases.UserUseCases
 import co.yml.charts.common.extensions.isNotNull
 import com.fredy.mysavings.Feature.Data.Database.Model.UserData
 import com.fredy.mysavings.Feature.Domain.Repository.UserRepository
+import com.fredy.mysavings.Util.Log
 import com.fredy.mysavings.Util.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 
 data class UserUseCases(
     val insertUser: InsertUser,
@@ -22,10 +25,10 @@ class InsertUser(
     private val userRepository: UserRepository
 ) {
     suspend operator fun invoke(user: UserData) {
-        userRepository.getUser(user.firebaseUserId).collectLatest{ isExist ->
-            if (!isExist.isNotNull()){
-                userRepository.upsertUser(user)
-            }
+        val isExist = userRepository.getUser(user.firebaseUserId).firstOrNull()
+        Log.i("InsertUser.Data: $isExist")
+        if (!isExist.isNotNull()){
+            userRepository.upsertUser(user)
         }
     }
 }
@@ -49,7 +52,7 @@ class DeleteUser(
 class GetUser(
     private val userRepository: UserRepository
 ) {
-    operator fun invoke(userId: String): Flow<UserData> {
+    operator fun invoke(userId: String): Flow<UserData?> {
         return userRepository.getUser(userId)
     }
 }

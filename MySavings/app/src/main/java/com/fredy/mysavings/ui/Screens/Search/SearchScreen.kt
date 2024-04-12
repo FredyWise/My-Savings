@@ -36,6 +36,7 @@ import com.fredy.mysavings.ViewModels.Event.RecordsEvent
 import com.fredy.mysavings.ViewModels.RecordState
 import com.fredy.mysavings.ViewModels.SearchState
 import com.fredy.mysavings.ui.NavigationComponent.Navigation.NavigationRoute
+import com.fredy.mysavings.ui.Screens.Record.BookAddDialog
 import com.fredy.mysavings.ui.Screens.Record.RecordBody
 import com.fredy.mysavings.ui.Screens.Record.RecordDialog
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.DefaultAppBar
@@ -55,6 +56,7 @@ fun SearchScreen(
     bookState: BookState,
     bookEvent: (BookEvent) -> Unit,
 ) {
+    BookAddDialog(state = bookState, onEvent = bookEvent)
     recordState.trueRecord?.let {
         RecordDialog(
             trueRecord = it,

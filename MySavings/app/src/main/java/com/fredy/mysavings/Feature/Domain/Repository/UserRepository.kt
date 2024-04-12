@@ -18,7 +18,7 @@ import javax.inject.Inject
 interface UserRepository {
     suspend fun upsertUser(user: UserData)
     suspend fun deleteUser(user: UserData)
-    fun getUser(userId: String): Flow<UserData>
+    fun getUser(userId: String): Flow<UserData?>
     suspend fun getCurrentUser(): Flow<Resource<UserData?>>
     suspend fun getAllUsersOrderedByName(): Flow<List<UserData>>
     suspend fun searchUsers(usernameEmail: String): Flow<List<UserData>>
@@ -43,10 +43,10 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getUser(userId: String): Flow<UserData> {
+    override fun getUser(userId: String): Flow<UserData?> {
         return flow {
             val user = withContext(Dispatchers.IO) {
-                userDao.getUser(userId)
+                userDataSource.getUser(userId)
             }
             emit(user)
         }

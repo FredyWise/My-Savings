@@ -59,7 +59,7 @@ class BookRepositoryImpl @Inject constructor(
     override fun getBook(bookId: String): Flow<Book> {
         return flow {
             val book = withContext(Dispatchers.IO) {
-                bookDao.getBook(bookId)
+                bookDataSource.getBook(bookId)
             }
             emit(book)
         }

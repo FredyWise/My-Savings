@@ -68,7 +68,7 @@ class CategoryRepositoryImpl @Inject constructor(
     override fun getCategory(categoryId: String): Flow<Category> {
         return flow {
             val category = withContext(Dispatchers.IO) {
-                categoryDao.getCategory(categoryId)
+                 categoryDataSource.getCategory(categoryId)
             }
             emit(category)
         }

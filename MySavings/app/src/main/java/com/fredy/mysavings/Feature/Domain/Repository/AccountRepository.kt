@@ -68,7 +68,7 @@ class AccountRepositoryImpl @Inject constructor(
     override fun getAccount(accountId: String): Flow<Account> {
         return flow {
             val account = withContext(Dispatchers.IO) {
-                accountDao.getAccount(
+                accountDataSource.getAccount(
                     accountId
                 )
             }
