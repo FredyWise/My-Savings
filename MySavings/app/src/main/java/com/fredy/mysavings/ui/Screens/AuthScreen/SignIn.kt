@@ -229,7 +229,7 @@ fun SignIn(
                                 )
                             )
                         } else {
-                            Toast.makeText(context, "Phone Number is Invalid", Toast.LENGTH_SHORT)
+                            Toast.makeText(context, "Phone Number should contain country code", Toast.LENGTH_SHORT)
                                 .show()
                         }
                     }

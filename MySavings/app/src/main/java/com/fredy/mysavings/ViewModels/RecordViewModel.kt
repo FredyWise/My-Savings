@@ -29,6 +29,7 @@ import com.fredy.mysavings.Util.updateType
 import com.fredy.mysavings.ViewModels.Event.RecordsEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.collectLatest
@@ -58,23 +59,25 @@ class RecordViewModel @Inject constructor(
 //                    }
 //                }
 //            }
-            syncRepository.syncAll()
-            bookUseCases.getUserBooks().collectLatest { bookResource ->
-                when (bookResource) {
-                    is Resource.Success -> {
-                        _filterState.update {
-                            it.copy(currentBook = bookResource.data!!.first())
-                        }
-                    }
-
-                    else -> {}
+            async {
+                syncRepository.syncAll()
+            }.await()
+            accountUseCases.getAccountsCurrencies().collect { currency ->
+                _state.update {
+                    it.copy(selectedCheckbox = currency)
                 }
-                accountUseCases.getAccountsCurrencies().collect { currency ->
-                    _state.update {
-                        it.copy(selectedCheckbox = currency)
-                    }
-                    _filterState.update {
-                        it.copy(currencies = currency)
+                _filterState.update {
+                    it.copy(currencies = currency)
+                }
+                bookUseCases.getUserBooks().collectLatest { bookResource ->
+                    when (bookResource) {
+                        is Resource.Success -> {
+                            _filterState.update {
+                                it.copy(currentBook = bookResource.data!!.first())
+                            }
+                        }
+
+                        else -> {}
                     }
                 }
             }

@@ -5,7 +5,6 @@ import android.hardware.biometrics.BiometricPrompt
 import android.hardware.biometrics.BiometricPrompt.AuthenticationCallback
 import android.net.Uri
 import android.os.CancellationSignal
-import com.fredy.mysavings.Util.Log
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
@@ -15,10 +14,9 @@ import com.fredy.mysavings.Feature.Data.Database.Model.UserData
 import com.fredy.mysavings.Feature.Data.Enum.AuthMethod
 import com.fredy.mysavings.Feature.Domain.Repository.AuthRepository
 import com.fredy.mysavings.Feature.Domain.Repository.SettingsRepository
-import com.fredy.mysavings.Feature.Domain.UseCases.AuthUseCases.AuthUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.UserUseCases.UserUseCases
+import com.fredy.mysavings.Util.Log
 import com.fredy.mysavings.Util.Resource
-
 import com.fredy.mysavings.ViewModels.Event.AuthEvent
 import com.google.firebase.Firebase
 import com.google.firebase.auth.AuthResult
@@ -85,21 +83,33 @@ class AuthViewModel @Inject constructor(
                         event.context,
                         event.phoneNumber
                     ).collect { result ->
-                        if (result is Resource.Success) {
-                            event.onCodeSent()
-                            storedVerificationId.update { result.data!! }
-                            _state.update {
-                                it.copy(
-                                    sendOtpResource = result,
-                                    authType = AuthMethod.None
-                                )
+                        when (result) {
+                            is Resource.Error -> {
+                                _state.update {
+                                    it.copy(
+                                        sendOtpResource = result,
+                                    )
+                                }
                             }
-                        } else {
-                            _state.update {
-                                it.copy(
-                                    sendOtpResource = result,
-                                    authType = AuthMethod.SendOTP
-                                )
+
+                            is Resource.Loading -> {
+                                _state.update {
+                                    it.copy(
+                                        sendOtpResource = result,
+                                        authType = AuthMethod.SendOTP
+                                    )
+                                }
+                            }
+
+                            is Resource.Success -> {
+                                event.onCodeSent()
+                                storedVerificationId.update { result.data!! }
+                                _state.update {
+                                    it.copy(
+                                        sendOtpResource = result,
+                                        authType = AuthMethod.None
+                                    )
+                                }
                             }
                         }
                     }

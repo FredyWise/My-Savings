@@ -9,7 +9,7 @@ plugins {
 android {
     signingConfigs {
         create("release") {
-            storeFile = file("C:\\Users\\ASUS\\OneDrive - Universitas Atma Jaya Yogyakarta\\Github\\My-Savings\\mysavingskey.jks")
+            storeFile = file("C:\\Users\\ASUS\\Downloads\\My-Savings\\mysavingskey.jks")
             storePassword = "TEDDY&#9051"
             keyPassword = "TEDDY&#9051"
             keyAlias = "mysavingskey"
@@ -78,7 +78,7 @@ dependencies {
     implementation("androidx.compose.material3:material3")
     debugImplementation("androidx.compose.ui:ui-tooling")
     // Additional UI
-    implementation("androidx.compose.foundation:foundation:1.6.1")
+    implementation("androidx.compose.foundation:foundation:1.6.5")
     // More UI elements
     implementation("com.google.android.material:material:1.11.0")
     implementation("androidx.compose.material:material-icons-extended")
@@ -90,6 +90,7 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore-ktx")
     implementation("com.google.firebase:firebase-storage-ktx")
     implementation("com.google.firebase:firebase-auth-ktx")
+    implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-messaging-ktx")
 
     // Google ml kit

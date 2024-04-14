@@ -25,7 +25,7 @@ fun isValidEmail(email: String): Boolean {
 fun isValidPhoneNumber(phoneNumber: String): Boolean {
     // Regular expression for a simple phone number format
     val isNumberLengthValid = phoneNumber.length >= 7
-    val phoneRegex = Regex("^\\+?[0-9-]+\$")
+    val phoneRegex = Regex("^\\+[0-9-]+\$")
 
     return phoneNumber.matches(phoneRegex) && isNumberLengthValid
 }

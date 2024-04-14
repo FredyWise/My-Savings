@@ -140,7 +140,7 @@ fun AccountDefaultAdditionalAppBar(
         Text(
             text = formatBalanceAmount(
                 state.account.accountAmount,
-                state.accountCurrency,
+                state.account.accountCurrency,
             ),
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,

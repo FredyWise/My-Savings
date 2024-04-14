@@ -32,6 +32,7 @@ class CurrencyViewModel @Inject constructor(
         viewModelScope.launch {
             userUseCases.getCurrentUser().collect { userData ->
                 userData.data?.let { user ->
+                    Log.i("$user")
                     _state.update {
                         it.copy(
                             userData = user

@@ -128,7 +128,7 @@ class ConvertCurrencyData(
         toCurrency: String,
         rates: Rates
     ): Double {
-        if (fromCurrency != toCurrency) {
+        if (fromCurrency != toCurrency && fromCurrency.isNotEmpty() && toCurrency.isNotEmpty()) {
             val toBaseRate = rates.getRateForCurrency(
                 toCurrency
             )?.toDouble() ?: throw IllegalArgumentException(
