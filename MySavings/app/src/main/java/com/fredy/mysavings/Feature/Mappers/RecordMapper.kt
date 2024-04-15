@@ -12,8 +12,8 @@ fun List<Record>.toTrueRecords(trueRecordComponentResult: TrueRecordComponentRes
     return this.map { record ->
         TrueRecord(
             record = record,
-            fromAccount = trueRecordComponentResult.fromAccount.single { it.accountId == record.accountIdFromFk },
-            toAccount = trueRecordComponentResult.toAccount.single { it.accountId == record.accountIdToFk },
+            fromWallet = trueRecordComponentResult.fromWallet.single { it.walletId == record.walletIdFromFk },
+            toWallet = trueRecordComponentResult.toWallet.single { it.walletId == record.walletIdToFk },
             toCategory = trueRecordComponentResult.toCategory.single { it.categoryId == record.categoryIdFk },
         )
     }

@@ -1,26 +1,15 @@
 package com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases
 
 import com.fredy.mysavings.BaseUseCaseTest
-import com.fredy.mysavings.Feature.Data.Database.Model.Account
 import com.fredy.mysavings.Feature.Data.Database.Model.Currency
-import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.ConvertCurrencyData
-import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.GetCurrencies
-import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.GetCurrencyRates
-import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.UpdateCurrency
-import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.currencyConverter
 import com.fredy.mysavings.Feature.Mappers.getRateForCurrency
 import com.fredy.mysavings.Util.Resource
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.last
-import kotlinx.coroutines.flow.lastOrNull
 import kotlinx.coroutines.runBlocking
-import org.junit.Assert.assertNotEquals
 import org.junit.Before
 import org.junit.Test
-import kotlin.test.assertContentEquals
-import kotlin.test.assertFailsWith
 
 class CurrencyUseCasesTest : BaseUseCaseTest() {
 

@@ -1,7 +1,7 @@
 package com.fredy.mysavings.Feature.Domain.UseCases.CSVUseCases
 
 import com.fredy.mysavings.Feature.Data.Database.Model.TrueRecord
-import com.fredy.mysavings.Feature.Domain.Repository.AccountRepository
+import com.fredy.mysavings.Feature.Domain.Repository.WalletRepository
 import com.fredy.mysavings.Feature.Domain.Repository.AuthRepository
 import com.fredy.mysavings.Feature.Domain.Repository.CSVRepository
 import com.fredy.mysavings.Feature.Domain.Repository.CategoryRepository
@@ -13,7 +13,6 @@ import com.fredy.mysavings.ViewModels.DBInfo
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.last
 
 data class CSVUseCases(
     val outputToCSV: OutputToCSV,
@@ -49,7 +48,7 @@ class InputFromCSV(
 class GetDBInfo(
     private val authRepository: AuthRepository,
     private val recordRepository: RecordRepository,
-    private val accountRepository: AccountRepository,
+    private val walletRepository: WalletRepository,
     private val categoryRepository: CategoryRepository
 
 ) {
@@ -57,7 +56,7 @@ class GetDBInfo(
         return flow {
             val currentUserId = authRepository.getCurrentUser()!!.firebaseUserId
             val sumOfRecord = recordRepository.getUserRecords(currentUserId).first()
-            val sumOfAccount = accountRepository.getUserAccounts(currentUserId).first().size
+            val sumOfAccount = walletRepository.getUserWallets(currentUserId).first().size
             val sumOfCategory = categoryRepository.getUserCategories(currentUserId).first().size
             val sumOfExpense =
                 sumOfRecord.sumOf { (if (isExpense(it.recordType)) 1 else 0).toInt() }

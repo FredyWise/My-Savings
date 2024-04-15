@@ -7,16 +7,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.fredy.mysavings.ViewModels.AccountViewModel
+import com.fredy.mysavings.ViewModels.WalletViewModel
 import com.fredy.mysavings.ViewModels.BookViewModel
 import com.fredy.mysavings.ViewModels.CategoryViewModel
 import com.fredy.mysavings.ViewModels.RecordViewModel
-import com.fredy.mysavings.ui.Screens.Account.AccountsScreen
+import com.fredy.mysavings.ui.Screens.Wallet.WalletsScreen
 import com.fredy.mysavings.ui.Screens.Analysis.AnalysisScreen
 import com.fredy.mysavings.ui.Screens.Category.CategoriesScreen
 import com.fredy.mysavings.ui.Screens.Record.RecordsScreen
@@ -28,7 +27,7 @@ fun HomeNavGraph(
     navController: NavHostController,
     modifier: Modifier = Modifier,
     recordViewModel: RecordViewModel,
-    accountViewModel: AccountViewModel,
+    walletViewModel: WalletViewModel,
     categoryViewModel: CategoryViewModel,
     bookViewModel: BookViewModel,
 ) {
@@ -68,7 +67,7 @@ fun HomeNavGraph(
         ) {
             val state by recordViewModel.state.collectAsStateWithLifecycle()
             val categoryState by categoryViewModel.state.collectAsStateWithLifecycle()
-            val accountState by accountViewModel.state.collectAsStateWithLifecycle()
+            val accountState by walletViewModel.state.collectAsStateWithLifecycle()
 
             AnalysisScreen(
                 rootNavController = rootNavController,
@@ -76,8 +75,8 @@ fun HomeNavGraph(
                 onEvent = recordViewModel::onEvent,
                 categoryState = categoryState,
                 categoryEvent = categoryViewModel::onEvent,
-                accountState = accountState,
-                accountEvent = accountViewModel::onEvent
+                walletState = accountState,
+                accountEvent = walletViewModel::onEvent
             )
         }
         composable(
@@ -89,14 +88,14 @@ fun HomeNavGraph(
                 fadeOut()
             },
         ) {
-            val state by accountViewModel.state.collectAsStateWithLifecycle()
+            val state by walletViewModel.state.collectAsStateWithLifecycle()
 //            val recordState by recordViewModel.state.collectAsStateWithLifecycle()
 
-            AccountsScreen(
+            WalletsScreen(
                 modifier = Modifier.padding(8.dp),
                 rootNavController = rootNavController,
                 state = state,
-                onEvent = accountViewModel::onEvent,
+                onEvent = walletViewModel::onEvent,
 //                recordState = recordState,
                 recordEvent = recordViewModel::onEvent,
             )

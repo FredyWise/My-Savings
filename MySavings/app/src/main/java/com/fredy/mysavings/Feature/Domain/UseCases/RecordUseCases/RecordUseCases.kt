@@ -1,7 +1,7 @@
 package com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases
 
 import co.yml.charts.common.extensions.isNotNull
-import com.fredy.mysavings.Feature.Data.Database.Model.Account
+import com.fredy.mysavings.Feature.Data.Database.Model.Wallet
 import com.fredy.mysavings.Feature.Data.Database.Model.Book
 import com.fredy.mysavings.Feature.Data.Database.Model.BookMap
 import com.fredy.mysavings.Feature.Data.Database.Model.Category
@@ -10,7 +10,7 @@ import com.fredy.mysavings.Feature.Data.Database.Model.RecordMap
 import com.fredy.mysavings.Feature.Data.Database.Model.TrueRecord
 import com.fredy.mysavings.Feature.Data.Enum.RecordType
 import com.fredy.mysavings.Feature.Data.Enum.SortType
-import com.fredy.mysavings.Feature.Domain.Repository.AccountRepository
+import com.fredy.mysavings.Feature.Domain.Repository.WalletRepository
 import com.fredy.mysavings.Feature.Domain.Repository.AccountWithAmountType
 import com.fredy.mysavings.Feature.Domain.Repository.AuthRepository
 import com.fredy.mysavings.Feature.Domain.Repository.BookRepository
@@ -22,9 +22,8 @@ import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.currencyConv
 import com.fredy.mysavings.Feature.Mappers.filterRecordCurrency
 import com.fredy.mysavings.Feature.Mappers.filterTrueRecordCurrency
 import com.fredy.mysavings.Feature.Mappers.toBookSortedMaps
-import com.fredy.mysavings.Feature.Mappers.toRecordSortedMaps
 import com.fredy.mysavings.Util.BalanceItem
-import com.fredy.mysavings.Util.DefaultData.deletedAccount
+import com.fredy.mysavings.Util.DefaultData.deletedWallet
 import com.fredy.mysavings.Util.DefaultData.deletedCategory
 import com.fredy.mysavings.Util.Log
 import com.fredy.mysavings.Util.Resource
@@ -84,7 +83,7 @@ class UpsertRecordItem(
         return recordRepository.upsertRecordItem(
             record.copy(
                 userIdFk = currentUserId,
-                categoryIdFk = if (record.accountIdFromFk != record.accountIdToFk) record.categoryIdFk + currentUserId else record.categoryIdFk
+                categoryIdFk = if (record.walletIdFromFk != record.walletIdToFk) record.categoryIdFk + currentUserId else record.categoryIdFk
             )
         )
     }
@@ -102,20 +101,20 @@ class UpdateRecordItemWithDeletedAccount(
     private val recordRepository: RecordRepository,
     private val authRepository: AuthRepository,
 ) {
-    suspend operator fun invoke(account: Account) {
+    suspend operator fun invoke(wallet: Wallet) {
         withContext(Dispatchers.IO) {
             val currentUser = authRepository.getCurrentUser()!!
             val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
             val records = recordRepository.getUserRecords(userId).first()
             val tempRecords = records.filter {
-                it.accountIdFromFk == account.accountId || it.accountIdToFk == account.accountId
+                it.walletIdFromFk == wallet.walletId || it.walletIdToFk == wallet.walletId
             }.map {
                 var record = it
-                if (it.accountIdFromFk == account.accountId) {
-                    record = record.copy(accountIdFromFk = deletedAccount.accountId + userId)
+                if (it.walletIdFromFk == wallet.walletId) {
+                    record = record.copy(walletIdFromFk = deletedWallet.walletId + userId)
                 }
-                if (it.accountIdToFk == account.accountId) {
-                    record = record.copy(accountIdToFk = deletedAccount.accountId + userId)
+                if (it.walletIdToFk == wallet.walletId) {
+                    record = record.copy(walletIdToFk = deletedWallet.walletId + userId)
                 }
                 record
             }
@@ -180,8 +179,8 @@ class GetRecordById(
                     record = trueRecord.record.copy(
                         recordAmount = currencyUseCases.currencyConverter(
                             trueRecord.record.recordAmount,
-                            trueRecord.toAccount.accountCurrency,
-                            trueRecord.fromAccount.accountCurrency
+                            trueRecord.toWallet.walletCurrency,
+                            trueRecord.fromWallet.walletCurrency
                         )
                     )
                 )
@@ -592,7 +591,7 @@ class GetUserCategoriesWithAmountFromSpecificTime(
 
 class GetUserAccountsWithAmountFromSpecificTime(
     private val recordRepository: RecordRepository,
-    private val accountRepository: AccountRepository,
+    private val walletRepository: WalletRepository,
     private val authRepository: AuthRepository,
     private val currencyUseCases: CurrencyUseCases,
 ) {
@@ -611,7 +610,7 @@ class GetUserAccountsWithAmountFromSpecificTime(
             Log.i(
                 "getUserAccountsWithAmountFromSpecificTime: \n$startDate\n:\n$endDate"
             )
-            val userAccounts = accountRepository.getUserAccounts(
+            val userAccounts = walletRepository.getUserWallets(
                 userId
             ).first()
 
@@ -645,27 +644,27 @@ class GetUserAccountsWithAmountFromSpecificTime(
     private suspend fun List<Record>.toAccountWithAmount(
         sortType: SortType = SortType.DESCENDING,
         userId: String,
-        userAccounts: List<Account>,
+        userWallets: List<Wallet>,
         userCurrency: String,
         useUserCurrency: Boolean,
     ): List<AccountWithAmountType> {
         val accountWithAmountMap = mutableMapOf<String, AccountWithAmountType>()
-        userAccounts.forEach { account ->
-            if (account.accountId == deletedAccount.accountId + userId && account.accountAmount == 0.0) {
+        userWallets.forEach { account ->
+            if (account.walletId == deletedWallet.walletId + userId && account.walletAmount == 0.0) {
                 return@forEach
             }
-            val currency = if (useUserCurrency) userCurrency else account.accountCurrency
-            val key = account.accountId
+            val currency = if (useUserCurrency) userCurrency else account.walletCurrency
+            val key = account.walletId
             val newAccount = AccountWithAmountType(
-                account = account.copy(accountCurrency = currency),
+                wallet = account.copy(walletCurrency = currency),
                 incomeAmount = 0.0,
                 expenseAmount = 0.0,
             )
             accountWithAmountMap[key] = newAccount
         }
         this.forEach { record ->
-            val account = userAccounts.first { it.accountId == record.accountIdFromFk }
-            val key = record.accountIdFromFk
+            val account = userWallets.first { it.walletId == record.walletIdFromFk }
+            val key = record.walletIdFromFk
 
             val existingAccount = accountWithAmountMap[key]
             if (!isTransfer(record.recordType)) {
@@ -682,17 +681,17 @@ class GetUserAccountsWithAmountFromSpecificTime(
                 val expenseAmount = if (isExpense(record.recordType)) amount else 0.0
                 if (existingAccount != null) {
                     val currency =
-                        if (useUserCurrency) userCurrency else existingAccount.account.accountCurrency
+                        if (useUserCurrency) userCurrency else existingAccount.wallet.walletCurrency
                     accountWithAmountMap[key] = existingAccount.copy(
-                        account = existingAccount.account.copy(accountCurrency = currency),
+                        wallet = existingAccount.wallet.copy(walletCurrency = currency),
                         incomeAmount = existingAccount.incomeAmount + incomeAmount,
                         expenseAmount = existingAccount.expenseAmount + expenseAmount,
                     )
 
                 } else {
-                    val currency = if (useUserCurrency) userCurrency else account.accountCurrency
+                    val currency = if (useUserCurrency) userCurrency else account.walletCurrency
                     val newAccount = AccountWithAmountType(
-                        account = account.copy(accountCurrency = currency),
+                        wallet = account.copy(walletCurrency = currency),
                         incomeAmount = incomeAmount,
                         expenseAmount = expenseAmount,
                     )
@@ -704,9 +703,9 @@ class GetUserAccountsWithAmountFromSpecificTime(
 
         val data = accountWithAmountMap.values.toList().let { value ->
             if (sortType == SortType.ASCENDING) {
-                value.sortedBy { it.account.accountName }
+                value.sortedBy { it.wallet.walletName }
             } else {
-                value.sortedByDescending { it.account.accountName }
+                value.sortedByDescending { it.wallet.walletName }
             }
         }
         return data

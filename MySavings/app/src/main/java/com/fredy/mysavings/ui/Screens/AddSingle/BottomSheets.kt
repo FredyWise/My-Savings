@@ -31,7 +31,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.fredy.mysavings.Feature.Data.Database.Model.Account
+import com.fredy.mysavings.Feature.Data.Database.Model.Wallet
 import com.fredy.mysavings.Feature.Data.Database.Model.Category
 import com.fredy.mysavings.Feature.Data.Enum.RecordType
 import com.fredy.mysavings.R
@@ -40,10 +40,10 @@ import com.fredy.mysavings.Util.formatBalanceAmount
 import com.fredy.mysavings.Util.isTransfer
 import com.fredy.mysavings.Util.DefaultData.savingsIcons
 import com.fredy.mysavings.Util.Resource
-import com.fredy.mysavings.ViewModels.AccountState
+import com.fredy.mysavings.ViewModels.WalletState
 import com.fredy.mysavings.ViewModels.CategoryMap
 import com.fredy.mysavings.ViewModels.CategoryState
-import com.fredy.mysavings.ViewModels.Event.AccountEvent
+import com.fredy.mysavings.ViewModels.Event.WalletEvent
 import com.fredy.mysavings.ViewModels.Event.CategoryEvent
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.ResourceHandler
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleButton
@@ -58,12 +58,12 @@ fun AddBottomSheet(
     onDismissModal: (Boolean) -> Unit,
     isLeading: Boolean,
     recordType: RecordType,
-    accountState: AccountState,
+    walletState: WalletState,
     categoryState: CategoryState,
-    onEventAccount: (AccountEvent) -> Unit,
+    onEventAccount: (WalletEvent) -> Unit,
     onEventCategory: (CategoryEvent) -> Unit,
-    onSelectFromAccount: (Account) -> Unit,
-    onSelectToAccount: (Account) -> Unit,
+    onSelectFromAccount: (Wallet) -> Unit,
+    onSelectToAccount: (Wallet) -> Unit,
     onSelectCategory: (Category) -> Unit,
 ) {
     ModalBottomSheet(
@@ -75,7 +75,7 @@ fun AddBottomSheet(
         },
     ) {
         if (isLeading || isTransfer(recordType)) {
-            accountState.accountResource.let { resource ->
+            walletState.walletResource.let { resource ->
                 ResourceHandler(
                     modifier = if (resource is Resource.Loading || resource.data.isNullOrEmpty()) Modifier.fillMaxHeight(
                         0.5f
@@ -86,9 +86,9 @@ fun AddBottomSheet(
                     errorMessage = resource.message ?: "",
                     onMessageClick = {
                         onEventAccount(
-                            AccountEvent.ShowDialog(
-                                Account(
-                                    accountName = ""
+                            WalletEvent.ShowDialog(
+                                Wallet(
+                                    walletName = ""
                                 )
                             )
                         )
@@ -96,16 +96,16 @@ fun AddBottomSheet(
                 ) { data ->
                     if (isLeading) {
                         AccountBottomSheet(
-                            accounts = data,
+                            wallets = data,
                             onSelectAccount = {
                                 onSelectFromAccount(it)
                                 onDismissModal(false)
                             },
                             onAddAccount = {
                                 onEventAccount(
-                                    AccountEvent.ShowDialog(
-                                        Account(
-                                            accountName = ""
+                                    WalletEvent.ShowDialog(
+                                        Wallet(
+                                            walletName = ""
                                         )
                                     )
                                 )
@@ -113,16 +113,16 @@ fun AddBottomSheet(
                         )
                     } else if (isTransfer(recordType)) {
                         AccountBottomSheet(
-                            accounts = data,
+                            wallets = data,
                             onSelectAccount = {
                                 onSelectToAccount(it)
                                 onDismissModal(false)
                             },
                             onAddAccount = {
                                 onEventAccount(
-                                    AccountEvent.ShowDialog(
-                                        Account(
-                                            accountName = ""
+                                    WalletEvent.ShowDialog(
+                                        Wallet(
+                                            walletName = ""
                                         )
                                     )
                                 )
@@ -182,8 +182,8 @@ fun AccountBottomSheet(
     modifier: Modifier = Modifier,
     textColor: Color = MaterialTheme.colorScheme.onSurface,
     backgroundColor: Color = MaterialTheme.colorScheme.surface,
-    accounts: List<Account>,
-    onSelectAccount: (Account) -> Unit,
+    wallets: List<Wallet>,
+    onSelectAccount: (Wallet) -> Unit,
     onAddAccount: () -> Unit
 ) {
     Column(Modifier.background(backgroundColor)) {
@@ -203,7 +203,7 @@ fun AccountBottomSheet(
                 horizontal = 8.dp
             )
         ) {
-            items(accounts, key = { it.accountId }) { account ->
+            items(wallets, key = { it.walletId }) { account ->
                 SimpleEntityItem(
                     modifier = Modifier
                         .clickable {
@@ -214,8 +214,8 @@ fun AccountBottomSheet(
                         .padding(
                             vertical = 4.dp
                         ),
-                    icon = account.accountIcon,
-                    iconDescription = account.accountIconDescription,
+                    icon = account.walletIcon,
+                    iconDescription = account.walletIconDescription,
                     iconModifier = Modifier
                         .size(
                             65.dp
@@ -226,20 +226,20 @@ fun AccountBottomSheet(
                     endContent = {
                         Text(
                             text = formatBalanceAmount(
-                                amount = account.accountAmount,
-                                currency = account.accountCurrency
+                                amount = account.walletAmount,
+                                currency = account.walletCurrency
                             ),
                             style = MaterialTheme.typography.headlineSmall.copy(
                                 fontSize = 20.sp
                             ),
                             color = BalanceColor(
-                                amount = account.accountAmount
+                                amount = account.walletAmount
                             ),
                         )
                     },
                 ) {
                     Text(
-                        text = account.accountName,
+                        text = account.walletName,
                         style = MaterialTheme.typography.headlineSmall,
                         color = textColor,
                         maxLines = 2,

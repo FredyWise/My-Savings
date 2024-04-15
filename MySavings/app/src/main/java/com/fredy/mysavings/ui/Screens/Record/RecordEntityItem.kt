@@ -5,7 +5,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
@@ -95,7 +94,7 @@ fun RecordEntityItem(
         ) {
             SimpleEntityItem(
                 modifier = Modifier,
-                icon = item.fromAccount.accountIcon,
+                icon = item.fromWallet.walletIcon,
                 iconModifier = Modifier
                     .size(
                         25.dp
@@ -103,11 +102,11 @@ fun RecordEntityItem(
                     .clip(
                         shape = MaterialTheme.shapes.small
                     ),
-                iconDescription = item.fromAccount.accountIconDescription,
+                iconDescription = item.fromWallet.walletIconDescription,
                 contentWeight = 0f
             ) {
                 Text(
-                    text = item.fromAccount.accountName,
+                    text = item.fromWallet.walletName,
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.Bold,
                     color = onBackgroundColor,
@@ -126,7 +125,7 @@ fun RecordEntityItem(
                 )
                 SimpleEntityItem(
                     modifier = Modifier,
-                    icon = item.toAccount.accountIcon,
+                    icon = item.toWallet.walletIcon,
                     iconModifier = Modifier
                         .size(
                             25.dp
@@ -134,11 +133,11 @@ fun RecordEntityItem(
                         .clip(
                             shape = MaterialTheme.shapes.small
                         ),
-                    iconDescription = item.toAccount.accountIconDescription,
+                    iconDescription = item.toWallet.walletIconDescription,
                     contentWeight = 0f
                 ) {
                     Text(
-                        text = item.toAccount.accountName,
+                        text = item.toWallet.walletName,
                         style = MaterialTheme.typography.bodyLarge,
                         fontWeight = FontWeight.Bold,
                         color = onBackgroundColor,

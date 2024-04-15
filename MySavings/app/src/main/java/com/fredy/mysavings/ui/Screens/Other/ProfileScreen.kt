@@ -1,7 +1,6 @@
 package com.fredy.mysavings.ui.Screens.Other
 
 import android.net.Uri
-import com.fredy.mysavings.Util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -50,9 +49,8 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.fredy.mysavings.Feature.Data.Database.Model.UserData
+import com.fredy.mysavings.Util.Log
 import com.fredy.mysavings.Util.Resource
-
-import com.fredy.mysavings.Util.isValidEmailOrPhone
 import com.fredy.mysavings.Util.isValidPassword
 import com.fredy.mysavings.ViewModels.AuthState
 import com.fredy.mysavings.ViewModels.Event.AuthEvent
@@ -100,9 +98,9 @@ fun ProfileScreen(
                 }
             },
         )
-        LaunchedEffect(key1 = state.updateResource){
-            Log.e("ProfileScreen: ${state.updateResource}", )
-            when(state.updateResource){
+        LaunchedEffect(key1 = state.updateResource) {
+            Log.e("ProfileScreen: ${state.updateResource}")
+            when (state.updateResource) {
                 is Resource.Success -> {
                     val message = state.updateResource.data.orEmpty()
                     if (message.isNotEmpty()) {
@@ -264,19 +262,33 @@ fun ProfileScreen(
             Spacer(modifier = Modifier.height(16.dp))
             Button(
                 onClick = {
-                    onEvent(
-                        AuthEvent.UpdateUserData(
-//                            email = emailOrPhone,
-                            username = username,
-                            oldPassword = oldPassword,
-                            password = newPassword,
-                            photoUrl = profilePictureUri
+                    if (isChangeCredentials) {
+                       if (isValidPassword(newPassword) && (newPassword == confirmPassword) && oldPassword.isNotEmpty()){
+                           onEvent(
+                               AuthEvent.UpdateUserData(
+                                   username = username,
+                                   oldPassword = oldPassword,
+                                   password = newPassword,
+                                   photoUrl = profilePictureUri
+                               )
+                           )
+                       }else{
+                           Toast.makeText(context,"The password are not valid",Toast.LENGTH_LONG).show()
+                       }
+                    } else {
+                        onEvent(
+                            AuthEvent.UpdateUserData(
+                                username = username,
+                                oldPassword = oldPassword,
+                                password = newPassword,
+                                photoUrl = profilePictureUri
+                            )
                         )
-                    )
+                    }
                 },
                 enabled = if (isChangeCredentials) {
-                    /*isValidEmailOrPhone(emailOrPhone) &&*/ (isValidPassword(newPassword) || newPassword.isEmpty()) && (newPassword == confirmPassword) && oldPassword.isNotEmpty()
-                } else true,
+                    newPassword.isNotEmpty() && oldPassword.isNotEmpty() && confirmPassword.isNotEmpty()
+                } else username.isNotEmpty() && username != currentUserData.username,
                 colors = ButtonDefaults.buttonColors(
                     disabledContainerColor = primaryColor.copy(
                         0.7f
@@ -295,7 +307,8 @@ fun ProfileScreen(
                             color = onPrimaryColor
                         )
                     }
-                    else ->{
+
+                    else -> {
                         Text(
                             text = "Save User Data",
                             style = MaterialTheme.typography.titleMedium,

@@ -6,11 +6,10 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.fredy.mysavings.Feature.Data.Database.Model.Account
+import com.fredy.mysavings.Feature.Data.Database.Model.Wallet
 import com.fredy.mysavings.Feature.Data.Database.Model.Category
 import com.fredy.mysavings.Feature.Data.Database.Model.Record
 import com.fredy.mysavings.Feature.Data.Enum.RecordType
-import com.fredy.mysavings.Feature.Domain.UseCases.BookUseCases.BookUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.CurrencyUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.RecordUseCases
 import com.fredy.mysavings.Util.DefaultData.transferCategory
@@ -53,12 +52,12 @@ class AddSingleRecordViewModel @Inject constructor(
                             recordId
                         ).collectLatest {
                             state = state.copy(
-                                fromAccount = it.fromAccount,
-                                toAccount = it.toAccount,
+                                fromWallet = it.fromWallet,
+                                toWallet = it.toWallet,
                                 toCategory = it.toCategory,
                                 recordId = it.record.recordId,
-                                accountIdFromFk = it.record.accountIdFromFk,
-                                accountIdToFk = it.record.accountIdToFk,
+                                accountIdFromFk = it.record.walletIdFromFk,
+                                accountIdToFk = it.record.walletIdToFk,
                                 categoryIdFk = it.record.categoryIdFk,
                                 recordDate = it.record.recordDateTime.toLocalDate(),
                                 recordTime = it.record.recordDateTime.toLocalTime(),
@@ -104,16 +103,16 @@ class AddSingleRecordViewModel @Inject constructor(
 
                 is AddRecordEvent.AccountIdFromFk -> {
                     state = state.copy(
-                        recordCurrency = event.fromAccount.accountCurrency,
-                        accountIdFromFk = event.fromAccount.accountId,
-                        fromAccount = event.fromAccount
+                        recordCurrency = event.fromWallet.walletCurrency,
+                        accountIdFromFk = event.fromWallet.walletId,
+                        fromWallet = event.fromWallet
                     )
                 }
 
                 is AddRecordEvent.AccountIdToFk -> {
                     state = state.copy(
-                        accountIdToFk = event.toAccount.accountId,
-                        toAccount = event.toAccount
+                        accountIdToFk = event.toWallet.walletId,
+                        toWallet = event.toWallet
                     )
                 }
 
@@ -171,8 +170,8 @@ class AddSingleRecordViewModel @Inject constructor(
                     viewModelScope.launch {
                         val balanceItem = currencyUseCase.convertCurrencyData(
                             calcState.number1.toDouble().absoluteValue,
-                            state.fromAccount.accountCurrency,
-                            state.toAccount.accountCurrency
+                            state.fromWallet.walletCurrency,
+                            state.toWallet.walletCurrency
                         )
                         calcState = calcState.copy(
                             number1 = balanceItem.amount.toString()
@@ -199,8 +198,8 @@ class AddSingleRecordViewModel @Inject constructor(
         )
         var calculationResult = calcState.number1.toDouble().absoluteValue
         val recordCurrency = state.recordCurrency
-        val fromAccountCurrency = state.fromAccount.accountCurrency
-        val toAccountCurrency = state.toAccount.accountCurrency
+        val fromAccountCurrency = state.fromWallet.walletCurrency
+        val toAccountCurrency = state.toWallet.walletCurrency
         val recordType = state.recordType
         val recordNotes = state.recordNotes
         val previousAmount = state.previousAmount.absoluteValue
@@ -228,7 +227,7 @@ class AddSingleRecordViewModel @Inject constructor(
             return null
         }
 
-        if ((state.fromAccount.accountAmount < difference && isExpense(recordType)) || (state.fromAccount.accountAmount < difference && isTransfer(
+        if ((state.fromWallet.walletAmount < difference && isExpense(recordType)) || (state.fromWallet.walletAmount < difference && isTransfer(
                 recordType
             ) && fromAccountCurrency == toAccountCurrency)
         ) {
@@ -253,7 +252,7 @@ class AddSingleRecordViewModel @Inject constructor(
         }
 
         if (isTransfer(recordType)) {
-            if (state.fromAccount.accountAmount < difference && fromAccountCurrency != toAccountCurrency) {
+            if (state.fromWallet.walletAmount < difference && fromAccountCurrency != toAccountCurrency) {
                 resource.update {
                     Resource.Error(
                         "Account balance is not enough"
@@ -261,7 +260,7 @@ class AddSingleRecordViewModel @Inject constructor(
                 }
                 return null
             }
-            if (state.fromAccount == state.toAccount) {
+            if (state.fromWallet == state.toWallet) {
                 resource.update {
                     Resource.Error(
                         "You Can't transfer into the same account"
@@ -284,16 +283,16 @@ class AddSingleRecordViewModel @Inject constructor(
         }
 
         if (isExpense(recordType)) {
-            state.fromAccount.accountAmount -= difference
+            state.fromWallet.walletAmount -= difference
             calculationResult = -calculationResult
         } else if (isTransfer(recordType) && fromAccountCurrency == toAccountCurrency) {
-            state.fromAccount.accountAmount -= difference
-            state.toAccount.accountAmount += difference
+            state.fromWallet.walletAmount -= difference
+            state.toWallet.walletAmount += difference
         } else if (isTransfer(recordType) && fromAccountCurrency != toAccountCurrency) {
-            state.fromAccount.accountAmount -= previousAmount
-            state.toAccount.accountAmount += difference
+            state.fromWallet.walletAmount -= previousAmount
+            state.toWallet.walletAmount += difference
         } else {
-            state.fromAccount.accountAmount += difference
+            state.fromWallet.walletAmount += difference
         }
 
         return Record(
@@ -477,9 +476,9 @@ class AddSingleRecordViewModel @Inject constructor(
 data class AddRecordState(
     val recordId: String = "",
     val accountIdFromFk: String? = null,
-    val fromAccount: Account = Account(),
+    val fromWallet: Wallet = Wallet(),
     val accountIdToFk: String? = null,
-    val toAccount: Account = Account(),
+    val toWallet: Wallet = Wallet(),
     val categoryIdFk: String? = null,
     val bookIdFk: String = "",
     val toCategory: Category = Category(),

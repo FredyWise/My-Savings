@@ -1,4 +1,4 @@
-package com.fredy.mysavings.ui.Screens.Account
+package com.fredy.mysavings.ui.Screens.Wallet
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -22,39 +22,39 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.fredy.mysavings.Feature.Data.Database.Model.Account
+import com.fredy.mysavings.Feature.Data.Database.Model.Wallet
 import com.fredy.mysavings.Util.ActionWithName
 import com.fredy.mysavings.Util.BalanceColor
 import com.fredy.mysavings.Util.formatBalanceAmount
-import com.fredy.mysavings.ViewModels.Event.AccountEvent
+import com.fredy.mysavings.ViewModels.Event.WalletEvent
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.AdvancedEntityItem
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.CustomStickyHeader
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleWarningDialog
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun AccountBody(
+fun WalletBody(
     modifier: Modifier = Modifier,
-    accounts: List<Account>,
+    wallets: List<Wallet>,
     topItem: @Composable () -> Unit = {},
-    onEvent: (AccountEvent) -> Unit,
-    onDeleteAccount: () -> Unit,
+    onEvent: (WalletEvent) -> Unit,
+    onDeleteWallet: () -> Unit,
     onEntityClick: () -> Unit,
 ) {
     var isShowWarning by remember { mutableStateOf(false) }
-    var tempAccount by remember { mutableStateOf(Account()) }
+    var tempWallet by remember { mutableStateOf(Wallet()) }
     SimpleWarningDialog(
         isShowWarning = isShowWarning,
         onDismissRequest = { isShowWarning = false },
         onSaveClicked = {
             onEvent(
-                AccountEvent.DeleteAccount(
-                    tempAccount,
-                    onDeleteAccount
+                WalletEvent.DeleteWallet(
+                    tempWallet,
+                    onDeleteWallet
                 )
             )
         },
-        warningText = "Are You Sure Want to Delete This Account?"
+        warningText = "Are You Sure Want to Delete This Wallet?"
     )
     LazyColumn(modifier = modifier) {
         item { topItem() }
@@ -63,11 +63,11 @@ fun AccountBody(
                 modifier = Modifier.background(
                     MaterialTheme.colorScheme.background
                 ),
-                title = "Accounts",
+                title = "Wallets",
                 textStyle = MaterialTheme.typography.titleLarge
             )
         }
-        items(accounts, key = { it.accountId }) { account ->
+        items(wallets, key = { it.walletId }) { account ->
             AdvancedEntityItem(
                 modifier = Modifier
                     .padding(
@@ -81,13 +81,13 @@ fun AccountBody(
                     )
                     .clickable {
                         onEntityClick()
-                        onEvent(AccountEvent.GetAccountDetail(account))
+                        onEvent(WalletEvent.GetWalletDetail(account))
                     }
                     .background(
                         MaterialTheme.colorScheme.surface
                     ),
-                icon = account.accountIcon,
-                iconDescription = account.accountIconDescription,
+                icon = account.walletIcon,
+                iconDescription = account.walletIconDescription,
                 iconModifier = Modifier
                     .size(50.dp)
                     .clip(
@@ -95,16 +95,16 @@ fun AccountBody(
                     ),
                 menuItems = listOf(
                     ActionWithName(
-                        name = "Delete Account",
+                        name = "Delete Wallet",
                         action = {
                             isShowWarning = true
-                            tempAccount = account
+                            tempWallet = account
                         },
                     ), ActionWithName(
-                        name = "Edit Account",
+                        name = "Edit Wallet",
                         action = {
                             onEvent(
-                                AccountEvent.ShowDialog(
+                                WalletEvent.ShowDialog(
                                     account
                                 )
                             )
@@ -113,7 +113,7 @@ fun AccountBody(
                 )
             ) {
                 Text(
-                    text = account.accountName,
+                    text = account.walletName,
                     style = MaterialTheme.typography.titleLarge.copy(
                         fontWeight = FontWeight.SemiBold
                     ),
@@ -123,15 +123,15 @@ fun AccountBody(
                 )
                 Text(
                     text = "Balance: " + formatBalanceAmount(
-                        amount = account.accountAmount,
-                        currency = account.accountCurrency,
+                        amount = account.walletAmount,
+                        currency = account.walletCurrency,
                         isShortenToChar = true,
                         k = false
                     ),
                     style = MaterialTheme.typography.titleLarge.copy(
                         fontWeight = FontWeight.SemiBold
                     ),
-                    color = BalanceColor(amount = account.accountAmount)
+                    color = BalanceColor(amount = account.walletAmount)
                 )
             }
         }

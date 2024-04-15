@@ -21,7 +21,6 @@ import com.fredy.mysavings.Util.formatTime
 import com.fredy.mysavings.Util.isTransfer
 import com.fredy.mysavings.ViewModels.CategoryState
 import com.fredy.mysavings.ViewModels.Event.RecordsEvent
-import com.fredy.mysavings.ui.Screens.Account.AccountDefaultAdditionalAppBar
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.DetailAppBar
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleEntityItem
 
@@ -73,8 +72,8 @@ fun CategoryDetailBottomSheet(
                         .clip(
                             shape = CircleShape
                         ),
-                    icon = item.fromAccount.accountIcon,
-                    iconDescription = item.fromAccount.accountIconDescription,
+                    icon = item.fromWallet.walletIcon,
+                    iconDescription = item.fromWallet.walletIconDescription,
                     endContent = {
                         Text(
                             text = formatTime(
@@ -87,8 +86,8 @@ fun CategoryDetailBottomSheet(
                 ) {
                     Text(
                         text = if (isTransfer(item.record.recordType)) {
-                            item.fromAccount.accountName + " -> " + item.toAccount.accountName
-                        } else item.fromAccount.accountName,
+                            item.fromWallet.walletName + " -> " + item.toWallet.walletName
+                        } else item.fromWallet.walletName,
                         color = onBackgroundColor,
                         style = MaterialTheme.typography.titleLarge,
                         maxLines = 1

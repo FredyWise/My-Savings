@@ -13,7 +13,7 @@ import com.fredy.mysavings.Feature.Domain.Repository.AccountWithAmountType
 import com.fredy.mysavings.Feature.Domain.Repository.CategoryWithAmount
 import com.fredy.mysavings.Feature.Domain.Repository.SettingsRepository
 import com.fredy.mysavings.Feature.Domain.Repository.SyncRepository
-import com.fredy.mysavings.Feature.Domain.UseCases.AccountUseCases.AccountUseCases
+import com.fredy.mysavings.Feature.Domain.UseCases.WalletUseCases.WalletUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.BookUseCases.BookUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.RecordUseCases
 import com.fredy.mysavings.Util.BalanceBar
@@ -45,7 +45,7 @@ import javax.inject.Inject
 @HiltViewModel
 class RecordViewModel @Inject constructor(
     private val recordUseCases: RecordUseCases,
-    private val accountUseCases: AccountUseCases,
+    private val walletUseCases: WalletUseCases,
     private val bookUseCases: BookUseCases,
     private val settingsRepository: SettingsRepository,
     private val syncRepository: SyncRepository,
@@ -62,7 +62,7 @@ class RecordViewModel @Inject constructor(
             async {
                 syncRepository.syncAll()
             }.await()
-            accountUseCases.getAccountsCurrencies().collect { currency ->
+            walletUseCases.getWalletsCurrencies().collect { currency ->
                 _state.update {
                     it.copy(selectedCheckbox = currency)
                 }
@@ -88,7 +88,7 @@ class RecordViewModel @Inject constructor(
         FilterState()
     )
 
-    private val _availableCurrency = accountUseCases.getAccountsCurrencies().stateIn(
+    private val _availableCurrency = walletUseCases.getWalletsCurrencies().stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(),
         emptyList()

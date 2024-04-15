@@ -4,22 +4,22 @@ import android.content.Context
 import com.fredy.mysavings.Feature.Data.APIs.CountryModels.CountryApi
 import com.fredy.mysavings.Feature.Data.APIs.CurrencyModels.CurrencyApi
 import com.fredy.mysavings.Feature.Data.CSV.CSVDao
-import com.fredy.mysavings.Feature.Data.Database.Dao.AccountDao
+import com.fredy.mysavings.Feature.Data.Database.Dao.WalletDao
 import com.fredy.mysavings.Feature.Data.Database.Dao.BookDao
 import com.fredy.mysavings.Feature.Data.Database.Dao.CategoryDao
 import com.fredy.mysavings.Feature.Data.Database.Dao.CurrencyCacheDao
 import com.fredy.mysavings.Feature.Data.Database.Dao.CurrencyDao
 import com.fredy.mysavings.Feature.Data.Database.Dao.RecordDao
 import com.fredy.mysavings.Feature.Data.Database.Dao.UserDao
-import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.AccountDataSource
+import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.WalletDataSource
 import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.BookDataSource
 import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.CategoryDataSource
 import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.CurrencyDataSource
 import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.CurrencyRatesDataSource
 import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.RecordDataSource
 import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.UserDataSource
-import com.fredy.mysavings.Feature.Domain.Repository.AccountRepository
-import com.fredy.mysavings.Feature.Domain.Repository.AccountRepositoryImpl
+import com.fredy.mysavings.Feature.Domain.Repository.WalletRepository
+import com.fredy.mysavings.Feature.Domain.Repository.WalletRepositoryImpl
 import com.fredy.mysavings.Feature.Domain.Repository.AuthRepository
 import com.fredy.mysavings.Feature.Domain.Repository.AuthRepositoryImpl
 import com.fredy.mysavings.Feature.Domain.Repository.BookRepository
@@ -103,12 +103,12 @@ object RepositoryModule {
     @Provides
     @Singleton
     fun provideAccountRepository(
-        accountDataSource: AccountDataSource,
-        accountDao: AccountDao,
+        walletDataSource: WalletDataSource,
+        walletDao: WalletDao,
         firestore: FirebaseFirestore,
-    ): AccountRepository = AccountRepositoryImpl(
-        accountDataSource,
-        accountDao,
+    ): WalletRepository = WalletRepositoryImpl(
+        walletDataSource,
+        walletDao,
         firestore,
     )
 
@@ -154,19 +154,19 @@ object RepositoryModule {
     @Singleton
     fun provideCSVRepository(
         csvDao: CSVDao,
-        accountRepository: AccountRepository,
+        walletRepository: WalletRepository,
         recordDataSource: RecordDataSource,
         categoryRepository: CategoryRepository
     ): CSVRepository = CSVRepositoryImpl(
-        csvDao, accountRepository, recordDataSource, categoryRepository
+        csvDao, walletRepository, recordDataSource, categoryRepository
     )
 
     @Provides
     @Singleton
     fun provideSyncRepository(
         @ApplicationContext context: Context,
-        accountDataSource: AccountDataSource,
-        accountDao: AccountDao,
+        walletDataSource: WalletDataSource,
+        walletDao: WalletDao,
         categoryDataSource: CategoryDataSource,
         categoryDao: CategoryDao,
         bookDataSource: BookDataSource,
@@ -176,8 +176,8 @@ object RepositoryModule {
         firebaseAuth: FirebaseAuth
     ): SyncRepository = SyncRepositoryImpl(
         context,
-        accountDataSource,
-        accountDao,
+        walletDataSource,
+        walletDao,
         categoryDataSource,
         categoryDao,
         bookDataSource,

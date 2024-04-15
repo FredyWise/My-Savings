@@ -1,4 +1,4 @@
-package com.fredy.mysavings.ui.Screens.Account
+package com.fredy.mysavings.ui.Screens.Wallet
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
@@ -19,20 +19,20 @@ import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.Util.formatBalanceAmount
 import com.fredy.mysavings.Util.formatTime
 import com.fredy.mysavings.Util.isTransfer
-import com.fredy.mysavings.ViewModels.AccountState
+import com.fredy.mysavings.ViewModels.WalletState
 import com.fredy.mysavings.ViewModels.Event.RecordsEvent
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.DetailAppBar
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleEntityItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AccountDetailBottomSheet(
+fun WalletDetailBottomSheet(
     modifier: Modifier = Modifier,
     isSheetOpen: Boolean,
     onCloseBottomSheet: (Boolean) -> Unit,
-    state: AccountState,
+    state: WalletState,
     recordEvent: (RecordsEvent) -> Unit,
-    additionalAppbar: @Composable () -> Unit = { AccountDefaultAdditionalAppBar(state) }
+    additionalAppbar: @Composable () -> Unit = { WalletDefaultAdditionalAppBar(state) }
 ) {
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
@@ -86,7 +86,7 @@ fun AccountDetailBottomSheet(
                 ) {
                     Text(
                         text = if (isTransfer(item.record.recordType)) {
-                            item.fromAccount.accountName + " -> " + item.toAccount.accountName
+                            item.fromWallet.walletName + " -> " + item.toWallet.walletName
                         } else item.toCategory.categoryName,
                         color = onBackgroundColor,
                         style = MaterialTheme.typography.titleLarge,
@@ -109,14 +109,14 @@ fun AccountDetailBottomSheet(
 }
 
 @Composable
-fun AccountDefaultAdditionalAppBar(
-    state: AccountState,
+fun WalletDefaultAdditionalAppBar(
+    state: WalletState,
     backgroundColor: Color = MaterialTheme.colorScheme.surface,
     onBackgroundColor: Color = MaterialTheme.colorScheme.onSurface,
 ) {
     SimpleEntityItem(
         modifier = Modifier.padding(8.dp),
-        icon = state.account.accountIcon,
+        icon = state.wallet.walletIcon,
         iconModifier = Modifier
             .size(
                 55.dp
@@ -124,10 +124,10 @@ fun AccountDefaultAdditionalAppBar(
             .clip(
                 shape = MaterialTheme.shapes.small
             ),
-        iconDescription = state.account.accountIconDescription
+        iconDescription = state.wallet.walletIconDescription
     ) {
         Text(
-            text = state.account.accountName,
+            text = state.wallet.walletName,
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
             color = onBackgroundColor,
@@ -139,8 +139,8 @@ fun AccountDefaultAdditionalAppBar(
         )
         Text(
             text = formatBalanceAmount(
-                state.account.accountAmount,
-                state.account.accountCurrency,
+                state.wallet.walletAmount,
+                state.wallet.walletCurrency,
             ),
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,

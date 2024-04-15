@@ -1,7 +1,7 @@
 package com.fredy.mysavings.Feature.Mappers
 
-import com.fredy.mysavings.Feature.Data.Database.Model.Account
+import com.fredy.mysavings.Feature.Data.Database.Model.Wallet
 
-fun List<Account>.getCurrencies():List<String>{
-    return this.map { it.accountCurrency }.distinct()
+fun List<Wallet>.getCurrencies():List<String>{
+    return this.map { it.walletCurrency }.distinct()
 }

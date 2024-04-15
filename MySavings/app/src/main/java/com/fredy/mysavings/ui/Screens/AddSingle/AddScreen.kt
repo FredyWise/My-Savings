@@ -44,13 +44,13 @@ import com.fredy.mysavings.R
 import com.fredy.mysavings.Util.ActionWithName
 import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.isTransfer
-import com.fredy.mysavings.ViewModels.AccountViewModel
+import com.fredy.mysavings.ViewModels.WalletViewModel
 import com.fredy.mysavings.ViewModels.AddSingleRecordViewModel
 import com.fredy.mysavings.ViewModels.CategoryViewModel
-import com.fredy.mysavings.ViewModels.Event.AccountEvent
+import com.fredy.mysavings.ViewModels.Event.WalletEvent
 import com.fredy.mysavings.ViewModels.Event.AddRecordEvent
 import com.fredy.mysavings.ViewModels.Event.CategoryEvent
-import com.fredy.mysavings.ui.Screens.Account.AccountAddDialog
+import com.fredy.mysavings.ui.Screens.Wallet.WalletAddDialog
 import com.fredy.mysavings.Util.createImageUri
 import com.fredy.mysavings.Util.detectTextFromImage
 import com.fredy.mysavings.ui.Screens.Category.CategoryAddDialog
@@ -72,13 +72,13 @@ fun AddScreen(
     navigateUp: () -> Unit,
     viewModel: AddSingleRecordViewModel = hiltViewModel(),
     categoryViewModel: CategoryViewModel = hiltViewModel(),
-    accountViewModel: AccountViewModel = hiltViewModel()
+    walletViewModel: WalletViewModel = hiltViewModel()
 ) {
     val state = viewModel.state
     val resource by viewModel.resource.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val categoryState by categoryViewModel.state.collectAsStateWithLifecycle()
-    val accountState by accountViewModel.state.collectAsStateWithLifecycle()
+    val accountState by walletViewModel.state.collectAsStateWithLifecycle()
     val calculatorState = viewModel.calcState
     val scope = rememberCoroutineScope()
     var isLeading by remember {
@@ -240,9 +240,9 @@ fun AddScreen(
             },
             isLeading = isLeading,
             recordType = state.recordType,
-            accountState = accountState,
+            walletState = accountState,
             categoryState = categoryState,
-            onEventAccount = accountViewModel::onEvent,
+            onEventAccount = walletViewModel::onEvent,
             onEventCategory = categoryViewModel::onEvent,
             onSelectFromAccount = {
                 viewModel.onEvent(
@@ -267,9 +267,9 @@ fun AddScreen(
             }
         )
     }
-        AccountAddDialog(
+        WalletAddDialog(
             state = accountState,
-            onEvent = accountViewModel::onEvent
+            onEvent = walletViewModel::onEvent
         )
 
     if (categoryState.isAddingCategory) {
@@ -307,18 +307,18 @@ fun AddScreen(
                 onClick = {
                     viewModel.onEvent(
                         AddRecordEvent.SaveRecord {
-                            accountViewModel.onEvent(
-                                AccountEvent.UpdateAccountBalance(
-                                    state.fromAccount
+                            walletViewModel.onEvent(
+                                WalletEvent.UpdateWalletBalance(
+                                    state.fromWallet
                                 )
                             )
                             if (isTransfer(
                                     state.recordType
                                 )
                             ) {
-                                accountViewModel.onEvent(
-                                    AccountEvent.UpdateAccountBalance(
-                                        state.toAccount
+                                walletViewModel.onEvent(
+                                    WalletEvent.UpdateWalletBalance(
+                                        state.toWallet
                                     )
                                 )
                             }
@@ -426,16 +426,16 @@ fun AddScreen(
                             color = MaterialTheme.colorScheme.secondary,
                             shape = MaterialTheme.shapes.small
                         ),
-                    image = state.fromAccount.accountIcon,
-                    imageDescription = state.fromAccount.accountIconDescription,
-                    imageColor = if (state.fromAccount.accountIconDescription == "") onBackground else Color.Unspecified,
+                    image = state.fromWallet.walletIcon,
+                    imageDescription = state.fromWallet.walletIconDescription,
+                    imageColor = if (state.fromWallet.walletIconDescription == "") onBackground else Color.Unspecified,
                     onClick = {
                         isLeading = true
                         scope.launch {
                             isSheetOpen = true
                         }
                     },
-                    title = state.fromAccount.accountName,
+                    title = state.fromWallet.walletName,
                     titleStyle = MaterialTheme.typography.headlineSmall.copy(
                         onBackground
                     )
@@ -472,17 +472,17 @@ fun AddScreen(
                     image = if (isTransfer(
                             state.recordType
                         )
-                    ) state.toAccount.accountIcon else state.toCategory.categoryIcon,
+                    ) state.toWallet.walletIcon else state.toCategory.categoryIcon,
                     imageDescription = if (isTransfer(
                             state.recordType
                         )
-                    ) state.toAccount.accountIconDescription else state.toCategory.categoryIconDescription,
+                    ) state.toWallet.walletIconDescription else state.toCategory.categoryIconDescription,
                     imageColor = if (state.toCategory.categoryIconDescription != "" && !isTransfer(
                             state.recordType
                         )
                     ) {
                         Color.Unspecified
-                    } else if (state.toAccount.accountIconDescription != "" && isTransfer(
+                    } else if (state.toWallet.walletIconDescription != "" && isTransfer(
                             state.recordType
                         )
                     ) {
@@ -499,7 +499,7 @@ fun AddScreen(
                     title = if (isTransfer(
                             state.recordType
                         )
-                    ) state.toAccount.accountName else state.toCategory.categoryName,
+                    ) state.toWallet.walletName else state.toCategory.categoryName,
                     titleStyle = MaterialTheme.typography.headlineSmall.copy(
                         onBackground
                     )

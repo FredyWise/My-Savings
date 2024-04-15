@@ -180,8 +180,8 @@ class InputOutputViewModel @Inject constructor(
         val uniqueAccounts = mutableSetOf<String>()
 
         for (trueRecord in trueRecords) {
-            uniqueAccounts.add(trueRecord.fromAccount.accountName)
-            uniqueAccounts.add(trueRecord.toAccount.accountName)
+            uniqueAccounts.add(trueRecord.fromWallet.walletName)
+            uniqueAccounts.add(trueRecord.toWallet.walletName)
         }
 
         return uniqueAccounts.size

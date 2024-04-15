@@ -2,18 +2,18 @@ package com.fredy.mysavings.ViewModels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.fredy.mysavings.Feature.Data.Database.Model.Account
+import com.fredy.mysavings.Feature.Data.Database.Model.Wallet
 import com.fredy.mysavings.Feature.Data.Database.Model.RecordMap
 import com.fredy.mysavings.Feature.Data.Database.Model.UserData
 import com.fredy.mysavings.Feature.Data.Enum.RecordType
 import com.fredy.mysavings.Feature.Data.Enum.SortType
-import com.fredy.mysavings.Feature.Domain.UseCases.AccountUseCases.AccountUseCases
+import com.fredy.mysavings.Feature.Domain.UseCases.WalletUseCases.WalletUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.UserUseCases.UserUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.RecordUseCases
 import com.fredy.mysavings.Util.BalanceBar
 import com.fredy.mysavings.Util.BalanceItem
 import com.fredy.mysavings.Util.Resource
-import com.fredy.mysavings.ViewModels.Event.AccountEvent
+import com.fredy.mysavings.ViewModels.Event.WalletEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -27,8 +27,8 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class AccountViewModel @Inject constructor(
-    private val accountUseCases: AccountUseCases,
+class WalletViewModel @Inject constructor(
+    private val walletUseCases: WalletUseCases,
     private val recordUseCases: RecordUseCases,
     private val userUseCases: UserUseCases,
 ) : ViewModel() {
@@ -39,9 +39,9 @@ class AccountViewModel @Inject constructor(
                     is Resource.Success -> {
                         currentUser.data?.let { user ->
                             _state.update {
-                                AccountState(
+                                WalletState(
                                     currentUser = user,
-                                    accountCurrency = user.userCurrency
+                                    walletCurrency = user.userCurrency
                                 )
                             }
                         }
@@ -63,7 +63,7 @@ class AccountViewModel @Inject constructor(
     )
 
     private val _totalAccountBalance = _updating.flatMapLatest {
-        accountUseCases.getAccountsTotalBalance()
+        walletUseCases.getWalletsTotalBalance()
     }.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(),
@@ -112,11 +112,11 @@ class AccountViewModel @Inject constructor(
     )
 
     private val _state = MutableStateFlow(
-        AccountState()
+        WalletState()
     )
 
     private val _accountResource =
-        _updating.flatMapLatest { accountUseCases.getAccountOrderedByName() }.stateIn(
+        _updating.flatMapLatest { walletUseCases.getWalletsOrderedByName() }.stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(),
             Resource.Success(emptyList())
@@ -124,7 +124,7 @@ class AccountViewModel @Inject constructor(
 
     private val _records = _state.flatMapLatest {
         recordUseCases.getUserAccountRecordsOrderedByDateTime(
-            it.account.accountId,
+            it.wallet.walletId,
             _sortType.value
         )
     }.stateIn(
@@ -167,7 +167,7 @@ class AccountViewModel @Inject constructor(
         _records
     ) { state, sortType, accountResource, balanceBar, records ->
         state.copy(
-            accountResource = accountResource,
+            walletResource = accountResource,
             recordMapsResource = records,
             balanceBar = balanceBar,
             sortType = sortType
@@ -175,127 +175,127 @@ class AccountViewModel @Inject constructor(
     }.stateIn(
         viewModelScope,
         SharingStarted.Eagerly,
-        AccountState()
+        WalletState()
     )
 
-    fun onEvent(event: AccountEvent) {
+    fun onEvent(event: WalletEvent) {
         when (event) {
-            is AccountEvent.ShowDialog -> {
+            is WalletEvent.ShowDialog -> {
                 _state.update {
                     it.copy(
-                        accountId = event.account.accountId,
-                        accountName = event.account.accountName,
-                        accountAmount = if (event.account.accountAmount != 0.0) event.account.accountAmount.toString() else "",
-                        accountCurrency = event.account.accountCurrency,
-                        accountIcon = event.account.accountIcon,
-                        accountIconDescription = event.account.accountIconDescription,
-                        isAddingAccount = true,
+                        walletId = event.wallet.walletId,
+                        walletName = event.wallet.walletName,
+                        walletAmount = if (event.wallet.walletAmount != 0.0) event.wallet.walletAmount.toString() else "",
+                        walletCurrency = event.wallet.walletCurrency,
+                        walletIcon = event.wallet.walletIcon,
+                        walletIconDescription = event.wallet.walletIconDescription,
+                        isAddingWallet = true,
                     )
                 }
             }
 
-            is AccountEvent.HideDialog -> {
+            is WalletEvent.HideDialog -> {
                 _state.update {
                     it.copy(
-                        isAddingAccount = false
+                        isAddingWallet = false
                     )
                 }
             }
 
-            is AccountEvent.DeleteAccount -> {
+            is WalletEvent.DeleteWallet -> {
                 viewModelScope.launch {
-                    accountUseCases.deleteAccount(
-                        event.account
+                    walletUseCases.deleteWallet(
+                        event.wallet
                     )
-                    recordUseCases.updateRecordItemWithDeletedAccount(event.account)
+                    recordUseCases.updateRecordItemWithDeletedAccount(event.wallet)
                     event.onDeleteEffect()
                 }
             }
 
-            is AccountEvent.SaveAccount -> {
-                val accountId = state.value.accountId
-                val accountName = state.value.accountName
-                val accountAmount = state.value.accountAmount
-                val accountCurrency = state.value.accountCurrency
-                val accountIcon = state.value.accountIcon
-                val accountIconDescription = state.value.accountIconDescription
+            is WalletEvent.SaveWallet -> {
+                val accountId = state.value.walletId
+                val accountName = state.value.walletName
+                val accountAmount = state.value.walletAmount
+                val accountCurrency = state.value.walletCurrency
+                val accountIcon = state.value.walletIcon
+                val accountIconDescription = state.value.walletIconDescription
 
                 if (accountName.isBlank() || accountAmount.isBlank() || accountCurrency.isBlank() || accountIconDescription.isBlank()) {
                     return
                 }
 
-                val account = Account(
-                    accountId = accountId,
-                    accountName = accountName,
-                    accountAmount = accountAmount.toDouble(),
-                    accountCurrency = accountCurrency,
-                    accountIcon = accountIcon,
-                    accountIconDescription = accountIconDescription,
+                val wallet = Wallet(
+                    walletId = accountId,
+                    walletName = accountName,
+                    walletAmount = accountAmount.toDouble(),
+                    walletCurrency = accountCurrency,
+                    walletIcon = accountIcon,
+                    walletIconDescription = accountIconDescription,
                 )
                 viewModelScope.launch {
-                    accountUseCases.upsertAccount(
-                        account
+                    walletUseCases.upsertWallet(
+                        wallet
                     )
                 }
                 _state.update {
-                    AccountState(
+                    WalletState(
                         currentUser = it.currentUser,
-                        accountCurrency = it.currentUser.userCurrency,
+                        walletCurrency = it.currentUser.userCurrency,
                     )
                 }
             }
 
-            is AccountEvent.AccountName -> {
+            is WalletEvent.WalletName -> {
                 _state.update {
                     it.copy(
-                        accountName = event.accountName
+                        walletName = event.accountName
                     )
                 }
             }
 
-            is AccountEvent.AccountAmount -> {
+            is WalletEvent.WalletAmount -> {
                 _state.update {
                     it.copy(
-                        accountAmount = event.amount
+                        walletAmount = event.amount
                     )
                 }
             }
 
-            is AccountEvent.AccountCurrency -> {
+            is WalletEvent.WalletCurrency -> {
                 _state.update {
                     it.copy(
-                        accountCurrency = event.currency
+                        walletCurrency = event.currency
                     )
                 }
             }
 
-            is AccountEvent.AccountIcon -> {
+            is WalletEvent.WalletIcon -> {
                 _state.update {
                     it.copy(
-                        accountIcon = event.icon,
-                        accountIconDescription = event.iconDescription
+                        walletIcon = event.icon,
+                        walletIconDescription = event.iconDescription
                     )
                 }
             }
 
-            is AccountEvent.UpdateAccountBalance -> {
+            is WalletEvent.UpdateWalletBalance -> {
                 viewModelScope.launch {
-                    accountUseCases.upsertAccount(
-                        event.account
+                    walletUseCases.upsertWallet(
+                        event.wallet
                     )
-                    onEvent(AccountEvent.UpdateAccount)
+                    onEvent(WalletEvent.UpdateWallet)
                 }
             }
 
-            is AccountEvent.GetAccountDetail -> {
+            is WalletEvent.GetWalletDetail -> {
                 _state.update {
                     it.copy(
-                        account = event.account
+                        wallet = event.wallet
                     )
                 }
             }
 
-            is AccountEvent.SearchAccount -> {
+            is WalletEvent.SearchWallet -> {
                 _state.update {
                     it.copy(
                         searchQuery = event.searchQuery
@@ -303,30 +303,30 @@ class AccountViewModel @Inject constructor(
                 }
             }
 
-            is AccountEvent.SortAccount -> {
+            is WalletEvent.SortWallet -> {
                 _sortType.value = event.sortType
             }
 
-            is AccountEvent.UpdateAccount -> {
+            is WalletEvent.UpdateWallet -> {
                 _updating.update { it.not() }
             }
         }
     }
 }
 
-data class AccountState(
+data class WalletState(
     val currentUser: UserData = UserData(),
-    val accountResource: Resource<List<Account>> = Resource.Loading(),
+    val walletResource: Resource<List<Wallet>> = Resource.Loading(),
     val recordMapsResource: Resource<List<RecordMap>> = Resource.Loading(),
-    val account: Account = Account(),
+    val wallet: Wallet = Wallet(),
     val balanceBar: BalanceBar = BalanceBar(),
-    val accountId: String = "",
-    val accountName: String = "",
-    val accountAmount: String = "",
-    val accountCurrency: String = "",
-    val accountIcon: Int = 0,
-    val accountIconDescription: String = "",
-    val isAddingAccount: Boolean = false,
+    val walletId: String = "",
+    val walletName: String = "",
+    val walletAmount: String = "",
+    val walletCurrency: String = "",
+    val walletIcon: Int = 0,
+    val walletIconDescription: String = "",
+    val isAddingWallet: Boolean = false,
     val searchQuery: String = "",
     val isSearching: Boolean = false,
     val sortType: SortType = SortType.ASCENDING

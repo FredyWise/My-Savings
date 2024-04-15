@@ -1,8 +1,7 @@
-package com.fredy.mysavings.ui.Screens.Account
+package com.fredy.mysavings.ui.Screens.Wallet
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -16,50 +15,50 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.fredy.mysavings.Util.DefaultData.accountIcons
-import com.fredy.mysavings.ViewModels.AccountState
-import com.fredy.mysavings.ViewModels.Event.AccountEvent
+import com.fredy.mysavings.Util.DefaultData.walletIcons
+import com.fredy.mysavings.ViewModels.WalletState
+import com.fredy.mysavings.ViewModels.Event.WalletEvent
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.ChooseIcon
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.CurrencyDropdown
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleDialog
 
 @Composable
-fun AccountAddDialog(
-    state: AccountState,
-    onEvent: (AccountEvent) -> Unit,
+fun WalletAddDialog(
+    state: WalletState,
+    onEvent: (WalletEvent) -> Unit,
     onSaveEffect: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
-    if (state.isAddingAccount) {
+    if (state.isAddingWallet) {
         SimpleDialog(
             modifier = modifier,
             dismissOnSave = false,
-            title = if (state.accountId.isEmpty()) "Add New Account" else "Update Account",
-            onDismissRequest = { onEvent(AccountEvent.HideDialog) },
+            title = if (state.walletId.isEmpty()) "Add New Wallet" else "Update Wallet",
+            onDismissRequest = { onEvent(WalletEvent.HideDialog) },
             onSaveClicked = {
-                if (state.accountName.isBlank() || state.accountAmount.isBlank() || state.accountCurrency.isBlank() || state.accountIconDescription.isBlank()) {
+                if (state.walletName.isBlank() || state.walletAmount.isBlank() || state.walletCurrency.isBlank() || state.walletIconDescription.isBlank()) {
                     Toast.makeText(
                         context,
                         "Please Fill All Required Information!!",
                         Toast.LENGTH_LONG
                     ).show()
                 } else {
-                    onEvent(AccountEvent.SaveAccount)
+                    onEvent(WalletEvent.SaveWallet)
                     onSaveEffect()
-                    onEvent(AccountEvent.HideDialog)
+                    onEvent(WalletEvent.HideDialog)
                 }
             },
         ) {
             TextField(
-                value = state.accountAmount,
+                value = state.walletAmount,
                 onValueChange = {
                     if (it.isEmpty() || it.matches(
                             Regex("^(\\d+\\.?\\d*|\\d*\\.\\d+)$")
                         )
                     ) {
                         onEvent(
-                            AccountEvent.AccountAmount(
+                            WalletEvent.WalletAmount(
                                 it
                             )
                         )
@@ -79,7 +78,7 @@ fun AccountAddDialog(
                         KeyboardActions.Default.onNext
                     }),
                 label = {
-                    Text(text = if (state.accountId.isEmpty()) "Initial Amount" else "Current Amount")
+                    Text(text = if (state.walletId.isEmpty()) "Initial Amount" else "Current Amount")
                 },
                 placeholder = {
                     Text(text = "0")
@@ -87,20 +86,20 @@ fun AccountAddDialog(
             )
             CurrencyDropdown(
                 menuModifier = Modifier,
-                selectedText = state.accountCurrency,
+                selectedText = state.walletCurrency,
                 onClick = {
                     onEvent(
-                        AccountEvent.AccountCurrency(
+                        WalletEvent.WalletCurrency(
                             it
                         )
                     )
                 },
             )
             TextField(
-                value = state.accountName,
+                value = state.walletName,
                 onValueChange = {
                     onEvent(
-                        AccountEvent.AccountName(it)
+                        WalletEvent.WalletName(it)
                     )
                 },
                 modifier = Modifier
@@ -120,20 +119,20 @@ fun AccountAddDialog(
                     Text(text = "Name")
                 },
                 placeholder = {
-                    Text(text = "Account Name")
+                    Text(text = "Wallet Name")
                 },
             )
             ChooseIcon(
-                icons = accountIcons, onClick = {
+                icons = walletIcons, onClick = {
                     onEvent(
-                        AccountEvent.AccountIcon(
+                        WalletEvent.WalletIcon(
                             icon = it.image,
                             iconDescription = it.description,
                         )
                     )
                 }, iconModifier = Modifier.clip(
                     shape = CircleShape
-                ), selectedIcon = state.accountIcon
+                ), selectedIcon = state.walletIcon
             )
         }
     }

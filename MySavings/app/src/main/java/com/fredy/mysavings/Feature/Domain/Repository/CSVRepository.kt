@@ -4,21 +4,15 @@ package com.fredy.mysavings.Feature.Domain.Repository
 import com.fredy.mysavings.Util.Log
 import com.fredy.mysavings.Feature.Data.CSV.CSVDao
 import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.RecordDataSource
-import com.fredy.mysavings.Feature.Data.Database.Model.Account
+import com.fredy.mysavings.Feature.Data.Database.Model.Wallet
 import com.fredy.mysavings.Feature.Data.Database.Model.Category
 import com.fredy.mysavings.Feature.Data.Database.Model.Record
 import com.fredy.mysavings.Feature.Data.Database.Model.TrueRecord
 
-import com.fredy.mysavings.Util.DefaultData.deletedAccount
+import com.fredy.mysavings.Util.DefaultData.deletedWallet
 import com.fredy.mysavings.Util.DefaultData.deletedCategory
-import com.fredy.mysavings.Util.isExpense
-import com.fredy.mysavings.Util.isIncome
-import com.fredy.mysavings.Util.isTransfer
-import com.fredy.mysavings.ViewModels.DBInfo
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
 
 
@@ -39,7 +33,7 @@ interface CSVRepository {
 
 class CSVRepositoryImpl(
     private val csvDao: CSVDao,
-    private val accountRepository: AccountRepository,
+    private val walletRepository: WalletRepository,
     private val recordDataSource: RecordDataSource,
     private val categoryRepository: CategoryRepository,
 ) : CSVRepository {
@@ -64,8 +58,8 @@ class CSVRepositoryImpl(
             val trueRecords = csvDao.inputFromCSV(directory, delimiter)
             val trueRecord = trueRecords.map {
                 Log.e("inputFromCSVRepo: $it")
-                val accountIdFromFk = findAccountId(it.fromAccount, currentUserId)
-                val accountIdToFk = findAccountId(it.toAccount, currentUserId)
+                val accountIdFromFk = findAccountId(it.fromWallet, currentUserId)
+                val accountIdToFk = findAccountId(it.toWallet, currentUserId)
                 val categoryIdFk = findCategoryId(it.toCategory, currentUserId)
                 val recordId = findRecordId(it.record, currentUserId)
                 it.constructRecordsWithIds(
@@ -93,8 +87,8 @@ class CSVRepositoryImpl(
         return this.copy(
             record = record.copy(
                 recordId = recordId,
-                accountIdFromFk = accountIdFromFk,
-                accountIdToFk = accountIdToFk,
+                walletIdFromFk = accountIdFromFk,
+                walletIdToFk = accountIdToFk,
                 categoryIdFk = categoryIdFk,
                 userIdFk = userIdFk
             )
@@ -115,22 +109,22 @@ class CSVRepositoryImpl(
                 recordType == record.recordType
     }
 
-    private suspend fun findAccountId(account: Account, userId: String): String {
-        val accounts = accountRepository.getUserAccounts(userId).first()
-        val accountId = if (account.accountId != deletedAccount.accountId + userId) {
+    private suspend fun findAccountId(wallet: Wallet, userId: String): String {
+        val accounts = walletRepository.getUserWallets(userId).first()
+        val accountId = if (wallet.walletId != deletedWallet.walletId + userId) {
             accounts.firstOrNull {
-                it.compareTo(account)
-            }?.accountId ?: accountRepository.upsertAccount(account.copy(userIdFk = userId))
+                it.compareTo(wallet)
+            }?.walletId ?: walletRepository.upsertWallet(wallet.copy(userIdFk = userId))
         } else {
-            deletedAccount.accountId + userId
+            deletedWallet.walletId + userId
         }
         return accountId
     }
 
-    private fun Account.compareTo(account: Account): Boolean {
-        return accountName == account.accountName &&
-                accountCurrency == account.accountCurrency &&
-                accountIconDescription == account.accountIconDescription
+    private fun Wallet.compareTo(wallet: Wallet): Boolean {
+        return walletName == wallet.walletName &&
+                walletCurrency == wallet.walletCurrency &&
+                walletIconDescription == wallet.walletIconDescription
     }
 
     private suspend fun findCategoryId(category: Category, userId: String): String {

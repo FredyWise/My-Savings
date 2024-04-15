@@ -9,11 +9,10 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.fredy.mysavings.Util.BalanceColor
 import com.fredy.mysavings.Util.RecordTypeColor
-import com.fredy.mysavings.ViewModels.AccountState
+import com.fredy.mysavings.ViewModels.WalletState
 import com.fredy.mysavings.ViewModels.CategoryState
-import com.fredy.mysavings.ViewModels.Event.AccountEvent
+import com.fredy.mysavings.ViewModels.Event.WalletEvent
 import com.fredy.mysavings.ViewModels.Event.CategoryEvent
 import com.fredy.mysavings.ViewModels.Event.RecordsEvent
 import com.fredy.mysavings.ViewModels.RecordState
@@ -30,8 +29,8 @@ fun AnalysisScreen(
     onEvent: (RecordsEvent) -> Unit,
     categoryState: CategoryState,
     categoryEvent: (CategoryEvent) -> Unit,
-    accountState: AccountState,
-    accountEvent: (AccountEvent) -> Unit,
+    walletState: WalletState,
+    accountEvent: (WalletEvent) -> Unit,
 ) {
     val navController = rememberNavController()
     val currentBackStack by navController.currentBackStackEntryAsState()
@@ -46,7 +45,7 @@ fun AnalysisScreen(
                 navController.navigateSingleTopTo(
                     screen.route
                 )
-                if (currentScreen == screen && screen != NavigationRoute.AnalysisAccount) {
+                if (currentScreen == screen && screen != NavigationRoute.AnalysisWallet) {
                     onEvent(
                         RecordsEvent.ToggleRecordType
                     )
@@ -61,7 +60,7 @@ fun AnalysisScreen(
             onEvent = onEvent,
             categoryState = categoryState,
             categoryEvent = categoryEvent,
-            accountState = accountState,
+            walletState = walletState,
             accountEvent = accountEvent
         )
 

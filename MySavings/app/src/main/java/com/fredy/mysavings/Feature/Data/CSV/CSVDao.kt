@@ -5,7 +5,7 @@ import android.os.Build
 import android.os.storage.StorageManager
 import androidx.core.content.ContextCompat.getSystemService
 import com.fredy.mysavings.Feature.Data.Database.Converter.TimestampConverter
-import com.fredy.mysavings.Feature.Data.Database.Model.Account
+import com.fredy.mysavings.Feature.Data.Database.Model.Wallet
 import com.fredy.mysavings.Feature.Data.Database.Model.Category
 import com.fredy.mysavings.Feature.Data.Database.Model.Record
 import com.fredy.mysavings.Feature.Data.Database.Model.TrueRecord
@@ -150,17 +150,17 @@ class CSVDaoImpl(private val context: Context) : CSVDao {
             recordNotes = recordNotes,
         )
 
-        val fromAccount = Account(
-            accountName = senderAccountName,
-            accountCurrency = senderAccountCurrency,
-            accountIconDescription = senderAccountIconDescription
+        val fromWallet = Wallet(
+            walletName = senderAccountName,
+            walletCurrency = senderAccountCurrency,
+            walletIconDescription = senderAccountIconDescription
         )
-        val toAccount =
-            if (recipientAccountName != null && recipientAccountIconDescription != null) Account(
-                accountName = recipientAccountName,
-                accountCurrency = recipientAccountCurrency,
-                accountIconDescription = recipientAccountIconDescription
-            ) else Account()
+        val toWallet =
+            if (recipientAccountName != null && recipientAccountIconDescription != null) Wallet(
+                walletName = recipientAccountName,
+                walletCurrency = recipientAccountCurrency,
+                walletIconDescription = recipientAccountIconDescription
+            ) else Wallet()
         val toCategory =
             if (recipientCategoryName != null && recipientCategoryIconDescription != null) Category(
                 categoryName = recipientCategoryName,
@@ -169,8 +169,8 @@ class CSVDaoImpl(private val context: Context) : CSVDao {
 
         return TrueRecord(
             record,
-            fromAccount,
-            toAccount,
+            fromWallet,
+            toWallet,
             toCategory
         )
     }
@@ -225,12 +225,12 @@ class CSVDaoImpl(private val context: Context) : CSVDao {
         val values = listOf(
             formatDateYearTime(trueRecord.record.recordDateTime).replace(",", ""),
             trueRecord.record.recordType.name,
-            trueRecord.fromAccount.accountName + "-" + trueRecord.fromAccount.accountCurrency,
-            trueRecord.fromAccount.accountIconDescription,
+            trueRecord.fromWallet.walletName + "-" + trueRecord.fromWallet.walletCurrency,
+            trueRecord.fromWallet.walletIconDescription,
             trueRecord.toCategory.categoryName,
             trueRecord.toCategory.categoryIconDescription,
-            trueRecord.toAccount.accountName + "-" + trueRecord.toAccount.accountCurrency,
-            trueRecord.toAccount.accountIconDescription,
+            trueRecord.toWallet.walletName + "-" + trueRecord.toWallet.walletCurrency,
+            trueRecord.toWallet.walletIconDescription,
             formatBalanceAmount(
                 trueRecord.record.recordAmount,
                 trueRecord.record.recordCurrency

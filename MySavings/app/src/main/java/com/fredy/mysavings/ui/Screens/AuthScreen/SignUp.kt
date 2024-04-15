@@ -246,7 +246,7 @@ fun SignUp(
                     ).show()
                 }
             },
-            enabled = email.isNotEmpty() && username.isNotEmpty() && password.isNotEmpty(),
+            enabled = email.isNotEmpty() && username.isNotEmpty() && password.isNotEmpty() && confirmPassword.isNotEmpty(),
             colors = ButtonDefaults.buttonColors(
                 disabledContainerColor = primaryColor.copy(
                     0.7f

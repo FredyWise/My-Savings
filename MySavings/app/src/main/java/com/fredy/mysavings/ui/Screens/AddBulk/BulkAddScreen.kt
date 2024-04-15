@@ -46,11 +46,11 @@ import com.fredy.mysavings.R
 import com.fredy.mysavings.Util.createImageUri
 import com.fredy.mysavings.Util.detectTextFromImage
 import com.fredy.mysavings.Util.isTransfer
-import com.fredy.mysavings.ViewModels.AccountViewModel
+import com.fredy.mysavings.ViewModels.WalletViewModel
 import com.fredy.mysavings.ViewModels.AddSingleRecordViewModel
 import com.fredy.mysavings.ViewModels.CategoryViewModel
 import com.fredy.mysavings.ViewModels.Event.AddRecordEvent
-import com.fredy.mysavings.ui.Screens.Account.AccountAddDialog
+import com.fredy.mysavings.ui.Screens.Wallet.WalletAddDialog
 import com.fredy.mysavings.ui.Screens.AddSingle.AddBottomSheet
 import com.fredy.mysavings.ui.Screens.AddSingle.TextBox
 import com.fredy.mysavings.ui.Screens.Category.CategoryAddDialog
@@ -72,12 +72,12 @@ fun BulkAddScreen(
     navigateUp: () -> Unit,
     viewModel: AddSingleRecordViewModel = hiltViewModel(),
     categoryViewModel: CategoryViewModel = hiltViewModel(),
-    accountViewModel: AccountViewModel = hiltViewModel()
+    walletViewModel: WalletViewModel = hiltViewModel()
 
 ) {
     val state = viewModel.state
     val categoryState by categoryViewModel.state.collectAsStateWithLifecycle()
-    val accountState by accountViewModel.state.collectAsStateWithLifecycle()
+    val accountState by walletViewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val uri = createImageUri(
@@ -174,9 +174,9 @@ fun BulkAddScreen(
             },
             isLeading = isLeading,
             recordType = state.recordType,
-            accountState = accountState,
+            walletState = accountState,
             categoryState = categoryState,
-            onEventAccount = accountViewModel::onEvent,
+            onEventAccount = walletViewModel::onEvent,
             onEventCategory = categoryViewModel::onEvent,
             onSelectFromAccount = {
                 viewModel.onEvent(
@@ -201,9 +201,9 @@ fun BulkAddScreen(
             }
         )
     }
-    AccountAddDialog(
+    WalletAddDialog(
         state = accountState,
-        onEvent = accountViewModel::onEvent
+        onEvent = walletViewModel::onEvent
     )
     CategoryAddDialog(
         state = categoryState,
@@ -297,15 +297,15 @@ fun BulkAddScreen(
                             color = MaterialTheme.colorScheme.secondary,
                             shape = MaterialTheme.shapes.small
                         ),
-                    image = state.fromAccount.accountIcon,
-                    imageColor = if (state.fromAccount.accountIconDescription == "") onBackground else Color.Unspecified,
+                    image = state.fromWallet.walletIcon,
+                    imageColor = if (state.fromWallet.walletIconDescription == "") onBackground else Color.Unspecified,
                     onClick = {
                         isLeading = true
                         scope.launch {
                             isSheetOpen = true
                         }
                     },
-                    title = state.fromAccount.accountName,
+                    title = state.fromWallet.walletName,
                     titleStyle = MaterialTheme.typography.headlineSmall.copy(
                         onBackground
                     )
@@ -342,13 +342,13 @@ fun BulkAddScreen(
                     image = if (isTransfer(
                             state.recordType
                         )
-                    ) state.toAccount.accountIcon else state.toCategory.categoryIcon,
+                    ) state.toWallet.walletIcon else state.toCategory.categoryIcon,
                     imageColor = if (state.toCategory.categoryIconDescription != "" && !isTransfer(
                             state.recordType
                         )
                     ) {
                         Color.Unspecified
-                    } else if (state.toAccount.accountIconDescription != "" && isTransfer(
+                    } else if (state.toWallet.walletIconDescription != "" && isTransfer(
                             state.recordType
                         )
                     ) {
@@ -365,7 +365,7 @@ fun BulkAddScreen(
                     title = if (isTransfer(
                             state.recordType
                         )
-                    ) state.toAccount.accountName else state.toCategory.categoryName,
+                    ) state.toWallet.walletName else state.toCategory.categoryName,
                     titleStyle = MaterialTheme.typography.headlineSmall.copy(
                         onBackground
                     )

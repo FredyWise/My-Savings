@@ -2,16 +2,16 @@ package com.fredy.mysavings.Feature.Domain.Repository
 
 import android.content.Context
 import co.yml.charts.common.extensions.isNotNull
-import com.fredy.mysavings.Feature.Data.Database.Dao.AccountDao
+import com.fredy.mysavings.Feature.Data.Database.Dao.WalletDao
 import com.fredy.mysavings.Feature.Data.Database.Dao.BookDao
 import com.fredy.mysavings.Feature.Data.Database.Dao.CategoryDao
 import com.fredy.mysavings.Feature.Data.Database.Dao.RecordDao
-import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.AccountDataSource
+import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.WalletDataSource
 import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.BookDataSource
 import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.CategoryDataSource
 import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.RecordDataSource
 import com.fredy.mysavings.Util.DefaultData.defaultBook
-import com.fredy.mysavings.Util.DefaultData.deletedAccount
+import com.fredy.mysavings.Util.DefaultData.deletedWallet
 import com.fredy.mysavings.Util.DefaultData.deletedCategory
 import com.fredy.mysavings.Util.DefaultData.transferCategory
 import com.fredy.mysavings.Util.Log
@@ -33,8 +33,8 @@ interface SyncRepository {
 
 class SyncRepositoryImpl @Inject constructor(
     private val context: Context,
-    private val accountDataSource: AccountDataSource,
-    private val accountDao: AccountDao,
+    private val walletDataSource: WalletDataSource,
+    private val walletDao: WalletDao,
     private val categoryDataSource: CategoryDataSource,
     private val categoryDao: CategoryDao,
     private val bookDataSource: BookDataSource,
@@ -78,17 +78,17 @@ class SyncRepositoryImpl @Inject constructor(
             val currentUser = firebaseAuth.currentUser
             currentUser?.let {
                 val userId = if (currentUser.isNotNull()) currentUser.uid else ""
-                accountDataSource.upsertAccountItem(
-                    deletedAccount.copy(
-                        accountId = deletedAccount.accountId + userId,
+                walletDataSource.upsertWalletItem(
+                    deletedWallet.copy(
+                        walletId = deletedWallet.walletId + userId,
                         userIdFk = userId
                     )
                 )
-                val accounts = accountDataSource.getUserAccounts(userId).first()
+                val accounts = walletDataSource.getUserWallets(userId).first()
                 if (withDelete) {
-                    accountDao.deleteAllAccounts()
+                    walletDao.deleteAllWallets()
                 }
-                accountDao.upsertAllAccountItem(accounts)
+                walletDao.upsertAllWalletItem(accounts)
             }
             Log.i("syncAccounts: Finish")
         }

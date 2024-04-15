@@ -60,7 +60,7 @@ class CSVUseCasesTest:BaseUseCaseTest() {
         val dbInfo = getDBInfo().first()
 
         val sumOfRecord = fakeRecordRepository.getUserRecords(currentUserId).first()
-        val sumOfAccount = fakeAccountRepository.getUserAccounts(currentUserId).first().size
+        val sumOfAccount = fakeAccountRepository.getUserWallets(currentUserId).first().size
         val sumOfCategory = fakeCategoryRepository.getUserCategories(currentUserId).first().size
         val sumOfExpense =
             sumOfRecord.sumOf { (if (isExpense(it.recordType)) 1 else 0).toInt() }

@@ -1,4 +1,4 @@
-package com.fredy.mysavings.ui.Screens.Account
+package com.fredy.mysavings.ui.Screens.Wallet
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -21,67 +20,40 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.fredy.mysavings.Feature.Data.Database.Model.Account
+import com.fredy.mysavings.Feature.Data.Database.Model.Wallet
 import com.fredy.mysavings.R
-import com.fredy.mysavings.ViewModels.AccountState
-import com.fredy.mysavings.ViewModels.Event.AccountEvent
+import com.fredy.mysavings.ViewModels.WalletState
+import com.fredy.mysavings.ViewModels.Event.WalletEvent
 import com.fredy.mysavings.ViewModels.Event.RecordsEvent
-import com.fredy.mysavings.ViewModels.RecordState
-import com.fredy.mysavings.ui.NavigationComponent.Navigation.NavigationRoute
-import com.fredy.mysavings.ui.Screens.Record.RecordDialog
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.ResourceHandler
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SearchBar
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleButton
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AccountsScreen(
+fun WalletsScreen(
     modifier: Modifier = Modifier,
     rootNavController: NavHostController,
-    state: AccountState,
-    onEvent: (AccountEvent) -> Unit,
-//    recordState: RecordState,
+    state: WalletState,
+    onEvent: (WalletEvent) -> Unit,
     recordEvent: (RecordsEvent) -> Unit,
 ) {
-//    recordState.trueRecord?.let {
-//        RecordDialog(
-//            trueRecord = it,
-//            onSaveClicked = { record ->
-//                recordEvent(
-//                    RecordsEvent.DeleteRecord(
-//                        record
-//                    )
-//                )
-//            },
-//            onDismissDialog = {
-//                recordEvent(
-//                    RecordsEvent.HideDialog
-//                )
-//            },
-//            onEdit = {
-//                rootNavController.navigate(
-//                    "${NavigationRoute.Add.route}?recordId=${it.record.recordId}"
-//                )
-//            },
-//        )
-//    }
     var isSheetOpen by rememberSaveable {
         mutableStateOf(false)
     }
-    AccountDetailBottomSheet(
+    WalletDetailBottomSheet(
         isSheetOpen = isSheetOpen,
         onCloseBottomSheet = { isSheetOpen = it },
         state = state,
         recordEvent = recordEvent
     )
-    AccountAddDialog(
+    WalletAddDialog(
         state = state, onEvent = onEvent, onSaveEffect = {
             recordEvent(RecordsEvent.UpdateRecord)
         }
     )
 
     Column(modifier = modifier) {
-        AccountHeader(
+        WalletHeader(
             modifier = Modifier
                 .height(150.dp)
                 .shadow(elevation = 4.dp, shape = MaterialTheme.shapes.large, clip = true)
@@ -102,7 +74,7 @@ fun AccountsScreen(
             searchText = state.searchQuery,
             onValueChange = {
                 onEvent(
-                    AccountEvent.SearchAccount(
+                    WalletEvent.SearchWallet(
                         it
                     )
                 )
@@ -116,22 +88,22 @@ fun AccountsScreen(
             },
         )
 
-        state.accountResource.let { resource ->
+        state.walletResource.let { resource ->
             ResourceHandler(
                 resource = resource,
-                nullOrEmptyMessage = "You Didn't Have Any Account Yet",
+                nullOrEmptyMessage = "You Didn't Have Any Wallet Yet",
                 isNullOrEmpty = { it.isNullOrEmpty() },
                 errorMessage = resource.message ?: "",
                 onMessageClick = {
                     onEvent(
-                        AccountEvent.ShowDialog(
-                            Account(accountName = "")
+                        WalletEvent.ShowDialog(
+                            Wallet(walletName = "")
                         )
                     )
                 },
             ) { data ->
-                AccountBody(
-                    accounts = data,
+                WalletBody(
+                    wallets = data,
                     topItem = {
                         SimpleButton(
                             modifier = Modifier
@@ -152,12 +124,12 @@ fun AccountsScreen(
                             imageColor = MaterialTheme.colorScheme.onBackground,
                             onClick = {
                                 onEvent(
-                                    AccountEvent.ShowDialog(
-                                        Account(accountName = "")
+                                    WalletEvent.ShowDialog(
+                                        Wallet(walletName = "")
                                     )
                                 )
                             },
-                            title = "Add New Account",
+                            title = "Add New Wallet",
                             titleStyle = MaterialTheme.typography.titleLarge.copy(
                                 MaterialTheme.colorScheme.onBackground
                             )
@@ -167,7 +139,7 @@ fun AccountsScreen(
                     onEntityClick = {
                         isSheetOpen = true
                     },
-                    onDeleteAccount = {
+                    onDeleteWallet = {
                         recordEvent(RecordsEvent.UpdateRecord)
                     }
                 )

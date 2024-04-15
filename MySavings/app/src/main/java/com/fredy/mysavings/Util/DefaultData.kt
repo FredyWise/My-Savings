@@ -1,7 +1,7 @@
 package com.fredy.mysavings.Util
 
 import android.graphics.Color
-import com.fredy.mysavings.Feature.Data.Database.Model.Account
+import com.fredy.mysavings.Feature.Data.Database.Model.Wallet
 import com.fredy.mysavings.Feature.Data.Database.Model.Book
 import com.fredy.mysavings.Feature.Data.Database.Model.Category
 import com.fredy.mysavings.Feature.Data.Enum.RecordType
@@ -43,9 +43,9 @@ object DefaultData {
     val bookInitIcon = SavingsIcon(R.drawable.ic_book, "Book")
     val transferIcon = SavingsIcon(R.drawable.ic_exchange, "Transfer")
     val categoryInitIcon = SavingsIcon(R.drawable.ic_category_foreground, "Category")
-    val accountInitIcon = SavingsIcon(R.drawable.ic_wallet_foreground, "Account")
+    val walletInitIcon = SavingsIcon(R.drawable.ic_wallet_foreground, "Account")
 
-    val accountIcons = listOf(
+    val walletIcons = listOf(
         SavingsIcon(R.drawable.ic_mastercard, "Master Card"),
         SavingsIcon(R.drawable.ic_visa, "Visa"),
         SavingsIcon(R.drawable.ic_alipay, "Alipay"),
@@ -78,10 +78,10 @@ object DefaultData {
         SavingsIcon(R.drawable.ic_voucher, "Voucher"),
     )
 
-    val allSavingsIcons = accountIcons + categoryIcons
+    val allSavingsIcons = walletIcons + categoryIcons
 
 
-    val accountIconsMap = accountIcons.plus(accountInitIcon).associateBy { it.description }
+    val accountIconsMap = walletIcons.plus(walletInitIcon).associateBy { it.description }
     val categoryIconsMap =
         categoryIcons.plus(categoryInitIcon).plus(transferIcon).associateBy { it.description }
     val savingsIcons = accountIconsMap.plus(categoryIconsMap)
@@ -105,11 +105,11 @@ object DefaultData {
         categoryType = RecordType.Transfer
     )
 
-    val deletedAccount = Account(
-        accountId = "deletedAccount",
+    val deletedWallet = Wallet(
+        walletId = "deletedAccount",
         userIdFk = "0",
-        accountName = "Deleted Account",
-        accountCurrency = "USD"
+        walletName = "Deleted Account",
+        walletCurrency = "USD"
     )
 
     val defaultBook = Book()

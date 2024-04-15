@@ -11,8 +11,8 @@ import java.time.LocalDateTime
 data class Record(
     @PrimaryKey
     var recordId: String = "",
-    val accountIdFromFk: String = "",
-    val accountIdToFk: String = "",
+    val walletIdFromFk: String = "",
+    val walletIdToFk: String = "",
     val categoryIdFk: String = "",
     val userIdFk: String = "",
     val bookIdFk: String = "",

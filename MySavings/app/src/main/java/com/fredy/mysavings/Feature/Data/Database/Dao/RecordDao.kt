@@ -41,7 +41,7 @@ interface RecordDao {
     ): Flow<List<TrueRecord>>
 
     @Query(
-        "SELECT * FROM record " + "WHERE userIdFk = :userId AND (accountIdFromFk = :accountId OR accountIdToFk = :accountId) " + "ORDER BY recordTimestamp DESC"
+        "SELECT * FROM record " + "WHERE userIdFk = :userId AND (walletIdFromFk = :accountId OR walletIdToFk = :accountId) " + "ORDER BY recordTimestamp DESC"
     )
     fun getUserAccountRecordsOrderedByDateTime(
         userId: String, accountId: String

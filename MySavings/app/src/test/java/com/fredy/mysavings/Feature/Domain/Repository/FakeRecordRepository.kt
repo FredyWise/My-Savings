@@ -88,7 +88,7 @@ class FakeRecordRepository : RecordRepository {
         sortType: SortType,
     ): Flow<List<RecordMap>> {
         return flow {
-            emit(trueRecords.filter { it.record.userIdFk == userId && (it.record.accountIdToFk == accountId || it.record.accountIdFromFk == accountId) }
+            emit(trueRecords.filter { it.record.userIdFk == userId && (it.record.walletIdToFk == accountId || it.record.walletIdFromFk == accountId) }
                 .toRecordSortedMaps())
         }
     }

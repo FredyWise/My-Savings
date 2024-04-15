@@ -2,7 +2,7 @@ package com.fredy.mysavings.Feature.Domain.Repository
 
 import com.fredy.mysavings.Feature.Data.Database.Dao.RecordDao
 import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.RecordDataSource
-import com.fredy.mysavings.Feature.Data.Database.Model.Account
+import com.fredy.mysavings.Feature.Data.Database.Model.Wallet
 import com.fredy.mysavings.Feature.Data.Database.Model.Category
 import com.fredy.mysavings.Feature.Data.Database.Model.Record
 import com.fredy.mysavings.Feature.Data.Database.Model.TrueRecord
@@ -254,7 +254,7 @@ data class CategoryWithAmount(
 )
 
 data class AccountWithAmountType(
-    val account: Account = Account(),
+    val wallet: Wallet = Wallet(),
     val expenseAmount: Double = 0.0,
     val incomeAmount: Double = 0.0
 )

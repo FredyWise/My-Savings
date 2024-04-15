@@ -46,7 +46,7 @@ object Graph {
 val analysisScreens = listOf(
     NavigationRoute.AnalysisOverview,
     NavigationRoute.AnalysisFlow,
-    NavigationRoute.AnalysisAccount,
+    NavigationRoute.AnalysisWallet,
 )
 
 val drawerScreens = listOf(
@@ -177,10 +177,10 @@ sealed class NavigationRoute(
         iconNot = Icons.Outlined.LineAxis
     )
 
-    object AnalysisAccount: NavigationRoute(
-        route = "analytics Account",
-        title = "Account",
-        contentDescription = "Go to Account Screen",
+    object AnalysisWallet: NavigationRoute(
+        route = "analytics Wallet",
+        title = "Wallet",
+        contentDescription = "Go to Wallet Screen",
         icon = Icons.Default.BarChart,
         iconNot = Icons.Outlined.BarChart
     )

@@ -198,7 +198,7 @@ fun RecordDialog(
                                     surface
                                 )
                                 .padding(8.dp),
-                            icon = trueRecord.fromAccount.accountIcon,
+                            icon = trueRecord.fromWallet.walletIcon,
                             iconModifier = Modifier
                                 .size(
                                     35.dp
@@ -206,11 +206,11 @@ fun RecordDialog(
                                 .clip(
                                     shape = MaterialTheme.shapes.medium
                                 ),
-                            iconDescription = trueRecord.fromAccount.accountIconDescription,
+                            iconDescription = trueRecord.fromWallet.walletIconDescription,
                             contentWeight = 0.3f,
                         ) {
                             Text(
-                                text = trueRecord.fromAccount.accountName,
+                                text = trueRecord.fromWallet.walletName,
                                 color = onSurface
                             )
                         }
@@ -242,7 +242,7 @@ fun RecordDialog(
                                         surface
                                     )
                                     .padding(8.dp),
-                                icon = trueRecord.toAccount.accountIcon,
+                                icon = trueRecord.toWallet.walletIcon,
                                 iconModifier = Modifier
                                     .size(
                                         35.dp
@@ -250,11 +250,11 @@ fun RecordDialog(
                                     .clip(
                                         shape = MaterialTheme.shapes.medium
                                     ),
-                                iconDescription = trueRecord.toAccount.accountId,
+                                iconDescription = trueRecord.toWallet.walletId,
                                 contentWeight = 0.3f,
                             ) {
                                 Text(
-                                    text = trueRecord.toAccount.accountName,
+                                    text = trueRecord.toWallet.walletName,
                                     color = onSurface
                                 )
                             }

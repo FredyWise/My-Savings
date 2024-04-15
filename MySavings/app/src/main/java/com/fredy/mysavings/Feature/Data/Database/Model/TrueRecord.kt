@@ -6,13 +6,13 @@ import androidx.room.Relation
 data class TrueRecord(
     @Embedded val record: Record = Record(),
     @Relation(
-        parentColumn = "accountIdFromFk",
-        entityColumn = "accountId"
-    ) val fromAccount: Account = Account(),
+        parentColumn = "walletIdFromFk",
+        entityColumn = "walletId"
+    ) val fromWallet: Wallet = Wallet(),
     @Relation(
-        parentColumn = "accountIdToFk",
-        entityColumn = "accountId"
-    ) val toAccount: Account = Account(),
+        parentColumn = "walletIdToFk",
+        entityColumn = "walletId"
+    ) val toWallet: Wallet = Wallet(),
     @Relation(
         parentColumn = "categoryIdFk",
         entityColumn = "categoryId"
@@ -20,8 +20,8 @@ data class TrueRecord(
 ) {
     fun doesMatchSearchQuery(query: String): Boolean {
         return record.doesMatchSearchQuery(query) ||
-                fromAccount.doesMatchSearchQuery(query) ||
-                toAccount.doesMatchSearchQuery(query) ||
+                fromWallet.doesMatchSearchQuery(query) ||
+                toWallet.doesMatchSearchQuery(query) ||
                 toCategory.doesMatchSearchQuery(query)
     }
 

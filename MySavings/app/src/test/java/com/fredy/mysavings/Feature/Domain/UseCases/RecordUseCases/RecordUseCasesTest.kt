@@ -1,7 +1,6 @@
 package com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases
 
 import com.fredy.mysavings.BaseUseCaseTest
-import com.fredy.mysavings.Feature.Data.Database.Model.Book
 import com.fredy.mysavings.Feature.Data.Database.Model.Record
 import com.fredy.mysavings.Feature.Data.Enum.RecordType
 import com.fredy.mysavings.Feature.Data.Enum.SortType
@@ -12,9 +11,7 @@ import com.google.firebase.Timestamp
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.last
-import kotlinx.coroutines.flow.lastOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertNotEquals
@@ -100,8 +97,8 @@ class RecordUseCasesTest : BaseUseCaseTest() {
         val recordId = "testing"
         val record = Record(
             recordId = recordId,
-            accountIdFromFk = "testAccountId",
-            accountIdToFk = "testAccountId",
+            walletIdFromFk = "testAccountId",
+            walletIdToFk = "testAccountId",
             categoryIdFk = "testCategoryId",
             userIdFk = currentUserId,
             recordTimestamp = Timestamp.now(),
@@ -123,8 +120,8 @@ class RecordUseCasesTest : BaseUseCaseTest() {
         val recordId = "testing"
         val oldRecord = Record(
             recordId = recordId,
-            accountIdFromFk = "testAccountId",
-            accountIdToFk = "testAccountId",
+            walletIdFromFk = "testAccountId",
+            walletIdToFk = "testAccountId",
             categoryIdFk = "testCategoryId",
             userIdFk = currentUserId,
             recordTimestamp = Timestamp.now(),
@@ -138,8 +135,8 @@ class RecordUseCasesTest : BaseUseCaseTest() {
 
         val record = Record(
             recordId = recordId,
-            accountIdFromFk = "testAccountId",
-            accountIdToFk = "testAccountId",
+            walletIdFromFk = "testAccountId",
+            walletIdToFk = "testAccountId",
             categoryIdFk = "testCategoryId",
             userIdFk = currentUserId,
             recordTimestamp = Timestamp.now(),
@@ -163,8 +160,8 @@ class RecordUseCasesTest : BaseUseCaseTest() {
             val recordId = "testing"
             val record = Record(
                 recordId = recordId,
-                accountIdFromFk = "testAccountIdFrom",
-                accountIdToFk = "testAccountIdTo",
+                walletIdFromFk = "testAccountIdFrom",
+                walletIdToFk = "testAccountIdTo",
                 categoryIdFk = "testCategoryId",
                 userIdFk = currentUserId,
                 recordTimestamp = Timestamp.now(),
@@ -189,8 +186,8 @@ class RecordUseCasesTest : BaseUseCaseTest() {
             val recordId = "testing"
             val record = Record(
                 recordId = recordId,
-                accountIdFromFk = "testAccountIdFrom",
-                accountIdToFk = "testAccountIdTo",
+                walletIdFromFk = "testAccountIdFrom",
+                walletIdToFk = "testAccountIdTo",
                 categoryIdFk = "testCategoryId",
                 userIdFk = currentUserId,
                 recordTimestamp = Timestamp.now(),
@@ -212,8 +209,8 @@ class RecordUseCasesTest : BaseUseCaseTest() {
         val recordId = "testing"
         val record = Record(
             recordId = recordId,
-            accountIdFromFk = "testAccountIdFrom",
-            accountIdToFk = "testAccountIdTo",
+            walletIdFromFk = "testAccountIdFrom",
+            walletIdToFk = "testAccountIdTo",
             categoryIdFk = "testCategoryId",
             userIdFk = currentUserId,
             recordTimestamp = Timestamp.now(),
@@ -433,7 +430,7 @@ class RecordUseCasesTest : BaseUseCaseTest() {
         assertTrue(accountsResource is Resource.Success)
         val accounts = (accountsResource as Resource.Success).data!!
         assertEquals(
-            fakeAccountRepository.getUserAccounts(
+            fakeAccountRepository.getUserWallets(
                 currentUserId,
             ).last().size, accounts.size
         )

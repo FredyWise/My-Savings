@@ -41,6 +41,7 @@ sealed interface AuthEvent {
     object BioAuth: AuthEvent
 
     object SignOut: AuthEvent
+
     object GetCurrentUser: AuthEvent
 
 

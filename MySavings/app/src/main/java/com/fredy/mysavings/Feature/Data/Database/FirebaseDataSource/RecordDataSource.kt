@@ -2,7 +2,7 @@ package com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource
 
 import androidx.lifecycle.MutableLiveData
 import com.fredy.mysavings.Feature.Data.Database.Converter.TimestampConverter
-import com.fredy.mysavings.Feature.Data.Database.Model.Account
+import com.fredy.mysavings.Feature.Data.Database.Model.Wallet
 import com.fredy.mysavings.Feature.Data.Database.Model.Category
 import com.fredy.mysavings.Feature.Data.Database.Model.Record
 import com.fredy.mysavings.Feature.Data.Database.Model.TrueRecord
@@ -77,7 +77,7 @@ interface RecordDataSource {
         endDate: LocalDateTime
     ): Flow<List<Record>>
 
-    suspend fun getUserAccounts(userId: String): List<Account>
+    suspend fun getUserAccounts(userId: String): List<Wallet>
     suspend fun getUserCategories(userId: String): List<Category>
 }
 
@@ -383,22 +383,22 @@ class RecordDataSourceImpl @Inject constructor(
         }
     }
 
-    private val _accounts = MutableLiveData<List<Account>>()
+    private val _accounts = MutableLiveData<List<Wallet>>()
     private val _categories = MutableLiveData<List<Category>>()
 
 
     override suspend fun getUserAccounts(
         userId: String
-    ): List<Account> {
+    ): List<Wallet> {
         return (Firebase.firestore.collection(
             "account"
         ).whereEqualTo(
             "userIdFk", userId
-        ).get().await().toObjects<Account>() + Firebase.firestore.collection(
+        ).get().await().toObjects<Wallet>() + Firebase.firestore.collection(
             "account"
         ).whereEqualTo(
             "userIdFk", "0"
-        ).get().await().toObjects<Account>())
+        ).get().await().toObjects<Wallet>())
     }
 
     override suspend fun getUserCategories(
@@ -419,13 +419,13 @@ class RecordDataSourceImpl @Inject constructor(
         withContext(Dispatchers.IO) {
             val fromAccountDeferred = async {
                 Firebase.firestore.collection("account").document(
-                    record.accountIdFromFk
+                    record.walletIdFromFk
                 ).get().await()
             }
 
             val toAccountDeferred = async {
                 Firebase.firestore.collection("account").document(
-                    record.accountIdToFk
+                    record.walletIdToFk
                 ).get().await()
             }
 
@@ -437,8 +437,8 @@ class RecordDataSourceImpl @Inject constructor(
 
             TrueRecord(
                 record = record,
-                fromAccount = fromAccountDeferred.await().toObject<Account>()!!,
-                toAccount = toAccountDeferred.await().toObject<Account>()!!,
+                fromWallet = fromAccountDeferred.await().toObject<Wallet>()!!,
+                toWallet = toAccountDeferred.await().toObject<Wallet>()!!,
                 toCategory = toCategoryDeferred.await().toObject<Category>()!!
             )
         }
@@ -461,16 +461,16 @@ class RecordDataSourceImpl @Inject constructor(
             }
 
             TrueRecordComponentResult(
-                fromAccount = fromAccountDeferred.await(),
-                toAccount = toAccountDeferred.await(),
+                fromWallet = fromAccountDeferred.await(),
+                toWallet = toAccountDeferred.await(),
                 toCategory = toCategoryDeferred.await()
             )
         }
     }
 
     data class TrueRecordComponentResult(
-        val fromAccount: List<Account>,
-        val toAccount: List<Account>,
+        val fromWallet: List<Wallet>,
+        val toWallet: List<Wallet>,
         val toCategory: List<Category>,
     )
 

@@ -1,7 +1,7 @@
 package com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource
 
 import com.fredy.mysavings.Util.Log
-import com.fredy.mysavings.Feature.Data.Database.Model.Account
+import com.fredy.mysavings.Feature.Data.Database.Model.Wallet
 
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.snapshots
@@ -12,38 +12,38 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
-interface AccountDataSource {
-    suspend fun upsertAccountItem(account: Account)
-    suspend fun deleteAccountItem(account: Account)
-    suspend fun getAccount(accountId: String): Account
-    suspend fun getUserAccounts(userId: String): Flow<List<Account>>
+interface WalletDataSource {
+    suspend fun upsertWalletItem(wallet: Wallet)
+    suspend fun deleteWalletItem(wallet: Wallet)
+    suspend fun getWallet(accountId: String): Wallet
+    suspend fun getUserWallets(userId: String): Flow<List<Wallet>>
 }
 
 
-class AccountDataSourceImpl @Inject constructor(
+class WalletDataSourceImpl @Inject constructor(
     private val firestore: FirebaseFirestore,
-) : AccountDataSource {
+) : WalletDataSource {
     private val accountCollection = firestore.collection(
         "account"
     )
 
-    override suspend fun upsertAccountItem(
-        account: Account
+    override suspend fun upsertWalletItem(
+        wallet: Wallet
     ) {
         accountCollection.document(
-            account.accountId
+            wallet.walletId
         ).set(
-            account
+            wallet
         )
     }
 
-    override suspend fun deleteAccountItem(account: Account) {
-        accountCollection.document(account.accountId).delete()
+    override suspend fun deleteWalletItem(wallet: Wallet) {
+        accountCollection.document(wallet.walletId).delete()
     }
 
-    override suspend fun getAccount(accountId: String): Account {
+    override suspend fun getWallet(accountId: String): Wallet {
         return try {
-            accountCollection.document(accountId).get().await().toObject<Account>()
+            accountCollection.document(accountId).get().await().toObject<Wallet>()
                 ?: throw Exception(
                     "Account Not Found"
                 )
@@ -53,7 +53,7 @@ class AccountDataSourceImpl @Inject constructor(
         }
     }
 
-    override suspend fun getUserAccounts(userId: String): Flow<List<Account>> {
+    override suspend fun getUserWallets(userId: String): Flow<List<Wallet>> {
         return try {
             val querySnapshot = accountCollection
                 .whereEqualTo("userIdFk", userId)

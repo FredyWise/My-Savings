@@ -1,6 +1,6 @@
 package com.fredy.mysavings
 
-import com.fredy.mysavings.Feature.Data.Database.Model.Account
+import com.fredy.mysavings.Feature.Data.Database.Model.Wallet
 import com.fredy.mysavings.Feature.Data.Database.Model.Book
 import com.fredy.mysavings.Feature.Data.Database.Model.Category
 import com.fredy.mysavings.Feature.Data.Database.Model.Currency
@@ -8,7 +8,7 @@ import com.fredy.mysavings.Feature.Data.Database.Model.Record
 import com.fredy.mysavings.Feature.Data.Database.Model.TrueRecord
 import com.fredy.mysavings.Feature.Data.Database.Model.UserData
 import com.fredy.mysavings.Feature.Data.Enum.RecordType
-import com.fredy.mysavings.Feature.Domain.Repository.FakeAccountRepository
+import com.fredy.mysavings.Feature.Domain.Repository.FakeWalletRepository
 import com.fredy.mysavings.Feature.Domain.Repository.FakeAuthRepository
 import com.fredy.mysavings.Feature.Domain.Repository.FakeBookRepository
 import com.fredy.mysavings.Feature.Domain.Repository.FakeCSVRepository
@@ -18,7 +18,7 @@ import com.fredy.mysavings.Feature.Domain.Repository.FakeRecordRepository
 import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.CurrencyUseCases
 import com.fredy.mysavings.Util.BalanceItem
 import com.fredy.mysavings.Util.DefaultData
-import com.fredy.mysavings.Util.DefaultData.deletedAccount
+import com.fredy.mysavings.Util.DefaultData.deletedWallet
 import com.fredy.mysavings.Util.DefaultData.deletedCategory
 import com.fredy.mysavings.Util.DefaultData.transferCategory
 import com.fredy.mysavings.Util.Log
@@ -36,7 +36,7 @@ import kotlin.random.Random
 
 abstract class BaseUseCaseTest {
 
-    protected lateinit var fakeAccountRepository: FakeAccountRepository
+    protected lateinit var fakeAccountRepository: FakeWalletRepository
     protected lateinit var fakeCategoryRepository: FakeCategoryRepository
     protected lateinit var fakeBookRepository: FakeBookRepository
     protected lateinit var fakeCurrencyRepository: FakeCurrencyRepository
@@ -69,26 +69,26 @@ abstract class BaseUseCaseTest {
 
     @Before
     fun fakeAccountRepositorySetUp() {
-        fakeAccountRepository = FakeAccountRepository()
+        fakeAccountRepository = FakeWalletRepository()
 
-        val accountsToInsert = mutableListOf<Account>()
+        val accountsToInsert = mutableListOf<Wallet>()
         ('a'..'z').forEachIndexed { index, c ->
             accountsToInsert.add(
-                Account(
-                    accountId = "Account${index + 1}",
+                Wallet(
+                    walletId = "Account${index + 1}",
                     userIdFk = currentUserId,
-                    accountName = "Account $c",
-                    accountAmount = (index + 1) * 10000.0,
-                    accountCurrency = if (index % 2 == 0) "USD" else "EUR",
-                    accountIcon = index,
-                    accountIconDescription = "Icon $c"
+                    walletName = "Account $c",
+                    walletAmount = (index + 1) * 10000.0,
+                    walletCurrency = if (index % 2 == 0) "USD" else "EUR",
+                    walletIcon = index,
+                    walletIconDescription = "Icon $c"
                 )
             )
         }
-        accountsToInsert.add(deletedAccount)
+        accountsToInsert.add(deletedWallet)
         accountsToInsert.shuffle()
         runBlocking {
-            accountsToInsert.forEach { fakeAccountRepository.upsertAccount(it) }
+            accountsToInsert.forEach { fakeAccountRepository.upsertWallet(it) }
         }
     }
 
@@ -188,15 +188,15 @@ abstract class BaseUseCaseTest {
     fun fakeRecordRepositorySetUp() {
         runBlocking {
             fakeRecordRepository = FakeRecordRepository()
-            val accounts = fakeAccountRepository.getUserAccounts(currentUserId).first()
+            val accounts = fakeAccountRepository.getUserWallets(currentUserId).first()
             val categories = fakeCategoryRepository.getUserCategories(currentUserId).first()
             val recordsToInsert = mutableListOf<Record>()
             val trueRecordToInsert = mutableListOf<TrueRecord>()
             ('a'..'y').forEachIndexed { index, c ->
                 val record = Record(
                     recordId = "Record${index + 1}",
-                    accountIdFromFk = accounts[index].accountId,
-                    accountIdToFk = accounts[index + 1].accountId,
+                    walletIdFromFk = accounts[index].walletId,
+                    walletIdToFk = accounts[index + 1].walletId,
                     categoryIdFk = categories[index + 1].categoryId,
                     userIdFk = currentUserId,
                     bookIdFk = bookTestId,
@@ -212,8 +212,8 @@ abstract class BaseUseCaseTest {
                 trueRecordToInsert.add(
                     TrueRecord(
                         record,
-                        accounts.find { it.accountId == record.accountIdFromFk }!!,
-                        accounts.find { it.accountId == record.accountIdToFk }!!,
+                        accounts.find { it.walletId == record.walletIdFromFk }!!,
+                        accounts.find { it.walletId == record.walletIdToFk }!!,
                         categories.find { it.categoryId == record.categoryIdFk }!!
                     )
                 )
@@ -226,14 +226,14 @@ abstract class BaseUseCaseTest {
     fun fakeCSVRepositorySetUp() {
         runBlocking {
             fakeCSVRepository = FakeCSVRepository()
-            val accounts = fakeAccountRepository.getUserAccounts(currentUserId).first()
+            val accounts = fakeAccountRepository.getUserWallets(currentUserId).first()
             val categories = fakeCategoryRepository.getUserCategories(currentUserId).first()
             val trueRecordToInsert = mutableListOf<TrueRecord>()
             ('a'..'y').forEachIndexed { index, c ->
                 val record = Record(
                     recordId = "Record${index + 1}",
-                    accountIdFromFk = accounts[index].accountId,
-                    accountIdToFk = accounts[index + 1].accountId,
+                    walletIdFromFk = accounts[index].walletId,
+                    walletIdToFk = accounts[index + 1].walletId,
                     categoryIdFk = categories[index + 1].categoryId,
                     userIdFk = currentUserId,
                     recordTimestamp = randomTimestamp(),
@@ -245,8 +245,8 @@ abstract class BaseUseCaseTest {
                 trueRecordToInsert.add(
                     TrueRecord(
                         record,
-                        accounts.find { it.accountId == record.accountIdFromFk }!!,
-                        accounts.find { it.accountId == record.accountIdToFk }!!,
+                        accounts.find { it.walletId == record.walletIdFromFk }!!,
+                        accounts.find { it.walletId == record.walletIdToFk }!!,
                         categories.find { it.categoryId == record.categoryIdFk }!!
                     )
                 )

@@ -5,9 +5,9 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.fredy.mysavings.ViewModels.AccountState
+import com.fredy.mysavings.ViewModels.WalletState
 import com.fredy.mysavings.ViewModels.CategoryState
-import com.fredy.mysavings.ViewModels.Event.AccountEvent
+import com.fredy.mysavings.ViewModels.Event.WalletEvent
 import com.fredy.mysavings.ViewModels.Event.CategoryEvent
 import com.fredy.mysavings.ViewModels.Event.RecordsEvent
 import com.fredy.mysavings.ViewModels.RecordState
@@ -25,8 +25,8 @@ fun AnalysisNavGraph(
     onEvent: (RecordsEvent) -> Unit,
     categoryState: CategoryState,
     categoryEvent: (CategoryEvent) -> Unit,
-    accountState: AccountState,
-    accountEvent: (AccountEvent) -> Unit,
+    walletState: WalletState,
+    accountEvent: (WalletEvent) -> Unit,
 ) {
     NavHost(
         navController = navController,
@@ -53,12 +53,12 @@ fun AnalysisNavGraph(
         }
 
         composable(
-            route = NavigationRoute.AnalysisAccount.route
+            route = NavigationRoute.AnalysisWallet.route
         ) {
             AnalysisAccount(
                 state = state,
                 onEvent = onEvent,
-                accountState = accountState,
+                walletState = walletState,
                 accountEvent = accountEvent
             )
         }

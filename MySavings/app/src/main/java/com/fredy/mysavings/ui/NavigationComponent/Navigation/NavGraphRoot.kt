@@ -2,7 +2,6 @@ package com.fredy.mysavings.ui.NavigationComponent.Navigation
 
 import BulkAddScreen
 import android.widget.Toast
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
@@ -28,11 +27,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
 import com.fredy.mysavings.Util.Log
-import com.fredy.mysavings.ViewModels.AccountViewModel
+import com.fredy.mysavings.ViewModels.WalletViewModel
 import com.fredy.mysavings.ViewModels.AuthViewModel
 import com.fredy.mysavings.ViewModels.BookViewModel
 import com.fredy.mysavings.ViewModels.CurrencyViewModel
-import com.fredy.mysavings.ViewModels.Event.AccountEvent
+import com.fredy.mysavings.ViewModels.Event.WalletEvent
 import com.fredy.mysavings.ViewModels.Event.AuthEvent
 import com.fredy.mysavings.ViewModels.Event.RecordsEvent
 import com.fredy.mysavings.ViewModels.InputOutputViewModel
@@ -83,7 +82,7 @@ fun NavGraphRoot(
                 },
             ) { entry ->
                 val recordViewModel = entry.sharedViewModel<RecordViewModel>(navController)
-                val accountViewModel = entry.sharedViewModel<AccountViewModel>(navController)
+                val walletViewModel = entry.sharedViewModel<WalletViewModel>(navController)
                 val bookViewModel = entry.sharedViewModel<BookViewModel>(navController)
                 val currencyViewModel = entry.sharedViewModel<CurrencyViewModel>(navController)
                 val state by authViewModel.state.collectAsStateWithLifecycle()
@@ -91,7 +90,7 @@ fun NavGraphRoot(
                 MainScreen(
                     rootNavController = navController,
                     recordViewModel = recordViewModel,
-                    accountViewModel = accountViewModel,
+                    walletViewModel = walletViewModel,
                     bookViewModel = bookViewModel,
                     signOut = {
                         authViewModel.onEvent(
@@ -205,7 +204,7 @@ fun NavGraphRoot(
                 },
             ) { entry ->
                 val recordViewModel = entry.sharedViewModel<RecordViewModel>(navController)
-                val accountViewModel = entry.sharedViewModel<AccountViewModel>(navController)
+                val walletViewModel = entry.sharedViewModel<WalletViewModel>(navController)
                 val currencyViewModel = entry.sharedViewModel<CurrencyViewModel>(navController)
                 val state by currencyViewModel.state.collectAsStateWithLifecycle()
                 CurrencyScreen(
@@ -214,7 +213,7 @@ fun NavGraphRoot(
                     state = state,
                     onEvent = currencyViewModel::onEvent,
                     updateMainScreen = {
-                        accountViewModel.onEvent(AccountEvent.UpdateAccount)
+                        walletViewModel.onEvent(WalletEvent.UpdateWallet)
                         recordViewModel.onEvent(RecordsEvent.UpdateRecord)
                     }
                 )

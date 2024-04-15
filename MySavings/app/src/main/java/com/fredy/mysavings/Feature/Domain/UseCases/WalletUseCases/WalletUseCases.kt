@@ -1,14 +1,14 @@
-package com.fredy.mysavings.Feature.Domain.UseCases.AccountUseCases
+package com.fredy.mysavings.Feature.Domain.UseCases.WalletUseCases
 
 import co.yml.charts.common.extensions.isNotNull
-import com.fredy.mysavings.Feature.Data.Database.Model.Account
-import com.fredy.mysavings.Feature.Domain.Repository.AccountRepository
+import com.fredy.mysavings.Feature.Data.Database.Model.Wallet
+import com.fredy.mysavings.Feature.Domain.Repository.WalletRepository
 import com.fredy.mysavings.Feature.Domain.Repository.AuthRepository
 import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.CurrencyUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.currencyConverter
 import com.fredy.mysavings.Feature.Mappers.getCurrencies
 import com.fredy.mysavings.Util.BalanceItem
-import com.fredy.mysavings.Util.DefaultData.deletedAccount
+import com.fredy.mysavings.Util.DefaultData.deletedWallet
 import com.fredy.mysavings.Util.Log
 import com.fredy.mysavings.Util.Resource
 import kotlinx.coroutines.Dispatchers
@@ -18,55 +18,55 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
-data class AccountUseCases(
-    val upsertAccount: UpsertAccount,
-    val deleteAccount: DeleteAccount,
-    val getAccount: GetAccount,
-    val getAccountOrderedByName: GetAccounts,
-    val getAccountsTotalBalance: GetAccountsTotalBalance,
-    val getAccountsCurrencies: GetAccountsCurrencies,
+data class WalletUseCases(
+    val upsertWallet: UpsertWallet,
+    val deleteWallet: DeleteWallet,
+    val getWallet: GetWallet,
+    val getWalletsOrderedByName: GetWallets,
+    val getWalletsTotalBalance: GetWalletsTotalBalance,
+    val getWalletsCurrencies: GetWalletsCurrencies,
 )
 
-class UpsertAccount(
-    private val repository: AccountRepository,
+class UpsertWallet(
+    private val repository: WalletRepository,
     private val authRepository: AuthRepository
 ) {
-    suspend operator fun invoke(account: Account): String {
+    suspend operator fun invoke(wallet: Wallet): String {
         val currentUser = authRepository.getCurrentUser()!!
         val currentUserId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
-        return repository.upsertAccount(account.copy(userIdFk = currentUserId))
+        return repository.upsertWallet(wallet.copy(userIdFk = currentUserId))
     }
 }
 
-class DeleteAccount(
-    private val repository: AccountRepository
+class DeleteWallet(
+    private val repository: WalletRepository
 ) {
-    suspend operator fun invoke(account: Account) {
-        repository.deleteAccount(account)
+    suspend operator fun invoke(wallet: Wallet) {
+        repository.deleteWallet(wallet)
     }
 }
 
-class GetAccount(
-    private val repository: AccountRepository
+class GetWallet(
+    private val repository: WalletRepository
 ) {
-    operator fun invoke(accountId: String): Flow<Account> {
-        return repository.getAccount(accountId)
+    operator fun invoke(accountId: String): Flow<Wallet> {
+        return repository.getWallet(accountId)
     }
 }
 
-class GetAccounts(
-    private val repository: AccountRepository,
+class GetWallets(
+    private val repository: WalletRepository,
     private val authRepository: AuthRepository,
 ) {
-    operator fun invoke(): Flow<Resource<List<Account>>> {
+    operator fun invoke(): Flow<Resource<List<Wallet>>> {
         return flow {
             emit(Resource.Loading())
             val currentUser = authRepository.getCurrentUser()!!
             val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
             withContext(Dispatchers.IO) {
-                repository.getUserAccounts(
+                repository.getUserWallets(
                     userId
-                ).map { accounts -> accounts.filter { it.accountId != deletedAccount.accountId + userId } }
+                ).map { accounts -> accounts.filter { it.walletId != deletedWallet.walletId + userId } }
             }.collect { data ->
                 Log.i("getUserAccountOrderedByName.Data: $data")
                 emit(Resource.Success(data))
@@ -78,8 +78,8 @@ class GetAccounts(
     }
 }
 
-class GetAccountsCurrencies(
-    private val repository: AccountRepository,
+class GetWalletsCurrencies(
+    private val repository: WalletRepository,
     private val authRepository: AuthRepository,
 ) {
     operator fun invoke(): Flow<List<String>> {
@@ -88,7 +88,7 @@ class GetAccountsCurrencies(
             val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
 
             withContext(Dispatchers.IO) {
-                repository.getUserAccounts(
+                repository.getUserWallets(
                     userId
                 ).map { it.getCurrencies() }
             }.collect { data ->
@@ -98,8 +98,8 @@ class GetAccountsCurrencies(
     }
 }
 
-class GetAccountsTotalBalance(
-    private val repository: AccountRepository,
+class GetWalletsTotalBalance(
+    private val repository: WalletRepository,
     private val currencyUseCases: CurrencyUseCases,
     private val authRepository: AuthRepository
 ) {
@@ -109,7 +109,7 @@ class GetAccountsTotalBalance(
             val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
             val userCurrency = currentUser.userCurrency
 
-            repository.getUserAccounts(userId).collect { accounts ->
+            repository.getUserWallets(userId).collect { accounts ->
                 val totalAccountBalance = accounts.getTotalAccountBalance(userCurrency)
                 val data = BalanceItem(
                     "Total Balance",
@@ -121,11 +121,11 @@ class GetAccountsTotalBalance(
         }
     }
 
-    private suspend fun List<Account>.getTotalAccountBalance(userCurrency: String): Double {
+    private suspend fun List<Wallet>.getTotalAccountBalance(userCurrency: String): Double {
         return this.sumOf { account ->
             currencyUseCases.currencyConverter(
-                account.accountAmount,
-                account.accountCurrency,
+                account.walletAmount,
+                account.walletCurrency,
                 userCurrency
             )
         }

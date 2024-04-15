@@ -1,6 +1,6 @@
 package com.fredy.mysavings.DI
 
-import com.fredy.mysavings.Feature.Domain.Repository.AccountRepository
+import com.fredy.mysavings.Feature.Domain.Repository.WalletRepository
 import com.fredy.mysavings.Feature.Domain.Repository.AuthRepository
 import com.fredy.mysavings.Feature.Domain.Repository.BookRepository
 import com.fredy.mysavings.Feature.Domain.Repository.CSVRepository
@@ -8,13 +8,13 @@ import com.fredy.mysavings.Feature.Domain.Repository.CategoryRepository
 import com.fredy.mysavings.Feature.Domain.Repository.CurrencyRepository
 import com.fredy.mysavings.Feature.Domain.Repository.RecordRepository
 import com.fredy.mysavings.Feature.Domain.Repository.UserRepository
-import com.fredy.mysavings.Feature.Domain.UseCases.AccountUseCases.AccountUseCases
-import com.fredy.mysavings.Feature.Domain.UseCases.AccountUseCases.DeleteAccount
-import com.fredy.mysavings.Feature.Domain.UseCases.AccountUseCases.GetAccount
-import com.fredy.mysavings.Feature.Domain.UseCases.AccountUseCases.GetAccounts
-import com.fredy.mysavings.Feature.Domain.UseCases.AccountUseCases.GetAccountsCurrencies
-import com.fredy.mysavings.Feature.Domain.UseCases.AccountUseCases.GetAccountsTotalBalance
-import com.fredy.mysavings.Feature.Domain.UseCases.AccountUseCases.UpsertAccount
+import com.fredy.mysavings.Feature.Domain.UseCases.WalletUseCases.WalletUseCases
+import com.fredy.mysavings.Feature.Domain.UseCases.WalletUseCases.DeleteWallet
+import com.fredy.mysavings.Feature.Domain.UseCases.WalletUseCases.GetWallet
+import com.fredy.mysavings.Feature.Domain.UseCases.WalletUseCases.GetWallets
+import com.fredy.mysavings.Feature.Domain.UseCases.WalletUseCases.GetWalletsCurrencies
+import com.fredy.mysavings.Feature.Domain.UseCases.WalletUseCases.GetWalletsTotalBalance
+import com.fredy.mysavings.Feature.Domain.UseCases.WalletUseCases.UpsertWallet
 import com.fredy.mysavings.Feature.Domain.UseCases.AuthUseCases.AuthUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.AuthUseCases.GoogleSignIn
 import com.fredy.mysavings.Feature.Domain.UseCases.AuthUseCases.LoginUser
@@ -82,19 +82,19 @@ object UseCasesModule {
     @Singleton
     fun provideAccountUseCases(
         currencyUseCases: CurrencyUseCases,
-        accountRepository: AccountRepository,
+        walletRepository: WalletRepository,
         authRepository: AuthRepository,
-    ): AccountUseCases = AccountUseCases(
-        upsertAccount = UpsertAccount(accountRepository, authRepository),
-        deleteAccount = DeleteAccount(accountRepository),
-        getAccount = GetAccount(accountRepository),
-        getAccountOrderedByName = GetAccounts(accountRepository, authRepository),
-        getAccountsTotalBalance = GetAccountsTotalBalance(
-            accountRepository,
+    ): WalletUseCases = WalletUseCases(
+        upsertWallet = UpsertWallet(walletRepository, authRepository),
+        deleteWallet = DeleteWallet(walletRepository),
+        getWallet = GetWallet(walletRepository),
+        getWalletsOrderedByName = GetWallets(walletRepository, authRepository),
+        getWalletsTotalBalance = GetWalletsTotalBalance(
+            walletRepository,
             currencyUseCases,
             authRepository
         ),
-        getAccountsCurrencies = GetAccountsCurrencies(accountRepository, authRepository)
+        getWalletsCurrencies = GetWalletsCurrencies(walletRepository, authRepository)
     )
 
     @Provides
@@ -102,7 +102,7 @@ object UseCasesModule {
     fun provideRecordUseCases(
         authRepository: AuthRepository,
         recordRepository: RecordRepository,
-        accountRepository: AccountRepository,
+        walletRepository: WalletRepository,
         categoryRepository: CategoryRepository,
         currencyUseCases: CurrencyUseCases,
         bookRepository: BookRepository,
@@ -145,7 +145,7 @@ object UseCasesModule {
             recordRepository, categoryRepository, authRepository, currencyUseCases
         ),
         getUserAccountsWithAmountFromSpecificTime = GetUserAccountsWithAmountFromSpecificTime(
-            recordRepository, accountRepository, authRepository, currencyUseCases
+            recordRepository, walletRepository, authRepository, currencyUseCases
         ),
         getUserTotalAmountByType = GetUserTotalAmountByType(
             recordRepository,
@@ -228,7 +228,7 @@ object UseCasesModule {
         csvRepository: CSVRepository,
         authRepository: AuthRepository,
         recordRepository: RecordRepository,
-        accountRepository: AccountRepository,
+        walletRepository: WalletRepository,
         categoryRepository: CategoryRepository,
     ): CSVUseCases = CSVUseCases(
         outputToCSV = OutputToCSV(csvRepository),
@@ -236,7 +236,7 @@ object UseCasesModule {
         getDBInfo = GetDBInfo(
             authRepository,
             recordRepository,
-            accountRepository,
+            walletRepository,
             categoryRepository
         )
     )

@@ -31,11 +31,11 @@ import co.yml.charts.ui.barchart.models.GroupBar
 import com.fredy.mysavings.Util.BalanceColor
 import com.fredy.mysavings.Util.RecordTypeColor
 import com.fredy.mysavings.Util.formatBalanceAmount
-import com.fredy.mysavings.ViewModels.AccountState
-import com.fredy.mysavings.ViewModels.Event.AccountEvent
+import com.fredy.mysavings.ViewModels.WalletState
+import com.fredy.mysavings.ViewModels.Event.WalletEvent
 import com.fredy.mysavings.ViewModels.Event.RecordsEvent
 import com.fredy.mysavings.ViewModels.RecordState
-import com.fredy.mysavings.ui.Screens.Account.AccountDetailBottomSheet
+import com.fredy.mysavings.ui.Screens.Wallet.WalletDetailBottomSheet
 import com.fredy.mysavings.ui.Screens.Analysis.Charts.ChartGroupedBar
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.ResourceHandler
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleEntityItem
@@ -46,8 +46,8 @@ fun AnalysisAccount(
     modifier: Modifier = Modifier,
     state: RecordState,
     onEvent: (RecordsEvent) -> Unit,
-    accountState: AccountState,
-    accountEvent: (AccountEvent) -> Unit,
+    walletState: WalletState,
+    accountEvent: (WalletEvent) -> Unit,
 ) {
     val expenseColor by remember { mutableStateOf(BalanceColor.Expense) }
     val incomeColor by remember { mutableStateOf(BalanceColor.Income) }
@@ -56,10 +56,10 @@ fun AnalysisAccount(
     var isSheetOpen by rememberSaveable {
         mutableStateOf(false)
     }
-    AccountDetailBottomSheet(
+    WalletDetailBottomSheet(
         isSheetOpen = isSheetOpen,
         onCloseBottomSheet = { isSheetOpen = it },
-        state = accountState,
+        state = walletState,
         recordEvent = onEvent
     )
 
@@ -83,7 +83,7 @@ fun AnalysisAccount(
                         infoColor = RecordTypeColor(recordType = state.filterState.recordType),
                         groupBarData = data.mapIndexed { index, item ->
                             GroupBar(
-                                label = item.account.accountName,
+                                label = item.wallet.walletName,
                                 barList = listOf(
                                     BarData(
                                         Point(
@@ -117,7 +117,7 @@ fun AnalysisAccount(
                         },
                     )
                 }
-                items(data, key = { it.account.accountId }) { item ->
+                items(data, key = { it.wallet.walletId }) { item ->
                     Divider(
                         modifier = Modifier.height(
                             0.3.dp
@@ -128,11 +128,11 @@ fun AnalysisAccount(
                     )
                     SimpleEntityItem(
                         modifier = Modifier.clickable {
-                            accountEvent(AccountEvent.GetAccountDetail(item.account))
+                            accountEvent(WalletEvent.GetWalletDetail(item.wallet))
                             isSheetOpen = true
                         },
-                        icon = item.account.accountIcon,
-                        iconDescription = item.account.accountIconDescription,
+                        icon = item.wallet.walletIcon,
+                        iconDescription = item.wallet.walletIconDescription,
                         iconModifier = Modifier
                             .size(
                                 55.dp
@@ -146,7 +146,7 @@ fun AnalysisAccount(
                             verticalArrangement = Arrangement.Center
                         ) {
                             Text(
-                                text = item.account.accountName,
+                                text = item.wallet.walletName,
                                 style = MaterialTheme.typography.titleMedium.copy(
                                     fontWeight = FontWeight.SemiBold
                                 ),
@@ -170,7 +170,7 @@ fun AnalysisAccount(
                                 Text(
                                     text = formatBalanceAmount(
                                         amount = item.expenseAmount,
-                                        currency = item.account.accountCurrency,
+                                        currency = item.wallet.walletCurrency,
                                         isShortenToChar = true
                                     ),
                                     style = MaterialTheme.typography.titleMedium.copy(
@@ -185,7 +185,7 @@ fun AnalysisAccount(
                                 Text(
                                     text = formatBalanceAmount(
                                         amount = item.incomeAmount,
-                                        currency = item.account.accountCurrency,
+                                        currency = item.wallet.walletCurrency,
                                         isShortenToChar = true
                                     ),
                                     style = MaterialTheme.typography.titleMedium.copy(

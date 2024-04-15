@@ -42,7 +42,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.fredy.mysavings.Feature.Data.Database.Model.UserData
 import com.fredy.mysavings.Util.formatRangeOfDate
-import com.fredy.mysavings.ViewModels.AccountViewModel
+import com.fredy.mysavings.ViewModels.WalletViewModel
 import com.fredy.mysavings.ViewModels.BookViewModel
 import com.fredy.mysavings.ViewModels.CategoryViewModel
 import com.fredy.mysavings.ViewModels.Event.RecordsEvent
@@ -66,7 +66,7 @@ fun MainScreen(
     onContentColor: Color = MaterialTheme.colorScheme.onSurface,
     rootNavController: NavHostController,
     recordViewModel: RecordViewModel,
-    accountViewModel: AccountViewModel,
+    walletViewModel: WalletViewModel,
     categoryViewModel: CategoryViewModel = hiltViewModel(),
     bookViewModel: BookViewModel,
     currentUser: UserData?,
@@ -393,7 +393,7 @@ fun MainScreen(
                     innerPadding
                 ),
                 recordViewModel = recordViewModel,
-                accountViewModel = accountViewModel,
+                walletViewModel = walletViewModel,
                 categoryViewModel = categoryViewModel,
                 bookViewModel = bookViewModel,
             )
