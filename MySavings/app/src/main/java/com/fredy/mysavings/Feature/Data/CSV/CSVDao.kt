@@ -5,14 +5,13 @@ import android.os.Build
 import android.os.storage.StorageManager
 import androidx.core.content.ContextCompat.getSystemService
 import com.fredy.mysavings.Feature.Data.Database.Converter.TimestampConverter
-import com.fredy.mysavings.Feature.Data.Database.Model.Wallet
 import com.fredy.mysavings.Feature.Data.Database.Model.Category
 import com.fredy.mysavings.Feature.Data.Database.Model.Record
 import com.fredy.mysavings.Feature.Data.Database.Model.TrueRecord
+import com.fredy.mysavings.Feature.Data.Database.Model.Wallet
 import com.fredy.mysavings.Feature.Data.Enum.RecordType
 import com.fredy.mysavings.Util.Log
-import com.fredy.mysavings.Util.formatBalanceAmount
-import com.fredy.mysavings.Util.formatDateYearTime
+import com.fredy.mysavings.Util.formatDateYearDetailedTime
 import java.io.File
 import java.io.FileReader
 import java.io.FileWriter
@@ -52,9 +51,10 @@ class CSVDaoImpl(private val context: Context) : CSVDao {
             }
             val directoryPath = directory.replace("%3A", ":").replace("%20", " ")
                 .replace("%2F", "/").replace("%2C", ",")
-                .replace(
-                    "content://com.android.externalstorage.documents/document/primary:",
-                    uri.toString() + "/"
+                .replaceBetweenString(
+                    "content:", ":",
+                    uri.toString() + "/",
+                    includePrefixSuffix = true
                 )
 
             FileReader(directoryPath).use { reader ->
@@ -82,9 +82,10 @@ class CSVDaoImpl(private val context: Context) : CSVDao {
                 null
             }
             val directoryPath = directory.replace("%3A", ":").replace("%20", " ")
-                .replace("%2F", "/").replace(
-                    "content://com.android.externalstorage.documents/tree/primary:",
-                    uri.toString() + "/"
+                .replace("%2F", "/").replaceBetweenString(
+                    "content:", ":",
+                    uri.toString() + "/",
+                    includePrefixSuffix = true
                 )
             val filenameClean = filename.replace(" ", "")
 
@@ -223,7 +224,7 @@ class CSVDaoImpl(private val context: Context) : CSVDao {
 
     private fun trueRecordToString(trueRecord: TrueRecord): String {
         val values = listOf(
-            formatDateYearTime(trueRecord.record.recordDateTime).replace(",", ""),
+            formatDateYearDetailedTime(trueRecord.record.recordDateTime).replace(",", ""),
             trueRecord.record.recordType.name,
             trueRecord.fromWallet.walletName + "-" + trueRecord.fromWallet.walletCurrency,
             trueRecord.fromWallet.walletIconDescription,
@@ -231,10 +232,7 @@ class CSVDaoImpl(private val context: Context) : CSVDao {
             trueRecord.toCategory.categoryIconDescription,
             trueRecord.toWallet.walletName + "-" + trueRecord.toWallet.walletCurrency,
             trueRecord.toWallet.walletIconDescription,
-            formatBalanceAmount(
-                trueRecord.record.recordAmount,
-                trueRecord.record.recordCurrency
-            ),
+            trueRecord.record.recordAmount.toString() + " " + trueRecord.record.recordCurrency,
             trueRecord.record.recordNotes
         )
         val escapedValues = values.map {
@@ -244,7 +242,27 @@ class CSVDaoImpl(private val context: Context) : CSVDao {
     }
 
     private fun String.toLocalDateTimeConverter(): LocalDateTime {
-        val formatter = DateTimeFormatter.ofPattern("MMM dd yyyy hh:mm a", Locale.ENGLISH)
+        val formatter = DateTimeFormatter.ofPattern("MMM dd yyyy hh:mm:ss.SSS a", Locale.ENGLISH)
         return LocalDateTime.parse(this, formatter)
     }
+
+    private fun String.replaceBetweenString(
+        prefix: String,
+        suffix: String,
+        newString: String,
+        includePrefixSuffix: Boolean = false
+    ): String {
+        val prefixIndex = this.indexOf(prefix)
+        if (prefixIndex == -1) throw Exception("prefix not found")
+
+        val suffixIndex = this.lastIndexOf(suffix)
+        if (suffixIndex == -1 || suffixIndex <= prefixIndex) throw Exception("suffix not found")
+
+        return if (includePrefixSuffix) {
+            this.replaceRange(prefixIndex, suffixIndex + suffix.length, newString)
+        } else {
+            this.replaceRange(prefixIndex + prefix.length, suffixIndex, newString)
+        }
+    }
+
 }

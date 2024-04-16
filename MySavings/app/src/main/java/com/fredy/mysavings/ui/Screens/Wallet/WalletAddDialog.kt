@@ -16,11 +16,12 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.Util.DefaultData.walletIcons
-import com.fredy.mysavings.ViewModels.WalletState
+import com.fredy.mysavings.Util.currencyCodes
 import com.fredy.mysavings.ViewModels.Event.WalletEvent
+import com.fredy.mysavings.ViewModels.WalletState
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.ChooseIcon
-import com.fredy.mysavings.ui.Screens.ZCommonComponent.CurrencyDropdown
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleDialog
+import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleDropdown
 
 @Composable
 fun WalletAddDialog(
@@ -84,8 +85,9 @@ fun WalletAddDialog(
                     Text(text = "0")
                 },
             )
-            CurrencyDropdown(
+            SimpleDropdown(
                 menuModifier = Modifier,
+                list = currencyCodes,
                 selectedText = state.walletCurrency,
                 onClick = {
                     onEvent(

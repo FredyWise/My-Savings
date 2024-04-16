@@ -67,7 +67,7 @@ fun WalletBody(
                 textStyle = MaterialTheme.typography.titleLarge
             )
         }
-        items(wallets, key = { it.walletId }) { account ->
+        items(wallets, key = { it.walletId }) { wallet ->
             AdvancedEntityItem(
                 modifier = Modifier
                     .padding(
@@ -81,13 +81,13 @@ fun WalletBody(
                     )
                     .clickable {
                         onEntityClick()
-                        onEvent(WalletEvent.GetWalletDetail(account))
+                        onEvent(WalletEvent.GetWalletDetail(wallet))
                     }
                     .background(
                         MaterialTheme.colorScheme.surface
                     ),
-                icon = account.walletIcon,
-                iconDescription = account.walletIconDescription,
+                icon = wallet.walletIcon,
+                iconDescription = wallet.walletIconDescription,
                 iconModifier = Modifier
                     .size(50.dp)
                     .clip(
@@ -98,14 +98,14 @@ fun WalletBody(
                         name = "Delete Wallet",
                         action = {
                             isShowWarning = true
-                            tempWallet = account
+                            tempWallet = wallet
                         },
                     ), ActionWithName(
                         name = "Edit Wallet",
                         action = {
                             onEvent(
                                 WalletEvent.ShowDialog(
-                                    account
+                                    wallet
                                 )
                             )
                         },
@@ -113,7 +113,7 @@ fun WalletBody(
                 )
             ) {
                 Text(
-                    text = account.walletName,
+                    text = wallet.walletName,
                     style = MaterialTheme.typography.titleLarge.copy(
                         fontWeight = FontWeight.SemiBold
                     ),
@@ -123,15 +123,15 @@ fun WalletBody(
                 )
                 Text(
                     text = "Balance: " + formatBalanceAmount(
-                        amount = account.walletAmount,
-                        currency = account.walletCurrency,
+                        amount = wallet.walletAmount,
+                        currency = wallet.walletCurrency,
                         isShortenToChar = true,
                         k = false
                     ),
                     style = MaterialTheme.typography.titleLarge.copy(
                         fontWeight = FontWeight.SemiBold
                     ),
-                    color = BalanceColor(amount = account.walletAmount)
+                    color = BalanceColor(amount = wallet.walletAmount)
                 )
             }
         }

@@ -20,24 +20,26 @@ fun formatMonthYear(date: LocalDate): String {
     ).format(date)
 }
 
-fun formatDate(date: LocalDate):String{
+fun formatDateMonth(date: LocalDate):String{
     return DateTimeFormatter.ofPattern(
         "MMM dd"
     ).format(date)
 }
 
-fun formatDateDay(date: LocalDate): String {
+fun formatDay(date: LocalDate):String{
     return DateTimeFormatter.ofPattern(
-        "MMM dd, EEEE "
+        "EEEE"
     ).format(date)
 }
 
-fun formatDateTime(dateTime: LocalDateTime): String {
-    return DateTimeFormatter.ofPattern(
-        "MMM dd, hh:mm a"
-    ).format(dateTime)
+fun formatDateDay(date: LocalDate): String {
+    return formatDateMonth(date) + ", " + formatDay(date)
 }
-fun formatDay(dateTime: LocalDateTime): String {
+
+fun formatDateMonthTime(dateTime: LocalDateTime): String {
+    return formatDateMonth(dateTime.toLocalDate()) + ", " + formatTime(dateTime.toLocalTime())
+}
+fun formatDateDay(dateTime: LocalDateTime): String {
     return DateTimeFormatter.ofPattern(
         "dd, EEEE"
     ).format(dateTime)
@@ -48,9 +50,14 @@ fun formatTime(time: LocalTime): String {
         "hh:mm a"
     ).format(time)
 }
+fun formatDetailedTime(time: LocalTime): String {
+    return DateTimeFormatter.ofPattern(
+        "hh:mm:ss.SSS a"
+    ).format(time)
+}
 
-fun formatDateYearTime(dateTime: LocalDateTime): String {
-    return formatDateYear(dateTime.toLocalDate()) + formatTime(
+fun formatDateYearDetailedTime(dateTime: LocalDateTime): String {
+    return formatDateYear(dateTime.toLocalDate()) + formatDetailedTime(
         dateTime.toLocalTime()
     )
 }

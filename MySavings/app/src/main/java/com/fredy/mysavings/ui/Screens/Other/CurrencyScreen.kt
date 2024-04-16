@@ -31,14 +31,15 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.fredy.mysavings.Util.currencyCodes
 import com.fredy.mysavings.Util.formatBalanceAmount
 import com.fredy.mysavings.ViewModels.CurrencyState
 import com.fredy.mysavings.ViewModels.Event.CurrencyEvent
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.AsyncImageHandler
-import com.fredy.mysavings.ui.Screens.ZCommonComponent.CurrencyDropdown
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.DefaultAppBar
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.ResourceHandler
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleDialog
+import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleDropdown
 
 @Composable
 fun CurrencyScreen(
@@ -75,11 +76,12 @@ fun CurrencyScreen(
                 modifier = Modifier
                     .background(MaterialTheme.colorScheme.surface)
                     .padding(horizontal = 4.dp, vertical = 8.dp)
-                    .clickable {  },
+                    .clickable { },
                 name = "Base Currency",
                 leadingComponent = {
-                    CurrencyDropdown(
+                    SimpleDropdown(
                         modifier = Modifier.weight(1f),
+                        list = currencyCodes,
                         selectedText = state.userData.userCurrency,
                         onClick = {
                             onEvent(CurrencyEvent.BaseCurrency(it))
@@ -169,12 +171,13 @@ fun CurrencyConverter(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            CurrencyDropdown(
-                selectedText = fromCurrency,
+            SimpleDropdown(
                 textFieldColors = TextFieldDefaults.colors(
                     focusedIndicatorColor = Color.Unspecified,
                     unfocusedIndicatorColor = Color.Unspecified,
                 ),
+                list = currencyCodes,
+                selectedText = fromCurrency,
                 onClick = fromOnClick
             )
             TextField(
@@ -195,12 +198,13 @@ fun CurrencyConverter(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            CurrencyDropdown(
-                selectedText = toCurrency,
+            SimpleDropdown(
                 textFieldColors = TextFieldDefaults.colors(
                     focusedIndicatorColor = Color.Unspecified,
                     unfocusedIndicatorColor = Color.Unspecified,
                 ),
+                list = currencyCodes,
+                selectedText = toCurrency,
                 onClick = toOnClick
             )
             TextField(

@@ -25,6 +25,7 @@ import com.fredy.mysavings.Feature.Mappers.toBookSortedMaps
 import com.fredy.mysavings.Util.BalanceItem
 import com.fredy.mysavings.Util.DefaultData.deletedWallet
 import com.fredy.mysavings.Util.DefaultData.deletedCategory
+import com.fredy.mysavings.Util.DefaultData.transferCategory
 import com.fredy.mysavings.Util.Log
 import com.fredy.mysavings.Util.Resource
 import com.fredy.mysavings.Util.isExpense
@@ -34,6 +35,7 @@ import com.fredy.mysavings.Util.minDate
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
@@ -83,7 +85,7 @@ class UpsertRecordItem(
         return recordRepository.upsertRecordItem(
             record.copy(
                 userIdFk = currentUserId,
-                categoryIdFk = if (record.walletIdFromFk != record.walletIdToFk) record.categoryIdFk + currentUserId else record.categoryIdFk
+                categoryIdFk = if (record.categoryIdFk == transferCategory.categoryId) record.categoryIdFk + currentUserId else record.categoryIdFk
             )
         )
     }
@@ -199,14 +201,15 @@ class GetAllTrueRecordsWithinSpecificTime(
 ) {
     operator fun invoke(
         startDate: LocalDateTime,
-        endDate: LocalDateTime
+        endDate: LocalDateTime,
+        book: Book,
     ): Flow<Resource<List<TrueRecord>>> {
         return flow {
             emit(Resource.Loading())
             val currentUser = authRepository.getCurrentUser()!!
             val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
 
-            recordRepository.getUserTrueRecordsFromSpecificTime(userId, startDate, endDate)
+            recordRepository.getUserTrueRecordsFromSpecificTime(userId, startDate, endDate).map { trueRecords -> trueRecords.filter {  it.record.bookIdFk == book.bookId } }
                 .collect { data ->
                     Log.i(
                         "getAllTrueRecordsWithinSpecificTime.Data: $data"

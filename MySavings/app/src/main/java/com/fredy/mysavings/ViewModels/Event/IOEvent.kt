@@ -14,5 +14,6 @@ sealed interface IOEvent {
     data class OnImport(val uri: MPFile<Any>) : IOEvent
     object OnClickedExport: IOEvent
     object OnAfterClickedImport: IOEvent
+    data class OnChooseBook(val bookName: String): IOEvent
 
 }

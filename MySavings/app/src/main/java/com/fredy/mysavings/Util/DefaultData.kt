@@ -43,7 +43,7 @@ object DefaultData {
     val bookInitIcon = SavingsIcon(R.drawable.ic_book, "Book")
     val transferIcon = SavingsIcon(R.drawable.ic_exchange, "Transfer")
     val categoryInitIcon = SavingsIcon(R.drawable.ic_category_foreground, "Category")
-    val walletInitIcon = SavingsIcon(R.drawable.ic_wallet_foreground, "Account")
+    val walletInitIcon = SavingsIcon(R.drawable.ic_wallet_foreground, "Wallet")
 
     val walletIcons = listOf(
         SavingsIcon(R.drawable.ic_mastercard, "Master Card"),
@@ -81,10 +81,10 @@ object DefaultData {
     val allSavingsIcons = walletIcons + categoryIcons
 
 
-    val accountIconsMap = walletIcons.plus(walletInitIcon).associateBy { it.description }
+    val walletIconsMap = walletIcons.plus(walletInitIcon).associateBy { it.description }
     val categoryIconsMap =
         categoryIcons.plus(categoryInitIcon).plus(transferIcon).associateBy { it.description }
-    val savingsIcons = accountIconsMap.plus(categoryIconsMap)
+    val savingsIcons = walletIconsMap.plus(categoryIconsMap)
 
 
     val WebClientId = "895326687881-e2kh5jh12kjvpf9se1cehbeias0iuvmq.apps.googleusercontent.com"
@@ -106,9 +106,9 @@ object DefaultData {
     )
 
     val deletedWallet = Wallet(
-        walletId = "deletedAccount",
+        walletId = "deletedWallet",
         userIdFk = "0",
-        walletName = "Deleted Account",
+        walletName = "Deleted Wallet",
         walletCurrency = "USD"
     )
 

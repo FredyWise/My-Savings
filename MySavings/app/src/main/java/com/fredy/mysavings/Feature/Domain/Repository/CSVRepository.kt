@@ -4,6 +4,7 @@ package com.fredy.mysavings.Feature.Domain.Repository
 import com.fredy.mysavings.Util.Log
 import com.fredy.mysavings.Feature.Data.CSV.CSVDao
 import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.RecordDataSource
+import com.fredy.mysavings.Feature.Data.Database.Model.Book
 import com.fredy.mysavings.Feature.Data.Database.Model.Wallet
 import com.fredy.mysavings.Feature.Data.Database.Model.Category
 import com.fredy.mysavings.Feature.Data.Database.Model.Record
@@ -27,7 +28,8 @@ interface CSVRepository {
     suspend fun inputFromCSV(
         currentUserId: String,
         directory: String,
-        delimiter: String = ","
+        delimiter: String = ",",
+        book: Book
     ): List<TrueRecord>
 }
 
@@ -52,7 +54,8 @@ class CSVRepositoryImpl(
     override suspend fun inputFromCSV(
         currentUserId:String,
         directory: String,
-        delimiter: String
+        delimiter: String,
+        book: Book
     ): List<TrueRecord> {
         return withContext(Dispatchers.IO) {
             val trueRecords = csvDao.inputFromCSV(directory, delimiter)
@@ -67,7 +70,8 @@ class CSVRepositoryImpl(
                     accountIdFromFk = accountIdFromFk,
                     accountIdToFk = accountIdToFk,
                     categoryIdFk = categoryIdFk,
-                    userIdFk = currentUserId
+                    userIdFk = currentUserId,
+                    bookIdFk = book.bookId
                 )
             }
             Log.e("inputFromCSVRepo1: $trueRecord")
@@ -83,6 +87,7 @@ class CSVRepositoryImpl(
         accountIdToFk: String,
         categoryIdFk: String,
         userIdFk: String,
+        bookIdFk:String,
     ): TrueRecord {
         return this.copy(
             record = record.copy(
@@ -90,7 +95,8 @@ class CSVRepositoryImpl(
                 walletIdFromFk = accountIdFromFk,
                 walletIdToFk = accountIdToFk,
                 categoryIdFk = categoryIdFk,
-                userIdFk = userIdFk
+                userIdFk = userIdFk,
+                bookIdFk = bookIdFk
             )
         )
     }

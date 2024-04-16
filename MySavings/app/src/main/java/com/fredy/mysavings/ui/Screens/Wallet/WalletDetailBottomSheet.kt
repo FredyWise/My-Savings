@@ -48,7 +48,7 @@ fun WalletDetailBottomSheet(
             dragHandle = {},
         ) {
             DetailAppBar(
-                title = "Account details",
+                title = "Wallet details",
                 resource = state.recordMapsResource,
                 onNavigationIconClick = {
                     onCloseBottomSheet(false)

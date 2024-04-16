@@ -449,6 +449,8 @@ fun TypeRadioButton(
 fun ChooseIcon(
     modifier: Modifier = Modifier,
     iconModifier: Modifier = Modifier,
+    selectedColor: Color = MaterialTheme.colorScheme.secondary,
+    normalColor: Color = Color.Unspecified,
     onClick: (SavingsIcon) -> Unit,
     selectedIcon: Int,
     icons: List<SavingsIcon>,
@@ -474,7 +476,7 @@ fun ChooseIcon(
                         onClick(icon)
                     }
                     .background(
-                        color = if (selectedIcon == icon.image) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.background
+                        color = if (selectedIcon == icon.image) selectedColor else normalColor
                     )
                     .padding(8.dp),
             ) {

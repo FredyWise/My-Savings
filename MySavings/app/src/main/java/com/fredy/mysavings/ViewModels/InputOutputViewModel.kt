@@ -2,9 +2,11 @@ package com.fredy.mysavings.ViewModels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.fredy.mysavings.Feature.Data.Database.Model.Book
 import com.fredy.mysavings.Feature.Data.Database.Model.Record
 import com.fredy.mysavings.Feature.Data.Database.Model.TrueRecord
 import com.fredy.mysavings.Feature.Data.Enum.RecordType
+import com.fredy.mysavings.Feature.Domain.UseCases.BookUseCases.BookUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.CSVUseCases.CSVUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.RecordUseCases
 import com.fredy.mysavings.Util.Resource
@@ -26,6 +28,7 @@ import javax.inject.Inject
 @HiltViewModel
 class InputOutputViewModel @Inject constructor(
     private val recordUseCases: RecordUseCases,
+    private val bookUseCases: BookUseCases,
     private val csvUseCases: CSVUseCases,
 ) : ViewModel() {
 
@@ -38,6 +41,21 @@ class InputOutputViewModel @Inject constructor(
                             dbInfo = dbInfo
                         )
                     }
+
+                    bookUseCases.getUserBooks().collectLatest { bookResource ->
+                        when (bookResource) {
+                            is Resource.Success -> {
+                                _state.update {
+                                    it.copy(
+                                        currentBook = bookResource.data!!.first(),
+                                        books = bookResource.data
+                                    )
+                                }
+                            }
+
+                            else -> {}
+                        }
+                    }
                 }
         }
     }
@@ -47,7 +65,11 @@ class InputOutputViewModel @Inject constructor(
     )
 
     private val _trueRecordsWithinSpecificTime = _state.flatMapLatest { state ->
-        recordUseCases.getAllTrueRecordsWithinSpecificTime(state.startDate, state.endDate)
+        recordUseCases.getAllTrueRecordsWithinSpecificTime(
+            state.startDate,
+            state.endDate,
+            state.currentBook
+        )
     }.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(),
@@ -56,15 +78,16 @@ class InputOutputViewModel @Inject constructor(
 
     val state = combine(
         _state,
-        _trueRecordsWithinSpecificTime
+        _trueRecordsWithinSpecificTime,
     ) { state, recordsResource ->
-        if (recordsResource is Resource.Success && recordsResource.data!!.isNotEmpty()) {
+        if (recordsResource is Resource.Success) {
             state.copy(
-                exportRecords = recordsResource.data.toList(),
+                exportRecords = recordsResource.data!!,
             )
         } else {
             state
         }
+
     }.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(),
@@ -107,17 +130,16 @@ class InputOutputViewModel @Inject constructor(
 
                 is IOEvent.OnImport -> {
                     val importRecords = csvUseCases.inputFromCSV(
-                        event.uri.path,
+                        event.uri.path, book = state.value.currentBook
                     )
-                    if (importRecords.isNotEmpty()) {
-                        _state.update {
-                            it.copy(
-                                importRecords = importRecords,
-                                importDBInfo = calculateDBInfo(importRecords),
-                                importConfirmation = true
-                            )
-                        }
+                    _state.update {
+                        it.copy(
+                            importRecords = importRecords,
+                            importDBInfo = calculateDBInfo(importRecords),
+                            importConfirmation = true
+                        )
                     }
+
                 }
 
                 IOEvent.OnClickedExport -> {
@@ -128,12 +150,10 @@ class InputOutputViewModel @Inject constructor(
                         )
                     }
                     state.value.run {
-                        if (exportRecords.isNotEmpty()) {
-                            _state.update {
-                                it.copy(
-                                    exportDBInfo = calculateDBInfo(exportRecords)
-                                )
-                            }
+                        _state.update {
+                            it.copy(
+                                exportDBInfo = calculateDBInfo(exportRecords)
+                            )
                         }
                     }
                 }
@@ -141,6 +161,12 @@ class InputOutputViewModel @Inject constructor(
                 IOEvent.OnAfterClickedImport -> {
                     _state.value.importRecords.forEach {
                         recordUseCases.upsertRecordItem(it.record)
+                    }
+                }
+
+                is IOEvent.OnChooseBook -> {
+                    _state.update {
+                        it.copy(currentBook = it.books.first { book -> book.bookName == event.bookName })
                     }
                 }
             }
@@ -203,8 +229,10 @@ class InputOutputViewModel @Inject constructor(
 data class IOState(
     val startDate: LocalDateTime = LocalDateTime.now().minusMonths(1),
     val endDate: LocalDateTime = LocalDateTime.now(),
-    val exportRecords: List<TrueRecord> = listOf(),
-    val importRecords: List<TrueRecord> = listOf(),
+    val books: List<Book> = emptyList(),
+    val currentBook: Book = Book(bookName = ""),
+    val exportRecords: List<TrueRecord> = emptyList(),
+    val importRecords: List<TrueRecord> = emptyList(),
     val exportConfirmation: Boolean = false,
     val importConfirmation: Boolean = false,
     val updateRecordValue: Boolean = false,

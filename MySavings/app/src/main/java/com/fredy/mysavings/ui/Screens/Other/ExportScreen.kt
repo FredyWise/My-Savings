@@ -5,7 +5,6 @@ import android.os.Build
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -28,6 +27,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
@@ -43,6 +43,7 @@ import com.fredy.mysavings.ui.Screens.ZCommonComponent.CustomStickyHeader
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.DefaultAppBar
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SettingButton
 import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleDialog
+import com.fredy.mysavings.ui.Screens.ZCommonComponent.SimpleDropdown
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
@@ -154,6 +155,14 @@ fun ExportScreen(
         onNavigationIconClick = { rootNavController.navigateUp() },
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            SimpleDropdown(
+                textFieldShape = RectangleShape,
+                list = state.books.map { it.bookName },
+                selectedText = state.currentBook.bookName,
+                onClick = {
+                    onEvent(IOEvent.OnChooseBook(it))
+                },
+            )
             InformationBoard(
                 modifier = Modifier.weight(1f),
                 dbInfo = dbInfo,
@@ -375,5 +384,12 @@ fun InformationBoard(
                 Text("Total Transfers: ${item.sumOfTransfer}", color = textColor)
             }
         }
+        item {
+            if (dbInfo.size == 1) {
+                Spacer(modifier = Modifier.height(16.dp))
+                Text("There is nothing to be exported", color = textColor)
+            }
+        }
     }
 }
+

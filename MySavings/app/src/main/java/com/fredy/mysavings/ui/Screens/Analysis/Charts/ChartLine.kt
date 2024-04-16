@@ -23,10 +23,8 @@ import co.yml.charts.ui.linechart.model.SelectionHighlightPoint
 import co.yml.charts.ui.linechart.model.SelectionHighlightPopUp
 import co.yml.charts.ui.linechart.model.ShadowUnderLine
 import com.fredy.mysavings.Util.formatBalanceAmount
-import com.fredy.mysavings.Util.formatDate
-import com.fredy.mysavings.Util.formatDay
+import com.fredy.mysavings.Util.formatDateMonth
 import java.time.LocalDate
-import java.time.Year
 import kotlin.math.nextUp
 
 @Composable
@@ -61,7 +59,7 @@ fun ChartLine(
         }else {
             val localDate =
                 if (xMax > 40) LocalDate.ofYearDay(year, i) else LocalDate.of(year, month, i)
-            formatDate(localDate)
+            formatDateMonth(localDate)
         }
     }.labelAndAxisLinePadding(
         15.dp

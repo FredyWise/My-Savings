@@ -47,6 +47,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.state.ToggleableState
@@ -320,33 +321,31 @@ fun ThemeSwitcher(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CurrencyDropdown(
+fun SimpleDropdown(
     modifier: Modifier = Modifier,
     menuModifier: Modifier = Modifier,
     textFieldColors: TextFieldColors = TextFieldDefaults.colors(),
     delayTime: Long = 500L,
+    textFieldShape: Shape = TextFieldDefaults.shape,
+    list: List<String>,
     selectedText: String,
     onClick: (String) -> Unit
 ) {
-    var selectedText by remember {
-        mutableStateOf(
-            selectedText
-        )
-    }
     var expanded by remember {
-        mutableStateOf(
-            false
-        )
+        mutableStateOf(false)
     }
-    var filteredData by remember {
-        mutableStateOf(currencyCodes)
+    var selectedTextState by remember(selectedText) {
+        mutableStateOf(selectedText)
+    }
+    var filteredData by remember(list) {
+        mutableStateOf(list)
     }
     val scope = rememberCoroutineScope()
     fun debounce(query: String, timeMillis:Long = delayTime) {
         scope.launch {
             delay(timeMillis)
-            if (query == selectedText) {
-                filteredData = currencyCodes.filter { data ->
+            if (query == selectedTextState) {
+                filteredData = list.filter { data ->
                     data.contains(query.replace(" ", ""), ignoreCase = true)
                 }.sorted()
                 expanded = true
@@ -363,12 +362,13 @@ fun CurrencyDropdown(
         onExpandedChange = { },
     ) {
         TextField(
-            value = selectedText,
+            value = selectedTextState,
             singleLine = true,
             onValueChange = {
-                selectedText = it
+                selectedTextState = it
                 debounce(it)
             },
+            shape = textFieldShape,
             modifier = Modifier
                 .fillMaxWidth()
                 .menuAnchor(),
@@ -396,7 +396,7 @@ fun CurrencyDropdown(
                 DropdownMenuItem(
                     onClick = {
                         expanded = false
-                        selectedText = label
+                        selectedTextState = label
                         onClick(label)
                     },
                     text = {
@@ -410,3 +410,4 @@ fun CurrencyDropdown(
         }
     }
 }
+

@@ -193,9 +193,7 @@ class AddSingleRecordViewModel @Inject constructor(
         var accountIdToFk = state.accountIdToFk
         var categoryIdToFk = state.categoryIdFk
         val bookIdFk = state.bookIdFk
-        val recordDateTime = state.recordDate.atTime(
-            state.recordTime
-        )
+        val recordDateTime = state.recordDate.atTime(state.recordTime.withNano((state.recordTime.nano.div(1000000)).times(1000000)))
         var calculationResult = calcState.number1.toDouble().absoluteValue
         val recordCurrency = state.recordCurrency
         val fromAccountCurrency = state.fromWallet.walletCurrency

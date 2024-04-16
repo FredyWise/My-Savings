@@ -1,5 +1,6 @@
 package com.fredy.mysavings.Feature.Domain.UseCases.CSVUseCases
 
+import com.fredy.mysavings.Feature.Data.Database.Model.Book
 import com.fredy.mysavings.Feature.Data.Database.Model.TrueRecord
 import com.fredy.mysavings.Feature.Domain.Repository.WalletRepository
 import com.fredy.mysavings.Feature.Domain.Repository.AuthRepository
@@ -37,10 +38,11 @@ class InputFromCSV(
 ) {
     suspend operator fun invoke(
         directory: String,
-        delimiter: String = ","
+        delimiter: String = ",",
+        book: Book
     ): List<TrueRecord> {
         val currentUserId = authRepository.getCurrentUser()!!.firebaseUserId
-        return csvRepository.inputFromCSV(currentUserId, directory, delimiter)
+        return csvRepository.inputFromCSV(currentUserId, directory, delimiter, book)
     }
 
 }

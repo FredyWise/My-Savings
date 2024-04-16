@@ -1,6 +1,7 @@
 package com.fredy.mysavings.ui.Screens.Record
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -32,7 +33,10 @@ import com.fredy.mysavings.Util.DefaultData
 fun RecordHeader(
     modifier: Modifier = Modifier,
     textColor: Color = MaterialTheme.colorScheme.onBackground,
+    selectedColor: Color = MaterialTheme.colorScheme.secondary.copy(0.3f),
+    normalColor: Color = Color.Unspecified,
     items: List<Book>,
+    selectedItem: Book,
     onBookClicked: (Book) -> Unit,
     onBookLongPress: (Book) -> Unit,
     onAddBook: (Book) -> Unit,
@@ -41,6 +45,7 @@ fun RecordHeader(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 8.dp)
+            .padding(top = 4.dp)
     ) {
         items(items) { item ->
             Column(
@@ -55,6 +60,7 @@ fun RecordHeader(
                             onBookClicked(item)
                         },
                     )
+                    .background(if (selectedItem == item) selectedColor else normalColor)
                     .padding(
                         vertical = 4.dp
                     ),

@@ -43,6 +43,7 @@ fun RecordsScreen(
             ) { bookData ->
                 RecordHeader(
                     items = bookData,
+                    selectedItem = state.filterState.currentBook,
                     onBookClicked = {
                         onEvent(RecordsEvent.ClickBook(it))
                     },
