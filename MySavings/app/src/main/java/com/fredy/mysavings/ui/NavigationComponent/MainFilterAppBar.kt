@@ -1,11 +1,11 @@
 package com.fredy.mysavings.ui.NavigationComponent
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -80,35 +80,36 @@ fun MainFilterAppBar(
             },
         )
     }
-    AnimatedVisibility(
-        modifier = modifier,
-        visible = onShowAppBar,
-        enter = slideInVertically(
-            initialOffsetY = { fullHeight -> -fullHeight },
-        ) + fadeIn(animationSpec = tween(300)),
+    Column(
+        modifier = Modifier
+            .animateContentSize(
+                animationSpec = spring(
+                    stiffness = Spring.StiffnessLow,
+                    dampingRatio = Spring.DampingRatioMediumBouncy
+                )
+            )
+            .heightIn(max = if (onShowAppBar) 100.dp else 0.dp)
     ) {
-        Column {
-            DisplayBar(
-                selectedDate = selectedDate,
-                onDateChange = {
-                    onDateChange(it)
-                },
-                selectedTitle = selectedDateFormat,
-                onPrevious = onPrevious,
-                onNext = onNext,
-                onLeadingIconClick = onLeadingIconClick,
-                onTrailingIconClick = onTrailingIconClick,
-                leadingIcon = leadingIcon,
-                trailingIcon = trailingIcon,
-            )
-            BalanceBar(
-                modifier = Modifier
-                    .background(
-                        MaterialTheme.colorScheme.surface
-                    )
-                    .padding(vertical = 5.dp),
-                amountBars = displayedBalance
-            )
-        }
+        DisplayBar(
+            selectedDate = selectedDate,
+            onDateChange = {
+                onDateChange(it)
+            },
+            selectedTitle = selectedDateFormat,
+            onPrevious = onPrevious,
+            onNext = onNext,
+            onLeadingIconClick = onLeadingIconClick,
+            onTrailingIconClick = onTrailingIconClick,
+            leadingIcon = leadingIcon,
+            trailingIcon = trailingIcon,
+        )
+        BalanceBar(
+            modifier = Modifier
+                .background(
+                    MaterialTheme.colorScheme.surface
+                )
+                .padding(vertical = 5.dp),
+            amountBars = displayedBalance
+        )
     }
 }

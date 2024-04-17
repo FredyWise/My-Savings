@@ -5,6 +5,12 @@ import android.os.Build
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.MutableTransitionState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -86,7 +92,7 @@ fun ExportScreen(
     }
 
     val dbInfo = listOfNotNull(
-        state.dbInfo,
+        state.dbInfo.takeIf { it.sumOfRecords != 0 },
         state.exportDBInfo.takeIf { it.sumOfRecords != 0 },
         state.importDBInfo.takeIf { it.sumOfRecords != 0 }
     )
@@ -156,6 +162,7 @@ fun ExportScreen(
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             SimpleDropdown(
+                textFieldEnabled = state.books.size > 5,
                 textFieldShape = RectangleShape,
                 list = state.books.map { it.bookName },
                 selectedText = state.currentBook.bookName,
@@ -352,6 +359,7 @@ fun ExportScreen(
     }
 }
 
+
 @Composable
 fun InformationBoard(
     modifier: Modifier = Modifier,
@@ -364,30 +372,43 @@ fun InformationBoard(
             .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        itemsIndexed(dbInfo) { index, item ->
-            Column(
-                modifier = Modifier
-                    .padding(8.dp)
-                    .fillMaxWidth(),
-            ) {
-                CustomStickyHeader(
-                    textStyle = MaterialTheme.typography.titleLarge,
-                    title = title(index)
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Text("Total Records: ${item.sumOfRecords}", color = textColor)
-                Text("Total Accounts: ${item.sumOfAccounts}", color = textColor)
-                Text("Total Categories: ${item.sumOfCategories}", color = textColor)
-                Text("Total Expenses: ${item.sumOfExpense}", color = textColor)
-                Text("Total Income: ${item.sumOfIncome}", color = textColor)
-                Text("Total Transfers: ${item.sumOfTransfer}", color = textColor)
+        itemsIndexed(dbInfo, key = { index, item -> index }) { index, item ->
+            val key = "$index$item".hashCode()
+            val isVisible = remember(key) {
+                MutableTransitionState(
+                    false
+                ).apply { targetState = true }
             }
-        }
-        item {
-            if (dbInfo.size == 1) {
-                Spacer(modifier = Modifier.height(16.dp))
-                Text("There is nothing to be exported", color = textColor)
+            AnimatedVisibility(
+                visibleState = isVisible,
+                enter = slideInHorizontally(
+                    initialOffsetX = { fullWidth -> -fullWidth },
+                    animationSpec = tween(
+                        durationMillis = 300,
+                        easing = FastOutSlowInEasing
+                    )
+                )
+            ) {
+                Column(
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .fillMaxWidth(),
+                ) {
+                    CustomStickyHeader(
+                        topPadding = 10.dp,
+                        textStyle = MaterialTheme.typography.titleLarge,
+                        title = title(index)
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Column(Modifier.padding(start = 8.dp)) {
+                        Text("Total Records: ${item.sumOfRecords}", color = textColor)
+                        Text("Total Accounts: ${item.sumOfAccounts}", color = textColor)
+                        Text("Total Categories: ${item.sumOfCategories}", color = textColor)
+                        Text("Total Expenses: ${item.sumOfExpense}", color = textColor)
+                        Text("Total Income: ${item.sumOfIncome}", color = textColor)
+                        Text("Total Transfers: ${item.sumOfTransfer}", color = textColor)
+                    }
+                }
             }
         }
     }

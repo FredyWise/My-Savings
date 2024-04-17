@@ -1,5 +1,6 @@
 package com.fredy.mysavings.ui.NavigationComponent
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -128,7 +129,7 @@ fun MainScreen(
         )
     }
     Scaffold(
-        modifier = modifier,
+        modifier = modifier.animateContentSize(),
         backgroundColor = backgroundColor,
         scaffoldState = scaffoldState,
         drawerGesturesEnabled = scaffoldState.drawerState.isOpen,

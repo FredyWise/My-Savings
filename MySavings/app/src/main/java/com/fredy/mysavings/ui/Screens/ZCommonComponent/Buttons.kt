@@ -47,14 +47,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.Util.ToggleableInfo
-import com.fredy.mysavings.Util.currencyCodes
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -324,7 +322,12 @@ fun ThemeSwitcher(
 fun SimpleDropdown(
     modifier: Modifier = Modifier,
     menuModifier: Modifier = Modifier,
-    textFieldColors: TextFieldColors = TextFieldDefaults.colors(),
+    textFieldEnabled: Boolean = true,
+    textFieldColors: TextFieldColors = TextFieldDefaults.colors(
+        disabledTextColor = MaterialTheme.colorScheme.onSurface,
+        disabledTrailingIconColor = MaterialTheme.colorScheme.onSurface,
+        disabledIndicatorColor = MaterialTheme.colorScheme.onSurface
+    ),
     delayTime: Long = 500L,
     textFieldShape: Shape = TextFieldDefaults.shape,
     list: List<String>,
@@ -341,7 +344,7 @@ fun SimpleDropdown(
         mutableStateOf(list)
     }
     val scope = rememberCoroutineScope()
-    fun debounce(query: String, timeMillis:Long = delayTime) {
+    fun debounce(query: String, timeMillis: Long = delayTime) {
         scope.launch {
             delay(timeMillis)
             if (query == selectedTextState) {
@@ -364,6 +367,7 @@ fun SimpleDropdown(
         TextField(
             value = selectedTextState,
             singleLine = true,
+            enabled = textFieldEnabled,
             onValueChange = {
                 selectedTextState = it
                 debounce(it)

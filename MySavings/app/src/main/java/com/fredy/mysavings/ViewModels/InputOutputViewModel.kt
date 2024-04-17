@@ -83,6 +83,7 @@ class InputOutputViewModel @Inject constructor(
         if (recordsResource is Resource.Success) {
             state.copy(
                 exportRecords = recordsResource.data!!,
+                exportDBInfo = calculateDBInfo(recordsResource.data)
             )
         } else {
             state
