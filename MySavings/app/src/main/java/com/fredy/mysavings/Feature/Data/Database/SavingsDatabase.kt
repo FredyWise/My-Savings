@@ -14,13 +14,13 @@ import com.fredy.mysavings.Feature.Data.Database.Dao.CurrencyCacheDao
 import com.fredy.mysavings.Feature.Data.Database.Dao.CurrencyDao
 import com.fredy.mysavings.Feature.Data.Database.Dao.RecordDao
 import com.fredy.mysavings.Feature.Data.Database.Dao.UserDao
-import com.fredy.mysavings.Feature.Data.Database.Model.Wallet
-import com.fredy.mysavings.Feature.Data.Database.Model.Book
-import com.fredy.mysavings.Feature.Data.Database.Model.Category
-import com.fredy.mysavings.Feature.Data.Database.Model.Currency
-import com.fredy.mysavings.Feature.Data.Database.Model.RatesCache
-import com.fredy.mysavings.Feature.Data.Database.Model.Record
-import com.fredy.mysavings.Feature.Data.Database.Model.UserData
+import com.fredy.mysavings.Feature.Domain.Model.Wallet
+import com.fredy.mysavings.Feature.Domain.Model.Book
+import com.fredy.mysavings.Feature.Domain.Model.Category
+import com.fredy.mysavings.Feature.Domain.Model.Currency
+import com.fredy.mysavings.Feature.Domain.Model.RatesCache
+import com.fredy.mysavings.Feature.Domain.Model.Record
+import com.fredy.mysavings.Feature.Domain.Model.UserData
 
 @TypeConverters(value = [DateTimeConverter::class, TimestampConverter::class, CurrencyRatesDoubleConverter::class, CurrencyResponseConverter::class])
 @Database(

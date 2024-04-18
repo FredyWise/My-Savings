@@ -1,12 +1,12 @@
 package com.fredy.mysavings.Feature.Domain.UseCases.WalletUseCases
 
 import co.yml.charts.common.extensions.isNotNull
-import com.fredy.mysavings.Feature.Data.Database.Model.Wallet
+import com.fredy.mysavings.Feature.Domain.Model.Wallet
 import com.fredy.mysavings.Feature.Domain.Repository.WalletRepository
 import com.fredy.mysavings.Feature.Domain.Repository.AuthRepository
 import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.CurrencyUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.currencyConverter
-import com.fredy.mysavings.Feature.Mappers.getCurrencies
+import com.fredy.mysavings.Util.Mappers.getCurrencies
 import com.fredy.mysavings.Util.BalanceItem
 import com.fredy.mysavings.Util.DefaultData.deletedWallet
 import com.fredy.mysavings.Util.Log

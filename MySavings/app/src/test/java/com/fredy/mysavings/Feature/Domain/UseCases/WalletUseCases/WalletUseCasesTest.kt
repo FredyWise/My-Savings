@@ -1,7 +1,7 @@
 package com.fredy.mysavings.Feature.Domain.UseCases.WalletUseCases
 
 import com.fredy.mysavings.BaseUseCaseTest
-import com.fredy.mysavings.Feature.Data.Database.Model.Wallet
+import com.fredy.mysavings.Feature.Domain.Model.Wallet
 import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.currencyConverter
 import com.fredy.mysavings.Util.Resource
 import junit.framework.TestCase.assertEquals

@@ -1,7 +1,7 @@
 package com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource
 
 import com.fredy.mysavings.Util.Log
-import com.fredy.mysavings.Feature.Data.Database.Model.UserData
+import com.fredy.mysavings.Feature.Domain.Model.UserData
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.Filter

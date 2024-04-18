@@ -1,8 +1,8 @@
 package com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases
 
 import com.fredy.mysavings.BaseUseCaseTest
-import com.fredy.mysavings.Feature.Data.Database.Model.Currency
-import com.fredy.mysavings.Feature.Mappers.getRateForCurrency
+import com.fredy.mysavings.Feature.Domain.Model.Currency
+import com.fredy.mysavings.Util.Mappers.getRateForCurrency
 import com.fredy.mysavings.Util.Resource
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue

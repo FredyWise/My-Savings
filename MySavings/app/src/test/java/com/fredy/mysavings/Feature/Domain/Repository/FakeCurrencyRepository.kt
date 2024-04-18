@@ -2,8 +2,8 @@ package com.fredy.mysavings.Feature.Domain.Repository
 
 import androidx.compose.runtime.mutableStateOf
 import com.fredy.mysavings.Feature.Data.APIs.CountryModels.Response.CurrencyInfoItem
-import com.fredy.mysavings.Feature.Data.Database.Model.Currency
-import com.fredy.mysavings.Feature.Data.Database.Model.RatesCache
+import com.fredy.mysavings.Feature.Domain.Model.Currency
+import com.fredy.mysavings.Feature.Domain.Model.RatesCache
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 

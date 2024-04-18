@@ -28,10 +28,10 @@ import com.fredy.mysavings.Feature.Domain.UseCases.BookUseCases.DeleteBook
 import com.fredy.mysavings.Feature.Domain.UseCases.BookUseCases.GetBook
 import com.fredy.mysavings.Feature.Domain.UseCases.BookUseCases.GetUserBooks
 import com.fredy.mysavings.Feature.Domain.UseCases.BookUseCases.UpsertBook
-import com.fredy.mysavings.Feature.Domain.UseCases.CSVUseCases.CSVUseCases
-import com.fredy.mysavings.Feature.Domain.UseCases.CSVUseCases.GetDBInfo
-import com.fredy.mysavings.Feature.Domain.UseCases.CSVUseCases.InputFromCSV
-import com.fredy.mysavings.Feature.Domain.UseCases.CSVUseCases.OutputToCSV
+import com.fredy.mysavings.Feature.Domain.UseCases.IOUseCases.IOUseCases
+import com.fredy.mysavings.Feature.Domain.UseCases.IOUseCases.GetDBInfo
+import com.fredy.mysavings.Feature.Domain.UseCases.IOUseCases.InputFromCSV
+import com.fredy.mysavings.Feature.Domain.UseCases.IOUseCases.OutputToCSV
 import com.fredy.mysavings.Feature.Domain.UseCases.CategoryUseCases.CategoryUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.CategoryUseCases.DeleteCategory
 import com.fredy.mysavings.Feature.Domain.UseCases.CategoryUseCases.GetCategory
@@ -230,7 +230,7 @@ object UseCasesModule {
         recordRepository: RecordRepository,
         walletRepository: WalletRepository,
         categoryRepository: CategoryRepository,
-    ): CSVUseCases = CSVUseCases(
+    ): IOUseCases = IOUseCases(
         outputToCSV = OutputToCSV(csvRepository),
         inputFromCSV = InputFromCSV(csvRepository, authRepository),
         getDBInfo = GetDBInfo(

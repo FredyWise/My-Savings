@@ -23,8 +23,8 @@ import com.fredy.mysavings.Feature.Data.Enum.DisplayState
 
 import com.fredy.mysavings.Util.initialDarkThemeDefaultColor
 import com.fredy.mysavings.Util.initialLightThemeDefaultColor
-import com.fredy.mysavings.ViewModels.SettingState
-import com.fredy.mysavings.ViewModels.SettingViewModel
+import com.fredy.mysavings.Feature.Presentation.ViewModels.SettingState
+import com.fredy.mysavings.Feature.Presentation.ViewModels.SettingViewModel
 
 private val LightColorScheme = lightColorScheme(
     primary = md_theme_light_primary,

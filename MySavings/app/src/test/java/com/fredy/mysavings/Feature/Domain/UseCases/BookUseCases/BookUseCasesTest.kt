@@ -1,7 +1,7 @@
 package com.fredy.mysavings.Feature.Domain.UseCases.BookUseCases
 
 import com.fredy.mysavings.BaseUseCaseTest
-import com.fredy.mysavings.Feature.Data.Database.Model.Book
+import com.fredy.mysavings.Feature.Domain.Model.Book
 import com.fredy.mysavings.Util.Resource
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue

@@ -2,15 +2,15 @@ package com.fredy.mysavings.Feature.Domain.UseCases.CategoryUseCases
 
 import com.fredy.mysavings.Util.Log
 import co.yml.charts.common.extensions.isNotNull
-import com.fredy.mysavings.Feature.Data.Database.Model.Category
+import com.fredy.mysavings.Feature.Domain.Model.Category
 import com.fredy.mysavings.Feature.Domain.Repository.AuthRepository
 import com.fredy.mysavings.Feature.Domain.Repository.CategoryRepository
-import com.fredy.mysavings.Feature.Mappers.toCategoryMaps
+import com.fredy.mysavings.Util.Mappers.toCategoryMaps
 import com.fredy.mysavings.Util.DefaultData.deletedCategory
 import com.fredy.mysavings.Util.DefaultData.transferCategory
 import com.fredy.mysavings.Util.Resource
 
-import com.fredy.mysavings.ViewModels.CategoryMap
+import com.fredy.mysavings.Feature.Presentation.ViewModels.CategoryMap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch

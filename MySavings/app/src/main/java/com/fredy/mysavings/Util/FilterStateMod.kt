@@ -1,6 +1,6 @@
 package com.fredy.mysavings.Util
 
-import com.fredy.mysavings.Feature.Data.Database.Model.Book
+import com.fredy.mysavings.Feature.Domain.Model.Book
 import com.fredy.mysavings.Feature.Data.Enum.FilterType
 import com.fredy.mysavings.Feature.Data.Enum.RecordType
 import com.fredy.mysavings.Feature.Data.Enum.SortType
@@ -44,7 +44,7 @@ fun FilterState.isFilterTypeMonthBelow(): Boolean{
     }
 }
 
-fun <T> FilterState.map(target: (start: LocalDateTime, end: LocalDateTime, RecordType, SortType, currencies: List<String>, useUserCurrency: Boolean, currentBook:Book) -> T): T {
+fun <T> FilterState.map(target: (start: LocalDateTime, end: LocalDateTime, RecordType, SortType, currencies: List<String>, useUserCurrency: Boolean, currentBook: Book) -> T): T {
     return when (filterType) {
         FilterType.Daily -> target(
             start,

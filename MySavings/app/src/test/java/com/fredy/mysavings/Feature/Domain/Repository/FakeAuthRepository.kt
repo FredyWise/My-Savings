@@ -4,9 +4,9 @@ import android.content.Context
 import android.net.Uri
 import androidx.compose.runtime.mutableStateOf
 import com.fredy.mysavings.Feature.Data.APIs.CountryModels.Response.CurrencyInfoItem
-import com.fredy.mysavings.Feature.Data.Database.Model.Currency
-import com.fredy.mysavings.Feature.Data.Database.Model.RatesCache
-import com.fredy.mysavings.Feature.Data.Database.Model.UserData
+import com.fredy.mysavings.Feature.Domain.Model.Currency
+import com.fredy.mysavings.Feature.Domain.Model.RatesCache
+import com.fredy.mysavings.Feature.Domain.Model.UserData
 import com.fredy.mysavings.Util.Resource
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.AuthResult

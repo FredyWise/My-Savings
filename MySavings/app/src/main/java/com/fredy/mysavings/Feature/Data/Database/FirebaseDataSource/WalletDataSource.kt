@@ -1,7 +1,7 @@
 package com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource
 
 import com.fredy.mysavings.Util.Log
-import com.fredy.mysavings.Feature.Data.Database.Model.Wallet
+import com.fredy.mysavings.Feature.Domain.Model.Wallet
 
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.snapshots

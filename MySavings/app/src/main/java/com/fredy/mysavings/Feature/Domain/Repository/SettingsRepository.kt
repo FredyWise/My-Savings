@@ -20,7 +20,7 @@ import com.fredy.mysavings.Util.FilterState
 import com.fredy.mysavings.Util.defaultDarkExpenseColor
 import com.fredy.mysavings.Util.defaultDarkIncomeColor
 import com.fredy.mysavings.Util.defaultDarkTransferColor
-import com.fredy.mysavings.ViewModels.SettingState
+import com.fredy.mysavings.Feature.Presentation.ViewModels.SettingState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow

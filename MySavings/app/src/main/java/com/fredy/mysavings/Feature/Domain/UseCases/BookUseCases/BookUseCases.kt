@@ -1,7 +1,7 @@
 package com.fredy.mysavings.Feature.Domain.UseCases.BookUseCases
 
 import co.yml.charts.common.extensions.isNotNull
-import com.fredy.mysavings.Feature.Data.Database.Model.Book
+import com.fredy.mysavings.Feature.Domain.Model.Book
 import com.fredy.mysavings.Feature.Domain.Repository.AuthRepository
 import com.fredy.mysavings.Feature.Domain.Repository.BookRepository
 import com.fredy.mysavings.Util.Log

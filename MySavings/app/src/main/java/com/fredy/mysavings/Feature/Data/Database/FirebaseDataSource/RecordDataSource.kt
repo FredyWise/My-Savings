@@ -2,12 +2,12 @@ package com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource
 
 import androidx.lifecycle.MutableLiveData
 import com.fredy.mysavings.Feature.Data.Database.Converter.TimestampConverter
-import com.fredy.mysavings.Feature.Data.Database.Model.Wallet
-import com.fredy.mysavings.Feature.Data.Database.Model.Category
-import com.fredy.mysavings.Feature.Data.Database.Model.Record
-import com.fredy.mysavings.Feature.Data.Database.Model.TrueRecord
+import com.fredy.mysavings.Feature.Domain.Model.Wallet
+import com.fredy.mysavings.Feature.Domain.Model.Category
+import com.fredy.mysavings.Feature.Domain.Model.Record
+import com.fredy.mysavings.Feature.Domain.Model.TrueRecord
 import com.fredy.mysavings.Feature.Data.Enum.RecordType
-import com.fredy.mysavings.Feature.Mappers.toTrueRecords
+import com.fredy.mysavings.Util.Mappers.toTrueRecords
 import com.fredy.mysavings.Util.Log
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.Filter

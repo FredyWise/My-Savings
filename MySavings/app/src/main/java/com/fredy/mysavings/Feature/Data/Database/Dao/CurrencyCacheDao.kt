@@ -5,7 +5,7 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
-import com.fredy.mysavings.Feature.Data.Database.Model.RatesCache
+import com.fredy.mysavings.Feature.Domain.Model.RatesCache
 
 @Dao
 interface CurrencyCacheDao {

@@ -4,7 +4,7 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
-import com.fredy.mysavings.Feature.Data.Database.Model.Wallet
+import com.fredy.mysavings.Feature.Domain.Model.Wallet
 import kotlinx.coroutines.flow.Flow
 
 @Dao

@@ -5,10 +5,10 @@ import android.os.Build
 import android.os.storage.StorageManager
 import androidx.core.content.ContextCompat.getSystemService
 import com.fredy.mysavings.Feature.Data.Database.Converter.TimestampConverter
-import com.fredy.mysavings.Feature.Data.Database.Model.Category
-import com.fredy.mysavings.Feature.Data.Database.Model.Record
-import com.fredy.mysavings.Feature.Data.Database.Model.TrueRecord
-import com.fredy.mysavings.Feature.Data.Database.Model.Wallet
+import com.fredy.mysavings.Feature.Domain.Model.Category
+import com.fredy.mysavings.Feature.Domain.Model.Record
+import com.fredy.mysavings.Feature.Domain.Model.TrueRecord
+import com.fredy.mysavings.Feature.Domain.Model.Wallet
 import com.fredy.mysavings.Feature.Data.Enum.RecordType
 import com.fredy.mysavings.Util.Log
 import com.fredy.mysavings.Util.formatDateYearDetailedTime
