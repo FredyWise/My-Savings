@@ -34,7 +34,6 @@ class BookUseCasesTest : BaseUseCaseTest() {
         val bookId = "testing"
         val book = Book(
             bookId = bookId,
-            userIdFk = currentUserId,
             bookName = "Book a",
             bookIcon = 0,
             bookIconDescription = "Icon a"
@@ -45,7 +44,7 @@ class BookUseCasesTest : BaseUseCaseTest() {
         assertEquals(bookId, result)
         val insertedBook =
             fakeBookRepository.getBook(bookId = bookId).lastOrNull()
-        assertEquals(book, insertedBook)
+        assertEquals(book.copy(userIdFk = currentUserId), insertedBook)
     }
 
     @Test
@@ -61,11 +60,8 @@ class BookUseCasesTest : BaseUseCaseTest() {
 
         fakeBookRepository.upsertBook(oldBook)
 
-        val book = Book(
-            bookId = bookId,
-            userIdFk = currentUserId,
+        val book = oldBook.copy(
             bookName = "Book b",
-            bookIcon = 0,
             bookIconDescription = "Icon b"
         )
 

@@ -42,6 +42,7 @@ class CurrencyUseCasesTest : BaseUseCaseTest() {
         val updatedCurrency = fakeCurrencyRepository.getCurrencies(currentUserId).last()
         assertTrue(updatedCurrency.contains(currency))
     }
+
     @Test
     fun `test get currency rates`() = runBlocking {
         val ratesResource = getCurrencyRates().last()

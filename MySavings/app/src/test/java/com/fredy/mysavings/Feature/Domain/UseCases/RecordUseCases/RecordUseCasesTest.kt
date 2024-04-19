@@ -101,7 +101,6 @@ class RecordUseCasesTest : BaseUseCaseTest() {
             walletIdFromFk = "testAccountId",
             walletIdToFk = "testAccountId",
             categoryIdFk = "testCategoryId",
-            userIdFk = currentUserId,
             recordTimestamp = Timestamp.now(),
             recordAmount = 100.0,
             recordCurrency = "USD",
@@ -113,7 +112,7 @@ class RecordUseCasesTest : BaseUseCaseTest() {
 
         assertEquals(recordId, result)
         val insertedRecord = fakeRecordRepository.getRecordById(recordId = recordId).record
-        assertEquals(record, insertedRecord)
+        assertEquals(record.copy(userIdFk = currentUserId), insertedRecord)
     }
 
     @Test
@@ -134,16 +133,14 @@ class RecordUseCasesTest : BaseUseCaseTest() {
 
         fakeRecordRepository.upsertRecordItem(oldRecord)
 
-        val record = Record(
-            recordId = recordId,
-            walletIdFromFk = "testAccountId",
-            walletIdToFk = "testAccountId",
-            categoryIdFk = "testCategoryId",
-            userIdFk = currentUserId,
+        val record = oldRecord.copy(
+            walletIdFromFk = "testAccountId1",
+            walletIdToFk = "testAccountId2",
+            categoryIdFk = "testCategoryId2",
             recordTimestamp = Timestamp.now(),
             recordAmount = 200.0,
             recordCurrency = "USD",
-            recordType = RecordType.Expense,
+            recordType = RecordType.Transfer,
             recordNotes = "Test record notes updated"
         )
 

@@ -39,7 +39,6 @@ class WalletUseCasesTest : BaseUseCaseTest() {
         val accountId = "testing"
         val wallet = Wallet(
             walletId = accountId,
-            userIdFk = currentUserId,
             walletName = "Account a",
             walletAmount = 100.0,
             walletCurrency = "USD",
@@ -51,7 +50,7 @@ class WalletUseCasesTest : BaseUseCaseTest() {
 
         assertEquals(accountId, result)
         val insertedAccount = fakeAccountRepository.getWallet(accountId = accountId).lastOrNull()
-        assertEquals(wallet, insertedAccount)
+        assertEquals(wallet.copy(userIdFk = currentUserId), insertedAccount)
     }
 
 
@@ -70,9 +69,7 @@ class WalletUseCasesTest : BaseUseCaseTest() {
 
         fakeAccountRepository.upsertWallet(oldWallet)
 
-        val wallet = Wallet(
-            walletId = accountId,
-            userIdFk = currentUserId,
+        val wallet = oldWallet.copy(
             walletName = "Account b",
             walletAmount = 100.0,
             walletCurrency = "IDR",

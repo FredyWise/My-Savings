@@ -1,8 +1,8 @@
 package com.fredy.mysavings.Feature.Domain.UseCases.CategoryUseCases
 
 import com.fredy.mysavings.BaseUseCaseTest
-import com.fredy.mysavings.Feature.Domain.Model.Category
 import com.fredy.mysavings.Feature.Data.Enum.RecordType
+import com.fredy.mysavings.Feature.Domain.Model.Category
 import com.fredy.mysavings.Util.Resource
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
@@ -36,7 +36,6 @@ class CategoryUseCasesTest : BaseUseCaseTest() {
         val categoryId = "testing"
         val category = Category(
             categoryId = categoryId,
-            userIdFk = currentUserId,
             categoryName = "Category a",
             categoryIcon = 0,
             categoryIconDescription = "Icon a"
@@ -47,7 +46,7 @@ class CategoryUseCasesTest : BaseUseCaseTest() {
         assertEquals(categoryId, result)
         val insertedCategory =
             fakeCategoryRepository.getCategory(categoryId = categoryId).lastOrNull()
-        assertEquals(category, insertedCategory)
+        assertEquals(category.copy(userIdFk = currentUserId), insertedCategory)
     }
 
     @Test
@@ -63,9 +62,7 @@ class CategoryUseCasesTest : BaseUseCaseTest() {
 
         fakeCategoryRepository.upsertCategory(oldCategory)
 
-        val category = Category(
-            categoryId = categoryId,
-            userIdFk = currentUserId,
+        val category = oldCategory.copy(
             categoryName = "Category b",
             categoryIcon = 0,
             categoryIconDescription = "Icon b"
@@ -135,7 +132,6 @@ class CategoryUseCasesTest : BaseUseCaseTest() {
         fakeCategoryRepository.upsertCategory(category)
 
         val retrievedCategory = getCategory(categoryId = categoryId).first()
-
         assertEquals(category, retrievedCategory)
     }
 
