@@ -1,5 +1,6 @@
 package com.fredy.mysavings.Feature.Domain.Repository
 
+import com.fredy.mysavings.Feature.Domain.Model.Book
 import com.fredy.mysavings.Feature.Domain.Model.TrueRecord
 
 class FakeCSVRepository : CSVRepository {
@@ -18,9 +19,10 @@ class FakeCSVRepository : CSVRepository {
     override suspend fun inputFromCSV(
         currentUserId: String,
         directory: String,
-        delimiter: String
+        delimiter: String,
+        book: Book
     ): List<TrueRecord> {
-        return csvFile.find { it.first.equals(directory+delimiter,ignoreCase = false) }!!.second
+        return csvFile.find { it.first.equals(directory+delimiter,ignoreCase = false) }!!.second.filter { it.record.bookIdFk == book.bookId }
     }
 }
 

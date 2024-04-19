@@ -37,7 +37,7 @@ class IOUseCasesTest:BaseUseCaseTest() {
 
         outputToCSV(directory, filename, trueRecords, delimiter)
 
-        assertEquals(trueRecords,fakeCSVRepository.inputFromCSV(currentUserId,directory+filename,delimiter))
+        assertEquals(trueRecords,fakeCSVRepository.inputFromCSV(currentUserId,directory+filename,delimiter,Book(bookTestId)))
     }
 
     @Test

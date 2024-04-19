@@ -4,6 +4,7 @@ import com.fredy.mysavings.BaseUseCaseTest
 import com.fredy.mysavings.Feature.Domain.Model.Record
 import com.fredy.mysavings.Feature.Data.Enum.RecordType
 import com.fredy.mysavings.Feature.Data.Enum.SortType
+import com.fredy.mysavings.Feature.Domain.Model.Book
 import com.fredy.mysavings.Util.Mappers.filterRecordCurrency
 import com.fredy.mysavings.Util.Mappers.filterTrueRecordCurrency
 import com.fredy.mysavings.Util.Resource
@@ -243,7 +244,7 @@ class RecordUseCasesTest : BaseUseCaseTest() {
         val startDate = LocalDateTime.now().minusDays(7)
         val endDate = LocalDateTime.now()
 
-        val recordsFlow = getAllTrueRecordsWithinSpecificTime(startDate, endDate)
+        val recordsFlow = getAllTrueRecordsWithinSpecificTime(startDate, endDate, Book(bookTestId))
         val recordsResource = recordsFlow.last()
 
         assertTrue(recordsResource is Resource.Success)
@@ -328,14 +329,14 @@ class RecordUseCasesTest : BaseUseCaseTest() {
         val recordsResource = recordsFlow.last()
 
         assertTrue(recordsResource is Resource.Success)
-        val recordMaps = (recordsResource as Resource.Success).data!!
+        val bookMaps = (recordsResource as Resource.Success).data!!
         assertEquals(
             fakeRecordRepository.getUserTrueRecordsFromSpecificTime(
                 currentUserId,
                 startDate,
                 endDate
             ).first().filterTrueRecordCurrency(currency + currentUserCurrency).size,
-            recordMaps.sumOf { it.recordMaps.size }
+            bookMaps.sumOf { bookMap -> bookMap.recordMaps.sumOf { it.records.size } }
 
         )
     }
