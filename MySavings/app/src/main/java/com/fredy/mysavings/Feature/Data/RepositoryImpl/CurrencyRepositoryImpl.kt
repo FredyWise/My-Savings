@@ -34,7 +34,7 @@ class CurrencyRepositoryImpl @Inject constructor(
     private val currencyCacheDao: CurrencyCacheDao,
     private val currencyDao: CurrencyDao,
 ) : CurrencyRepository {
-    private val _cachedRates = MutableLiveData<RatesCache>()
+    private val _cachedRates = MutableLiveData<RatesCache?>()
     private val _currentUser = MutableLiveData<UserData>()
     private val _cachedCurrencyInfoResponse = MutableLiveData<List<CurrencyInfoItem>>()
     override suspend fun updateRates(cache: RatesCache) {
@@ -109,6 +109,7 @@ class CurrencyRepositoryImpl @Inject constructor(
                     Log.i("getRates: $cachedData")
 
                     if (cachedData.isNotNull() && isCacheValid(cachedData!!.cachedTime)) {
+                        _cachedRates.postValue(cachedData)
                         Log.i(
                             "getCachedRates: $cachedData"
                         )

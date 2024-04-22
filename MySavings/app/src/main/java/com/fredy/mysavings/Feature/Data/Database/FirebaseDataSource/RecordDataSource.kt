@@ -2,13 +2,13 @@ package com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource
 
 import androidx.lifecycle.MutableLiveData
 import com.fredy.mysavings.Feature.Data.Database.Converter.TimestampConverter
-import com.fredy.mysavings.Feature.Domain.Model.Wallet
+import com.fredy.mysavings.Feature.Data.Enum.RecordType
 import com.fredy.mysavings.Feature.Domain.Model.Category
 import com.fredy.mysavings.Feature.Domain.Model.Record
 import com.fredy.mysavings.Feature.Domain.Model.TrueRecord
-import com.fredy.mysavings.Feature.Data.Enum.RecordType
-import com.fredy.mysavings.Util.Mappers.toTrueRecords
+import com.fredy.mysavings.Feature.Domain.Model.Wallet
 import com.fredy.mysavings.Util.Log
+import com.fredy.mysavings.Util.Mappers.toTrueRecords
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
@@ -21,6 +21,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
@@ -77,8 +78,8 @@ interface RecordDataSource {
         endDate: LocalDateTime
     ): Flow<List<Record>>
 
-    suspend fun getUserAccounts(userId: String): List<Wallet>
-    suspend fun getUserCategories(userId: String): List<Category>
+//    suspend fun getUserAccounts(userId: String): List<Wallet>
+//    suspend fun getUserCategories(userId: String): List<Category>
 }
 
 class RecordDataSourceImpl @Inject constructor(
@@ -383,36 +384,25 @@ class RecordDataSourceImpl @Inject constructor(
         }
     }
 
-    private val _accounts = MutableLiveData<List<Wallet>>()
-    private val _categories = MutableLiveData<List<Category>>()
 
-
-    override suspend fun getUserAccounts(
+    fun getUserAccounts(
         userId: String
-    ): List<Wallet> {
-        return (Firebase.firestore.collection(
+    ): Flow<List<Wallet>> {
+        return Firebase.firestore.collection(
             "account"
         ).whereEqualTo(
             "userIdFk", userId
-        ).get().await().toObjects<Wallet>() + Firebase.firestore.collection(
-            "account"
-        ).whereEqualTo(
-            "userIdFk", "0"
-        ).get().await().toObjects<Wallet>())
+        ).snapshots().map { it.toObjects() }
     }
 
-    override suspend fun getUserCategories(
+    fun getUserCategories(
         userId: String
-    ): List<Category> {
-        return (Firebase.firestore.collection(
+    ): Flow<List<Category>> {
+        return Firebase.firestore.collection(
             "category"
         ).whereEqualTo(
             "userIdFk", userId
-        ).get().await().toObjects<Category>() + Firebase.firestore.collection(
-            "category"
-        ).whereEqualTo(
-            "userIdFk", "0"
-        ).get().await().toObjects<Category>())
+        ).snapshots().map { it.toObjects() }
     }
 
     private suspend fun getTrueRecord(record: Record) = coroutineScope {
@@ -448,22 +438,18 @@ class RecordDataSourceImpl @Inject constructor(
         userId: String
     ) = coroutineScope {
         withContext(Dispatchers.IO) {
-            val fromAccountDeferred = async {
-                getUserAccounts(userId)
+            val userAccounts = async {
+                getUserAccounts(userId).first()
             }
 
-            val toAccountDeferred = async {
-                getUserAccounts(userId)
-            }
-
-            val toCategoryDeferred = async {
-                getUserCategories(userId)
+            val userCategories = async {
+                getUserCategories(userId).first()
             }
 
             TrueRecordComponentResult(
-                fromWallet = fromAccountDeferred.await(),
-                toWallet = toAccountDeferred.await(),
-                toCategory = toCategoryDeferred.await()
+                fromWallet = userAccounts.await(),
+                toWallet = userAccounts.await(),
+                toCategory = userCategories.await()
             )
         }
     }
@@ -473,6 +459,8 @@ class RecordDataSourceImpl @Inject constructor(
         val toWallet: List<Wallet>,
         val toCategory: List<Category>,
     )
+
+
 
 //    suspend fun getUserTrueRecords(
 //        userId: String,

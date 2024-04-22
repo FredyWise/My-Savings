@@ -1,18 +1,17 @@
 package com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases
 
-import com.fredy.mysavings.Util.Log
 import co.yml.charts.common.extensions.isNotNull
 import com.fredy.mysavings.Feature.Data.APIs.CurrencyModels.Response.Rates
 import com.fredy.mysavings.Feature.Domain.Model.Currency
 import com.fredy.mysavings.Feature.Domain.Repository.AuthRepository
 import com.fredy.mysavings.Feature.Domain.Repository.CurrencyRepository
+import com.fredy.mysavings.Feature.Domain.Util.Resource
+import com.fredy.mysavings.Util.BalanceItem
+import com.fredy.mysavings.Util.Log
 import com.fredy.mysavings.Util.Mappers.getRateForCurrency
 import com.fredy.mysavings.Util.Mappers.toCurrency
 import com.fredy.mysavings.Util.Mappers.updateRatesUsingCode
-import com.fredy.mysavings.Util.BalanceItem
-import com.fredy.mysavings.Feature.Domain.Util.Resource
 import com.fredy.mysavings.Util.isCacheValid
-
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -29,9 +28,13 @@ data class CurrencyUseCases(
 suspend fun CurrencyUseCases.currencyConverter(
     amount: Double, from: String, to: String
 ): Double {
-    return this.convertCurrencyData(
-        amount, from, to
-    ).amount
+    return if (from != to && from.isNotEmpty() && to.isNotEmpty()) {
+        this.convertCurrencyData(
+            amount, from, to
+        ).amount
+    } else {
+        amount
+    }
 
 }
 
@@ -126,21 +129,17 @@ class ConvertCurrencyData(
         toCurrency: String,
         rates: Rates
     ): Double {
-        if (fromCurrency != toCurrency && fromCurrency.isNotEmpty() && toCurrency.isNotEmpty()) {
-            val toBaseRate = rates.getRateForCurrency(
-                toCurrency
-            )?.toDouble() ?: throw IllegalArgumentException(
-                "Currency '$toCurrency' not found in rates."
-            )
-            val fromBaseRate = rates.getRateForCurrency(
-                fromCurrency
-            )?.toDouble() ?: throw IllegalArgumentException(
-                "Currency '$fromCurrency' not found in rates."
-            )
-            return amount * (toBaseRate / fromBaseRate)
-        }else{
-            return amount
-        }
+        val toBaseRate = rates.getRateForCurrency(
+            toCurrency
+        )?.toDouble() ?: throw IllegalArgumentException(
+            "Currency '$toCurrency' not found in rates."
+        )
+        val fromBaseRate = rates.getRateForCurrency(
+            fromCurrency
+        )?.toDouble() ?: throw IllegalArgumentException(
+            "Currency '$fromCurrency' not found in rates."
+        )
+        return amount * (toBaseRate / fromBaseRate)
     }
 }
 
