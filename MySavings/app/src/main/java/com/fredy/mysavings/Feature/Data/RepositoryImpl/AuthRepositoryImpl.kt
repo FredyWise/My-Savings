@@ -6,7 +6,7 @@ import com.fredy.mysavings.Feature.Domain.Model.UserData
 import com.fredy.mysavings.Feature.Domain.Repository.AuthRepository
 import com.fredy.mysavings.MainActivity
 import com.fredy.mysavings.Util.Log
-import com.fredy.mysavings.Util.Resource
+import com.fredy.mysavings.Feature.Domain.Util.Resource
 import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.AuthCredential

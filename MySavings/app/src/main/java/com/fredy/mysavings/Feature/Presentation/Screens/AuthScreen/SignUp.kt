@@ -48,7 +48,7 @@ import androidx.navigation.NavHostController
 import coil.compose.rememberImagePainter
 import com.fredy.mysavings.Feature.Data.Enum.AuthMethod
 import com.fredy.mysavings.R
-import com.fredy.mysavings.Util.Resource
+import com.fredy.mysavings.Feature.Domain.Util.Resource
 import com.fredy.mysavings.Feature.Presentation.ViewModels.AuthState
 import com.fredy.mysavings.Feature.Presentation.ViewModels.Event.AuthEvent
 import com.google.android.gms.auth.api.signin.GoogleSignIn

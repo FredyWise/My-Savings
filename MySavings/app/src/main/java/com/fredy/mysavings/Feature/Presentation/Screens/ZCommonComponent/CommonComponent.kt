@@ -68,7 +68,7 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.fredy.mysavings.Util.ActionWithName
-import com.fredy.mysavings.Util.Resource
+import com.fredy.mysavings.Feature.Domain.Util.Resource
 import com.fredy.mysavings.Util.SavingsIcon
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay

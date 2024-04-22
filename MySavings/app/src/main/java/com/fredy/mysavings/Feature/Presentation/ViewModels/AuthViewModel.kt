@@ -16,7 +16,7 @@ import com.fredy.mysavings.Feature.Domain.Repository.AuthRepository
 import com.fredy.mysavings.Feature.Domain.Repository.SettingsRepository
 import com.fredy.mysavings.Feature.Domain.UseCases.UserUseCases.UserUseCases
 import com.fredy.mysavings.Util.Log
-import com.fredy.mysavings.Util.Resource
+import com.fredy.mysavings.Feature.Domain.Util.Resource
 import com.fredy.mysavings.Feature.Presentation.ViewModels.Event.AuthEvent
 import com.google.firebase.Firebase
 import com.google.firebase.auth.AuthResult

@@ -42,7 +42,7 @@ import com.canhub.cropper.CropImageOptions
 import com.fredy.mysavings.Feature.Data.Enum.RecordType
 import com.fredy.mysavings.R
 import com.fredy.mysavings.Util.ActionWithName
-import com.fredy.mysavings.Util.Resource
+import com.fredy.mysavings.Feature.Domain.Util.Resource
 import com.fredy.mysavings.Util.isTransfer
 import com.fredy.mysavings.Feature.Presentation.ViewModels.WalletViewModel
 import com.fredy.mysavings.Feature.Presentation.ViewModels.AddSingleRecordViewModel

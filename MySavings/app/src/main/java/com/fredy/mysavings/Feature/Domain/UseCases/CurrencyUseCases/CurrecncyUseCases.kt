@@ -2,17 +2,15 @@ package com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases
 
 import com.fredy.mysavings.Util.Log
 import co.yml.charts.common.extensions.isNotNull
-import com.fredy.mysavings.Feature.Data.APIs.ApiCredentials
 import com.fredy.mysavings.Feature.Data.APIs.CurrencyModels.Response.Rates
 import com.fredy.mysavings.Feature.Domain.Model.Currency
-import com.fredy.mysavings.Feature.Domain.Model.RatesCache
 import com.fredy.mysavings.Feature.Domain.Repository.AuthRepository
 import com.fredy.mysavings.Feature.Domain.Repository.CurrencyRepository
 import com.fredy.mysavings.Util.Mappers.getRateForCurrency
 import com.fredy.mysavings.Util.Mappers.toCurrency
 import com.fredy.mysavings.Util.Mappers.updateRatesUsingCode
 import com.fredy.mysavings.Util.BalanceItem
-import com.fredy.mysavings.Util.Resource
+import com.fredy.mysavings.Feature.Domain.Util.Resource
 import com.fredy.mysavings.Util.isCacheValid
 
 import kotlinx.coroutines.Dispatchers

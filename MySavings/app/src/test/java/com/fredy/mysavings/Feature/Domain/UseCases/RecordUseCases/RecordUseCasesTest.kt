@@ -7,7 +7,7 @@ import com.fredy.mysavings.Feature.Data.Enum.SortType
 import com.fredy.mysavings.Feature.Domain.Model.Book
 import com.fredy.mysavings.Util.Mappers.filterRecordCurrency
 import com.fredy.mysavings.Util.Mappers.filterTrueRecordCurrency
-import com.fredy.mysavings.Util.Resource
+import com.fredy.mysavings.Feature.Domain.Util.Resource
 import com.google.firebase.Timestamp
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue

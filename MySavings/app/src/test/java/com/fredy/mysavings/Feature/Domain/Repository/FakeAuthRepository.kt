@@ -2,16 +2,11 @@ package com.fredy.mysavings.Feature.Domain.Repository
 
 import android.content.Context
 import android.net.Uri
-import androidx.compose.runtime.mutableStateOf
-import com.fredy.mysavings.Feature.Data.APIs.CountryModels.Response.CurrencyInfoItem
-import com.fredy.mysavings.Feature.Domain.Model.Currency
-import com.fredy.mysavings.Feature.Domain.Model.RatesCache
 import com.fredy.mysavings.Feature.Domain.Model.UserData
-import com.fredy.mysavings.Util.Resource
+import com.fredy.mysavings.Feature.Domain.Util.Resource
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.AuthResult
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 
 class FakeAuthRepository : AuthRepository {

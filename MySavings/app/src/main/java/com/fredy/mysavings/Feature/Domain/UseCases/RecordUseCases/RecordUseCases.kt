@@ -27,7 +27,7 @@ import com.fredy.mysavings.Util.DefaultData.deletedWallet
 import com.fredy.mysavings.Util.DefaultData.deletedCategory
 import com.fredy.mysavings.Util.DefaultData.transferCategory
 import com.fredy.mysavings.Util.Log
-import com.fredy.mysavings.Util.Resource
+import com.fredy.mysavings.Feature.Domain.Util.Resource
 import com.fredy.mysavings.Util.isExpense
 import com.fredy.mysavings.Util.isIncome
 import com.fredy.mysavings.Util.isTransfer

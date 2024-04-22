@@ -10,7 +10,7 @@ import com.fredy.mysavings.Util.Mappers.getCurrencies
 import com.fredy.mysavings.Util.BalanceItem
 import com.fredy.mysavings.Util.DefaultData.deletedWallet
 import com.fredy.mysavings.Util.Log
-import com.fredy.mysavings.Util.Resource
+import com.fredy.mysavings.Feature.Domain.Util.Resource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch

@@ -32,7 +32,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.Feature.Domain.Model.TrueRecord
 import com.fredy.mysavings.Util.RecordTypeColor
-import com.fredy.mysavings.Util.Resource
+import com.fredy.mysavings.Feature.Domain.Util.Resource
 import com.fredy.mysavings.Util.formatDateDay
 import com.fredy.mysavings.Feature.Domain.Model.RecordMap
 

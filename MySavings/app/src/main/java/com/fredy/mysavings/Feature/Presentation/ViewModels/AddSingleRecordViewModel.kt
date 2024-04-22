@@ -13,7 +13,7 @@ import com.fredy.mysavings.Feature.Data.Enum.RecordType
 import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.CurrencyUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.RecordUseCases
 import com.fredy.mysavings.Util.DefaultData.transferCategory
-import com.fredy.mysavings.Util.Resource
+import com.fredy.mysavings.Feature.Domain.Util.Resource
 import com.fredy.mysavings.Util.isExpense
 import com.fredy.mysavings.Util.isTransfer
 import com.fredy.mysavings.Feature.Presentation.ViewModels.Event.AddRecordEvent

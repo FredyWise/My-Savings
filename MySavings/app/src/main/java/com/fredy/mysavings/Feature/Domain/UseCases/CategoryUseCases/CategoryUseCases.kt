@@ -8,7 +8,7 @@ import com.fredy.mysavings.Feature.Domain.Repository.CategoryRepository
 import com.fredy.mysavings.Util.Mappers.toCategoryMaps
 import com.fredy.mysavings.Util.DefaultData.deletedCategory
 import com.fredy.mysavings.Util.DefaultData.transferCategory
-import com.fredy.mysavings.Util.Resource
+import com.fredy.mysavings.Feature.Domain.Util.Resource
 
 import com.fredy.mysavings.Feature.Presentation.ViewModels.CategoryMap
 import kotlinx.coroutines.Dispatchers

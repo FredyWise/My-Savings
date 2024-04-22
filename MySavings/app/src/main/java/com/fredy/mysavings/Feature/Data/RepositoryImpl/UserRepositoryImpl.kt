@@ -5,7 +5,7 @@ import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.UserDataSour
 import com.fredy.mysavings.Feature.Domain.Model.UserData
 import com.fredy.mysavings.Feature.Domain.Repository.UserRepository
 import com.fredy.mysavings.Util.Log
-import com.fredy.mysavings.Util.Resource
+import com.fredy.mysavings.Feature.Domain.Util.Resource
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow

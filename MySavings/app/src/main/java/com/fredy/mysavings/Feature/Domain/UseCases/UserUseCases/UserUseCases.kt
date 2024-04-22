@@ -4,10 +4,8 @@ import co.yml.charts.common.extensions.isNotNull
 import com.fredy.mysavings.Feature.Domain.Model.UserData
 import com.fredy.mysavings.Feature.Domain.Repository.UserRepository
 import com.fredy.mysavings.Util.Log
-import com.fredy.mysavings.Util.Resource
+import com.fredy.mysavings.Feature.Domain.Util.Resource
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 
 data class UserUseCases(

@@ -48,7 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.fredy.mysavings.Feature.Data.Enum.AuthMethod
 import com.fredy.mysavings.R
-import com.fredy.mysavings.Util.Resource
+import com.fredy.mysavings.Feature.Domain.Util.Resource
 
 import com.fredy.mysavings.Util.isValidLogin
 import com.fredy.mysavings.Util.isValidPhoneNumber

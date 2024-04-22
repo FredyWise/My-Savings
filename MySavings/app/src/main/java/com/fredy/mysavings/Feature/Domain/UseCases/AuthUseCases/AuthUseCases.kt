@@ -3,7 +3,7 @@ package com.fredy.mysavings.Feature.Domain.UseCases.AuthUseCases
 import android.content.Context
 import android.net.Uri
 import com.fredy.mysavings.Feature.Domain.Repository.AuthRepository
-import com.fredy.mysavings.Util.Resource
+import com.fredy.mysavings.Feature.Domain.Util.Resource
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.AuthResult
 import kotlinx.coroutines.flow.Flow
