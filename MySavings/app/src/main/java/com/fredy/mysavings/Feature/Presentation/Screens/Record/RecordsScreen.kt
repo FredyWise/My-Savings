@@ -69,8 +69,6 @@ fun RecordsScreen(
                 RecordBody(
                     recordMaps = data.find { it.book == state.filterState.currentBook }?.recordMaps,
                     onEvent = onEvent,
-                    additionalHeader = {
-                    }
                 )
             }
         }

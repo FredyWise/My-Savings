@@ -64,10 +64,9 @@ fun RecordBody(
                 )
             }
         }
-
-
         item {
             Spacer(modifier = Modifier.height(75.dp))
         }
+
     }
 }
