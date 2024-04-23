@@ -22,9 +22,9 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.fredy.mysavings.Feature.Domain.Model.Wallet
 import com.fredy.mysavings.R
-import com.fredy.mysavings.Feature.Presentation.ViewModels.WalletState
-import com.fredy.mysavings.Feature.Presentation.ViewModels.Event.WalletEvent
-import com.fredy.mysavings.Feature.Presentation.ViewModels.Event.RecordsEvent
+import com.fredy.mysavings.Feature.Presentation.ViewModels.WalletViewModel.WalletState
+import com.fredy.mysavings.Feature.Presentation.ViewModels.WalletViewModel.WalletEvent
+import com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel.RecordEvent
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.ResourceHandler
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SearchBar
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SimpleButton
@@ -35,7 +35,7 @@ fun WalletsScreen(
     rootNavController: NavHostController,
     state: WalletState,
     onEvent: (WalletEvent) -> Unit,
-    recordEvent: (RecordsEvent) -> Unit,
+    recordEvent: (RecordEvent) -> Unit,
 ) {
     var isSheetOpen by rememberSaveable {
         mutableStateOf(false)
@@ -48,7 +48,7 @@ fun WalletsScreen(
     )
     WalletAddDialog(
         state = state, onEvent = onEvent, onSaveEffect = {
-            recordEvent(RecordsEvent.UpdateRecord)
+            recordEvent(RecordEvent.UpdateRecord)
         }
     )
 
@@ -140,7 +140,7 @@ fun WalletsScreen(
                         isSheetOpen = true
                     },
                     onDeleteWallet = {
-                        recordEvent(RecordsEvent.UpdateRecord)
+                        recordEvent(RecordEvent.UpdateRecord)
                     }
                 )
             }

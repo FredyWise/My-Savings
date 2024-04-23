@@ -43,11 +43,11 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.fredy.mysavings.Feature.Domain.Model.UserData
 import com.fredy.mysavings.Util.formatRangeOfDate
-import com.fredy.mysavings.Feature.Presentation.ViewModels.WalletViewModel
-import com.fredy.mysavings.Feature.Presentation.ViewModels.BookViewModel
-import com.fredy.mysavings.Feature.Presentation.ViewModels.CategoryViewModel
-import com.fredy.mysavings.Feature.Presentation.ViewModels.Event.RecordsEvent
-import com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel
+import com.fredy.mysavings.Feature.Presentation.ViewModels.WalletViewModel.WalletViewModel
+import com.fredy.mysavings.Feature.Presentation.ViewModels.BookViewModel.BookViewModel
+import com.fredy.mysavings.Feature.Presentation.ViewModels.CategoryViewModel.CategoryViewModel
+import com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel.RecordEvent
+import com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel.RecordViewModel
 import com.fredy.mysavings.Feature.Presentation.NavigationComponent.Navigation.HomeNavGraph
 import com.fredy.mysavings.Feature.Presentation.NavigationComponent.Navigation.NavigationRoute
 import com.fredy.mysavings.Feature.Presentation.NavigationComponent.Navigation.bottomBarScreens
@@ -111,14 +111,14 @@ fun MainScreen(
             trueRecord = it,
             onSaveClicked = { record ->
                 onEvent(
-                    RecordsEvent.DeleteRecord(
+                    RecordEvent.DeleteRecord(
                         record
                     )
                 )
             },
             onDismissDialog = {
                 onEvent(
-                    RecordsEvent.HideDialog
+                    RecordEvent.HideDialog
                 )
             },
             onEdit = {
@@ -328,7 +328,7 @@ fun MainScreen(
                     selectedDate = state.filterState.selectedDate,
                     onDateChange = {
                         onEvent(
-                            RecordsEvent.ChangeDate(it)
+                            RecordEvent.ChangeDate(it)
                         )
                     },
                     selectedDateFormat = formatRangeOfDate(
@@ -340,16 +340,16 @@ fun MainScreen(
                     checkboxesFilter = state.availableCurrency,
                     selectedCheckbox = state.selectedCheckbox,
                     onDismissFilterDialog = {
-                        onEvent(RecordsEvent.HideFilterDialog)
+                        onEvent(RecordEvent.HideFilterDialog)
                     },
                     onSelectFilter = {
                         onEvent(
-                            RecordsEvent.FilterRecord(it)
+                            RecordEvent.FilterRecord(it)
                         )
                     },
                     onSelectCheckboxFilter = {
                         onEvent(
-                            RecordsEvent.SelectedCurrencies(it)
+                            RecordEvent.SelectedCurrencies(it)
                         )
                     },
                     balanceBar = state.balanceBar,
@@ -371,19 +371,19 @@ fun MainScreen(
                     showTotal = state.filterState.showTotal,
                     carryOn = state.filterState.carryOn,
                     useUserCurrency = state.filterState.useUserCurrency,
-                    onUserCurrencyChange = { onEvent(RecordsEvent.ToggleUserCurrency) },
-                    onShowTotalChange = { onEvent(RecordsEvent.ToggleShowTotal) },
-                    onCarryOnChange = { onEvent(RecordsEvent.ToggleCarryOn) },
-                    onShortChange = { onEvent(RecordsEvent.ToggleSortType) },
-                    onPrevious = { onEvent(RecordsEvent.ShowPreviousList) },
-                    onNext = { onEvent(RecordsEvent.ShowNextList) },
+                    onUserCurrencyChange = { onEvent(RecordEvent.ToggleUserCurrency) },
+                    onShowTotalChange = { onEvent(RecordEvent.ToggleShowTotal) },
+                    onCarryOnChange = { onEvent(RecordEvent.ToggleCarryOn) },
+                    onShortChange = { onEvent(RecordEvent.ToggleSortType) },
+                    onPrevious = { onEvent(RecordEvent.ShowPreviousList) },
+                    onNext = { onEvent(RecordEvent.ShowNextList) },
                     onLeadingIconClick = {
                         rootNavController.navigate(
                             NavigationRoute.Search.route
                         )
                     },
                     onTrailingIconClick = {
-                        onEvent(RecordsEvent.ShowFilterDialog)
+                        onEvent(RecordEvent.ShowFilterDialog)
                     },
                 )
             }

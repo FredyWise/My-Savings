@@ -1,7 +1,6 @@
 package com.fredy.mysavings
 
 import android.os.Bundle
-import com.fredy.mysavings.Util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -11,9 +10,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 
-import com.fredy.mysavings.Feature.Presentation.ViewModels.AuthViewModel
-import com.fredy.mysavings.Feature.Presentation.ViewModels.Event.AuthEvent
-import com.fredy.mysavings.Feature.Presentation.ViewModels.SettingViewModel
+import com.fredy.mysavings.Feature.Presentation.ViewModels.AuthViewModel.AuthViewModel
+import com.fredy.mysavings.Feature.Presentation.ViewModels.AuthViewModel.AuthEvent
+import com.fredy.mysavings.Feature.Presentation.ViewModels.PreferencesViewModel.PreferencesViewModel
 import com.fredy.mysavings.Feature.Presentation.NavigationComponent.Navigation.Graph
 import com.fredy.mysavings.Feature.Presentation.NavigationComponent.Navigation.NavGraphRoot
 import com.fredy.mysavings.ui.theme.MySavingsTheme
@@ -21,7 +20,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    private val viewModel by viewModels<SettingViewModel>()
+    private val viewModel by viewModels<PreferencesViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

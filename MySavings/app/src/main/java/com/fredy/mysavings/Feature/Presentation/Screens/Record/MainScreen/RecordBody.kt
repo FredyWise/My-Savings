@@ -13,7 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.Util.formatDateDay
-import com.fredy.mysavings.Feature.Presentation.ViewModels.Event.RecordsEvent
+import com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel.RecordEvent
 import com.fredy.mysavings.Feature.Domain.Model.RecordMap
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.CustomStickyHeader
 
@@ -24,7 +24,7 @@ fun RecordBody(
     onBackgroundColor: Color = MaterialTheme.colorScheme.onBackground,
     backgroundColor: Color = MaterialTheme.colorScheme.background,
     recordMaps: List<RecordMap>?,
-    onEvent: (RecordsEvent) -> Unit,
+    onEvent: (RecordEvent) -> Unit,
     additionalHeader: @Composable () -> Unit = {},
 ) {
     LazyColumn(modifier) {
@@ -56,7 +56,7 @@ fun RecordBody(
                     item = item,
                     onItemClick = {
                         onEvent(
-                            RecordsEvent.ShowDialog(
+                            RecordEvent.ShowDialog(
                                 item
                             )
                         )

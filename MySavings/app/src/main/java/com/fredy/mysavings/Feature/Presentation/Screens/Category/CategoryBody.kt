@@ -25,8 +25,8 @@ import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.Feature.Domain.Model.Category
 import com.fredy.mysavings.Util.ActionWithName
 import com.fredy.mysavings.Util.isTransfer
-import com.fredy.mysavings.Feature.Presentation.ViewModels.CategoryMap
-import com.fredy.mysavings.Feature.Presentation.ViewModels.Event.CategoryEvent
+import com.fredy.mysavings.Feature.Presentation.ViewModels.CategoryViewModel.CategoryMap
+import com.fredy.mysavings.Feature.Presentation.ViewModels.CategoryViewModel.CategoryEvent
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.AdvancedEntityItem
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.CustomStickyHeader
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SimpleWarningDialog

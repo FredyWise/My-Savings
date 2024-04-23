@@ -1,7 +1,7 @@
 package com.fredy.mysavings.Util.Mappers
 
 import com.fredy.mysavings.Feature.Domain.Model.Category
-import com.fredy.mysavings.Feature.Presentation.ViewModels.CategoryMap
+import com.fredy.mysavings.Feature.Presentation.ViewModels.CategoryViewModel.CategoryMap
 
 fun List<Category>.toCategoryMaps():List<CategoryMap>{
     return this.groupBy {

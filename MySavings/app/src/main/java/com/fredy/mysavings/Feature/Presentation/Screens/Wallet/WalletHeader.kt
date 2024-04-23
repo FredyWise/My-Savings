@@ -15,7 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.fredy.mysavings.Feature.Presentation.ViewModels.WalletState
+import com.fredy.mysavings.Feature.Presentation.ViewModels.WalletViewModel.WalletState
 import com.fredy.mysavings.Feature.Presentation.Screens.Record.BalanceItem
 
 @Composable

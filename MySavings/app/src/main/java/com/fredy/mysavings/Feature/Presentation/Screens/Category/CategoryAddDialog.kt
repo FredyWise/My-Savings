@@ -18,8 +18,8 @@ import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.Feature.Data.Enum.RecordType
 import com.fredy.mysavings.Util.ActionWithName
 import com.fredy.mysavings.Util.DefaultData.categoryIcons
-import com.fredy.mysavings.Feature.Presentation.ViewModels.CategoryState
-import com.fredy.mysavings.Feature.Presentation.ViewModels.Event.CategoryEvent
+import com.fredy.mysavings.Feature.Presentation.ViewModels.CategoryViewModel.CategoryState
+import com.fredy.mysavings.Feature.Presentation.ViewModels.CategoryViewModel.CategoryEvent
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.ChooseIcon
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SimpleDialog
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.TypeRadioButton

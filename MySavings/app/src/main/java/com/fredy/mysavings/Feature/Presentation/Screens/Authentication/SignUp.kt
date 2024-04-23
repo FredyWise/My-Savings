@@ -49,8 +49,8 @@ import coil.compose.rememberImagePainter
 import com.fredy.mysavings.Feature.Data.Enum.AuthMethod
 import com.fredy.mysavings.R
 import com.fredy.mysavings.Feature.Domain.Util.Resource
-import com.fredy.mysavings.Feature.Presentation.ViewModels.AuthState
-import com.fredy.mysavings.Feature.Presentation.ViewModels.Event.AuthEvent
+import com.fredy.mysavings.Feature.Presentation.ViewModels.AuthViewModel.AuthState
+import com.fredy.mysavings.Feature.Presentation.ViewModels.AuthViewModel.AuthEvent
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException

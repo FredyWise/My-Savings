@@ -27,17 +27,17 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
 import com.fredy.mysavings.Util.Log
-import com.fredy.mysavings.Feature.Presentation.ViewModels.WalletViewModel
-import com.fredy.mysavings.Feature.Presentation.ViewModels.AuthViewModel
-import com.fredy.mysavings.Feature.Presentation.ViewModels.BookViewModel
-import com.fredy.mysavings.Feature.Presentation.ViewModels.CurrencyViewModel
-import com.fredy.mysavings.Feature.Presentation.ViewModels.Event.WalletEvent
-import com.fredy.mysavings.Feature.Presentation.ViewModels.Event.AuthEvent
-import com.fredy.mysavings.Feature.Presentation.ViewModels.Event.RecordsEvent
-import com.fredy.mysavings.Feature.Presentation.ViewModels.InputOutputViewModel
-import com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel
-import com.fredy.mysavings.Feature.Presentation.ViewModels.SearchViewModel
-import com.fredy.mysavings.Feature.Presentation.ViewModels.SettingViewModel
+import com.fredy.mysavings.Feature.Presentation.ViewModels.WalletViewModel.WalletViewModel
+import com.fredy.mysavings.Feature.Presentation.ViewModels.AuthViewModel.AuthViewModel
+import com.fredy.mysavings.Feature.Presentation.ViewModels.BookViewModel.BookViewModel
+import com.fredy.mysavings.Feature.Presentation.ViewModels.CurrencyViewModel.CurrencyViewModel
+import com.fredy.mysavings.Feature.Presentation.ViewModels.WalletViewModel.WalletEvent
+import com.fredy.mysavings.Feature.Presentation.ViewModels.AuthViewModel.AuthEvent
+import com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel.RecordEvent
+import com.fredy.mysavings.Feature.Presentation.ViewModels.IOViewModel.InputOutputViewModel
+import com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel.RecordViewModel
+import com.fredy.mysavings.Feature.Presentation.ViewModels.SearchViewModel.SearchViewModel
+import com.fredy.mysavings.Feature.Presentation.ViewModels.PreferencesViewModel.PreferencesViewModel
 import com.fredy.mysavings.Feature.Presentation.NavigationComponent.MainScreen
 import com.fredy.mysavings.Feature.Presentation.Screens.AddRecord.AddSingle.AddScreen
 import com.fredy.mysavings.Feature.Presentation.Screens.Currency.CurrencyScreen
@@ -52,7 +52,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 fun NavGraphRoot(
     navController: NavHostController,
     startDestination: String,
-    settingViewModel: SettingViewModel,
+    preferencesViewModel: PreferencesViewModel,
     authViewModel: AuthViewModel,
 ) {
     NavHost(
@@ -64,7 +64,7 @@ fun NavGraphRoot(
         startDestination = startDestination,
     ) {
         authenticationNavGraph(
-            settingViewModel,
+            preferencesViewModel,
             authViewModel,
             rootNavController = navController
         )
@@ -168,12 +168,12 @@ fun NavGraphRoot(
                     fadeOut()
                 },
             ) {
-                val state by settingViewModel.state.collectAsStateWithLifecycle()
+                val state by preferencesViewModel.state.collectAsStateWithLifecycle()
                 PreferencesScreen(
                     title = NavigationRoute.Preferences.title,
                     rootNavController = navController,
                     state = state,
-                    onEvent = settingViewModel::onEvent
+                    onEvent = preferencesViewModel::onEvent
                 )
             }
             composable(
@@ -214,7 +214,7 @@ fun NavGraphRoot(
                     onEvent = currencyViewModel::onEvent,
                     updateMainScreen = {
                         walletViewModel.onEvent(WalletEvent.UpdateWallet)
-                        recordViewModel.onEvent(RecordsEvent.UpdateRecord)
+                        recordViewModel.onEvent(RecordEvent.UpdateRecord)
                     }
                 )
             }

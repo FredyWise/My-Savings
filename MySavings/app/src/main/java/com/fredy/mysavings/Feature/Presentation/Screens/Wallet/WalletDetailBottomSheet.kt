@@ -19,8 +19,8 @@ import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.Util.formatBalanceAmount
 import com.fredy.mysavings.Util.formatTime
 import com.fredy.mysavings.Util.isTransfer
-import com.fredy.mysavings.Feature.Presentation.ViewModels.WalletState
-import com.fredy.mysavings.Feature.Presentation.ViewModels.Event.RecordsEvent
+import com.fredy.mysavings.Feature.Presentation.ViewModels.WalletViewModel.WalletState
+import com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel.RecordEvent
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.DetailAppBar
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SimpleEntityItem
 
@@ -31,7 +31,7 @@ fun WalletDetailBottomSheet(
     isSheetOpen: Boolean,
     onCloseBottomSheet: (Boolean) -> Unit,
     state: WalletState,
-    recordEvent: (RecordsEvent) -> Unit,
+    recordEvent: (RecordEvent) -> Unit,
     additionalAppbar: @Composable () -> Unit = { WalletDefaultAdditionalAppBar(state) }
 ) {
     val sheetState = rememberModalBottomSheetState(
@@ -62,7 +62,7 @@ fun WalletDetailBottomSheet(
                         )
                         .clickable {
                             recordEvent(
-                                RecordsEvent.ShowDialog(item)
+                                RecordEvent.ShowDialog(item)
                             )
                         },
                     iconModifier = Modifier

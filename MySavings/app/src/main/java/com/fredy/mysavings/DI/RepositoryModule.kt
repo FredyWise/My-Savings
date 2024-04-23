@@ -32,8 +32,8 @@ import com.fredy.mysavings.Feature.Domain.Repository.CurrencyRepository
 import com.fredy.mysavings.Feature.Data.RepositoryImpl.CurrencyRepositoryImpl
 import com.fredy.mysavings.Feature.Domain.Repository.RecordRepository
 import com.fredy.mysavings.Feature.Data.RepositoryImpl.RecordRepositoryImpl
-import com.fredy.mysavings.Feature.Domain.Repository.SettingsRepository
-import com.fredy.mysavings.Feature.Domain.Repository.SettingsRepositoryImpl
+import com.fredy.mysavings.Feature.Domain.Repository.PreferencesRepository
+import com.fredy.mysavings.Feature.Data.RepositoryImpl.PreferencesRepositoryImpl
 import com.fredy.mysavings.Feature.Domain.Repository.SyncRepository
 import com.fredy.mysavings.Feature.Data.RepositoryImpl.SyncRepositoryImpl
 import com.fredy.mysavings.Feature.Domain.Repository.UserRepository
@@ -146,7 +146,7 @@ object RepositoryModule {
     @Singleton
     fun provideSettingsRepository(
         @ApplicationContext appContext: Context
-    ): SettingsRepository = SettingsRepositoryImpl(
+    ): PreferencesRepository = PreferencesRepositoryImpl(
         appContext
     )
 

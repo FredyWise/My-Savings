@@ -10,7 +10,7 @@ import com.fredy.mysavings.Util.DefaultData.deletedCategory
 import com.fredy.mysavings.Util.DefaultData.transferCategory
 import com.fredy.mysavings.Feature.Domain.Util.Resource
 
-import com.fredy.mysavings.Feature.Presentation.ViewModels.CategoryMap
+import com.fredy.mysavings.Feature.Presentation.ViewModels.CategoryViewModel.CategoryMap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch

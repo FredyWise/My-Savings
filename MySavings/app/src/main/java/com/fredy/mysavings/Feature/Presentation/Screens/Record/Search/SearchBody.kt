@@ -28,7 +28,7 @@ import com.fredy.mysavings.Feature.Domain.Model.Book
 import com.fredy.mysavings.Feature.Domain.Model.BookMap
 import com.fredy.mysavings.Feature.Presentation.Screens.Record.MainScreen.RecordEntityItem
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.CustomStickyHeader
-import com.fredy.mysavings.Feature.Presentation.ViewModels.Event.RecordsEvent
+import com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel.RecordEvent
 import com.fredy.mysavings.Util.DefaultData
 import com.fredy.mysavings.Util.formatDateDay
 
@@ -41,7 +41,7 @@ fun SearchBody(
     onBookClicked: (Book) -> Unit,
     onBookLongPress: (Book) -> Unit,
     bookMaps: List<BookMap>?,
-    onEvent: (RecordsEvent) -> Unit,
+    onEvent: (RecordEvent) -> Unit,
 ) {
     LazyColumn(modifier) {
         bookMaps?.forEach {bookMap ->
@@ -113,7 +113,7 @@ fun SearchBody(
                         item = item,
                         onItemClick = {
                             onEvent(
-                                RecordsEvent.ShowDialog(
+                                RecordEvent.ShowDialog(
                                     item
                                 )
                             )

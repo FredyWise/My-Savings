@@ -13,14 +13,14 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.fredy.mysavings.Feature.Domain.Util.Resource
-import com.fredy.mysavings.Feature.Presentation.ViewModels.AuthViewModel
-import com.fredy.mysavings.Feature.Presentation.ViewModels.Event.AuthEvent
-import com.fredy.mysavings.Feature.Presentation.ViewModels.SettingViewModel
+import com.fredy.mysavings.Feature.Presentation.ViewModels.AuthViewModel.AuthViewModel
+import com.fredy.mysavings.Feature.Presentation.ViewModels.AuthViewModel.AuthEvent
+import com.fredy.mysavings.Feature.Presentation.ViewModels.PreferencesViewModel.PreferencesViewModel
 import com.fredy.mysavings.Feature.Presentation.Screens.Authentication.SignIn
 import com.fredy.mysavings.Feature.Presentation.Screens.Authentication.SignUp
 
 fun NavGraphBuilder.authenticationNavGraph(
-    settingViewModel: SettingViewModel,
+    preferencesViewModel: PreferencesViewModel,
     viewModel: AuthViewModel,
     rootNavController: NavHostController
 ) {
@@ -43,7 +43,7 @@ fun NavGraphBuilder.authenticationNavGraph(
                 fadeOut(animationSpec = tween(300))
             },
         ) {
-            val setting by settingViewModel.state.collectAsStateWithLifecycle()
+            val setting by preferencesViewModel.state.collectAsStateWithLifecycle()
             val state by viewModel.state.collectAsStateWithLifecycle()
             val context = LocalContext.current
             LaunchedEffect(

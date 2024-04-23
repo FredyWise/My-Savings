@@ -21,7 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.CustomStickyHeader
-import com.fredy.mysavings.Feature.Presentation.ViewModels.DBInfo
+import com.fredy.mysavings.Feature.Presentation.ViewModels.IOViewModel.DBInfo
 
 @Composable
 fun InformationBoard(

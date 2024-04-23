@@ -22,9 +22,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.fredy.mysavings.Feature.Presentation.ViewModels.CalcState
-import com.fredy.mysavings.Feature.Presentation.ViewModels.Event.CalcEvent
-import com.fredy.mysavings.Feature.Presentation.ViewModels.Event.CalcOperation
+import com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel.CalcState
+import com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel.CalcEvent
+import com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel.CalcOperation
 
 @Composable
 fun Calculator(

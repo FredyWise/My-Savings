@@ -50,8 +50,8 @@ import com.fredy.mysavings.Util.formatBalanceAmount
 import com.fredy.mysavings.Util.formatTime
 import com.fredy.mysavings.Util.initialDarkThemeDefaultColor
 import com.fredy.mysavings.Util.initialLightThemeDefaultColor
-import com.fredy.mysavings.Feature.Presentation.ViewModels.Event.SettingEvent
-import com.fredy.mysavings.Feature.Presentation.ViewModels.SettingState
+import com.fredy.mysavings.Feature.Presentation.ViewModels.PreferencesViewModel.PreferencesEvent
+import com.fredy.mysavings.Feature.Presentation.ViewModels.PreferencesViewModel.PreferencesState
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.CustomStickyHeader
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.DefaultAppBar
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SimpleButton
@@ -75,8 +75,8 @@ fun PreferencesScreen(
     spacer: Dp = 3.dp,
     rootNavController: NavController,
     title: String,
-    state: SettingState,
-    onEvent: (SettingEvent) -> Unit
+    state: PreferencesState,
+    onEvent: (PreferencesEvent) -> Unit
 ) {
     val context = LocalContext.current
     val timeDialogState = rememberMaterialDialogState()
@@ -129,9 +129,9 @@ fun PreferencesScreen(
     if (state.isShowColorPallet) {
         SimpleDialog(
             title = "Color Picker",
-            onDismissRequest = { onEvent(SettingEvent.HideColorPallet) },
+            onDismissRequest = { onEvent(PreferencesEvent.HideColorPallet) },
             onSaveClicked = {
-                onEvent(SettingEvent.ChangeColor(selectedColorType, selectedColor))
+                onEvent(PreferencesEvent.ChangeColor(selectedColorType, selectedColor))
             },
         ) {
             ColorPicker(onColorChange = { selectedColor = it }, initialColor = initialColor)
@@ -165,13 +165,13 @@ fun PreferencesScreen(
             menuItems = listOf(
                 ActionWithName(
                     DisplayState.Light.name,
-                    action = { onEvent(SettingEvent.SelectDisplayMode(DisplayState.Light)) }),
+                    action = { onEvent(PreferencesEvent.SelectDisplayMode(DisplayState.Light)) }),
                 ActionWithName(
                     DisplayState.Dark.name,
-                    action = { onEvent(SettingEvent.SelectDisplayMode(DisplayState.Dark)) }),
+                    action = { onEvent(PreferencesEvent.SelectDisplayMode(DisplayState.Dark)) }),
                 ActionWithName(
                     DisplayState.System.name,
-                    action = { onEvent(SettingEvent.SelectDisplayMode(DisplayState.System)) }),
+                    action = { onEvent(PreferencesEvent.SelectDisplayMode(DisplayState.System)) }),
             ),
             endContent = {
                 Text(
@@ -191,7 +191,7 @@ fun PreferencesScreen(
         SimpleItem(
             onClick = {
                 selectedColorType = ChangeColorType.Surface
-                onEvent(SettingEvent.ShowColorPallet)
+                onEvent(PreferencesEvent.ShowColorPallet)
             },
             endContent = {
                 Box(
@@ -212,7 +212,7 @@ fun PreferencesScreen(
         SimpleItem(
             onClick = {
                 selectedColorType = ChangeColorType.Expense
-                onEvent(SettingEvent.ShowColorPallet)
+                onEvent(PreferencesEvent.ShowColorPallet)
             },
             endContent = {
                 Text(
@@ -232,7 +232,7 @@ fun PreferencesScreen(
         SimpleItem(
             onClick = {
                 selectedColorType = ChangeColorType.Income
-                onEvent(SettingEvent.ShowColorPallet)
+                onEvent(PreferencesEvent.ShowColorPallet)
             },
             endContent = {
                 Text(
@@ -252,7 +252,7 @@ fun PreferencesScreen(
         SimpleItem(
             onClick = {
                 selectedColorType = ChangeColorType.Transfer
-                onEvent(SettingEvent.ShowColorPallet)
+                onEvent(PreferencesEvent.ShowColorPallet)
             },
             endContent = {
                 Text(
@@ -279,7 +279,7 @@ fun PreferencesScreen(
         SimpleItem(
             onClick = {
                 if (permissionsState) {
-                    onEvent(SettingEvent.ToggleDailyNotification)
+                    onEvent(PreferencesEvent.ToggleDailyNotification)
                 } else {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                         permissionLauncher.launch(
@@ -294,7 +294,7 @@ fun PreferencesScreen(
                     checked = state.dailyNotification,
                     onCheckedChange = {
                         if (permissionsState) {
-                            onEvent(SettingEvent.ToggleDailyNotification)
+                            onEvent(PreferencesEvent.ToggleDailyNotification)
                         } else {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                                 permissionLauncher.launch(
@@ -371,13 +371,13 @@ fun PreferencesScreen(
         Spacer(modifier = Modifier.height(spacer))
         SimpleItem(
             onClick = {
-                onEvent(SettingEvent.ToggleAutoLogin)
+                onEvent(PreferencesEvent.ToggleAutoLogin)
             },
             endContent = {
                 Switch(
                     modifier = Modifier.height(10.dp),
                     checked = state.autoLogin,
-                    onCheckedChange = { onEvent(SettingEvent.ToggleAutoLogin) },
+                    onCheckedChange = { onEvent(PreferencesEvent.ToggleAutoLogin) },
                 )
             }
         ) {
@@ -391,7 +391,7 @@ fun PreferencesScreen(
         SimpleItem(
             onClick = {
                 if (state.isBioAuthPossible) {
-                    onEvent(SettingEvent.ToggleBioAuth)
+                    onEvent(PreferencesEvent.ToggleBioAuth)
                 } else {
                     Toast.makeText(
                         context,
@@ -406,7 +406,7 @@ fun PreferencesScreen(
                     checked = state.bioAuth,
                     onCheckedChange = {
                         if (state.isBioAuthPossible) {
-                            onEvent(SettingEvent.ToggleBioAuth)
+                            onEvent(PreferencesEvent.ToggleBioAuth)
                         } else {
                             Toast.makeText(
                                 context,
@@ -472,7 +472,7 @@ fun PreferencesScreen(
                 borderColor = MaterialTheme.colorScheme.onBackground
             ),
             onTimeChange = {
-                onEvent(SettingEvent.SetDailyNotificationTime(it))
+                onEvent(PreferencesEvent.SetDailyNotificationTime(it))
             },
         )
     }

@@ -12,7 +12,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SimpleEntityItem
-import com.fredy.mysavings.Feature.Presentation.ViewModels.CategoryState
+import com.fredy.mysavings.Feature.Presentation.ViewModels.CategoryViewModel.CategoryState
 
 @Composable
 fun CategoryDefaultAdditionalAppBar(

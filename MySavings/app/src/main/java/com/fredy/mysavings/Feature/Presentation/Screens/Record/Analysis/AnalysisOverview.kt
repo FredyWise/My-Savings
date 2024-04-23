@@ -40,10 +40,10 @@ import com.fredy.mysavings.Util.defaultColors
 import com.fredy.mysavings.Util.formatBalanceAmount
 import com.fredy.mysavings.Util.isExpense
 import com.fredy.mysavings.Util.isIncome
-import com.fredy.mysavings.Feature.Presentation.ViewModels.CategoryState
-import com.fredy.mysavings.Feature.Presentation.ViewModels.Event.CategoryEvent
-import com.fredy.mysavings.Feature.Presentation.ViewModels.Event.RecordsEvent
-import com.fredy.mysavings.Feature.Presentation.ViewModels.RecordState
+import com.fredy.mysavings.Feature.Presentation.ViewModels.CategoryViewModel.CategoryState
+import com.fredy.mysavings.Feature.Presentation.ViewModels.CategoryViewModel.CategoryEvent
+import com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel.RecordEvent
+import com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel.RecordState
 import com.fredy.mysavings.Feature.Presentation.Screens.Record.Analysis.Charts.ChartSlimDonutWithTitle
 import com.fredy.mysavings.Feature.Presentation.Screens.Category.CategoryDetailBottomSheet
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.ResourceHandler
@@ -54,7 +54,7 @@ import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SimpleE
 fun AnalysisOverview(
     modifier: Modifier = Modifier,
     state: RecordState,
-    onEvent: (RecordsEvent) -> Unit,
+    onEvent: (RecordEvent) -> Unit,
     categoryState: CategoryState,
     categoryEvent: (CategoryEvent) -> Unit,
 ) {
@@ -76,7 +76,7 @@ fun AnalysisOverview(
             errorMessage = resource.message ?: "",
             onMessageClick = {
                 onEvent(
-                    RecordsEvent.ToggleRecordType
+                    RecordEvent.ToggleRecordType
                 )
             },
         ) { data ->
@@ -117,7 +117,7 @@ fun AnalysisOverview(
                                 amountsTotal = totalAmount,
                                 onClickLabel = {
                                     onEvent(
-                                        RecordsEvent.ToggleRecordType
+                                        RecordEvent.ToggleRecordType
                                     )
                                 },
                             )

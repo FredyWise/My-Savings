@@ -18,8 +18,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.Util.formatDateYear
 import com.fredy.mysavings.Util.formatTime
-import com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordState
-import com.fredy.mysavings.Feature.Presentation.ViewModels.Event.AddRecordEvent
+import com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel.AddRecordState
+import com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel.AddRecordEvent
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SimpleButton
 import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.datetime.date.DatePickerDefaults

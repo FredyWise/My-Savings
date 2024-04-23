@@ -28,8 +28,8 @@ import com.fredy.mysavings.Util.formatDateDay
 import com.fredy.mysavings.Util.isExpense
 import com.fredy.mysavings.Util.isFilterTypeMonthBelow
 import com.fredy.mysavings.Util.isIncome
-import com.fredy.mysavings.Feature.Presentation.ViewModels.Event.RecordsEvent
-import com.fredy.mysavings.Feature.Presentation.ViewModels.RecordState
+import com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel.RecordEvent
+import com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel.RecordState
 import com.fredy.mysavings.Feature.Presentation.Screens.Record.Analysis.Charts.ChartLine
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.Calendar
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.CustomStickyHeader
@@ -42,7 +42,7 @@ fun AnalysisFlow(
     modifier: Modifier = Modifier,
     onBackgroundColor: Color = MaterialTheme.colorScheme.secondary,
     state: RecordState,
-    onEvent: (RecordsEvent) -> Unit,
+    onEvent: (RecordEvent) -> Unit,
 ) {
     state.resourceData.recordsWithinTimeResource.let { resource ->
         ResourceHandler(
@@ -52,7 +52,7 @@ fun AnalysisFlow(
             isNullOrEmpty = { it.isNullOrEmpty() },
             onMessageClick = {
                 onEvent(
-                    RecordsEvent.ToggleRecordType
+                    RecordEvent.ToggleRecordType
                 )
             },
         ) { data ->
@@ -95,7 +95,7 @@ fun AnalysisFlow(
                             .padding(top = 8.dp)
                             .clickable {
                                 onEvent(
-                                    RecordsEvent.ToggleRecordType
+                                    RecordEvent.ToggleRecordType
                                 )
                             },
                     ) {

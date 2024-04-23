@@ -13,7 +13,7 @@ import com.fredy.mysavings.Feature.Domain.Repository.RecordRepository
 import com.fredy.mysavings.Util.isExpense
 import com.fredy.mysavings.Util.isIncome
 import com.fredy.mysavings.Util.isTransfer
-import com.fredy.mysavings.Feature.Presentation.ViewModels.DBInfo
+import com.fredy.mysavings.Feature.Presentation.ViewModels.IOViewModel.DBInfo
 import com.fredy.mysavings.Util.DefaultData
 import com.fredy.mysavings.Util.Log
 import kotlinx.coroutines.flow.Flow

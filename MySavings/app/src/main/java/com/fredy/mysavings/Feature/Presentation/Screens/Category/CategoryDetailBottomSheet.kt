@@ -16,8 +16,8 @@ import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.Util.formatBalanceAmount
 import com.fredy.mysavings.Util.formatTime
 import com.fredy.mysavings.Util.isTransfer
-import com.fredy.mysavings.Feature.Presentation.ViewModels.CategoryState
-import com.fredy.mysavings.Feature.Presentation.ViewModels.Event.RecordsEvent
+import com.fredy.mysavings.Feature.Presentation.ViewModels.CategoryViewModel.CategoryState
+import com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel.RecordEvent
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.DetailAppBar
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SimpleEntityItem
 
@@ -27,7 +27,7 @@ fun CategoryDetailBottomSheet(
     modifier: Modifier = Modifier,
     isSheetOpen: Boolean,
     onCloseBottomSheet: (Boolean) -> Unit,
-    recordEvent: (RecordsEvent) -> Unit,
+    recordEvent: (RecordEvent) -> Unit,
     state: CategoryState,
     additionalAppbar: @Composable () -> Unit = { CategoryDefaultAdditionalAppBar(state) }
 ) {
@@ -59,7 +59,7 @@ fun CategoryDetailBottomSheet(
                         )
                         .clickable {
                             recordEvent(
-                                RecordsEvent.ShowDialog(item)
+                                RecordEvent.ShowDialog(item)
                             )
                         },
                     iconModifier = Modifier

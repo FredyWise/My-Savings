@@ -19,11 +19,11 @@ import com.fredy.mysavings.Feature.Presentation.Screens.Record.Search.SearchBody
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.DefaultAppBar
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.ResourceHandler
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SearchBar
-import com.fredy.mysavings.Feature.Presentation.ViewModels.BookState
-import com.fredy.mysavings.Feature.Presentation.ViewModels.Event.BookEvent
-import com.fredy.mysavings.Feature.Presentation.ViewModels.Event.RecordsEvent
-import com.fredy.mysavings.Feature.Presentation.ViewModels.RecordState
-import com.fredy.mysavings.Feature.Presentation.ViewModels.SearchState
+import com.fredy.mysavings.Feature.Presentation.ViewModels.BookViewModel.BookState
+import com.fredy.mysavings.Feature.Presentation.ViewModels.BookViewModel.BookEvent
+import com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel.RecordEvent
+import com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel.RecordState
+import com.fredy.mysavings.Feature.Presentation.ViewModels.SearchViewModel.SearchState
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -34,7 +34,7 @@ fun SearchScreen(
     state: SearchState,
     onSearch: (String) -> Unit,
     recordState: RecordState,
-    onEvent: (RecordsEvent) -> Unit,
+    onEvent: (RecordEvent) -> Unit,
     bookState: BookState,
     bookEvent: (BookEvent) -> Unit,
 ) {
@@ -44,14 +44,14 @@ fun SearchScreen(
             trueRecord = it,
             onSaveClicked = { record ->
                 onEvent(
-                    RecordsEvent.DeleteRecord(
+                    RecordEvent.DeleteRecord(
                         record
                     )
                 )
             },
             onDismissDialog = {
                 onEvent(
-                    RecordsEvent.HideDialog
+                    RecordEvent.HideDialog
                 )
             },
             onEdit = {

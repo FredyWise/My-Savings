@@ -52,8 +52,8 @@ import com.fredy.mysavings.Feature.Domain.Model.UserData
 import com.fredy.mysavings.Util.Log
 import com.fredy.mysavings.Feature.Domain.Util.Resource
 import com.fredy.mysavings.Util.isValidPassword
-import com.fredy.mysavings.Feature.Presentation.ViewModels.AuthState
-import com.fredy.mysavings.Feature.Presentation.ViewModels.Event.AuthEvent
+import com.fredy.mysavings.Feature.Presentation.ViewModels.AuthViewModel.AuthState
+import com.fredy.mysavings.Feature.Presentation.ViewModels.AuthViewModel.AuthEvent
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.DefaultAppBar
 
 @Composable

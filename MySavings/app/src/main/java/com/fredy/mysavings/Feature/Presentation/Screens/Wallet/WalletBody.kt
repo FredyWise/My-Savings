@@ -26,7 +26,7 @@ import com.fredy.mysavings.Feature.Domain.Model.Wallet
 import com.fredy.mysavings.Util.ActionWithName
 import com.fredy.mysavings.Util.BalanceColor
 import com.fredy.mysavings.Util.formatBalanceAmount
-import com.fredy.mysavings.Feature.Presentation.ViewModels.Event.WalletEvent
+import com.fredy.mysavings.Feature.Presentation.ViewModels.WalletViewModel.WalletEvent
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.AdvancedEntityItem
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.CustomStickyHeader
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SimpleWarningDialog

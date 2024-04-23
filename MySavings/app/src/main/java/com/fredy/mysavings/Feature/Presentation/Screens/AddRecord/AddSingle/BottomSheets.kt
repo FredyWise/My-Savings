@@ -40,11 +40,11 @@ import com.fredy.mysavings.Util.formatBalanceAmount
 import com.fredy.mysavings.Util.isTransfer
 import com.fredy.mysavings.Util.DefaultData.savingsIcons
 import com.fredy.mysavings.Feature.Domain.Util.Resource
-import com.fredy.mysavings.Feature.Presentation.ViewModels.WalletState
-import com.fredy.mysavings.Feature.Presentation.ViewModels.CategoryMap
-import com.fredy.mysavings.Feature.Presentation.ViewModels.CategoryState
-import com.fredy.mysavings.Feature.Presentation.ViewModels.Event.WalletEvent
-import com.fredy.mysavings.Feature.Presentation.ViewModels.Event.CategoryEvent
+import com.fredy.mysavings.Feature.Presentation.ViewModels.WalletViewModel.WalletState
+import com.fredy.mysavings.Feature.Presentation.ViewModels.CategoryViewModel.CategoryMap
+import com.fredy.mysavings.Feature.Presentation.ViewModels.CategoryViewModel.CategoryState
+import com.fredy.mysavings.Feature.Presentation.ViewModels.WalletViewModel.WalletEvent
+import com.fredy.mysavings.Feature.Presentation.ViewModels.CategoryViewModel.CategoryEvent
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.ResourceHandler
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SimpleButton
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SimpleEntityItem

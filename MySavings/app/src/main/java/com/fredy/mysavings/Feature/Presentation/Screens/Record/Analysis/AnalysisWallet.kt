@@ -31,10 +31,10 @@ import co.yml.charts.ui.barchart.models.GroupBar
 import com.fredy.mysavings.Util.BalanceColor
 import com.fredy.mysavings.Util.RecordTypeColor
 import com.fredy.mysavings.Util.formatBalanceAmount
-import com.fredy.mysavings.Feature.Presentation.ViewModels.WalletState
-import com.fredy.mysavings.Feature.Presentation.ViewModels.Event.WalletEvent
-import com.fredy.mysavings.Feature.Presentation.ViewModels.Event.RecordsEvent
-import com.fredy.mysavings.Feature.Presentation.ViewModels.RecordState
+import com.fredy.mysavings.Feature.Presentation.ViewModels.WalletViewModel.WalletState
+import com.fredy.mysavings.Feature.Presentation.ViewModels.WalletViewModel.WalletEvent
+import com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel.RecordEvent
+import com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel.RecordState
 import com.fredy.mysavings.Feature.Presentation.Screens.Wallet.WalletDetailBottomSheet
 import com.fredy.mysavings.Feature.Presentation.Screens.Record.Analysis.Charts.ChartGroupedBar
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.ResourceHandler
@@ -45,7 +45,7 @@ import kotlin.math.absoluteValue
 fun AnalysisAccount(
     modifier: Modifier = Modifier,
     state: RecordState,
-    onEvent: (RecordsEvent) -> Unit,
+    onEvent: (RecordEvent) -> Unit,
     walletState: WalletState,
     accountEvent: (WalletEvent) -> Unit,
 ) {
@@ -71,7 +71,7 @@ fun AnalysisAccount(
             isNullOrEmpty = { it.isNullOrEmpty() },
             onMessageClick = {
                 onEvent(
-                    RecordsEvent.ToggleRecordType
+                    RecordEvent.ToggleRecordType
                 )
             },
         ) { data ->

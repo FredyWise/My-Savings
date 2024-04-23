@@ -11,10 +11,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.fredy.mysavings.Feature.Presentation.ViewModels.WalletViewModel
-import com.fredy.mysavings.Feature.Presentation.ViewModels.BookViewModel
-import com.fredy.mysavings.Feature.Presentation.ViewModels.CategoryViewModel
-import com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel
+import com.fredy.mysavings.Feature.Presentation.ViewModels.WalletViewModel.WalletViewModel
+import com.fredy.mysavings.Feature.Presentation.ViewModels.BookViewModel.BookViewModel
+import com.fredy.mysavings.Feature.Presentation.ViewModels.CategoryViewModel.CategoryViewModel
+import com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel.RecordViewModel
 import com.fredy.mysavings.Feature.Presentation.Screens.Wallet.WalletsScreen
 import com.fredy.mysavings.Feature.Presentation.Screens.Record.Analysis.AnalysisScreen
 import com.fredy.mysavings.Feature.Presentation.Screens.Category.CategoriesScreen

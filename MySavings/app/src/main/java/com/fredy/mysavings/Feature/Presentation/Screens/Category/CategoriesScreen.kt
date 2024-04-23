@@ -20,9 +20,9 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.fredy.mysavings.Feature.Domain.Model.Category
 import com.fredy.mysavings.R
-import com.fredy.mysavings.Feature.Presentation.ViewModels.CategoryState
-import com.fredy.mysavings.Feature.Presentation.ViewModels.Event.CategoryEvent
-import com.fredy.mysavings.Feature.Presentation.ViewModels.Event.RecordsEvent
+import com.fredy.mysavings.Feature.Presentation.ViewModels.CategoryViewModel.CategoryState
+import com.fredy.mysavings.Feature.Presentation.ViewModels.CategoryViewModel.CategoryEvent
+import com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel.RecordEvent
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.ResourceHandler
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SearchBar
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SimpleButton
@@ -35,7 +35,7 @@ fun CategoriesScreen(
     state: CategoryState,
     onEvent: (CategoryEvent) -> Unit,
 //    recordState: RecordState,
-    recordEvent: (RecordsEvent) -> Unit,
+    recordEvent: (RecordEvent) -> Unit,
 ) {
 //    recordState.trueRecord?.let {
 //        RecordDialog(
@@ -71,7 +71,7 @@ fun CategoriesScreen(
 
     CategoryAddDialog(
         state = state, onEvent = onEvent, onSaveEffect = {
-            recordEvent(RecordsEvent.UpdateRecord)
+            recordEvent(RecordEvent.UpdateRecord)
         }
     )
 
@@ -147,7 +147,7 @@ fun CategoriesScreen(
                         isSheetOpen = true
                     },
                     onDeleteCategory = {
-                        recordEvent(RecordsEvent.UpdateRecord)
+                        recordEvent(RecordEvent.UpdateRecord)
                     }
                 )
             }
