@@ -53,7 +53,7 @@ import com.fredy.mysavings.Feature.Presentation.NavigationComponent.Navigation.N
 import com.fredy.mysavings.Feature.Presentation.NavigationComponent.Navigation.bottomBarScreens
 import com.fredy.mysavings.Feature.Presentation.NavigationComponent.Navigation.drawerScreens
 import com.fredy.mysavings.Feature.Presentation.NavigationComponent.Navigation.navigateSingleTopTo
-import com.fredy.mysavings.Feature.Presentation.Screens.Record.RecordDialog
+import com.fredy.mysavings.Feature.Presentation.Screens.Record.MainScreen.RecordDialog
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SimpleWarningDialog
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch

@@ -39,11 +39,11 @@ import com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel
 import com.fredy.mysavings.Feature.Presentation.ViewModels.SearchViewModel
 import com.fredy.mysavings.Feature.Presentation.ViewModels.SettingViewModel
 import com.fredy.mysavings.Feature.Presentation.NavigationComponent.MainScreen
-import com.fredy.mysavings.Feature.Presentation.Screens.AddSingle.AddScreen
-import com.fredy.mysavings.Feature.Presentation.Screens.Other.CurrencyScreen
-import com.fredy.mysavings.Feature.Presentation.Screens.Other.ExportScreen
-import com.fredy.mysavings.Feature.Presentation.Screens.Other.PreferencesScreen
-import com.fredy.mysavings.Feature.Presentation.Screens.Other.ProfileScreen
+import com.fredy.mysavings.Feature.Presentation.Screens.AddRecord.AddSingle.AddScreen
+import com.fredy.mysavings.Feature.Presentation.Screens.Currency.CurrencyScreen
+import com.fredy.mysavings.Feature.Presentation.Screens.IO.ExportScreen
+import com.fredy.mysavings.Feature.Presentation.Screens.Preference.PreferencesScreen
+import com.fredy.mysavings.Feature.Presentation.Screens.Authentication.ProfileScreen
 import com.fredy.mysavings.ui.Search.SearchScreen
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 

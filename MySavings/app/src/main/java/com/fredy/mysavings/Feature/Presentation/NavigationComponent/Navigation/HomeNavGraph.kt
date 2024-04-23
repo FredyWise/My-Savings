@@ -16,9 +16,9 @@ import com.fredy.mysavings.Feature.Presentation.ViewModels.BookViewModel
 import com.fredy.mysavings.Feature.Presentation.ViewModels.CategoryViewModel
 import com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel
 import com.fredy.mysavings.Feature.Presentation.Screens.Wallet.WalletsScreen
-import com.fredy.mysavings.Feature.Presentation.Screens.Analysis.AnalysisScreen
+import com.fredy.mysavings.Feature.Presentation.Screens.Record.Analysis.AnalysisScreen
 import com.fredy.mysavings.Feature.Presentation.Screens.Category.CategoriesScreen
-import com.fredy.mysavings.Feature.Presentation.Screens.Record.RecordsScreen
+import com.fredy.mysavings.Feature.Presentation.Screens.Record.MainScreen.RecordsScreen
 
 
 @Composable

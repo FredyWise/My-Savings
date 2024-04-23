@@ -1,6 +1,5 @@
 package com.fredy.mysavings.DI
 
-import com.fredy.mysavings.Feature.Domain.Repository.WalletRepository
 import com.fredy.mysavings.Feature.Domain.Repository.AuthRepository
 import com.fredy.mysavings.Feature.Domain.Repository.BookRepository
 import com.fredy.mysavings.Feature.Domain.Repository.CSVRepository
@@ -8,13 +7,7 @@ import com.fredy.mysavings.Feature.Domain.Repository.CategoryRepository
 import com.fredy.mysavings.Feature.Domain.Repository.CurrencyRepository
 import com.fredy.mysavings.Feature.Domain.Repository.RecordRepository
 import com.fredy.mysavings.Feature.Domain.Repository.UserRepository
-import com.fredy.mysavings.Feature.Domain.UseCases.WalletUseCases.WalletUseCases
-import com.fredy.mysavings.Feature.Domain.UseCases.WalletUseCases.DeleteWallet
-import com.fredy.mysavings.Feature.Domain.UseCases.WalletUseCases.GetWallet
-import com.fredy.mysavings.Feature.Domain.UseCases.WalletUseCases.GetWallets
-import com.fredy.mysavings.Feature.Domain.UseCases.WalletUseCases.GetWalletsCurrencies
-import com.fredy.mysavings.Feature.Domain.UseCases.WalletUseCases.GetWalletsTotalBalance
-import com.fredy.mysavings.Feature.Domain.UseCases.WalletUseCases.UpsertWallet
+import com.fredy.mysavings.Feature.Domain.Repository.WalletRepository
 import com.fredy.mysavings.Feature.Domain.UseCases.AuthUseCases.AuthUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.AuthUseCases.GoogleSignIn
 import com.fredy.mysavings.Feature.Domain.UseCases.AuthUseCases.LoginUser
@@ -28,10 +21,6 @@ import com.fredy.mysavings.Feature.Domain.UseCases.BookUseCases.DeleteBook
 import com.fredy.mysavings.Feature.Domain.UseCases.BookUseCases.GetBook
 import com.fredy.mysavings.Feature.Domain.UseCases.BookUseCases.GetUserBooks
 import com.fredy.mysavings.Feature.Domain.UseCases.BookUseCases.UpsertBook
-import com.fredy.mysavings.Feature.Domain.UseCases.IOUseCases.IOUseCases
-import com.fredy.mysavings.Feature.Domain.UseCases.IOUseCases.GetDBInfo
-import com.fredy.mysavings.Feature.Domain.UseCases.IOUseCases.InputFromCSV
-import com.fredy.mysavings.Feature.Domain.UseCases.IOUseCases.OutputToCSV
 import com.fredy.mysavings.Feature.Domain.UseCases.CategoryUseCases.CategoryUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.CategoryUseCases.DeleteCategory
 import com.fredy.mysavings.Feature.Domain.UseCases.CategoryUseCases.GetCategory
@@ -42,6 +31,11 @@ import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.CurrencyUseC
 import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.GetCurrencies
 import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.GetCurrencyRates
 import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.UpdateCurrency
+import com.fredy.mysavings.Feature.Domain.UseCases.IOUseCases.GetDBInfo
+import com.fredy.mysavings.Feature.Domain.UseCases.IOUseCases.IOUseCases
+import com.fredy.mysavings.Feature.Domain.UseCases.IOUseCases.InputFromCSV
+import com.fredy.mysavings.Feature.Domain.UseCases.IOUseCases.OutputToCSV
+import com.fredy.mysavings.Feature.Domain.UseCases.IOUseCases.UpsertTrueRecords
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.DeleteRecordItem
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.GetAllRecords
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.GetAllTrueRecordsWithinSpecificTime
@@ -68,6 +62,13 @@ import com.fredy.mysavings.Feature.Domain.UseCases.UserUseCases.InsertUser
 import com.fredy.mysavings.Feature.Domain.UseCases.UserUseCases.SearchUsers
 import com.fredy.mysavings.Feature.Domain.UseCases.UserUseCases.UpdateUser
 import com.fredy.mysavings.Feature.Domain.UseCases.UserUseCases.UserUseCases
+import com.fredy.mysavings.Feature.Domain.UseCases.WalletUseCases.DeleteWallet
+import com.fredy.mysavings.Feature.Domain.UseCases.WalletUseCases.GetWallet
+import com.fredy.mysavings.Feature.Domain.UseCases.WalletUseCases.GetWallets
+import com.fredy.mysavings.Feature.Domain.UseCases.WalletUseCases.GetWalletsCurrencies
+import com.fredy.mysavings.Feature.Domain.UseCases.WalletUseCases.GetWalletsTotalBalance
+import com.fredy.mysavings.Feature.Domain.UseCases.WalletUseCases.UpsertWallet
+import com.fredy.mysavings.Feature.Domain.UseCases.WalletUseCases.WalletUseCases
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -126,7 +127,7 @@ object UseCasesModule {
             recordRepository,
             authRepository
         ),
-        getAllRecords = GetAllRecords(recordRepository, authRepository,bookRepository),
+        getAllRecords = GetAllRecords(recordRepository, authRepository, bookRepository),
         getUserCategoryRecordsOrderedByDateTime = GetUserCategoryRecordsOrderedByDateTime(
             recordRepository, authRepository
         ),
@@ -160,7 +161,7 @@ object UseCasesModule {
             authRepository,
             currencyUseCases
         )
-     )
+    )
 
     @Provides
     @Singleton
@@ -232,7 +233,19 @@ object UseCasesModule {
         categoryRepository: CategoryRepository,
     ): IOUseCases = IOUseCases(
         outputToCSV = OutputToCSV(csvRepository),
-        inputFromCSV = InputFromCSV(csvRepository, authRepository),
+        inputFromCSV = InputFromCSV(
+            csvRepository,
+            authRepository,
+            recordRepository,
+            walletRepository,
+            categoryRepository
+        ),
+        upsertTrueRecords = UpsertTrueRecords(
+            authRepository,
+            recordRepository,
+            walletRepository,
+            categoryRepository
+        ),
         getDBInfo = GetDBInfo(
             authRepository,
             recordRepository,

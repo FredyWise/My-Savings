@@ -13,6 +13,7 @@ import com.fredy.mysavings.Feature.Domain.Util.Resource
 import com.fredy.mysavings.Util.formatDateYear
 import com.fredy.mysavings.Feature.Presentation.ViewModels.Event.IOEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.collectLatest
@@ -25,6 +26,7 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 import javax.inject.Inject
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class InputOutputViewModel @Inject constructor(
     private val recordUseCases: RecordUseCases,
@@ -160,9 +162,7 @@ class InputOutputViewModel @Inject constructor(
                 }
 
                 IOEvent.OnAfterClickedImport -> {
-                    _state.value.importRecords.forEach {
-                        recordUseCases.upsertRecordItem(it.record)
-                    }
+                    IOUseCases.upsertTrueRecords(_state.value.importRecords)
                 }
 
                 is IOEvent.OnChooseBook -> {

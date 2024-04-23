@@ -16,8 +16,8 @@ import com.fredy.mysavings.Feature.Domain.Util.Resource
 import com.fredy.mysavings.Feature.Presentation.ViewModels.AuthViewModel
 import com.fredy.mysavings.Feature.Presentation.ViewModels.Event.AuthEvent
 import com.fredy.mysavings.Feature.Presentation.ViewModels.SettingViewModel
-import com.fredy.mysavings.Feature.Presentation.Screens.AuthScreen.SignIn
-import com.fredy.mysavings.Feature.Presentation.Screens.AuthScreen.SignUp
+import com.fredy.mysavings.Feature.Presentation.Screens.Authentication.SignIn
+import com.fredy.mysavings.Feature.Presentation.Screens.Authentication.SignUp
 
 fun NavGraphBuilder.authenticationNavGraph(
     settingViewModel: SettingViewModel,

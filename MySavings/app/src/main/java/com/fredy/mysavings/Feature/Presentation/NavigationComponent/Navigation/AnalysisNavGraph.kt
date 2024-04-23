@@ -11,9 +11,9 @@ import com.fredy.mysavings.Feature.Presentation.ViewModels.Event.WalletEvent
 import com.fredy.mysavings.Feature.Presentation.ViewModels.Event.CategoryEvent
 import com.fredy.mysavings.Feature.Presentation.ViewModels.Event.RecordsEvent
 import com.fredy.mysavings.Feature.Presentation.ViewModels.RecordState
-import com.fredy.mysavings.Feature.Presentation.Screens.Analysis.AnalysisAccount
-import com.fredy.mysavings.Feature.Presentation.Screens.Analysis.AnalysisFlow
-import com.fredy.mysavings.Feature.Presentation.Screens.Analysis.AnalysisOverview
+import com.fredy.mysavings.Feature.Presentation.Screens.Record.Analysis.AnalysisAccount
+import com.fredy.mysavings.Feature.Presentation.Screens.Record.Analysis.AnalysisFlow
+import com.fredy.mysavings.Feature.Presentation.Screens.Record.Analysis.AnalysisOverview
 
 
 @Composable

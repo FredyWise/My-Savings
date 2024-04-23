@@ -35,7 +35,7 @@ import com.fredy.mysavings.Feature.Data.RepositoryImpl.RecordRepositoryImpl
 import com.fredy.mysavings.Feature.Domain.Repository.SettingsRepository
 import com.fredy.mysavings.Feature.Domain.Repository.SettingsRepositoryImpl
 import com.fredy.mysavings.Feature.Domain.Repository.SyncRepository
-import com.fredy.mysavings.Feature.Domain.Repository.SyncRepositoryImpl
+import com.fredy.mysavings.Feature.Data.RepositoryImpl.SyncRepositoryImpl
 import com.fredy.mysavings.Feature.Domain.Repository.UserRepository
 import com.fredy.mysavings.Feature.Data.RepositoryImpl.UserRepositoryImpl
 import com.google.android.gms.auth.api.identity.SignInClient
@@ -154,11 +154,8 @@ object RepositoryModule {
     @Singleton
     fun provideCSVRepository(
         csvDao: CSVDao,
-        walletRepository: WalletRepository,
-        recordDataSource: RecordDataSource,
-        categoryRepository: CategoryRepository
     ): CSVRepository = CSVRepositoryImpl(
-        csvDao, walletRepository, recordDataSource, categoryRepository
+        csvDao
     )
 
     @Provides
