@@ -25,17 +25,17 @@ class RecordUseCasesTest : BaseUseCaseTest() {
 
     private lateinit var upsertRecordItem: UpsertRecordItem
     private lateinit var deleteRecordItem: DeleteRecordItem
-    private lateinit var updateRecordItemWithDeletedAccount: UpdateRecordItemWithDeletedAccount
+    private lateinit var updateRecordItemWithDeletedWallet: UpdateRecordItemWithDeletedWallet
     private lateinit var updateRecordItemWithDeletedCategory: UpdateRecordItemWithDeletedCategory
     private lateinit var getRecordById: GetRecordById
     private lateinit var getAllTrueRecordsWithinSpecificTime: GetAllTrueRecordsWithinSpecificTime
     private lateinit var getAllRecords: GetAllRecords
     private lateinit var getUserCategoryRecordsOrderedByDateTime: GetUserCategoryRecordsOrderedByDateTime
-    private lateinit var getUserAccountRecordsOrderedByDateTime: GetUserAccountRecordsOrderedByDateTime
+    private lateinit var getUserWalletRecordsOrderedByDateTime: GetUserWalletRecordsOrderedByDateTime
     private lateinit var getUserTrueRecordMapsFromSpecificTime: GetUserTrueRecordMapsFromSpecificTime
     private lateinit var getUserRecordsFromSpecificTime: GetUserRecordsFromSpecificTime
     private lateinit var getUserCategoriesWithAmountFromSpecificTime: GetUserCategoriesWithAmountFromSpecificTime
-    private lateinit var getUserAccountsWithAmountFromSpecificTime: GetUserAccountsWithAmountFromSpecificTime
+    private lateinit var getUserWalletsWithAmountFromSpecificTime: GetUserWalletsWithAmountFromSpecificTime
     private lateinit var getUserTotalAmountByType: GetUserTotalAmountByType
     private lateinit var getUserTotalAmountByTypeFromSpecificTime: GetUserTotalAmountByTypeFromSpecificTime
     private lateinit var getUserTotalRecordBalance: GetUserTotalRecordBalance
@@ -44,8 +44,8 @@ class RecordUseCasesTest : BaseUseCaseTest() {
     fun setUp() {
         upsertRecordItem = UpsertRecordItem(fakeRecordRepository, fakeAuthRepository)
         deleteRecordItem = DeleteRecordItem(fakeRecordRepository)
-        updateRecordItemWithDeletedAccount =
-            UpdateRecordItemWithDeletedAccount(fakeRecordRepository, fakeAuthRepository)
+        updateRecordItemWithDeletedWallet =
+            UpdateRecordItemWithDeletedWallet(fakeRecordRepository, fakeAuthRepository)
         updateRecordItemWithDeletedCategory =
             UpdateRecordItemWithDeletedCategory(fakeRecordRepository, fakeAuthRepository)
         getRecordById = GetRecordById(fakeRecordRepository, mockCurrencyUseCases)
@@ -54,8 +54,8 @@ class RecordUseCasesTest : BaseUseCaseTest() {
         getAllRecords = GetAllRecords(fakeRecordRepository, fakeAuthRepository,fakeBookRepository)
         getUserCategoryRecordsOrderedByDateTime =
             GetUserCategoryRecordsOrderedByDateTime(fakeRecordRepository, fakeAuthRepository)
-        getUserAccountRecordsOrderedByDateTime =
-            GetUserAccountRecordsOrderedByDateTime(fakeRecordRepository, fakeAuthRepository)
+        getUserWalletRecordsOrderedByDateTime =
+            GetUserWalletRecordsOrderedByDateTime(fakeRecordRepository, fakeAuthRepository)
         getUserTrueRecordMapsFromSpecificTime = GetUserTrueRecordMapsFromSpecificTime(
             fakeRecordRepository,
             fakeAuthRepository,
@@ -73,7 +73,7 @@ class RecordUseCasesTest : BaseUseCaseTest() {
             fakeAuthRepository,
             mockCurrencyUseCases
         )
-        getUserAccountsWithAmountFromSpecificTime = GetUserAccountsWithAmountFromSpecificTime(
+        getUserWalletsWithAmountFromSpecificTime = GetUserWalletsWithAmountFromSpecificTime(
             fakeRecordRepository,
             fakeAccountRepository,
             fakeAuthRepository,
@@ -292,7 +292,7 @@ class RecordUseCasesTest : BaseUseCaseTest() {
         val accountId = "testAccountId"
         val sortType = SortType.ASCENDING
 
-        val recordsFlow = getUserAccountRecordsOrderedByDateTime(accountId, sortType)
+        val recordsFlow = getUserWalletRecordsOrderedByDateTime(accountId, sortType)
         val recordsResource = recordsFlow.last()
 
         assertTrue(recordsResource is Resource.Success)
@@ -416,7 +416,7 @@ class RecordUseCasesTest : BaseUseCaseTest() {
         val book = fakeBookRepository.getBook(bookTestId).first()
 
         val accountsFlow =
-            getUserAccountsWithAmountFromSpecificTime(
+            getUserWalletsWithAmountFromSpecificTime(
                 sortType,
                 startDate,
                 endDate,

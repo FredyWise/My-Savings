@@ -176,7 +176,7 @@ class RecordViewModel @Inject constructor(
 
     private val _accountsWithAmount = _filterState.flatMapLatest { filterState ->
         filterState.map { start, end, _, sortType, _, useUserCurrency, currentBook ->
-            recordUseCases.getUserAccountsWithAmountFromSpecificTime(
+            recordUseCases.getUserWalletsWithAmountFromSpecificTime(
                 sortType,
                 start,
                 end,

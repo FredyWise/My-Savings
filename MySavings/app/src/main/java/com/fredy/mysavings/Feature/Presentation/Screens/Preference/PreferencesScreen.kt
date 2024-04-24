@@ -263,7 +263,7 @@ fun PreferencesScreen(
             }
         ) {
             Text(
-                text = "Income Color",
+                text = "Transfer Color",
                 color = optionColor,
                 style = MaterialTheme.typography.titleLarge.copy(fontSize = 20.sp)
             )

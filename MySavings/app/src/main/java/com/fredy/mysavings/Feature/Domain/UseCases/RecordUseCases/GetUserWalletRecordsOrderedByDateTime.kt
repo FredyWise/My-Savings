@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
 
-class GetUserAccountRecordsOrderedByDateTime(
+class GetUserWalletRecordsOrderedByDateTime(
     private val recordRepository: RecordRepository,
     private val authRepository: AuthRepository,
 ) {

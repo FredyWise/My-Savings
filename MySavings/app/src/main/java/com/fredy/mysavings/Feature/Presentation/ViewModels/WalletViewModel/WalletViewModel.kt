@@ -59,7 +59,7 @@ class WalletViewModel @Inject constructor(
         SortType.ASCENDING
     )
 
-    private val _totalAccountBalance = _updating.flatMapLatest {
+    private val _totalWalletBalance = _updating.flatMapLatest {
         walletUseCases.getWalletsTotalBalance()
     }.stateIn(
         viewModelScope,
@@ -95,12 +95,12 @@ class WalletViewModel @Inject constructor(
         _balanceBar,
         _totalExpense,
         _totalIncome,
-        _totalAccountBalance
-    ) { balanceBar, totalExpense, totalIncome, totalAccountBalance ->
+        _totalWalletBalance
+    ) { balanceBar, totalExpense, totalIncome, totalWalletBalance ->
         balanceBar.copy(
             expense = totalExpense.copy(name = "Total Expense"),
             income = totalIncome.copy(name = "Total Income"),
-            balance = totalAccountBalance.copy(name = "Total Balance"),
+            balance = totalWalletBalance.copy(name = "Total Balance"),
         )
     }.stateIn(
         viewModelScope,
@@ -120,7 +120,7 @@ class WalletViewModel @Inject constructor(
         )
 
     private val _records = _state.flatMapLatest {
-        recordUseCases.getUserAccountRecordsOrderedByDateTime(
+        recordUseCases.getUserWalletRecordsOrderedByDateTime(
             it.wallet.walletId,
             _sortType.value
         )
@@ -204,7 +204,7 @@ class WalletViewModel @Inject constructor(
                     walletUseCases.deleteWallet(
                         event.wallet
                     )
-                    recordUseCases.updateRecordItemWithDeletedAccount(event.wallet)
+                    recordUseCases.updateRecordItemWithDeletedWallet(event.wallet)
                     event.onDeleteEffect()
                 }
             }

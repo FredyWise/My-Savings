@@ -40,8 +40,8 @@ import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.DeleteRecordIt
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.GetAllRecords
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.GetAllTrueRecordsWithinSpecificTime
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.GetRecordById
-import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.GetUserAccountRecordsOrderedByDateTime
-import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.GetUserAccountsWithAmountFromSpecificTime
+import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.GetUserWalletRecordsOrderedByDateTime
+import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.GetUserWalletsWithAmountFromSpecificTime
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.GetUserCategoriesWithAmountFromSpecificTime
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.GetUserCategoryRecordsOrderedByDateTime
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.GetUserRecordsFromSpecificTime
@@ -50,7 +50,7 @@ import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.GetUserTotalAm
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.GetUserTotalRecordBalance
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.GetUserTrueRecordMapsFromSpecificTime
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.RecordUseCases
-import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.UpdateRecordItemWithDeletedAccount
+import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.UpdateRecordItemWithDeletedWallet
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.UpdateRecordItemWithDeletedBook
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.UpdateRecordItemWithDeletedCategory
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.UpsertRecordItem
@@ -81,7 +81,7 @@ object UseCasesModule {
 
     @Provides
     @Singleton
-    fun provideAccountUseCases(
+    fun provideWalletUseCases(
         currencyUseCases: CurrencyUseCases,
         walletRepository: WalletRepository,
         authRepository: AuthRepository,
@@ -110,7 +110,7 @@ object UseCasesModule {
     ): RecordUseCases = RecordUseCases(
         upsertRecordItem = UpsertRecordItem(recordRepository, authRepository),
         deleteRecordItem = DeleteRecordItem(recordRepository),
-        updateRecordItemWithDeletedAccount = UpdateRecordItemWithDeletedAccount(
+        updateRecordItemWithDeletedWallet = UpdateRecordItemWithDeletedWallet(
             recordRepository,
             authRepository
         ),
@@ -131,7 +131,7 @@ object UseCasesModule {
         getUserCategoryRecordsOrderedByDateTime = GetUserCategoryRecordsOrderedByDateTime(
             recordRepository, authRepository
         ),
-        getUserAccountRecordsOrderedByDateTime = GetUserAccountRecordsOrderedByDateTime(
+        getUserWalletRecordsOrderedByDateTime = GetUserWalletRecordsOrderedByDateTime(
             recordRepository, authRepository
         ),
         getUserTrueRecordMapsFromSpecificTime = GetUserTrueRecordMapsFromSpecificTime(
@@ -145,7 +145,7 @@ object UseCasesModule {
         getUserCategoriesWithAmountFromSpecificTime = GetUserCategoriesWithAmountFromSpecificTime(
             recordRepository, categoryRepository, authRepository, currencyUseCases
         ),
-        getUserAccountsWithAmountFromSpecificTime = GetUserAccountsWithAmountFromSpecificTime(
+        getUserWalletsWithAmountFromSpecificTime = GetUserWalletsWithAmountFromSpecificTime(
             recordRepository, walletRepository, authRepository, currencyUseCases
         ),
         getUserTotalAmountByType = GetUserTotalAmountByType(

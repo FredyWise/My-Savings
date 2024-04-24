@@ -9,7 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 
-class UpdateRecordItemWithDeletedAccount(
+class UpdateRecordItemWithDeletedWallet(
     private val recordRepository: RecordRepository,
     private val authRepository: AuthRepository,
 ) {

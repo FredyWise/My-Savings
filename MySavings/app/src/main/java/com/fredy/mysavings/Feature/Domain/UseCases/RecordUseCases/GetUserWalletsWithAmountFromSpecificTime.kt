@@ -24,7 +24,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import java.time.LocalDateTime
 
-class GetUserAccountsWithAmountFromSpecificTime(
+class GetUserWalletsWithAmountFromSpecificTime(
     private val recordRepository: RecordRepository,
     private val walletRepository: WalletRepository,
     private val authRepository: AuthRepository,

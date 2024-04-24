@@ -7,18 +7,18 @@ import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.currencyConv
 data class RecordUseCases(
     val upsertRecordItem: UpsertRecordItem,
     val deleteRecordItem: DeleteRecordItem,
-    val updateRecordItemWithDeletedAccount: UpdateRecordItemWithDeletedAccount,
+    val updateRecordItemWithDeletedWallet: UpdateRecordItemWithDeletedWallet,
     val updateRecordItemWithDeletedCategory: UpdateRecordItemWithDeletedCategory,
     val updateRecordItemWithDeletedBook: UpdateRecordItemWithDeletedBook,
     val getRecordById: GetRecordById,
     val getAllTrueRecordsWithinSpecificTime: GetAllTrueRecordsWithinSpecificTime, //io
     val getAllRecords: GetAllRecords, //search
     val getUserCategoryRecordsOrderedByDateTime: GetUserCategoryRecordsOrderedByDateTime, // category
-    val getUserAccountRecordsOrderedByDateTime: GetUserAccountRecordsOrderedByDateTime, // account
+    val getUserWalletRecordsOrderedByDateTime: GetUserWalletRecordsOrderedByDateTime, // account
     val getUserTrueRecordMapsFromSpecificTime: GetUserTrueRecordMapsFromSpecificTime, // record main screen
     val getUserRecordsFromSpecificTime: GetUserRecordsFromSpecificTime, //analysis flow
     val getUserCategoriesWithAmountFromSpecificTime: GetUserCategoriesWithAmountFromSpecificTime,//analysis overview
-    val getUserAccountsWithAmountFromSpecificTime: GetUserAccountsWithAmountFromSpecificTime,//analysis account
+    val getUserWalletsWithAmountFromSpecificTime: GetUserWalletsWithAmountFromSpecificTime,//analysis account
     val getUserTotalAmountByType: GetUserTotalAmountByType,
     val getUserTotalAmountByTypeFromSpecificTime: GetUserTotalAmountByTypeFromSpecificTime,
     val getUserTotalRecordBalance: GetUserTotalRecordBalance // balance bar total balance
