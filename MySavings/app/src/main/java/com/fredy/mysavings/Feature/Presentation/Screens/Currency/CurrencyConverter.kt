@@ -17,7 +17,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SimpleDropdown
-import com.fredy.mysavings.Util.currencyCodes
+import com.fredy.mysavings.Feature.Presentation.Util.currencyCodes
 
 @Composable
 fun CurrencyConverter(

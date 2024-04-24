@@ -2,7 +2,7 @@ package com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases
 
 import com.fredy.mysavings.Feature.Domain.Model.Currency
 import com.fredy.mysavings.Feature.Domain.Repository.CurrencyRepository
-import com.fredy.mysavings.Util.Mappers.updateRatesUsingCode
+import com.fredy.mysavings.Feature.Domain.Util.Mappers.updateRatesUsingCode
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 

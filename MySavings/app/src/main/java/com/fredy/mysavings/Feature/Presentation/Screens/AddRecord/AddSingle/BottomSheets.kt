@@ -35,10 +35,10 @@ import com.fredy.mysavings.Feature.Domain.Model.Wallet
 import com.fredy.mysavings.Feature.Domain.Model.Category
 import com.fredy.mysavings.Feature.Data.Enum.RecordType
 import com.fredy.mysavings.R
-import com.fredy.mysavings.Util.BalanceColor
-import com.fredy.mysavings.Util.formatBalanceAmount
-import com.fredy.mysavings.Util.isTransfer
-import com.fredy.mysavings.Util.DefaultData.savingsIcons
+import com.fredy.mysavings.Feature.Presentation.Util.BalanceColor
+import com.fredy.mysavings.Feature.Presentation.Util.formatBalanceAmount
+import com.fredy.mysavings.Feature.Presentation.Util.isTransfer
+import com.fredy.mysavings.Feature.Presentation.Util.DefaultData.savingsIcons
 import com.fredy.mysavings.Feature.Domain.Util.Resource
 import com.fredy.mysavings.Feature.Presentation.ViewModels.WalletViewModel.WalletState
 import com.fredy.mysavings.Feature.Presentation.ViewModels.CategoryViewModel.CategoryMap

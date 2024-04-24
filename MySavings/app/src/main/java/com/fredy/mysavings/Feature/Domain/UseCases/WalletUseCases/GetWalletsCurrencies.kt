@@ -3,7 +3,7 @@ package com.fredy.mysavings.Feature.Domain.UseCases.WalletUseCases
 import co.yml.charts.common.extensions.isNotNull
 import com.fredy.mysavings.Feature.Domain.Repository.AuthRepository
 import com.fredy.mysavings.Feature.Domain.Repository.WalletRepository
-import com.fredy.mysavings.Util.Mappers.getCurrencies
+import com.fredy.mysavings.Feature.Domain.Util.Mappers.getCurrencies
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

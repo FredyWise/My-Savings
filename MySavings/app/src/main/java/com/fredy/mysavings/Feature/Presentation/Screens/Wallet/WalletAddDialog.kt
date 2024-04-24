@@ -15,8 +15,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.fredy.mysavings.Util.DefaultData.walletIcons
-import com.fredy.mysavings.Util.currencyCodes
+import com.fredy.mysavings.Feature.Presentation.Util.DefaultData.walletIcons
+import com.fredy.mysavings.Feature.Presentation.Util.currencyCodes
 import com.fredy.mysavings.Feature.Presentation.ViewModels.WalletViewModel.WalletEvent
 import com.fredy.mysavings.Feature.Presentation.ViewModels.WalletViewModel.WalletState
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.ChooseIcon

@@ -13,9 +13,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import com.fredy.mysavings.Util.BalanceColor
-import com.fredy.mysavings.Util.BalanceItem
-import com.fredy.mysavings.Util.formatBalanceAmount
+import com.fredy.mysavings.Feature.Presentation.Util.BalanceColor
+import com.fredy.mysavings.Feature.Presentation.Util.BalanceItem
+import com.fredy.mysavings.Feature.Presentation.Util.formatBalanceAmount
 
 @Composable
 fun BalanceBar(

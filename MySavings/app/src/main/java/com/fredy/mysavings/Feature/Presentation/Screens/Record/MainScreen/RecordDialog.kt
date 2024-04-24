@@ -33,9 +33,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.fredy.mysavings.Feature.Domain.Model.Record
 import com.fredy.mysavings.Feature.Domain.Model.TrueRecord
-import com.fredy.mysavings.Util.BalanceColor
-import com.fredy.mysavings.Util.formatDateYearDetailedTime
-import com.fredy.mysavings.Util.isTransfer
+import com.fredy.mysavings.Feature.Presentation.Util.BalanceColor
+import com.fredy.mysavings.Feature.Presentation.Util.formatDateYearDetailedTime
+import com.fredy.mysavings.Feature.Presentation.Util.isTransfer
 import com.fredy.mysavings.Feature.Presentation.Screens.Record.BalanceItem
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SimpleEntityItem
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SimpleWarningDialog

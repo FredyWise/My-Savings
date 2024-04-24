@@ -6,7 +6,7 @@ import com.fredy.mysavings.Feature.Domain.Repository.AuthRepository
 import com.fredy.mysavings.Feature.Domain.Repository.WalletRepository
 import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.CurrencyUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.currencyConverter
-import com.fredy.mysavings.Util.BalanceItem
+import com.fredy.mysavings.Feature.Presentation.Util.BalanceItem
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 

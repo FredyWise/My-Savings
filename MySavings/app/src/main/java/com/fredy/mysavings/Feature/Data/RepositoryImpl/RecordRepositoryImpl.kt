@@ -9,7 +9,7 @@ import com.fredy.mysavings.Feature.Domain.Model.RecordMap
 import com.fredy.mysavings.Feature.Domain.Model.TrueRecord
 import com.fredy.mysavings.Feature.Domain.Repository.RecordRepository
 import com.fredy.mysavings.Util.Log
-import com.fredy.mysavings.Util.Mappers.toRecordSortedMaps
+import com.fredy.mysavings.Feature.Domain.Util.Mappers.toRecordSortedMaps
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow

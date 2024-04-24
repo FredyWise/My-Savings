@@ -13,9 +13,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import com.fredy.mysavings.Util.formatBalanceAmount
-import com.fredy.mysavings.Util.formatTime
-import com.fredy.mysavings.Util.isTransfer
+import com.fredy.mysavings.Feature.Presentation.Util.formatBalanceAmount
+import com.fredy.mysavings.Feature.Presentation.Util.formatTime
+import com.fredy.mysavings.Feature.Presentation.Util.isTransfer
 import com.fredy.mysavings.Feature.Presentation.ViewModels.CategoryViewModel.CategoryState
 import com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel.RecordEvent
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.DetailAppBar

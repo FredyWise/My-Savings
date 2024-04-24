@@ -1,4 +1,4 @@
-package com.fredy.mysavings.Util.Mappers
+package com.fredy.mysavings.Feature.Domain.Util.Mappers
 
 import com.fredy.mysavings.Feature.Domain.Model.Category
 import com.fredy.mysavings.Feature.Presentation.ViewModels.CategoryViewModel.CategoryMap

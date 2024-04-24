@@ -1,4 +1,4 @@
-package com.fredy.mysavings.Util
+package com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel
 
 import android.content.Context
 import android.graphics.Bitmap

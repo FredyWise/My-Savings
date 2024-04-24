@@ -12,8 +12,8 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 import com.fredy.mysavings.Feature.Data.Enum.DisplayState
 
-import com.fredy.mysavings.Util.initialDarkThemeDefaultColor
-import com.fredy.mysavings.Util.initialLightThemeDefaultColor
+import com.fredy.mysavings.Feature.Presentation.Util.initialDarkThemeDefaultColor
+import com.fredy.mysavings.Feature.Presentation.Util.initialLightThemeDefaultColor
 import com.fredy.mysavings.Feature.Presentation.ViewModels.PreferencesViewModel.PreferencesState
 
 private val LightColorScheme = lightColorScheme(

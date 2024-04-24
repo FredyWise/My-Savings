@@ -26,7 +26,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.Feature.Domain.Model.Book
 import com.fredy.mysavings.R
-import com.fredy.mysavings.Util.DefaultData
+import com.fredy.mysavings.Feature.Presentation.Util.DefaultData
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

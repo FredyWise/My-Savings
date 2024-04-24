@@ -11,7 +11,7 @@ import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.CategoryData
 import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.RecordDataSource
 import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.WalletDataSource
 import com.fredy.mysavings.Feature.Domain.Repository.SyncRepository
-import com.fredy.mysavings.Util.DefaultData
+import com.fredy.mysavings.Feature.Presentation.Util.DefaultData
 import com.fredy.mysavings.Util.Log
 import com.fredy.mysavings.Util.isInternetConnected
 import com.google.firebase.auth.FirebaseAuth

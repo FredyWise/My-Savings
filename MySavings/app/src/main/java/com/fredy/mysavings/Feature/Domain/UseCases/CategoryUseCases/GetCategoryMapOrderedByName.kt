@@ -5,9 +5,9 @@ import com.fredy.mysavings.Feature.Domain.Repository.AuthRepository
 import com.fredy.mysavings.Feature.Domain.Repository.CategoryRepository
 import com.fredy.mysavings.Feature.Domain.Util.Resource
 import com.fredy.mysavings.Feature.Presentation.ViewModels.CategoryViewModel.CategoryMap
-import com.fredy.mysavings.Util.DefaultData
+import com.fredy.mysavings.Feature.Presentation.Util.DefaultData
 import com.fredy.mysavings.Util.Log
-import com.fredy.mysavings.Util.Mappers.toCategoryMaps
+import com.fredy.mysavings.Feature.Domain.Util.Mappers.toCategoryMaps
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch

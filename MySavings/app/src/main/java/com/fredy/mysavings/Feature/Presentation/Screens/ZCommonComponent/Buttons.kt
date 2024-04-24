@@ -52,7 +52,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.fredy.mysavings.Util.ToggleableInfo
+import com.fredy.mysavings.Feature.Presentation.Util.ToggleableInfo
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 

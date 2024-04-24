@@ -1,4 +1,4 @@
-package com.fredy.mysavings.Util
+package com.fredy.mysavings.Feature.Presentation.Util
 
 import android.graphics.Color
 import com.fredy.mysavings.Feature.Domain.Model.Wallet

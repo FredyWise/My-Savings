@@ -12,11 +12,11 @@ import com.fredy.mysavings.Feature.Domain.Repository.WalletRepository
 import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.CurrencyUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.currencyConverter
 import com.fredy.mysavings.Feature.Domain.Util.Resource
-import com.fredy.mysavings.Util.DefaultData
+import com.fredy.mysavings.Feature.Presentation.Util.DefaultData
 import com.fredy.mysavings.Util.Log
-import com.fredy.mysavings.Util.isExpense
-import com.fredy.mysavings.Util.isIncome
-import com.fredy.mysavings.Util.isTransfer
+import com.fredy.mysavings.Feature.Presentation.Util.isExpense
+import com.fredy.mysavings.Feature.Presentation.Util.isIncome
+import com.fredy.mysavings.Feature.Presentation.Util.isTransfer
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first

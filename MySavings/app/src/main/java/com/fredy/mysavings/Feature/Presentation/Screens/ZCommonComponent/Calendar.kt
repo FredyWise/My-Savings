@@ -29,7 +29,7 @@ import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
-import com.fredy.mysavings.Util.formatBalanceAmount
+import com.fredy.mysavings.Feature.Presentation.Util.formatBalanceAmount
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.YearMonth

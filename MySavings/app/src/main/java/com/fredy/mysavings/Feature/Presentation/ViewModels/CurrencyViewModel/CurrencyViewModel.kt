@@ -8,7 +8,7 @@ import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.CurrencyUseC
 import com.fredy.mysavings.Feature.Domain.UseCases.UserUseCases.UserUseCases
 import com.fredy.mysavings.Feature.Domain.Util.Resource
 import com.fredy.mysavings.Util.Log
-import com.fredy.mysavings.Util.Mappers.changeBase
+import com.fredy.mysavings.Feature.Domain.Util.Mappers.changeBase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted

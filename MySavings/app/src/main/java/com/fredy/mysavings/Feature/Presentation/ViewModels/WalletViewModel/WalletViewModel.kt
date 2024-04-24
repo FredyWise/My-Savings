@@ -9,8 +9,8 @@ import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.RecordUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.UserUseCases.UserUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.WalletUseCases.WalletUseCases
 import com.fredy.mysavings.Feature.Domain.Util.Resource
-import com.fredy.mysavings.Util.BalanceBar
-import com.fredy.mysavings.Util.BalanceItem
+import com.fredy.mysavings.Feature.Presentation.Util.BalanceBar
+import com.fredy.mysavings.Feature.Presentation.Util.BalanceItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted

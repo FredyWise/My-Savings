@@ -21,8 +21,8 @@ import co.yml.charts.ui.barchart.models.GroupBar
 import co.yml.charts.ui.barchart.models.GroupBarChartData
 import co.yml.charts.ui.barchart.models.GroupSeparatorConfig
 import co.yml.charts.ui.barchart.models.SelectionHighlightData
-import com.fredy.mysavings.Util.formatBalanceAmount
-import com.fredy.mysavings.Util.truncateString
+import com.fredy.mysavings.Feature.Presentation.Util.formatBalanceAmount
+import com.fredy.mysavings.Feature.Presentation.Util.truncateString
 import kotlin.math.absoluteValue
 
 

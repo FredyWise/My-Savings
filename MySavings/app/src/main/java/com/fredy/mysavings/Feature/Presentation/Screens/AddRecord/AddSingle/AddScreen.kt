@@ -41,9 +41,9 @@ import com.canhub.cropper.CropImageContractOptions
 import com.canhub.cropper.CropImageOptions
 import com.fredy.mysavings.Feature.Data.Enum.RecordType
 import com.fredy.mysavings.R
-import com.fredy.mysavings.Util.ActionWithName
+import com.fredy.mysavings.Feature.Presentation.Util.ActionWithName
 import com.fredy.mysavings.Feature.Domain.Util.Resource
-import com.fredy.mysavings.Util.isTransfer
+import com.fredy.mysavings.Feature.Presentation.Util.isTransfer
 import com.fredy.mysavings.Feature.Presentation.ViewModels.WalletViewModel.WalletViewModel
 import com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel.AddSingleRecordViewModel
 import com.fredy.mysavings.Feature.Presentation.ViewModels.CategoryViewModel.CategoryViewModel
@@ -51,8 +51,8 @@ import com.fredy.mysavings.Feature.Presentation.ViewModels.WalletViewModel.Walle
 import com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel.AddRecordEvent
 import com.fredy.mysavings.Feature.Presentation.ViewModels.CategoryViewModel.CategoryEvent
 import com.fredy.mysavings.Feature.Presentation.Screens.Wallet.WalletAddDialog
-import com.fredy.mysavings.Util.createImageUri
-import com.fredy.mysavings.Util.detectTextFromImage
+import com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel.createImageUri
+import com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel.detectTextFromImage
 import com.fredy.mysavings.Feature.Presentation.Screens.Category.CategoryAddDialog
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SimpleButton
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SimpleWarningDialog

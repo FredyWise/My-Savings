@@ -4,7 +4,7 @@ import co.yml.charts.common.extensions.isNotNull
 import com.fredy.mysavings.Feature.Domain.Model.Record
 import com.fredy.mysavings.Feature.Domain.Repository.AuthRepository
 import com.fredy.mysavings.Feature.Domain.Repository.RecordRepository
-import com.fredy.mysavings.Util.DefaultData
+import com.fredy.mysavings.Feature.Presentation.Util.DefaultData
 
 class UpsertRecordItem(
     private val recordRepository: RecordRepository,

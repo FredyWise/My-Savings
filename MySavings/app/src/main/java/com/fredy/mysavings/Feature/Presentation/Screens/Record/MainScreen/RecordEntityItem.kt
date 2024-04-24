@@ -22,9 +22,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.Feature.Domain.Model.TrueRecord
 import com.fredy.mysavings.Feature.Data.Enum.RecordType
-import com.fredy.mysavings.Util.BalanceColor
-import com.fredy.mysavings.Util.formatBalanceAmount
-import com.fredy.mysavings.Util.isTransfer
+import com.fredy.mysavings.Feature.Presentation.Util.BalanceColor
+import com.fredy.mysavings.Feature.Presentation.Util.formatBalanceAmount
+import com.fredy.mysavings.Feature.Presentation.Util.isTransfer
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SimpleEntityItem
 
 @Composable

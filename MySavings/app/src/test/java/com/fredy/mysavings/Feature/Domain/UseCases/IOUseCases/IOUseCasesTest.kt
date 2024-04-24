@@ -2,9 +2,9 @@ package com.fredy.mysavings.Feature.Domain.UseCases.IOUseCases
 
 import com.fredy.mysavings.BaseUseCaseTest
 import com.fredy.mysavings.Feature.Domain.Model.Book
-import com.fredy.mysavings.Util.isExpense
-import com.fredy.mysavings.Util.isIncome
-import com.fredy.mysavings.Util.isTransfer
+import com.fredy.mysavings.Feature.Presentation.Util.isExpense
+import com.fredy.mysavings.Feature.Presentation.Util.isIncome
+import com.fredy.mysavings.Feature.Presentation.Util.isTransfer
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.last

@@ -4,7 +4,7 @@ import com.fredy.mysavings.Feature.Domain.Model.Record
 import com.fredy.mysavings.Feature.Domain.Model.TrueRecord
 import com.fredy.mysavings.Feature.Data.Enum.RecordType
 import com.fredy.mysavings.Feature.Data.Enum.SortType
-import com.fredy.mysavings.Util.Mappers.toRecordSortedMaps
+import com.fredy.mysavings.Feature.Domain.Util.Mappers.toRecordSortedMaps
 import com.fredy.mysavings.Feature.Domain.Model.RecordMap
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

@@ -8,7 +8,7 @@ import com.fredy.mysavings.Feature.Domain.Model.Record
 import com.fredy.mysavings.Feature.Domain.Model.TrueRecord
 import com.fredy.mysavings.Feature.Domain.Model.Wallet
 import com.fredy.mysavings.Util.Log
-import com.fredy.mysavings.Util.Mappers.toTrueRecords
+import com.fredy.mysavings.Feature.Domain.Util.Mappers.toTrueRecords
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore

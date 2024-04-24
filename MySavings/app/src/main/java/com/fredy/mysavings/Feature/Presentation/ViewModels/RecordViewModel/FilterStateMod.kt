@@ -1,4 +1,4 @@
-package com.fredy.mysavings.Util
+package com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel
 
 import com.fredy.mysavings.Feature.Domain.Model.Book
 import com.fredy.mysavings.Feature.Data.Enum.FilterType
@@ -108,7 +108,7 @@ fun <T> FilterState.map(target: (start: LocalDateTime, end: LocalDateTime, Recor
     }
 }
 
-fun FilterState.updateType(filterType: FilterType):FilterState{
+fun FilterState.updateType(filterType: FilterType): FilterState {
     val startDate: LocalDateTime
     val endDate: LocalDateTime
 
@@ -189,7 +189,7 @@ fun FilterState.updateType(filterType: FilterType):FilterState{
 
 fun FilterState.updateDate(
     selectedDate: LocalDate,
-):FilterState {
+): FilterState {
     val startDate: LocalDateTime
     val endDate: LocalDateTime
 
@@ -270,7 +270,7 @@ fun FilterState.updateDate(
 }
 
 fun FilterState.minusDate(
-):FilterState {
+): FilterState {
     val selectedDate = when (filterType) {
         FilterType.Daily -> selectedDate.minusDays(
             1
@@ -299,7 +299,7 @@ fun FilterState.minusDate(
     return this.updateDate(selectedDate)
 }
 
-fun FilterState.plusDate():FilterState {
+fun FilterState.plusDate(): FilterState {
      val selectedDate = when (filterType) {
         FilterType.Daily -> selectedDate.plusDays(
             1

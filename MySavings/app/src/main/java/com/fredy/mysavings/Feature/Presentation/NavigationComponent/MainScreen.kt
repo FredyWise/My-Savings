@@ -42,7 +42,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.fredy.mysavings.Feature.Domain.Model.UserData
-import com.fredy.mysavings.Util.formatRangeOfDate
+import com.fredy.mysavings.Feature.Presentation.Util.formatRangeOfDate
 import com.fredy.mysavings.Feature.Presentation.ViewModels.WalletViewModel.WalletViewModel
 import com.fredy.mysavings.Feature.Presentation.ViewModels.BookViewModel.BookViewModel
 import com.fredy.mysavings.Feature.Presentation.ViewModels.CategoryViewModel.CategoryViewModel

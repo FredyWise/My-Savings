@@ -11,9 +11,9 @@ import com.fredy.mysavings.Feature.Domain.Model.Record
 import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.CurrencyUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.RecordUseCases
 import com.fredy.mysavings.Feature.Domain.Util.Resource
-import com.fredy.mysavings.Util.DefaultData.transferCategory
-import com.fredy.mysavings.Util.isExpense
-import com.fredy.mysavings.Util.isTransfer
+import com.fredy.mysavings.Feature.Presentation.Util.DefaultData.transferCategory
+import com.fredy.mysavings.Feature.Presentation.Util.isExpense
+import com.fredy.mysavings.Feature.Presentation.Util.isTransfer
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest

@@ -1,4 +1,4 @@
-package com.fredy.mysavings.Util.Mappers
+package com.fredy.mysavings.Feature.Domain.Util.Mappers
 
 import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.RecordDataSourceImpl.TrueRecordComponentResult
 import com.fredy.mysavings.Feature.Domain.Model.Book

@@ -1,4 +1,4 @@
-package com.fredy.mysavings.Util
+package com.fredy.mysavings.Feature.Presentation.Util
 
 fun truncateString(inputString: String, maxLength: Int): String {
     return if (inputString.length > maxLength) {

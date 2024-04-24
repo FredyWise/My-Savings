@@ -5,7 +5,7 @@ import com.fredy.mysavings.Feature.Domain.Model.RecordMap
 import com.fredy.mysavings.Feature.Domain.Model.UserData
 import com.fredy.mysavings.Feature.Domain.Model.Wallet
 import com.fredy.mysavings.Feature.Domain.Util.Resource
-import com.fredy.mysavings.Util.BalanceBar
+import com.fredy.mysavings.Feature.Presentation.Util.BalanceBar
 
 data class WalletState(
     val currentUser: UserData = UserData(),

@@ -18,10 +18,10 @@ import com.fredy.mysavings.Feature.Data.Database.Converter.LocalTimeConverter
 import com.fredy.mysavings.Feature.Data.Enum.DisplayState
 import com.fredy.mysavings.Feature.Domain.Repository.PreferencesRepository
 import com.fredy.mysavings.Feature.Presentation.ViewModels.PreferencesViewModel.PreferencesState
-import com.fredy.mysavings.Util.FilterState
-import com.fredy.mysavings.Util.defaultDarkExpenseColor
-import com.fredy.mysavings.Util.defaultDarkIncomeColor
-import com.fredy.mysavings.Util.defaultDarkTransferColor
+import com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel.FilterState
+import com.fredy.mysavings.Feature.Presentation.Util.defaultDarkExpenseColor
+import com.fredy.mysavings.Feature.Presentation.Util.defaultDarkIncomeColor
+import com.fredy.mysavings.Feature.Presentation.Util.defaultDarkTransferColor
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow

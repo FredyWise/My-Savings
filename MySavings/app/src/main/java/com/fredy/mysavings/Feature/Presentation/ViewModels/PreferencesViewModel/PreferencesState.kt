@@ -2,9 +2,9 @@ package com.fredy.mysavings.Feature.Presentation.ViewModels.PreferencesViewModel
 
 import androidx.compose.ui.graphics.Color
 import com.fredy.mysavings.Feature.Data.Enum.DisplayState
-import com.fredy.mysavings.Util.defaultDarkExpenseColor
-import com.fredy.mysavings.Util.defaultDarkIncomeColor
-import com.fredy.mysavings.Util.defaultDarkTransferColor
+import com.fredy.mysavings.Feature.Presentation.Util.defaultDarkExpenseColor
+import com.fredy.mysavings.Feature.Presentation.Util.defaultDarkIncomeColor
+import com.fredy.mysavings.Feature.Presentation.Util.defaultDarkTransferColor
 import java.time.LocalDateTime
 import java.time.LocalTime
 

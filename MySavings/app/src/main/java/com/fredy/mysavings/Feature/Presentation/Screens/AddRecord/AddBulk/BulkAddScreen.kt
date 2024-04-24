@@ -43,9 +43,9 @@ import com.canhub.cropper.CropImageContract
 import com.canhub.cropper.CropImageContractOptions
 import com.canhub.cropper.CropImageOptions
 import com.fredy.mysavings.R
-import com.fredy.mysavings.Util.createImageUri
-import com.fredy.mysavings.Util.detectTextFromImage
-import com.fredy.mysavings.Util.isTransfer
+import com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel.createImageUri
+import com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel.detectTextFromImage
+import com.fredy.mysavings.Feature.Presentation.Util.isTransfer
 import com.fredy.mysavings.Feature.Presentation.ViewModels.WalletViewModel.WalletViewModel
 import com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel.AddSingleRecordViewModel
 import com.fredy.mysavings.Feature.Presentation.ViewModels.CategoryViewModel.CategoryViewModel

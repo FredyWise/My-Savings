@@ -9,7 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.fredy.mysavings.Util.RecordTypeColor
+import com.fredy.mysavings.Feature.Presentation.Util.RecordTypeColor
 import com.fredy.mysavings.Feature.Presentation.ViewModels.WalletViewModel.WalletState
 import com.fredy.mysavings.Feature.Presentation.ViewModels.CategoryViewModel.CategoryState
 import com.fredy.mysavings.Feature.Presentation.ViewModels.WalletViewModel.WalletEvent

@@ -5,9 +5,9 @@ import com.fredy.mysavings.Feature.Domain.Repository.CategoryRepository
 import com.fredy.mysavings.Feature.Domain.Repository.RecordRepository
 import com.fredy.mysavings.Feature.Domain.Repository.WalletRepository
 import com.fredy.mysavings.Feature.Presentation.ViewModels.IOViewModel.DBInfo
-import com.fredy.mysavings.Util.isExpense
-import com.fredy.mysavings.Util.isIncome
-import com.fredy.mysavings.Util.isTransfer
+import com.fredy.mysavings.Feature.Presentation.Util.isExpense
+import com.fredy.mysavings.Feature.Presentation.Util.isIncome
+import com.fredy.mysavings.Feature.Presentation.Util.isTransfer
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow

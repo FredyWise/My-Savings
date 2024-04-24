@@ -22,8 +22,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.fredy.mysavings.Util.currencyCodes
-import com.fredy.mysavings.Util.formatBalanceAmount
+import com.fredy.mysavings.Feature.Presentation.Util.currencyCodes
+import com.fredy.mysavings.Feature.Presentation.Util.formatBalanceAmount
 import com.fredy.mysavings.Feature.Presentation.ViewModels.CurrencyViewModel.CurrencyState
 import com.fredy.mysavings.Feature.Presentation.ViewModels.CurrencyViewModel.CurrencyEvent
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.DefaultAppBar

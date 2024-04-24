@@ -29,8 +29,8 @@ import com.fredy.mysavings.Feature.Domain.Model.BookMap
 import com.fredy.mysavings.Feature.Presentation.Screens.Record.MainScreen.RecordEntityItem
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.CustomStickyHeader
 import com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel.RecordEvent
-import com.fredy.mysavings.Util.DefaultData
-import com.fredy.mysavings.Util.formatDateDay
+import com.fredy.mysavings.Feature.Presentation.Util.DefaultData
+import com.fredy.mysavings.Feature.Presentation.Util.formatDateDay
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

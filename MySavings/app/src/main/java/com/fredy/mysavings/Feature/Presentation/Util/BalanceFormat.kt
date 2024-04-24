@@ -1,4 +1,4 @@
-package com.fredy.mysavings.Util
+package com.fredy.mysavings.Feature.Presentation.Util
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue

@@ -16,6 +16,4 @@ class MySavingsApp: Application(){
         super.onCreate()
         notificationManager
     }
-
-
 }

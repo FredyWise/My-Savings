@@ -2,8 +2,8 @@ package com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource
 
 import com.fredy.mysavings.Feature.Domain.Model.FirebaseRatesCache
 import com.fredy.mysavings.Feature.Domain.Model.RatesCache
-import com.fredy.mysavings.Util.Mappers.toFireBaseRatesCache
-import com.fredy.mysavings.Util.Mappers.toRatesCache
+import com.fredy.mysavings.Feature.Domain.Util.Mappers.toFireBaseRatesCache
+import com.fredy.mysavings.Feature.Domain.Util.Mappers.toRatesCache
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.tasks.await

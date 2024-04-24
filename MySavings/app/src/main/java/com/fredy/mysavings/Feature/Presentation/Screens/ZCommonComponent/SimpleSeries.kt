@@ -35,8 +35,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import com.fredy.mysavings.Util.ActionWithName
-import com.fredy.mysavings.Util.DefaultData.savingsIcons
+import com.fredy.mysavings.Feature.Presentation.Util.ActionWithName
+import com.fredy.mysavings.Feature.Presentation.Util.DefaultData.savingsIcons
 
 @Composable
 fun SimpleWarningDialog(

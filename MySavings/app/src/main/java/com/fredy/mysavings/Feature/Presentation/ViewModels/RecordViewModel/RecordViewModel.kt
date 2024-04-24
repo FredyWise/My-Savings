@@ -12,15 +12,9 @@ import com.fredy.mysavings.Feature.Domain.UseCases.BookUseCases.BookUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.RecordUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.WalletUseCases.WalletUseCases
 import com.fredy.mysavings.Feature.Domain.Util.Resource
-import com.fredy.mysavings.Util.BalanceBar
-import com.fredy.mysavings.Util.BalanceItem
-import com.fredy.mysavings.Util.FilterState
+import com.fredy.mysavings.Feature.Presentation.Util.BalanceBar
+import com.fredy.mysavings.Feature.Presentation.Util.BalanceItem
 import com.fredy.mysavings.Util.Log
-import com.fredy.mysavings.Util.map
-import com.fredy.mysavings.Util.minusDate
-import com.fredy.mysavings.Util.plusDate
-import com.fredy.mysavings.Util.updateDate
-import com.fredy.mysavings.Util.updateType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async

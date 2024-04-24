@@ -1,4 +1,4 @@
-package com.fredy.mysavings.Util.Mappers
+package com.fredy.mysavings.Feature.Domain.Util.Mappers
 
 import com.fredy.mysavings.Util.Log
 import com.fredy.mysavings.Feature.Data.APIs.CountryModels.Response.Currencies

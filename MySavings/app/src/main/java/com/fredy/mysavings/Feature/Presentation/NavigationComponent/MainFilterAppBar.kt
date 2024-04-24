@@ -13,7 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.Feature.Data.Enum.FilterType
 import com.fredy.mysavings.Feature.Data.Enum.SortType
-import com.fredy.mysavings.Util.BalanceBar
+import com.fredy.mysavings.Feature.Presentation.Util.BalanceBar
 import com.fredy.mysavings.Feature.Presentation.Screens.Record.BalanceBar
 import com.fredy.mysavings.Feature.Presentation.Screens.Record.DisplayBar
 import com.fredy.mysavings.Feature.Presentation.Screens.Record.FilterDialog

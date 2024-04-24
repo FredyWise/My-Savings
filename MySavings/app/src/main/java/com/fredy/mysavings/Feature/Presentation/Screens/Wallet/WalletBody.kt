@@ -23,9 +23,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.Feature.Domain.Model.Wallet
-import com.fredy.mysavings.Util.ActionWithName
-import com.fredy.mysavings.Util.BalanceColor
-import com.fredy.mysavings.Util.formatBalanceAmount
+import com.fredy.mysavings.Feature.Presentation.Util.ActionWithName
+import com.fredy.mysavings.Feature.Presentation.Util.BalanceColor
+import com.fredy.mysavings.Feature.Presentation.Util.formatBalanceAmount
 import com.fredy.mysavings.Feature.Presentation.ViewModels.WalletViewModel.WalletEvent
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.AdvancedEntityItem
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.CustomStickyHeader

@@ -2,7 +2,7 @@ package com.fredy.mysavings.Feature.Domain.Model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.fredy.mysavings.Util.DefaultData
+import com.fredy.mysavings.Feature.Presentation.Util.DefaultData
 
 @Entity
 data class Book(

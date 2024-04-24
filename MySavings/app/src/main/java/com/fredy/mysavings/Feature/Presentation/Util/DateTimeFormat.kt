@@ -1,4 +1,4 @@
-package com.fredy.mysavings.Util
+package com.fredy.mysavings.Feature.Presentation.Util
 
 import com.fredy.mysavings.Feature.Data.Enum.FilterType
 import java.time.DayOfWeek

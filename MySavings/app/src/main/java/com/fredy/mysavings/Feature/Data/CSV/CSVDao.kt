@@ -11,7 +11,7 @@ import com.fredy.mysavings.Feature.Domain.Model.TrueRecord
 import com.fredy.mysavings.Feature.Domain.Model.Wallet
 import com.fredy.mysavings.Feature.Data.Enum.RecordType
 import com.fredy.mysavings.Util.Log
-import com.fredy.mysavings.Util.formatDateYearDetailedTime
+import com.fredy.mysavings.Feature.Presentation.Util.formatDateYearDetailedTime
 import java.io.File
 import java.io.FileReader
 import java.io.FileWriter

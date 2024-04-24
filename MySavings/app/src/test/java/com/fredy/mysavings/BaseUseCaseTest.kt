@@ -16,11 +16,11 @@ import com.fredy.mysavings.Feature.Domain.Repository.FakeCategoryRepository
 import com.fredy.mysavings.Feature.Domain.Repository.FakeCurrencyRepository
 import com.fredy.mysavings.Feature.Domain.Repository.FakeRecordRepository
 import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.CurrencyUseCases
-import com.fredy.mysavings.Util.BalanceItem
-import com.fredy.mysavings.Util.DefaultData
-import com.fredy.mysavings.Util.DefaultData.deletedWallet
-import com.fredy.mysavings.Util.DefaultData.deletedCategory
-import com.fredy.mysavings.Util.DefaultData.transferCategory
+import com.fredy.mysavings.Feature.Presentation.Util.BalanceItem
+import com.fredy.mysavings.Feature.Presentation.Util.DefaultData
+import com.fredy.mysavings.Feature.Presentation.Util.DefaultData.deletedWallet
+import com.fredy.mysavings.Feature.Presentation.Util.DefaultData.deletedCategory
+import com.fredy.mysavings.Feature.Presentation.Util.DefaultData.transferCategory
 import com.fredy.mysavings.Util.Log
 import com.google.firebase.Timestamp
 import io.mockk.MockKAnnotations

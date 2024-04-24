@@ -22,8 +22,8 @@ import co.yml.charts.ui.linechart.model.LineType
 import co.yml.charts.ui.linechart.model.SelectionHighlightPoint
 import co.yml.charts.ui.linechart.model.SelectionHighlightPopUp
 import co.yml.charts.ui.linechart.model.ShadowUnderLine
-import com.fredy.mysavings.Util.formatBalanceAmount
-import com.fredy.mysavings.Util.formatDateMonth
+import com.fredy.mysavings.Feature.Presentation.Util.formatBalanceAmount
+import com.fredy.mysavings.Feature.Presentation.Util.formatDateMonth
 import java.time.LocalDate
 import kotlin.math.nextUp
 

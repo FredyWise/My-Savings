@@ -7,7 +7,7 @@ import com.fredy.mysavings.Feature.Domain.Repository.BookRepository
 import com.fredy.mysavings.Feature.Domain.Repository.RecordRepository
 import com.fredy.mysavings.Feature.Domain.Util.Resource
 import com.fredy.mysavings.Util.Log
-import com.fredy.mysavings.Util.Mappers.toBookSortedMaps
+import com.fredy.mysavings.Feature.Domain.Util.Mappers.toBookSortedMaps
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first

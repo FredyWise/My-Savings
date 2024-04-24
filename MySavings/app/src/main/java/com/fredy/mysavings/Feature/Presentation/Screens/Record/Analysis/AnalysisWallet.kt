@@ -28,9 +28,9 @@ import androidx.compose.ui.unit.dp
 import co.yml.charts.common.model.Point
 import co.yml.charts.ui.barchart.models.BarData
 import co.yml.charts.ui.barchart.models.GroupBar
-import com.fredy.mysavings.Util.BalanceColor
-import com.fredy.mysavings.Util.RecordTypeColor
-import com.fredy.mysavings.Util.formatBalanceAmount
+import com.fredy.mysavings.Feature.Presentation.Util.BalanceColor
+import com.fredy.mysavings.Feature.Presentation.Util.RecordTypeColor
+import com.fredy.mysavings.Feature.Presentation.Util.formatBalanceAmount
 import com.fredy.mysavings.Feature.Presentation.ViewModels.WalletViewModel.WalletState
 import com.fredy.mysavings.Feature.Presentation.ViewModels.WalletViewModel.WalletEvent
 import com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel.RecordEvent

@@ -3,7 +3,7 @@ package com.fredy.mysavings.Feature.Domain.Repository
 import androidx.compose.ui.graphics.Color
 import com.fredy.mysavings.Feature.Data.Enum.DisplayState
 import com.fredy.mysavings.Feature.Presentation.ViewModels.PreferencesViewModel.PreferencesState
-import com.fredy.mysavings.Util.FilterState
+import com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel.FilterState
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalTime
 

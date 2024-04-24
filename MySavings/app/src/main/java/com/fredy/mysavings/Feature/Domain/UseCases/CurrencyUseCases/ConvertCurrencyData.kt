@@ -2,9 +2,9 @@ package com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases
 
 import com.fredy.mysavings.Feature.Data.APIs.CurrencyModels.Response.Rates
 import com.fredy.mysavings.Feature.Domain.Repository.CurrencyRepository
-import com.fredy.mysavings.Util.BalanceItem
+import com.fredy.mysavings.Feature.Presentation.Util.BalanceItem
 import com.fredy.mysavings.Util.Log
-import com.fredy.mysavings.Util.Mappers.getRateForCurrency
+import com.fredy.mysavings.Feature.Domain.Util.Mappers.getRateForCurrency
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 

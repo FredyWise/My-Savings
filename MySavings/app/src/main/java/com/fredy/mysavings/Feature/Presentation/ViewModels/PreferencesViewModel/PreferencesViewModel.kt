@@ -10,7 +10,7 @@ import com.fredy.mysavings.Feature.Data.Enum.ChangeColorType
 import com.fredy.mysavings.Feature.Domain.Notification.NotificationCredentials
 import com.fredy.mysavings.Feature.Domain.Notification.NotificationWorker
 import com.fredy.mysavings.Feature.Domain.Repository.PreferencesRepository
-import com.fredy.mysavings.Util.BalanceColor
+import com.fredy.mysavings.Feature.Presentation.Util.BalanceColor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
