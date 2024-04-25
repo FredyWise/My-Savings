@@ -13,34 +13,34 @@ import java.time.LocalDateTime
 
 class FakeRecordRepository : RecordRepository {
 
-    private val records = mutableListOf<Record>()
-    private val trueRecords = mutableListOf<TrueRecord>()
+//    private val records = mutableListOf<Record>()
+    val trueRecords = mutableListOf<TrueRecord>()
 
     override suspend fun upsertRecordItem(record: Record): String {
-        val existingRecord = records.find { it.recordId == record.recordId }
+//        val existingRecord = records.find { it.recordId == record.recordId }
         val existingTrueRecord = trueRecords.find { it.record.recordId == record.recordId }
-        return if (existingRecord != null) {
-            records.remove(existingRecord)
-            records.add(record)
+        return if (existingTrueRecord != null) {
+//            records.remove(existingRecord)
+//            records.add(record)
             trueRecords.remove(existingTrueRecord)
             trueRecords.add(TrueRecord(record))
             record.recordId
         } else {
             record.recordId.also {
-                records.add(record)
+//                records.add(record)
                 trueRecords.add(TrueRecord(record))
             }
         }
     }
 
     override suspend fun upsertAllRecordItems(records: List<Record>) {
-        this.records.addAll(records)
+        this.trueRecords.addAll(records.map { TrueRecord(it) })
     }
 
     override suspend fun deleteRecordItem(record: Record) {
         val existingTrueRecord = trueRecords.find { it.record.recordId == record.recordId }
         trueRecords.remove(existingTrueRecord)
-        records.remove(record)
+//        records.remove(record)
     }
 
     override suspend fun deleteAllRecordItems(records: List<Record>) {
@@ -50,7 +50,7 @@ class FakeRecordRepository : RecordRepository {
     }
 
     override  fun getUserRecords(userId: String): Flow<List<Record>> {
-        return flow { emit(records.filter { it.userIdFk == userId }) }
+        return flow { emit(trueRecords.filter { it.record.userIdFk == userId }.map { it.record }) }
     }
 
     override suspend fun getRecordById(recordId: String): TrueRecord {
@@ -99,7 +99,7 @@ class FakeRecordRepository : RecordRepository {
         startDate: LocalDateTime,
         endDate: LocalDateTime,
     ): Flow<List<Record>> {
-        return flow { emit(records.filter { it.userIdFk == userId && it.recordType in recordType && it.recordDateTime in startDate..endDate }) }
+        return flow { emit(trueRecords.filter { it.record.userIdFk == userId && it.record.recordType in recordType && it.record.recordDateTime in startDate..endDate }.map { it.record }) }
     }
 
     override fun getUserRecordsFromSpecificTime(
@@ -107,14 +107,14 @@ class FakeRecordRepository : RecordRepository {
         startDate: LocalDateTime,
         endDate: LocalDateTime,
     ): Flow<List<Record>> {
-        return flow { emit(records.filter { it.userIdFk == userId && it.recordDateTime in startDate..endDate }) }
+        return flow { emit(trueRecords.filter { it.record.userIdFk == userId && it.record.recordDateTime in startDate..endDate }.map { it.record }) }
     }
 
     override fun getUserRecordsByType(
         userId: String,
         recordType: RecordType,
     ): Flow<List<Record>> {
-        return flow { emit(records.filter { it.userIdFk == userId && it.recordType == recordType }) }
+        return flow { emit(trueRecords.filter { it.record.userIdFk == userId && it.record.recordType == recordType }.map { it.record }) }
     }
 }
 

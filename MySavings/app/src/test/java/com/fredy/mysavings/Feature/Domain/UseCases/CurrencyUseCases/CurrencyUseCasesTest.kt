@@ -23,7 +23,7 @@ class CurrencyUseCasesTest : BaseUseCaseTest() {
         updateCurrency = UpdateCurrency(fakeCurrencyRepository)
         getCurrencyRates = GetCurrencyRates(fakeCurrencyRepository)
         convertCurrencyData = ConvertCurrencyData(fakeCurrencyRepository)
-        getCurrencies = GetCurrencies(fakeCurrencyRepository, fakeAuthRepository)
+        getCurrencies = GetCurrencies(fakeCurrencyRepository, fakeUserRepository)
     }
 
 

@@ -7,41 +7,46 @@ import com.fredy.mysavings.Feature.Domain.Util.Resource
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.AuthResult
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 
-class FakeUserRepository :
-    UserRepository {
+class FakeUserRepository : UserRepository {
 
-    val users = mutableListOf<UserData>()
+    private val users = mutableListOf<UserData>()
+
+    override suspend fun upsertUser(user: UserData) {
+        val existingUser = users.find { it.firebaseUserId == user.firebaseUserId }
+        if (existingUser != null) {
+            users.remove(existingUser)
+            users.add(user)
+            user.firebaseUserId
+        } else {
+            user.firebaseUserId.also { users.add(user) }
+        }
+    }
+
+    override suspend fun deleteUser(user: UserData) {
+        users.remove(user)
+    }
+
+    override fun getUser(firebaseUserId: String): Flow<UserData?> {
+        return flow { emit(users.find { it.firebaseUserId == firebaseUserId }) }
+    }
+
+    override suspend fun getCurrentUserFlow(): Flow<Resource<UserData?>> {
+        return flow { emit(Resource.Success(users.firstOrNull())) }
+    }
 
     override suspend fun getCurrentUser(): UserData? {
         return users.firstOrNull()
     }
 
-    override fun loginUser(email: String, password: String): Flow<Resource<AuthResult>> {
-        return flowOf()
+    override suspend fun getAllUsersOrderedByName(): Flow<List<UserData>> {
+        return flow { emit(users.sortedBy { it.username }) }
     }
 
-    override fun registerUser(email: String, password: String): Flow<Resource<AuthResult>> {
-        return flowOf()
-    }
-
-    override fun updateUserInformation(profilePicture: Uri?, username: String, oldPassword: String, password: String): Flow<Resource<String>> {
-        return flowOf()
-    }
-
-    override fun googleSignIn(credential: AuthCredential): Flow<Resource<AuthResult>> {
-        return flowOf()
-    }
-
-    override fun sendOtp(context: Context, phoneNumber: String): Flow<Resource<String>> {
-        return flowOf()
-    }
-
-    override fun verifyPhoneNumber(context: Context, verificationId: String, code: String): Flow<Resource<AuthResult>> {
-        return flowOf()
-    }
-
-    override suspend fun signOut() {
+    override suspend fun searchUsers(usernameEmail: String): Flow<List<UserData>> {
+        return flow { emit(users.filter { it.username?.contains(usernameEmail)?:false || it.email?.contains(usernameEmail)?:false }) }
     }
 }
+

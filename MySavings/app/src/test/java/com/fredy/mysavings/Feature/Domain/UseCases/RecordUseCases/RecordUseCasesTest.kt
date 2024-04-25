@@ -42,53 +42,53 @@ class RecordUseCasesTest : BaseUseCaseTest() {
 
     @Before
     fun setUp() {
-        upsertRecordItem = UpsertRecordItem(fakeRecordRepository, fakeAuthRepository)
+        upsertRecordItem = UpsertRecordItem(fakeRecordRepository, fakeUserRepository)
         deleteRecordItem = DeleteRecordItem(fakeRecordRepository)
         updateRecordItemWithDeletedWallet =
-            UpdateRecordItemWithDeletedWallet(fakeRecordRepository, fakeAuthRepository)
+            UpdateRecordItemWithDeletedWallet(fakeRecordRepository, fakeUserRepository)
         updateRecordItemWithDeletedCategory =
-            UpdateRecordItemWithDeletedCategory(fakeRecordRepository, fakeAuthRepository)
+            UpdateRecordItemWithDeletedCategory(fakeRecordRepository, fakeUserRepository)
         getRecordById = GetRecordById(fakeRecordRepository, mockCurrencyUseCases)
         getAllTrueRecordsWithinSpecificTime =
-            GetAllTrueRecordsWithinSpecificTime(fakeRecordRepository, fakeAuthRepository)
-        getAllRecords = GetAllRecords(fakeRecordRepository, fakeAuthRepository,fakeBookRepository)
+            GetAllTrueRecordsWithinSpecificTime(fakeRecordRepository, fakeUserRepository)
+        getAllRecords = GetAllRecords(fakeRecordRepository, fakeUserRepository,fakeBookRepository)
         getUserCategoryRecordsOrderedByDateTime =
-            GetUserCategoryRecordsOrderedByDateTime(fakeRecordRepository, fakeAuthRepository)
+            GetUserCategoryRecordsOrderedByDateTime(fakeRecordRepository, fakeUserRepository)
         getUserWalletRecordsOrderedByDateTime =
-            GetUserWalletRecordsOrderedByDateTime(fakeRecordRepository, fakeAuthRepository)
+            GetUserWalletRecordsOrderedByDateTime(fakeRecordRepository, fakeUserRepository)
         getUserTrueRecordMapsFromSpecificTime = GetUserTrueRecordMapsFromSpecificTime(
             fakeRecordRepository,
-            fakeAuthRepository,
+            fakeUserRepository,
             mockCurrencyUseCases,
             fakeBookRepository
         )
         getUserRecordsFromSpecificTime = GetUserRecordsFromSpecificTime(
             fakeRecordRepository,
-            fakeAuthRepository,
+            fakeUserRepository,
             mockCurrencyUseCases
         )
         getUserCategoriesWithAmountFromSpecificTime = GetUserCategoriesWithAmountFromSpecificTime(
             fakeRecordRepository,
             fakeCategoryRepository,
-            fakeAuthRepository,
+            fakeUserRepository,
             mockCurrencyUseCases
         )
         getUserWalletsWithAmountFromSpecificTime = GetUserWalletsWithAmountFromSpecificTime(
             fakeRecordRepository,
             fakeAccountRepository,
-            fakeAuthRepository,
+            fakeUserRepository,
             mockCurrencyUseCases
         )
         getUserTotalAmountByType =
-            GetUserTotalAmountByType(fakeRecordRepository, fakeAuthRepository, mockCurrencyUseCases)
+            GetUserTotalAmountByType(fakeRecordRepository, fakeUserRepository, mockCurrencyUseCases)
         getUserTotalAmountByTypeFromSpecificTime = GetUserTotalAmountByTypeFromSpecificTime(
             fakeRecordRepository,
-            fakeAuthRepository,
+            fakeUserRepository,
             mockCurrencyUseCases
         )
         getUserTotalRecordBalance = GetUserTotalRecordBalance(
             fakeRecordRepository,
-            fakeAuthRepository,
+            fakeUserRepository,
             mockCurrencyUseCases
         )
     }
@@ -403,7 +403,7 @@ class RecordUseCasesTest : BaseUseCaseTest() {
                 listOf(categoryType),
                 startDate,
                 endDate
-            ).first().size, categories.size
+            ).map { it.filter { record -> currency.first() == record.recordCurrency } }.first().size, categories.size
         )
     }
 

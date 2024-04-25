@@ -40,7 +40,7 @@ abstract class BaseUseCaseTest {
     protected lateinit var fakeCategoryRepository: FakeCategoryRepository
     protected lateinit var fakeBookRepository: FakeBookRepository
     protected lateinit var fakeCurrencyRepository: FakeCurrencyRepository
-    protected lateinit var fakeAuthRepository: FakeUserRepository
+    protected lateinit var fakeUserRepository: FakeUserRepository
     protected lateinit var fakeRecordRepository: FakeRecordRepository
     protected lateinit var fakeCSVRepository: FakeCSVRepository
     protected val currentUserId = "User1"
@@ -165,7 +165,7 @@ abstract class BaseUseCaseTest {
 
     @Before
     fun fakeAuthRepositorySetUp() {
-        fakeAuthRepository = FakeUserRepository()
+        fakeUserRepository = FakeUserRepository()
 
         val usersToInsert = mutableListOf<UserData>()
 
@@ -180,7 +180,7 @@ abstract class BaseUseCaseTest {
             )
         )
         runBlocking {
-            usersToInsert.forEach { fakeAuthRepository.users.add(it) }
+            usersToInsert.forEach { fakeUserRepository.upsertUser(it) }
         }
     }
 
@@ -212,13 +212,14 @@ abstract class BaseUseCaseTest {
                 trueRecordToInsert.add(
                     TrueRecord(
                         record,
-                        accounts.find { it.walletId == record.walletIdFromFk }!!,
-                        accounts.find { it.walletId == record.walletIdToFk }!!,
-                        categories.find { it.categoryId == record.categoryIdFk }!!
+                        accounts.first { it.walletId == record.walletIdFromFk },
+                        accounts.first { it.walletId == record.walletIdToFk },
+                        categories.first { it.categoryId == record.categoryIdFk }
                     )
                 )
             }
-            recordsToInsert.forEach { fakeRecordRepository.upsertRecordItem(it) }
+//            recordsToInsert.forEach { fakeRecordRepository.upsertRecordItem(it) }
+            trueRecordToInsert.forEach { fakeRecordRepository.trueRecords.add(it) }
         }
     }
 

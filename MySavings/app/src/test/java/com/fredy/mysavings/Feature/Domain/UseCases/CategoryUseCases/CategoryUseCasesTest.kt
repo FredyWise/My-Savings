@@ -24,11 +24,11 @@ class CategoryUseCasesTest : BaseUseCaseTest() {
 
     @Before
     fun setUp() {
-        upsertCategory = UpsertCategory(fakeCategoryRepository, fakeAuthRepository)
+        upsertCategory = UpsertCategory(fakeCategoryRepository, fakeUserRepository)
         deleteCategory = DeleteCategory(fakeCategoryRepository)
         getCategory = GetCategory(fakeCategoryRepository)
         getCategoryMapOrderedByName =
-            GetCategoryMapOrderedByName(fakeCategoryRepository, fakeAuthRepository)
+            GetCategoryMapOrderedByName(fakeCategoryRepository, fakeUserRepository)
     }
 
     @Test

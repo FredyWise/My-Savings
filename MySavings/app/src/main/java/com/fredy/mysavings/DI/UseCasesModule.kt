@@ -216,7 +216,6 @@ object UseCasesModule {
     fun provideAuthUseCases(
         firebaseAuth: FirebaseAuth,
         oneTapClient: SignInClient,
-        firestore: FirebaseFirestore,
     ): AuthUseCases = AuthUseCases(
         loginUser = LoginUser(firebaseAuth),
         registerUser = RegisterUser(firebaseAuth),

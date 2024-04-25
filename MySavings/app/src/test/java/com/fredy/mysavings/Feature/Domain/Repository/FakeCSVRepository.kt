@@ -19,10 +19,9 @@ class FakeCSVRepository : CSVRepository {
     override suspend fun inputFromCSV(
         currentUserId: String,
         directory: String,
-        delimiter: String,
-        book: Book
+        delimiter: String
     ): List<TrueRecord> {
-        return csvFile.find { it.first.equals(directory+delimiter,ignoreCase = false) }!!.second.filter { it.record.bookIdFk == book.bookId }
+        return csvFile.find { it.first.equals(directory+delimiter,ignoreCase = false) }!!.second
     }
 }
 

@@ -23,10 +23,10 @@ class BookUseCasesTest : BaseUseCaseTest() {
 
     @Before
     fun setUp() {
-        upsertBook = UpsertBook(fakeBookRepository, fakeAuthRepository)
+        upsertBook = UpsertBook(fakeBookRepository, fakeUserRepository)
         deleteBook = DeleteBook(fakeBookRepository)
         getBook = GetBook(fakeBookRepository)
-        getUserBooks = GetUserBooks(fakeBookRepository, fakeAuthRepository)
+        getUserBooks = GetUserBooks(fakeBookRepository, fakeUserRepository)
     }
 
     @Test

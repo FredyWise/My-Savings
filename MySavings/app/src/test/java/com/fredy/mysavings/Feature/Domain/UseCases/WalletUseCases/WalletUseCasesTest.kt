@@ -26,12 +26,12 @@ class WalletUseCasesTest : BaseUseCaseTest() {
 
     @Before
     fun setUp() {
-        upsertWallet = UpsertWallet(fakeAccountRepository, fakeAuthRepository)
+        upsertWallet = UpsertWallet(fakeAccountRepository, fakeUserRepository)
         deleteWallet = DeleteWallet(fakeAccountRepository)
         getWallet = GetWallet(fakeAccountRepository)
-        getWallets = GetWallets(fakeAccountRepository, fakeAuthRepository)
-        getWalletsCurrencies = GetWalletsCurrencies(fakeAccountRepository, fakeAuthRepository)
-        getWalletsTotalBalance = GetWalletsTotalBalance(fakeAccountRepository, mockCurrencyUseCases, fakeAuthRepository)
+        getWallets = GetWallets(fakeAccountRepository, fakeUserRepository)
+        getWalletsCurrencies = GetWalletsCurrencies(fakeAccountRepository, fakeUserRepository)
+        getWalletsTotalBalance = GetWalletsTotalBalance(fakeAccountRepository, mockCurrencyUseCases, fakeUserRepository)
     }
 
     @Test

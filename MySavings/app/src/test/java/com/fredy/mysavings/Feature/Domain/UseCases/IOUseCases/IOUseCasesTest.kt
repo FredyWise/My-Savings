@@ -13,7 +13,7 @@ import org.junit.Before
 import org.junit.Test
 import java.time.LocalDateTime
 
-class IOUseCasesTest:BaseUseCaseTest() {
+class IOUseCasesTest : BaseUseCaseTest() {
 
     private lateinit var outputToCSV: OutputToCSV
     private lateinit var inputFromCSV: InputFromCSV
@@ -22,8 +22,19 @@ class IOUseCasesTest:BaseUseCaseTest() {
     @Before
     fun setUp() {
         outputToCSV = OutputToCSV(fakeCSVRepository)
-        inputFromCSV = InputFromCSV(fakeCSVRepository, fakeAuthRepository)
-        getDBInfo = GetDBInfo(fakeAuthRepository, fakeRecordRepository, fakeAccountRepository, fakeCategoryRepository)
+        inputFromCSV = InputFromCSV(
+            fakeCSVRepository,
+            fakeUserRepository,
+            fakeRecordRepository,
+            fakeAccountRepository,
+            fakeCategoryRepository
+        )
+        getDBInfo = GetDBInfo(
+            fakeUserRepository,
+            fakeRecordRepository,
+            fakeAccountRepository,
+            fakeCategoryRepository
+        )
     }
 
     @Test
@@ -32,12 +43,23 @@ class IOUseCasesTest:BaseUseCaseTest() {
         val endDate = LocalDateTime.now()
         val directory = "testDirectory"
         val filename = "testFile"
-        val trueRecords = fakeRecordRepository.getUserTrueRecordsFromSpecificTime(currentUserId,startDate,endDate).last()
+        val trueRecords = fakeRecordRepository.getUserTrueRecordsFromSpecificTime(
+            currentUserId,
+            startDate,
+            endDate
+        ).last()
         val delimiter = ","
 
         outputToCSV(directory, filename, trueRecords, delimiter)
 
-        assertEquals(trueRecords,fakeCSVRepository.inputFromCSV(currentUserId,directory+filename,delimiter,Book(bookTestId)))
+        assertEquals(
+            trueRecords,
+            fakeCSVRepository.inputFromCSV(
+                currentUserId,
+                directory + filename,
+                delimiter,
+            )
+        )
     }
 
     @Test
@@ -48,10 +70,14 @@ class IOUseCasesTest:BaseUseCaseTest() {
         val directory = "testDirectory"
         val delimiter = ","
 
-        val trueRecords = fakeRecordRepository.getUserTrueRecordsFromSpecificTime(currentUserId,startDate,endDate).last()
+        val trueRecords = fakeRecordRepository.getUserTrueRecordsFromSpecificTime(
+            currentUserId,
+            startDate,
+            endDate
+        ).last()
         fakeCSVRepository.outputToCSV(directory, filename, trueRecords, delimiter)
 
-        val result = inputFromCSV(directory+filename, delimiter, Book(bookTestId))
+        val result = inputFromCSV(directory + filename, delimiter, Book(bookTestId))
 
         assertEquals(trueRecords, result)
     }
