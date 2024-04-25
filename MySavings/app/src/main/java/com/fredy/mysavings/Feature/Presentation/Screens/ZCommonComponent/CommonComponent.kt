@@ -46,6 +46,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -106,20 +107,20 @@ fun <T> ResourceHandler(
     fun debounce(resource: Resource<T>) {
         job?.cancel()
         job = scope.launch {
+            showCircularProgressIndicator = false
+            showEmptyMessage = false
             if (resource is Resource.Success) {
-                showCircularProgressIndicator = false
                 delay(500L)
-                showEmptyMessage = true
+                showEmptyMessage = resource is Resource.Success
             }
             if (resource is Resource.Loading) {
-                showEmptyMessage = false
-                delay(1000L)
-                showCircularProgressIndicator = true
+                delay(1300L)
+                showCircularProgressIndicator = resource is Resource.Loading
             }
         }
     }
 
-    if (resource is Resource.Loading || resource is Resource.Success) {
+    LaunchedEffect(key1 = resource.hashCode()) {
         debounce(resource)
     }
     AnimatedVisibility(

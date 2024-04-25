@@ -41,12 +41,13 @@ fun List<TrueRecord>.toRecordSortedMaps(sortType: SortType = SortType.DESCENDING
     }
 }
 
-fun List<Book>.toBookSortedMaps(
-    trueRecords: List<TrueRecord>,
+
+fun List<TrueRecord>.toBookSortedMaps(
+    books: List<Book>,
     sortType: SortType = SortType.DESCENDING
 ): List<BookMap> {
-    return this.map { book ->
-        val records = trueRecords.filter { it.record.bookIdFk == book.bookId }
+    return books.map { book ->
+        val records = this.filter { it.record.bookIdFk == book.bookId }
         BookMap(
             book = book,
             recordMaps = records.toRecordSortedMaps(sortType)

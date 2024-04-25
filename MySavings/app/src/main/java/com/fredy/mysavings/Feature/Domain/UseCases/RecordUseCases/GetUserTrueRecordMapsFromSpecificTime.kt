@@ -10,10 +10,10 @@ import com.fredy.mysavings.Feature.Domain.Repository.BookRepository
 import com.fredy.mysavings.Feature.Domain.Repository.RecordRepository
 import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.CurrencyUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.currencyConverter
-import com.fredy.mysavings.Feature.Domain.Util.Resource
-import com.fredy.mysavings.Util.Log
 import com.fredy.mysavings.Feature.Domain.Util.Mappers.filterTrueRecordCurrency
 import com.fredy.mysavings.Feature.Domain.Util.Mappers.toBookSortedMaps
+import com.fredy.mysavings.Feature.Domain.Util.Resource
+import com.fredy.mysavings.Util.Log
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
@@ -55,10 +55,10 @@ class GetUserTrueRecordMapsFromSpecificTime(
                 records.filter { it.record.bookIdFk == book.bookId }
                     .filterTrueRecordCurrency(currency + userCurrency)
                     .convertRecordCurrency(userCurrency, useUserCurrency)
+                    .toBookSortedMaps(books)
             }.collect { data ->
-                val bookMap = books.toBookSortedMaps(data, sortType)
-                Log.i("getUserTrueRecordMapsFromSpecificTime.Data: $bookMap")
-                emit(Resource.Success(bookMap))
+                Log.i("getUserTrueRecordMapsFromSpecificTime.Data: $data")
+                emit(Resource.Success(data))
             }
 
         }.catch { e ->
