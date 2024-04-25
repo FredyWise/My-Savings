@@ -26,24 +26,26 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
-import com.fredy.mysavings.Util.Log
-import com.fredy.mysavings.Feature.Presentation.ViewModels.WalletViewModel.WalletViewModel
-import com.fredy.mysavings.Feature.Presentation.ViewModels.AuthViewModel.AuthViewModel
-import com.fredy.mysavings.Feature.Presentation.ViewModels.BookViewModel.BookViewModel
-import com.fredy.mysavings.Feature.Presentation.ViewModels.CurrencyViewModel.CurrencyViewModel
-import com.fredy.mysavings.Feature.Presentation.ViewModels.WalletViewModel.WalletEvent
-import com.fredy.mysavings.Feature.Presentation.ViewModels.AuthViewModel.AuthEvent
-import com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel.RecordEvent
-import com.fredy.mysavings.Feature.Presentation.ViewModels.IOViewModel.InputOutputViewModel
-import com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel.RecordViewModel
-import com.fredy.mysavings.Feature.Presentation.ViewModels.SearchViewModel.SearchViewModel
-import com.fredy.mysavings.Feature.Presentation.ViewModels.PreferencesViewModel.PreferencesViewModel
 import com.fredy.mysavings.Feature.Presentation.NavigationComponent.MainScreen
 import com.fredy.mysavings.Feature.Presentation.Screens.AddRecord.AddSingle.AddScreen
+import com.fredy.mysavings.Feature.Presentation.Screens.Authentication.ProfileScreen
 import com.fredy.mysavings.Feature.Presentation.Screens.Currency.CurrencyScreen
 import com.fredy.mysavings.Feature.Presentation.Screens.IO.ExportScreen
 import com.fredy.mysavings.Feature.Presentation.Screens.Preference.PreferencesScreen
-import com.fredy.mysavings.Feature.Presentation.Screens.Authentication.ProfileScreen
+import com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel.AddSingleRecordViewModel
+import com.fredy.mysavings.Feature.Presentation.ViewModels.AuthViewModel.AuthEvent
+import com.fredy.mysavings.Feature.Presentation.ViewModels.AuthViewModel.AuthViewModel
+import com.fredy.mysavings.Feature.Presentation.ViewModels.BookViewModel.BookViewModel
+import com.fredy.mysavings.Feature.Presentation.ViewModels.CategoryViewModel.CategoryViewModel
+import com.fredy.mysavings.Feature.Presentation.ViewModels.CurrencyViewModel.CurrencyViewModel
+import com.fredy.mysavings.Feature.Presentation.ViewModels.IOViewModel.InputOutputViewModel
+import com.fredy.mysavings.Feature.Presentation.ViewModels.PreferencesViewModel.PreferencesViewModel
+import com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel.RecordEvent
+import com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel.RecordViewModel
+import com.fredy.mysavings.Feature.Presentation.ViewModels.SearchViewModel.SearchViewModel
+import com.fredy.mysavings.Feature.Presentation.ViewModels.WalletViewModel.WalletEvent
+import com.fredy.mysavings.Feature.Presentation.ViewModels.WalletViewModel.WalletViewModel
+import com.fredy.mysavings.Util.Log
 import com.fredy.mysavings.ui.Search.SearchScreen
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
@@ -83,6 +85,7 @@ fun NavGraphRoot(
             ) { entry ->
                 val recordViewModel = entry.sharedViewModel<RecordViewModel>(navController)
                 val walletViewModel = entry.sharedViewModel<WalletViewModel>(navController)
+                val categoryViewModel = entry.sharedViewModel<CategoryViewModel>(navController)
                 val bookViewModel = entry.sharedViewModel<BookViewModel>(navController)
                 val currencyViewModel = entry.sharedViewModel<CurrencyViewModel>(navController)
                 val state by authViewModel.state.collectAsStateWithLifecycle()
@@ -91,6 +94,7 @@ fun NavGraphRoot(
                     rootNavController = navController,
                     recordViewModel = recordViewModel,
                     walletViewModel = walletViewModel,
+                    categoryViewModel = categoryViewModel,
                     bookViewModel = bookViewModel,
                     signOut = {
                         authViewModel.onEvent(
@@ -116,7 +120,10 @@ fun NavGraphRoot(
                 exitTransition = {
                     fadeOut()
                 },
-            ) {
+            ) { entry ->
+                val walletViewModel: WalletViewModel = hiltViewModel()
+                val categoryViewModel: CategoryViewModel = hiltViewModel()
+                val viewModel: AddSingleRecordViewModel = hiltViewModel()
                 Log.d("NavGraphRoot: BulkAdd")
                 BulkAddScreen(
                     modifier = Modifier.padding(
@@ -124,6 +131,9 @@ fun NavGraphRoot(
                         vertical = 4.dp
                     ),
                     navigateUp = { navController.navigateUp() },
+                    viewModel = viewModel,
+                    walletViewModel = walletViewModel,
+                    categoryViewModel = categoryViewModel
                 )
             }
             composable(
@@ -149,7 +159,10 @@ fun NavGraphRoot(
                         nullable = true
                     },
                 )
-            ) {
+            ) { entry ->
+                val walletViewModel: WalletViewModel = hiltViewModel()
+                val categoryViewModel: CategoryViewModel = hiltViewModel()
+                val viewModel: AddSingleRecordViewModel = hiltViewModel()
                 Log.d("NavGraphRoot: Add")
                 AddScreen(
                     modifier = Modifier.padding(
@@ -157,6 +170,9 @@ fun NavGraphRoot(
                         vertical = 4.dp
                     ),
                     navigateUp = { navController.navigateUp() },
+                    viewModel = viewModel,
+                    walletViewModel = walletViewModel,
+                    categoryViewModel = categoryViewModel
                 )
             }
             composable(
@@ -249,7 +265,7 @@ fun NavGraphRoot(
                 exitTransition = {
                     fadeOut()
                 },
-            ) {entry ->
+            ) { entry ->
                 val viewModel: SearchViewModel = hiltViewModel()
                 val state by viewModel.state.collectAsStateWithLifecycle()
                 val recordViewModel = entry.sharedViewModel<RecordViewModel>(navController)

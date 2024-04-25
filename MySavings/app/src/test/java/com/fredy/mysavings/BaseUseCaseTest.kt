@@ -9,7 +9,7 @@ import com.fredy.mysavings.Feature.Domain.Model.TrueRecord
 import com.fredy.mysavings.Feature.Domain.Model.UserData
 import com.fredy.mysavings.Feature.Data.Enum.RecordType
 import com.fredy.mysavings.Feature.Domain.Repository.FakeWalletRepository
-import com.fredy.mysavings.Feature.Domain.Repository.FakeAuthRepository
+import com.fredy.mysavings.Feature.Domain.Repository.FakeUserRepository
 import com.fredy.mysavings.Feature.Domain.Repository.FakeBookRepository
 import com.fredy.mysavings.Feature.Domain.Repository.FakeCSVRepository
 import com.fredy.mysavings.Feature.Domain.Repository.FakeCategoryRepository
@@ -40,7 +40,7 @@ abstract class BaseUseCaseTest {
     protected lateinit var fakeCategoryRepository: FakeCategoryRepository
     protected lateinit var fakeBookRepository: FakeBookRepository
     protected lateinit var fakeCurrencyRepository: FakeCurrencyRepository
-    protected lateinit var fakeAuthRepository: FakeAuthRepository
+    protected lateinit var fakeAuthRepository: FakeUserRepository
     protected lateinit var fakeRecordRepository: FakeRecordRepository
     protected lateinit var fakeCSVRepository: FakeCSVRepository
     protected val currentUserId = "User1"
@@ -165,7 +165,7 @@ abstract class BaseUseCaseTest {
 
     @Before
     fun fakeAuthRepositorySetUp() {
-        fakeAuthRepository = FakeAuthRepository()
+        fakeAuthRepository = FakeUserRepository()
 
         val usersToInsert = mutableListOf<UserData>()
 

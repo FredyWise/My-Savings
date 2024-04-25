@@ -4,40 +4,38 @@ import android.content.Context
 import com.fredy.mysavings.Feature.Data.APIs.CountryModels.CountryApi
 import com.fredy.mysavings.Feature.Data.APIs.CurrencyModels.CurrencyApi
 import com.fredy.mysavings.Feature.Data.CSV.CSVDao
-import com.fredy.mysavings.Feature.Data.Database.Dao.WalletDao
 import com.fredy.mysavings.Feature.Data.Database.Dao.BookDao
 import com.fredy.mysavings.Feature.Data.Database.Dao.CategoryDao
 import com.fredy.mysavings.Feature.Data.Database.Dao.CurrencyCacheDao
 import com.fredy.mysavings.Feature.Data.Database.Dao.CurrencyDao
 import com.fredy.mysavings.Feature.Data.Database.Dao.RecordDao
 import com.fredy.mysavings.Feature.Data.Database.Dao.UserDao
-import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.WalletDataSource
+import com.fredy.mysavings.Feature.Data.Database.Dao.WalletDao
 import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.BookDataSource
 import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.CategoryDataSource
 import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.CurrencyDataSource
 import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.CurrencyRatesDataSource
 import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.RecordDataSource
 import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.UserDataSource
-import com.fredy.mysavings.Feature.Domain.Repository.WalletRepository
-import com.fredy.mysavings.Feature.Data.RepositoryImpl.WalletRepositoryImpl
-import com.fredy.mysavings.Feature.Domain.Repository.AuthRepository
-import com.fredy.mysavings.Feature.Data.RepositoryImpl.AuthRepositoryImpl
-import com.fredy.mysavings.Feature.Domain.Repository.BookRepository
+import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.WalletDataSource
 import com.fredy.mysavings.Feature.Data.RepositoryImpl.BookRepositoryImpl
-import com.fredy.mysavings.Feature.Domain.Repository.CSVRepository
 import com.fredy.mysavings.Feature.Data.RepositoryImpl.CSVRepositoryImpl
-import com.fredy.mysavings.Feature.Domain.Repository.CategoryRepository
 import com.fredy.mysavings.Feature.Data.RepositoryImpl.CategoryRepositoryImpl
-import com.fredy.mysavings.Feature.Domain.Repository.CurrencyRepository
 import com.fredy.mysavings.Feature.Data.RepositoryImpl.CurrencyRepositoryImpl
-import com.fredy.mysavings.Feature.Domain.Repository.RecordRepository
-import com.fredy.mysavings.Feature.Data.RepositoryImpl.RecordRepositoryImpl
-import com.fredy.mysavings.Feature.Domain.Repository.PreferencesRepository
 import com.fredy.mysavings.Feature.Data.RepositoryImpl.PreferencesRepositoryImpl
-import com.fredy.mysavings.Feature.Domain.Repository.SyncRepository
+import com.fredy.mysavings.Feature.Data.RepositoryImpl.RecordRepositoryImpl
 import com.fredy.mysavings.Feature.Data.RepositoryImpl.SyncRepositoryImpl
-import com.fredy.mysavings.Feature.Domain.Repository.UserRepository
 import com.fredy.mysavings.Feature.Data.RepositoryImpl.UserRepositoryImpl
+import com.fredy.mysavings.Feature.Data.RepositoryImpl.WalletRepositoryImpl
+import com.fredy.mysavings.Feature.Domain.Repository.BookRepository
+import com.fredy.mysavings.Feature.Domain.Repository.CSVRepository
+import com.fredy.mysavings.Feature.Domain.Repository.CategoryRepository
+import com.fredy.mysavings.Feature.Domain.Repository.CurrencyRepository
+import com.fredy.mysavings.Feature.Domain.Repository.PreferencesRepository
+import com.fredy.mysavings.Feature.Domain.Repository.RecordRepository
+import com.fredy.mysavings.Feature.Domain.Repository.SyncRepository
+import com.fredy.mysavings.Feature.Domain.Repository.UserRepository
+import com.fredy.mysavings.Feature.Domain.Repository.WalletRepository
 import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -61,7 +59,7 @@ object RepositoryModule {
     @Provides
     @Singleton
     fun provideCurrencyRepository(
-        authRepository: AuthRepository,
+        userRepository: UserRepository,
         currencyApi: CurrencyApi,
         countryApi: CountryApi,
         currencyRatesDataSource: CurrencyRatesDataSource,
@@ -69,7 +67,7 @@ object RepositoryModule {
         currencyCacheDao: CurrencyCacheDao,
         currencyInfoCacheDao: CurrencyDao,
     ): CurrencyRepository = CurrencyRepositoryImpl(
-        authRepository,
+        userRepository,
         currencyApi,
         countryApi,
         currencyRatesDataSource,
@@ -78,15 +76,6 @@ object RepositoryModule {
         currencyInfoCacheDao
     )
 
-    @Provides
-    @Singleton
-    fun provideAuthRepository(
-        oneTapClient: SignInClient,
-        firestore: FirebaseFirestore,
-        firebaseAuth: FirebaseAuth,
-    ): AuthRepository = AuthRepositoryImpl(
-        oneTapClient, firestore, firebaseAuth
-    )
 
     @Provides
     @Singleton

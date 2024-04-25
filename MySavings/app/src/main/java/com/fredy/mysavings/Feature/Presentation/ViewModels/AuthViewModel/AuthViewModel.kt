@@ -12,8 +12,8 @@ import androidx.lifecycle.viewModelScope
 import co.yml.charts.common.extensions.isNotNull
 import com.fredy.mysavings.Feature.Data.Enum.AuthMethod
 import com.fredy.mysavings.Feature.Domain.Model.UserData
-import com.fredy.mysavings.Feature.Domain.Repository.AuthRepository
 import com.fredy.mysavings.Feature.Domain.Repository.PreferencesRepository
+import com.fredy.mysavings.Feature.Domain.UseCases.AuthUseCases.AuthUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.UserUseCases.UserUseCases
 import com.fredy.mysavings.Feature.Domain.Util.Resource
 import com.fredy.mysavings.Util.Log
@@ -33,7 +33,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val authUseCases: AuthRepository,
+    private val authUseCases: AuthUseCases,
     private val preferencesRepository: PreferencesRepository,
     private val userUseCases: UserUseCases,
     private val currentUserData: UserData?,

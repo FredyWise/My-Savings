@@ -70,9 +70,9 @@ fun AddScreen(
     modifier: Modifier = Modifier,
     onBackground: Color = MaterialTheme.colorScheme.onBackground,
     navigateUp: () -> Unit,
-    viewModel: AddSingleRecordViewModel = hiltViewModel(),
-    categoryViewModel: CategoryViewModel = hiltViewModel(),
-    walletViewModel: WalletViewModel = hiltViewModel()
+    viewModel: AddSingleRecordViewModel,
+    categoryViewModel: CategoryViewModel,
+    walletViewModel: WalletViewModel
 ) {
     val state = viewModel.state
     val resource by viewModel.resource.collectAsStateWithLifecycle()

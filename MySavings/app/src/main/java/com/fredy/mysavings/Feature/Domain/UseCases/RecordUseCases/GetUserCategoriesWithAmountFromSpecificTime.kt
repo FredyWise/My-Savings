@@ -7,7 +7,7 @@ import com.fredy.mysavings.Feature.Domain.Model.Book
 import com.fredy.mysavings.Feature.Domain.Model.Category
 import com.fredy.mysavings.Feature.Domain.Model.CategoryWithAmount
 import com.fredy.mysavings.Feature.Domain.Model.Record
-import com.fredy.mysavings.Feature.Domain.Repository.AuthRepository
+import com.fredy.mysavings.Feature.Domain.Repository.UserRepository
 import com.fredy.mysavings.Feature.Domain.Repository.CategoryRepository
 import com.fredy.mysavings.Feature.Domain.Repository.RecordRepository
 import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.CurrencyUseCases
@@ -25,7 +25,7 @@ import java.time.LocalDateTime
 class GetUserCategoriesWithAmountFromSpecificTime(
     private val recordRepository: RecordRepository,
     private val categoryRepository: CategoryRepository,
-    private val authRepository: AuthRepository,
+    private val userRepository: UserRepository,
     private val currencyUseCases: CurrencyUseCases,
 ) {
     operator fun invoke(
@@ -39,7 +39,7 @@ class GetUserCategoriesWithAmountFromSpecificTime(
     ): Flow<Resource<List<CategoryWithAmount>>> {
         return flow {
             emit(Resource.Loading())
-            val currentUser = authRepository.getCurrentUser()!!
+            val currentUser = userRepository.getCurrentUser()!!
             val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
             val userCurrency = currentUser.userCurrency
             Log.i(

@@ -7,10 +7,12 @@ import com.fredy.mysavings.Feature.Domain.Repository.UserRepository
 import com.fredy.mysavings.Util.Log
 import com.fredy.mysavings.Feature.Domain.Util.Resource
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -42,7 +44,7 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getCurrentUser(): Flow<Resource<UserData?>> = flow {
+    override suspend fun getCurrentUserFlow(): Flow<Resource<UserData?>> = flow {
         emit(Resource.Loading())
         val currentUser = firebaseAuth.currentUser
         if (currentUser != null) {
@@ -57,6 +59,8 @@ class UserRepositoryImpl @Inject constructor(
         )
         emit(Resource.Error(e.message.toString()))
     }
+
+    override suspend fun getCurrentUser() = userDataSource.getUser(firebaseAuth.currentUser?.uid ?: "-1")
 
     override suspend fun getAllUsersOrderedByName(): Flow<List<UserData>> {
         return userDataSource.getAllUsersOrderedByName()

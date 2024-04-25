@@ -5,7 +5,7 @@ import com.fredy.mysavings.Feature.Domain.Model.Category
 import com.fredy.mysavings.Feature.Domain.Model.Record
 import com.fredy.mysavings.Feature.Domain.Model.TrueRecord
 import com.fredy.mysavings.Feature.Domain.Model.Wallet
-import com.fredy.mysavings.Feature.Domain.Repository.AuthRepository
+import com.fredy.mysavings.Feature.Domain.Repository.UserRepository
 import com.fredy.mysavings.Feature.Domain.Repository.CSVRepository
 import com.fredy.mysavings.Feature.Domain.Repository.CategoryRepository
 import com.fredy.mysavings.Feature.Domain.Repository.RecordRepository
@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.first
 
 class InputFromCSV(
     private val csvRepository: CSVRepository,
-    private val authRepository: AuthRepository,
+    private val userRepository: UserRepository,
     private val recordRepository: RecordRepository,
     private val walletRepository: WalletRepository,
     private val categoryRepository: CategoryRepository
@@ -26,7 +26,7 @@ class InputFromCSV(
         delimiter: String = ",",
         book: Book
     ): List<TrueRecord> {
-        val currentUserId = authRepository.getCurrentUser()!!.firebaseUserId
+        val currentUserId = userRepository.getCurrentUser()!!.firebaseUserId
         val trueRecords = csvRepository.inputFromCSV(currentUserId, directory, delimiter).map {
             Log.i("inputFromCSV: $it")
             val walletIdFromFk = findWalletId(it.fromWallet, currentUserId)

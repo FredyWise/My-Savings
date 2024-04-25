@@ -2,7 +2,7 @@ package com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases
 
 import co.yml.charts.common.extensions.isNotNull
 import com.fredy.mysavings.Feature.Domain.Model.Currency
-import com.fredy.mysavings.Feature.Domain.Repository.AuthRepository
+import com.fredy.mysavings.Feature.Domain.Repository.UserRepository
 import com.fredy.mysavings.Feature.Domain.Repository.CurrencyRepository
 import com.fredy.mysavings.Feature.Domain.Util.Resource
 import com.fredy.mysavings.Util.Log
@@ -16,13 +16,13 @@ import kotlinx.coroutines.withContext
 
 class GetCurrencies(
     private val currencyRepository: CurrencyRepository,
-    private val authRepository: AuthRepository
+    private val userRepository: UserRepository
 ) {
     operator fun invoke(): Flow<Resource<List<Currency>>> {
         return flow {
             emit(Resource.Loading())
             Log.i("getCurrencies: start")
-            val currentUser = authRepository.getCurrentUser()!!
+            val currentUser = userRepository.getCurrentUser()!!
             val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
             val cachedRates = currencyRepository.getRateResponse()
             withContext(Dispatchers.IO) {

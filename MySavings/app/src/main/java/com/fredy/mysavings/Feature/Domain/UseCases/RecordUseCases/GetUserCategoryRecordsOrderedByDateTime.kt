@@ -3,7 +3,7 @@ package com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases
 import co.yml.charts.common.extensions.isNotNull
 import com.fredy.mysavings.Feature.Data.Enum.SortType
 import com.fredy.mysavings.Feature.Domain.Model.RecordMap
-import com.fredy.mysavings.Feature.Domain.Repository.AuthRepository
+import com.fredy.mysavings.Feature.Domain.Repository.UserRepository
 import com.fredy.mysavings.Feature.Domain.Repository.RecordRepository
 import com.fredy.mysavings.Feature.Domain.Util.Resource
 import com.fredy.mysavings.Util.Log
@@ -13,12 +13,12 @@ import kotlinx.coroutines.flow.flow
 
 class GetUserCategoryRecordsOrderedByDateTime(
     private val recordRepository: RecordRepository,
-    private val authRepository: AuthRepository,
+    private val userRepository: UserRepository,
 ) {
     operator fun invoke(categoryId: String, sortType: SortType): Flow<Resource<List<RecordMap>>> {
         return flow {
             emit(Resource.Loading())
-            val currentUser = authRepository.getCurrentUser()!!
+            val currentUser = userRepository.getCurrentUser()!!
             val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
             Log.i(
                 "getUserCategoryRecordsOrderedByDateTime: $categoryId",

@@ -68,7 +68,7 @@ fun MainScreen(
     rootNavController: NavHostController,
     recordViewModel: RecordViewModel,
     walletViewModel: WalletViewModel,
-    categoryViewModel: CategoryViewModel = hiltViewModel(),
+    categoryViewModel: CategoryViewModel,
     bookViewModel: BookViewModel,
     currentUser: UserData?,
     signOut: () -> Unit,

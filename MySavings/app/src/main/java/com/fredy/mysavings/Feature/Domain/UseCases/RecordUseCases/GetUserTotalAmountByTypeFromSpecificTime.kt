@@ -3,7 +3,7 @@ package com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases
 import co.yml.charts.common.extensions.isNotNull
 import com.fredy.mysavings.Feature.Data.Enum.RecordType
 import com.fredy.mysavings.Feature.Domain.Model.Book
-import com.fredy.mysavings.Feature.Domain.Repository.AuthRepository
+import com.fredy.mysavings.Feature.Domain.Repository.UserRepository
 import com.fredy.mysavings.Feature.Domain.Repository.RecordRepository
 import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.CurrencyUseCases
 import com.fredy.mysavings.Feature.Presentation.Util.BalanceItem
@@ -16,7 +16,7 @@ import java.time.LocalDateTime
 
 class GetUserTotalAmountByTypeFromSpecificTime(
     private val recordRepository: RecordRepository,
-    private val authRepository: AuthRepository,
+    private val userRepository: UserRepository,
     private val currencyUseCases: CurrencyUseCases
 ) {
     operator fun invoke(
@@ -26,7 +26,7 @@ class GetUserTotalAmountByTypeFromSpecificTime(
         book: Book,
     ): Flow<BalanceItem> {
         return flow {
-            val currentUser = authRepository.getCurrentUser()!!
+            val currentUser = userRepository.getCurrentUser()!!
             val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
             val userCurrency = currentUser.userCurrency
             Log.i("getUserTotalAmountByTypeFromSpecificTime: $recordType")

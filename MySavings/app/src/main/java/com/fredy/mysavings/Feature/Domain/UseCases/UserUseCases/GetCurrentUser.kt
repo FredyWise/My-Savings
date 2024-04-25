@@ -9,6 +9,6 @@ class GetCurrentUser(
     private val userRepository: UserRepository
 ) {
     suspend operator fun invoke(): Flow<Resource<UserData?>> {
-        return userRepository.getCurrentUser()
+        return userRepository.getCurrentUserFlow()
     }
 }

@@ -1,12 +1,11 @@
 package com.fredy.mysavings.DI
 
-import com.fredy.mysavings.Feature.Domain.Repository.AuthRepository
+import com.fredy.mysavings.Feature.Domain.Repository.UserRepository
 import com.fredy.mysavings.Feature.Domain.Repository.BookRepository
 import com.fredy.mysavings.Feature.Domain.Repository.CSVRepository
 import com.fredy.mysavings.Feature.Domain.Repository.CategoryRepository
 import com.fredy.mysavings.Feature.Domain.Repository.CurrencyRepository
 import com.fredy.mysavings.Feature.Domain.Repository.RecordRepository
-import com.fredy.mysavings.Feature.Domain.Repository.UserRepository
 import com.fredy.mysavings.Feature.Domain.Repository.WalletRepository
 import com.fredy.mysavings.Feature.Domain.UseCases.AuthUseCases.AuthUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.AuthUseCases.GoogleSignIn
@@ -69,6 +68,9 @@ import com.fredy.mysavings.Feature.Domain.UseCases.WalletUseCases.GetWalletsCurr
 import com.fredy.mysavings.Feature.Domain.UseCases.WalletUseCases.GetWalletsTotalBalance
 import com.fredy.mysavings.Feature.Domain.UseCases.WalletUseCases.UpsertWallet
 import com.fredy.mysavings.Feature.Domain.UseCases.WalletUseCases.WalletUseCases
+import com.google.android.gms.auth.api.identity.SignInClient
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -84,81 +86,81 @@ object UseCasesModule {
     fun provideWalletUseCases(
         currencyUseCases: CurrencyUseCases,
         walletRepository: WalletRepository,
-        authRepository: AuthRepository,
+        userRepository: UserRepository,
     ): WalletUseCases = WalletUseCases(
-        upsertWallet = UpsertWallet(walletRepository, authRepository),
+        upsertWallet = UpsertWallet(walletRepository, userRepository),
         deleteWallet = DeleteWallet(walletRepository),
         getWallet = GetWallet(walletRepository),
-        getWalletsOrderedByName = GetWallets(walletRepository, authRepository),
+        getWalletsOrderedByName = GetWallets(walletRepository, userRepository),
         getWalletsTotalBalance = GetWalletsTotalBalance(
             walletRepository,
             currencyUseCases,
-            authRepository
+            userRepository
         ),
-        getWalletsCurrencies = GetWalletsCurrencies(walletRepository, authRepository)
+        getWalletsCurrencies = GetWalletsCurrencies(walletRepository, userRepository)
     )
 
     @Provides
     @Singleton
     fun provideRecordUseCases(
-        authRepository: AuthRepository,
+        userRepository: UserRepository,
         recordRepository: RecordRepository,
         walletRepository: WalletRepository,
         categoryRepository: CategoryRepository,
         currencyUseCases: CurrencyUseCases,
         bookRepository: BookRepository,
     ): RecordUseCases = RecordUseCases(
-        upsertRecordItem = UpsertRecordItem(recordRepository, authRepository),
+        upsertRecordItem = UpsertRecordItem(recordRepository, userRepository),
         deleteRecordItem = DeleteRecordItem(recordRepository),
         updateRecordItemWithDeletedWallet = UpdateRecordItemWithDeletedWallet(
             recordRepository,
-            authRepository
+            userRepository
         ),
         updateRecordItemWithDeletedCategory = UpdateRecordItemWithDeletedCategory(
             recordRepository,
-            authRepository
+            userRepository
         ),
         updateRecordItemWithDeletedBook = UpdateRecordItemWithDeletedBook(
             recordRepository,
-            authRepository
+            userRepository
         ),
         getRecordById = GetRecordById(recordRepository, currencyUseCases),
         getAllTrueRecordsWithinSpecificTime = GetAllTrueRecordsWithinSpecificTime(
             recordRepository,
-            authRepository
+            userRepository
         ),
-        getAllRecords = GetAllRecords(recordRepository, authRepository, bookRepository),
+        getAllRecords = GetAllRecords(recordRepository, userRepository, bookRepository),
         getUserCategoryRecordsOrderedByDateTime = GetUserCategoryRecordsOrderedByDateTime(
-            recordRepository, authRepository
+            recordRepository, userRepository
         ),
         getUserWalletRecordsOrderedByDateTime = GetUserWalletRecordsOrderedByDateTime(
-            recordRepository, authRepository
+            recordRepository, userRepository
         ),
         getUserTrueRecordMapsFromSpecificTime = GetUserTrueRecordMapsFromSpecificTime(
-            recordRepository, authRepository, currencyUseCases, bookRepository
+            recordRepository, userRepository, currencyUseCases, bookRepository
         ),
         getUserRecordsFromSpecificTime = GetUserRecordsFromSpecificTime(
             recordRepository,
-            authRepository,
+            userRepository,
             currencyUseCases
         ),
         getUserCategoriesWithAmountFromSpecificTime = GetUserCategoriesWithAmountFromSpecificTime(
-            recordRepository, categoryRepository, authRepository, currencyUseCases
+            recordRepository, categoryRepository, userRepository, currencyUseCases
         ),
         getUserWalletsWithAmountFromSpecificTime = GetUserWalletsWithAmountFromSpecificTime(
-            recordRepository, walletRepository, authRepository, currencyUseCases
+            recordRepository, walletRepository, userRepository, currencyUseCases
         ),
         getUserTotalAmountByType = GetUserTotalAmountByType(
             recordRepository,
-            authRepository,
+            userRepository,
             currencyUseCases
         ),
         getUserTotalAmountByTypeFromSpecificTime = GetUserTotalAmountByTypeFromSpecificTime(
-            recordRepository, authRepository, currencyUseCases
+            recordRepository, userRepository, currencyUseCases
         ),
         getUserTotalRecordBalance = GetUserTotalRecordBalance(
             recordRepository,
-            authRepository,
+            userRepository,
             currencyUseCases
         )
     )
@@ -181,15 +183,15 @@ object UseCasesModule {
     @Provides
     @Singleton
     fun provideCategoryUseCases(
-        authRepository: AuthRepository,
+        userRepository: UserRepository,
         categoryRepository: CategoryRepository
     ): CategoryUseCases = CategoryUseCases(
-        upsertCategory = UpsertCategory(categoryRepository, authRepository),
+        upsertCategory = UpsertCategory(categoryRepository, userRepository),
         deleteCategory = DeleteCategory(categoryRepository),
         getCategory = GetCategory(categoryRepository),
         getCategoryMapOrderedByName = GetCategoryMapOrderedByName(
             categoryRepository,
-            authRepository
+            userRepository
         )
     )
 
@@ -197,37 +199,39 @@ object UseCasesModule {
     @Provides
     @Singleton
     fun provideBookUseCases(
-        authRepository: AuthRepository,
+        userRepository: UserRepository,
         bookRepository: BookRepository
     ): BookUseCases = BookUseCases(
-        upsertBook = UpsertBook(bookRepository, authRepository),
+        upsertBook = UpsertBook(bookRepository, userRepository),
         deleteBook = DeleteBook(bookRepository),
         getBook = GetBook(bookRepository),
         getUserBooks = GetUserBooks(
             bookRepository,
-            authRepository
+            userRepository
         )
     )
 
     @Provides
     @Singleton
     fun provideAuthUseCases(
-        authRepository: AuthRepository,
+        firebaseAuth: FirebaseAuth,
+        oneTapClient: SignInClient,
+        firestore: FirebaseFirestore,
     ): AuthUseCases = AuthUseCases(
-        loginUser = LoginUser(authRepository),
-        registerUser = RegisterUser(authRepository),
-        updateUserInformation = UpdateUserInformation(authRepository),
-        googleSignIn = GoogleSignIn(authRepository),
-        sendOtp = SendOtp(authRepository),
-        verifyPhoneNumber = VerifyPhoneNumber(authRepository),
-        signOut = SignOut(authRepository),
+        loginUser = LoginUser(firebaseAuth),
+        registerUser = RegisterUser(firebaseAuth),
+        updateUserInformation = UpdateUserInformation(firebaseAuth),
+        googleSignIn = GoogleSignIn(firebaseAuth),
+        sendOtp = SendOtp(firebaseAuth),
+        verifyPhoneNumber = VerifyPhoneNumber(firebaseAuth),
+        signOut = SignOut(firebaseAuth, oneTapClient),
     )
 
     @Provides
     @Singleton
     fun provideCSVUseCases(
         csvRepository: CSVRepository,
-        authRepository: AuthRepository,
+        userRepository: UserRepository,
         recordRepository: RecordRepository,
         walletRepository: WalletRepository,
         categoryRepository: CategoryRepository,
@@ -235,19 +239,19 @@ object UseCasesModule {
         outputToCSV = OutputToCSV(csvRepository),
         inputFromCSV = InputFromCSV(
             csvRepository,
-            authRepository,
+            userRepository,
             recordRepository,
             walletRepository,
             categoryRepository
         ),
         upsertTrueRecords = UpsertTrueRecords(
-            authRepository,
+            userRepository,
             recordRepository,
             walletRepository,
             categoryRepository
         ),
         getDBInfo = GetDBInfo(
-            authRepository,
+            userRepository,
             recordRepository,
             walletRepository,
             categoryRepository
@@ -257,13 +261,13 @@ object UseCasesModule {
     @Provides
     @Singleton
     fun provideCurrencyUseCases(
-        authRepository: AuthRepository,
+        userRepository: UserRepository,
         currencyRepository: CurrencyRepository,
     ): CurrencyUseCases = CurrencyUseCases(
         updateCurrency = UpdateCurrency(currencyRepository),
         getCurrencyRates = GetCurrencyRates(currencyRepository),
         convertCurrencyData = ConvertCurrencyData(currencyRepository),
-        getCurrencies = GetCurrencies(currencyRepository, authRepository)
+        getCurrencies = GetCurrencies(currencyRepository, userRepository)
     )
 
 }

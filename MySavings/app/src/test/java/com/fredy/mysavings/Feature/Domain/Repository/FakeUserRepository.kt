@@ -9,7 +9,8 @@ import com.google.firebase.auth.AuthResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
-class FakeAuthRepository : AuthRepository {
+class FakeUserRepository :
+    UserRepository {
 
     val users = mutableListOf<UserData>()
 

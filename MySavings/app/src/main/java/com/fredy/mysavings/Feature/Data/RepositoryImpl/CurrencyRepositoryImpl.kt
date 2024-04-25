@@ -13,7 +13,7 @@ import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.CurrencyRate
 import com.fredy.mysavings.Feature.Domain.Model.Currency
 import com.fredy.mysavings.Feature.Domain.Model.RatesCache
 import com.fredy.mysavings.Feature.Domain.Model.UserData
-import com.fredy.mysavings.Feature.Domain.Repository.AuthRepository
+import com.fredy.mysavings.Feature.Domain.Repository.UserRepository
 import com.fredy.mysavings.Feature.Domain.Repository.CurrencyRepository
 import com.fredy.mysavings.Util.Log
 import com.fredy.mysavings.Feature.Domain.Util.Mappers.toCurrencyInfoItems
@@ -26,7 +26,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class CurrencyRepositoryImpl @Inject constructor(
-    private val authRepository: AuthRepository,
+    private val userRepository: UserRepository,
     private val currencyApi: CurrencyApi,
     private val countryApi: CountryApi,
     private val currencyRatesDataSource: CurrencyRatesDataSource,
@@ -97,7 +97,7 @@ class CurrencyRepositoryImpl @Inject constructor(
         val result = withContext(Dispatchers.IO) {
             val cachedUser = _currentUser.value
             val currentUser =
-                if (cachedUser.isNotNull()) cachedUser!! else authRepository.getCurrentUser()!!
+                if (cachedUser.isNotNull()) cachedUser!! else userRepository.getCurrentUser()!!
             _currentUser.postValue(currentUser)
             val currentUserId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
             val rates = _cachedRates.value

@@ -5,7 +5,7 @@ import com.fredy.mysavings.Feature.Data.Enum.SortType
 import com.fredy.mysavings.Feature.Domain.Model.Book
 import com.fredy.mysavings.Feature.Domain.Model.BookMap
 import com.fredy.mysavings.Feature.Domain.Model.TrueRecord
-import com.fredy.mysavings.Feature.Domain.Repository.AuthRepository
+import com.fredy.mysavings.Feature.Domain.Repository.UserRepository
 import com.fredy.mysavings.Feature.Domain.Repository.BookRepository
 import com.fredy.mysavings.Feature.Domain.Repository.RecordRepository
 import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.CurrencyUseCases
@@ -24,7 +24,7 @@ import java.time.LocalDateTime
 class GetUserTrueRecordMapsFromSpecificTime(
     // main screen
     private val recordRepository: RecordRepository,
-    private val authRepository: AuthRepository,
+    private val userRepository: UserRepository,
     private val currencyUseCases: CurrencyUseCases,
     private val bookRepository: BookRepository,
 ) {
@@ -38,7 +38,7 @@ class GetUserTrueRecordMapsFromSpecificTime(
     ): Flow<Resource<List<BookMap>>> {
         return flow {
             emit(Resource.Loading())
-            val currentUser = authRepository.getCurrentUser()!!
+            val currentUser = userRepository.getCurrentUser()!!
             val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
             val userCurrency = if (currency.isEmpty()) "" else currentUser.userCurrency
             Log.i(

@@ -3,14 +3,14 @@ package com.fredy.mysavings.Feature.Domain.UseCases.IOUseCases
 import com.fredy.mysavings.Feature.Domain.Model.Category
 import com.fredy.mysavings.Feature.Domain.Model.TrueRecord
 import com.fredy.mysavings.Feature.Domain.Model.Wallet
-import com.fredy.mysavings.Feature.Domain.Repository.AuthRepository
+import com.fredy.mysavings.Feature.Domain.Repository.UserRepository
 import com.fredy.mysavings.Feature.Domain.Repository.CategoryRepository
 import com.fredy.mysavings.Feature.Domain.Repository.RecordRepository
 import com.fredy.mysavings.Feature.Domain.Repository.WalletRepository
 import com.fredy.mysavings.Util.Log
 
 class UpsertTrueRecords(
-    private val authRepository: AuthRepository,
+    private val userRepository: UserRepository,
     private val recordRepository: RecordRepository,
     private val walletRepository: WalletRepository,
     private val categoryRepository: CategoryRepository
@@ -19,7 +19,7 @@ class UpsertTrueRecords(
     suspend operator fun invoke(
         trueRecords: List<TrueRecord>
     ) {
-        val currentUserId = authRepository.getCurrentUser()!!.firebaseUserId
+        val currentUserId = userRepository.getCurrentUser()!!.firebaseUserId
         trueRecords.forEach {
             Log.i("UpsertTrueRecords: $it")
             val walletIdFromFk = findWalletId(it.fromWallet.copy(userIdFk = currentUserId))

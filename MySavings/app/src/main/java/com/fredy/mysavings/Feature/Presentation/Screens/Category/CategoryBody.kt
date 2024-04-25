@@ -57,84 +57,83 @@ fun CategoryBody(
         warningText = "Are You Sure Want to Delete This Category?"
     )
     LazyColumn(modifier = modifier) {
-        item { 
+        item {
             topItem()
         }
         categoryMaps.forEach { categoryMap ->
-            if (!isTransfer(categoryMap.categoryType)) {
-                stickyHeader {
-                    CustomStickyHeader(
-                        modifier = Modifier.background(
-                            MaterialTheme.colorScheme.background
+            stickyHeader {
+                CustomStickyHeader(
+                    modifier = Modifier.background(
+                        MaterialTheme.colorScheme.background
+                    ),
+                    title = categoryMap.categoryType.name + " Categories",
+                    textStyle = MaterialTheme.typography.titleLarge
+                )
+            }
+            items(categoryMap.categories, key = { it.categoryId }) { category ->
+                AdvancedEntityItem(
+                    modifier = Modifier
+                        .padding(
+                            vertical = 4.dp
+                        )
+                        .clip(MaterialTheme.shapes.medium)
+                        .border(
+                            width = 2.dp,
+                            color = MaterialTheme.colorScheme.secondary,
+                            shape = MaterialTheme.shapes.medium
+                        )
+                        .background(
+                            MaterialTheme.colorScheme.surface
+                        )
+                        .clickable {
+                            onEntityClick()
+                            onEvent(
+                                CategoryEvent.GetCategoryDetail(
+                                    category
+                                )
+                            )
+                        },
+                    icon = category.categoryIcon,
+                    iconModifier = Modifier
+                        .size(
+                            40.dp
+                        )
+                        .clip(
+                            shape = MaterialTheme.shapes.extraLarge
                         ),
-                        title = categoryMap.categoryType.name + " Categories",
-                        textStyle = MaterialTheme.typography.titleLarge
-                    )
-                }
-                items(categoryMap.categories,key = {it.categoryId}) { category ->
-                    AdvancedEntityItem(
-                        modifier = Modifier
-                            .padding(
-                                vertical = 4.dp
-                            )
-                            .clip(MaterialTheme.shapes.medium)
-                            .border(
-                                width = 2.dp,
-                                color = MaterialTheme.colorScheme.secondary,
-                                shape = MaterialTheme.shapes.medium
-                            )
-                            .background(
-                                MaterialTheme.colorScheme.surface
-                            )
-                            .clickable {
-                                onEntityClick()
+                    iconDescription = category.categoryIconDescription,
+                    menuItems = listOf(
+                        ActionWithName(
+                            name = "Delete Category",
+                            action = {
+                                isShowWarning = true
+                                tempCategory = category
+                            },
+                        ), ActionWithName(
+                            name = "Edit Category",
+                            action = {
                                 onEvent(
-                                    CategoryEvent.GetCategoryDetail(
+                                    CategoryEvent.ShowDialog(
                                         category
                                     )
                                 )
                             },
-                        icon = category.categoryIcon,
-                        iconModifier = Modifier
-                            .size(
-                                40.dp
-                            )
-                            .clip(
-                                shape = MaterialTheme.shapes.extraLarge
-                            ),
-                        iconDescription = category.categoryIconDescription,
-                        menuItems = listOf(
-                            ActionWithName(
-                                name = "Delete Category",
-                                action = {
-                                    isShowWarning = true
-                                    tempCategory = category
-                                },
-                            ), ActionWithName(
-                                name = "Edit Category",
-                                action = {
-                                    onEvent(
-                                        CategoryEvent.ShowDialog(
-                                            category
-                                        )
-                                    )
-                                },
-                            )
                         )
-                    ) {
-                        Text(
-                            text = category.categoryName,
-                            style = MaterialTheme.typography.titleMedium.copy(
-                                fontWeight = FontWeight.SemiBold
-                            ),
-                            color = MaterialTheme.colorScheme.onSurface,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                        )
-                    }
+                    )
+                ) {
+                    Text(
+                        text = category.categoryName,
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = FontWeight.SemiBold
+                        ),
+                        color = MaterialTheme.colorScheme.onSurface,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
                 }
             }
         }
+
         item {
             Spacer(modifier = Modifier.height(75.dp))
         }

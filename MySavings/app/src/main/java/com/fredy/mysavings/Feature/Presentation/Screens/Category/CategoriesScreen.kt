@@ -27,38 +27,14 @@ import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.Resourc
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SearchBar
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SimpleButton
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategoriesScreen(
     modifier: Modifier = Modifier,
     rootNavController: NavHostController,
     state: CategoryState,
     onEvent: (CategoryEvent) -> Unit,
-//    recordState: RecordState,
     recordEvent: (RecordEvent) -> Unit,
 ) {
-//    recordState.trueRecord?.let {
-//        RecordDialog(
-//            trueRecord = it,
-//            onSaveClicked = { record ->
-//                recordEvent(
-//                    RecordsEvent.DeleteRecord(
-//                        record
-//                    )
-//                )
-//            },
-//            onDismissDialog = {
-//                recordEvent(
-//                    RecordsEvent.HideDialog
-//                )
-//            },
-//            onEdit = {
-//                rootNavController.navigate(
-//                    "${NavigationRoute.Add.route}?recordId=${it.record.recordId}"
-//                )
-//            },
-//        )
-//    }
     var isSheetOpen by rememberSaveable {
         mutableStateOf(false)
     }

@@ -2,7 +2,7 @@ package com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases
 
 import co.yml.charts.common.extensions.isNotNull
 import com.fredy.mysavings.Feature.Domain.Model.Category
-import com.fredy.mysavings.Feature.Domain.Repository.AuthRepository
+import com.fredy.mysavings.Feature.Domain.Repository.UserRepository
 import com.fredy.mysavings.Feature.Domain.Repository.RecordRepository
 import com.fredy.mysavings.Feature.Presentation.Util.DefaultData
 import com.fredy.mysavings.Util.Log
@@ -12,12 +12,12 @@ import kotlinx.coroutines.withContext
 
 class UpdateRecordItemWithDeletedCategory(
     private val recordRepository: RecordRepository,
-    private val authRepository: AuthRepository,
+    private val userRepository: UserRepository,
 ) {
     suspend operator fun invoke(category: Category) {
         withContext(Dispatchers.IO) {
             Log.d("startDelCategory")
-            val currentUser = authRepository.getCurrentUser()!!
+            val currentUser = userRepository.getCurrentUser()!!
             val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
             val records = recordRepository.getUserRecords(userId).first()
             Log.d("$records")
