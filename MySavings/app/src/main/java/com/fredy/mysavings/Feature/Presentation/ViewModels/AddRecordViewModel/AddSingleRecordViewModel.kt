@@ -6,13 +6,13 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.fredy.mysavings.Feature.Data.Enum.RecordType
 import com.fredy.mysavings.Feature.Domain.Model.Category
 import com.fredy.mysavings.Feature.Domain.Model.Record
 import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.CurrencyUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.RecordUseCases
 import com.fredy.mysavings.Feature.Domain.Util.Resource
 import com.fredy.mysavings.Feature.Presentation.Util.DefaultData.transferCategory
-import com.fredy.mysavings.Feature.Presentation.Util.isExpense
 import com.fredy.mysavings.Feature.Presentation.Util.isTransfer
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -186,7 +186,11 @@ class AddSingleRecordViewModel @Inject constructor(
         var accountIdToFk = state.accountIdToFk
         var categoryIdToFk = state.categoryIdFk
         val bookIdFk = state.bookIdFk
-        val recordDateTime = state.recordDate.atTime(state.recordTime.withNano((state.recordTime.nano.div(1000000)).times(1000000)))
+        val recordDateTime = state.recordDate.atTime(
+            state.recordTime.withNano(
+                (state.recordTime.nano.div(1000000)).times(1000000)
+            )
+        )
         var calculationResult = calcState.number1.toDouble().absoluteValue
         val recordCurrency = state.recordCurrency
         val fromAccountCurrency = state.fromWallet.walletCurrency
@@ -194,11 +198,12 @@ class AddSingleRecordViewModel @Inject constructor(
         val recordType = state.recordType
         val recordNotes = state.recordNotes
         val previousAmount = state.previousAmount.absoluteValue
-        var difference = state.recordAmount.absoluteValue
+        var difference = 0.0
 
         if (recordId == "") {
             difference = calculationResult
         } else {
+            difference = state.recordAmount.absoluteValue
             difference -= calculationResult
             difference = -difference
         }
@@ -218,73 +223,73 @@ class AddSingleRecordViewModel @Inject constructor(
             return null
         }
 
-        if ((state.fromWallet.walletAmount < difference && isExpense(recordType)) || (state.fromWallet.walletAmount < difference && isTransfer(
-                recordType
-            ) && fromAccountCurrency == toAccountCurrency)
-        ) {
-            resource.update {
-                Resource.Error(
-                    "Account balance is not enough"
-                )
+        when (recordType) {
+            RecordType.Income -> {
+                state.fromWallet.walletAmount += difference
             }
-            return null
+
+            RecordType.Expense -> {
+                if (state.fromWallet.walletAmount < difference) {
+                    resource.update {
+                        Resource.Error(
+                            "Account balance is not enough"
+                        )
+                    }
+                    return null
+                }
+                state.fromWallet.walletAmount -= difference
+                calculationResult = -calculationResult
+            }
+
+            RecordType.Transfer -> {
+                if (state.fromWallet == state.toWallet) {
+                    resource.update {
+                        Resource.Error(
+                            "You Can't transfer into the same account"
+                        )
+                    }
+                    return null
+                }
+
+                if (fromAccountCurrency == toAccountCurrency) {
+                    if ((state.fromWallet.walletAmount < difference)) {
+                        resource.update {
+                            Resource.Error(
+                                "Account balance is not enough"
+                            )
+                        }
+                        return null
+                    }
+                    state.fromWallet.walletAmount -= difference
+                    state.toWallet.walletAmount += difference
+                } else {
+                    if (!state.isAgreeToConvert) {
+                        if (state.fromWallet.walletAmount < difference) {
+                            resource.update {
+                                Resource.Error(
+                                    "Account balance is not enough"
+                                )
+                            }
+                            return null
+                        }
+                        resource.update {
+                            Resource.Error(
+                                "Account Currencies Are not The same!!!, " + "Are you sure want to Transfer from $fromAccountCurrency Currency to ${toAccountCurrency} Currency? \n(Result Will be Converted)"
+                            )
+                        }
+                        state = state.copy(
+                            isShowWarning = true,
+                            previousAmount = calculationResult
+                        )
+                        return null
+                    }
+                    state.fromWallet.walletAmount -= previousAmount
+                    state.toWallet.walletAmount += difference
+                }
+            }
         }
 
-        if ((recordType != state.toCategory.categoryType && !isTransfer(
-                recordType
-            ))
-        ) {
-            resource.update {
-                Resource.Error(
-                    "Record Type is not the same with category type"
-                )
-            }
-            return null
-        }
 
-        if (isTransfer(recordType)) {
-            if (state.fromWallet.walletAmount < difference && fromAccountCurrency != toAccountCurrency) {
-                resource.update {
-                    Resource.Error(
-                        "Account balance is not enough"
-                    )
-                }
-                return null
-            }
-            if (state.fromWallet == state.toWallet) {
-                resource.update {
-                    Resource.Error(
-                        "You Can't transfer into the same account"
-                    )
-                }
-                return null
-            }
-            if (!state.isAgreeToConvert && fromAccountCurrency != toAccountCurrency) {
-                resource.update {
-                    Resource.Error(
-                        "Account Currencies Are not The same!!!, " + "Are you sure want to Transfer from $fromAccountCurrency Currency to ${toAccountCurrency} Currency? \n(Result Will be Converted)"
-                    )
-                }
-                state = state.copy(
-                    isShowWarning = true,
-                    previousAmount = calculationResult
-                )
-                return null
-            }
-        }
-
-        if (isExpense(recordType)) {
-            state.fromWallet.walletAmount -= difference
-            calculationResult = -calculationResult
-        } else if (isTransfer(recordType) && fromAccountCurrency == toAccountCurrency) {
-            state.fromWallet.walletAmount -= difference
-            state.toWallet.walletAmount += difference
-        } else if (isTransfer(recordType) && fromAccountCurrency != toAccountCurrency) {
-            state.fromWallet.walletAmount -= previousAmount
-            state.toWallet.walletAmount += difference
-        } else {
-            state.fromWallet.walletAmount += difference
-        }
 
         return Record(
             recordId = recordId,
