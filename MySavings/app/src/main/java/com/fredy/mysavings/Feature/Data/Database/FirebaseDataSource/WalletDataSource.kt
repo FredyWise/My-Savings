@@ -15,7 +15,7 @@ import javax.inject.Inject
 interface WalletDataSource {
     suspend fun upsertWalletItem(wallet: Wallet)
     suspend fun deleteWalletItem(wallet: Wallet)
-    suspend fun getWallet(accountId: String): Wallet
+    suspend fun getWallet(walletId: String): Wallet
     suspend fun getUserWallets(userId: String): Flow<List<Wallet>>
 }
 
@@ -23,14 +23,14 @@ interface WalletDataSource {
 class WalletDataSourceImpl @Inject constructor(
     private val firestore: FirebaseFirestore,
 ) : WalletDataSource {
-    private val accountCollection = firestore.collection(
-        "account"
+    private val walletCollection = firestore.collection(
+        "wallet"
     )
 
     override suspend fun upsertWalletItem(
         wallet: Wallet
     ) {
-        accountCollection.document(
+        walletCollection.document(
             wallet.walletId
         ).set(
             wallet
@@ -38,30 +38,30 @@ class WalletDataSourceImpl @Inject constructor(
     }
 
     override suspend fun deleteWalletItem(wallet: Wallet) {
-        accountCollection.document(wallet.walletId).delete()
+        walletCollection.document(wallet.walletId).delete()
     }
 
-    override suspend fun getWallet(accountId: String): Wallet {
+    override suspend fun getWallet(walletId: String): Wallet {
         return try {
-            accountCollection.document(accountId).get().await().toObject<Wallet>()
+            walletCollection.document(walletId).get().await().toObject<Wallet>()
                 ?: throw Exception(
                     "Account Not Found"
                 )
         } catch (e: Exception) {
-            Log.e("Failed to get account: ${e.message}")
+            Log.e("Failed to get wallet: ${e.message}")
             throw e
         }
     }
 
     override suspend fun getUserWallets(userId: String): Flow<List<Wallet>> {
         return try {
-            val querySnapshot = accountCollection
+            val querySnapshot = walletCollection
                 .whereEqualTo("userIdFk", userId)
                 .snapshots()
 
             querySnapshot.map { it.toObjects()}
         } catch (e: Exception) {
-            Log.e("Failed to get user accounts: $e")
+            Log.e("Failed to get user wallets: $e")
             throw e
         }
     }

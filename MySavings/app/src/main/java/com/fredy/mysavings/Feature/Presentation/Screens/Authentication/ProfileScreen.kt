@@ -46,6 +46,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import co.yml.charts.common.extensions.isNotNull
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.fredy.mysavings.Feature.Domain.Model.UserData
@@ -287,7 +288,7 @@ fun ProfileScreen(
                 },
                 enabled = if (isChangeCredentials) {
                     newPassword.isNotEmpty() && oldPassword.isNotEmpty() && confirmPassword.isNotEmpty()
-                } else username.isNotEmpty() && username != currentUserData.username,
+                } else (username.isNotEmpty() && username != currentUserData.username) || profilePictureUri != Uri.EMPTY,
                 colors = ButtonDefaults.buttonColors(
                     disabledContainerColor = primaryColor.copy(
                         0.7f

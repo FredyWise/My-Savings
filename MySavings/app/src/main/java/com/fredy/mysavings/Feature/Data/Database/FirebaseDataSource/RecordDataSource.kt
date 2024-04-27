@@ -1,14 +1,13 @@
 package com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource
 
-import androidx.lifecycle.MutableLiveData
 import com.fredy.mysavings.Feature.Data.Database.Converter.TimestampConverter
 import com.fredy.mysavings.Feature.Data.Enum.RecordType
 import com.fredy.mysavings.Feature.Domain.Model.Category
 import com.fredy.mysavings.Feature.Domain.Model.Record
 import com.fredy.mysavings.Feature.Domain.Model.TrueRecord
 import com.fredy.mysavings.Feature.Domain.Model.Wallet
-import com.fredy.mysavings.Util.Log
 import com.fredy.mysavings.Feature.Domain.Util.Mappers.toTrueRecords
+import com.fredy.mysavings.Util.Log
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
@@ -50,9 +49,9 @@ interface RecordDataSource {
         categoryId: String,
     ): Flow<List<TrueRecord>>
 
-    suspend fun getUserAccountRecordsOrderedByDateTime(
+    suspend fun getUserWalletRecordsOrderedByDateTime(
         userId: String,
-        accountId: String,
+        walletId: String,
     ): Flow<List<TrueRecord>>
 
 
@@ -78,7 +77,7 @@ interface RecordDataSource {
         endDate: LocalDateTime
     ): Flow<List<Record>>
 
-//    suspend fun getUserAccounts(userId: String): List<Wallet>
+//    suspend fun getUserWallets(userId: String): List<Wallet>
 //    suspend fun getUserCategories(userId: String): List<Category>
 }
 
@@ -244,9 +243,9 @@ class RecordDataSourceImpl @Inject constructor(
         }
     }
 
-    override suspend fun getUserAccountRecordsOrderedByDateTime(
+    override suspend fun getUserWalletRecordsOrderedByDateTime(
         userId: String,
-        accountId: String,
+        walletId: String,
     ): Flow<List<TrueRecord>> {
         val trueRecordComponentResult = getTrueRecordsComponent(
             userId
@@ -257,10 +256,7 @@ class RecordDataSourceImpl @Inject constructor(
                 val querySnapshot = recordCollection.where(
                     Filter.or(
                         Filter.equalTo(
-                            "accountIdFromFk",
-                            accountId
-                        ), Filter.equalTo(
-                            "accountIdToFk", accountId
+                            "walletIdFromFk", walletId
                         )
                     )
                 ).whereEqualTo(
@@ -275,7 +271,7 @@ class RecordDataSourceImpl @Inject constructor(
                 }
             } catch (e: Exception) {
                 Log.e(
-                    "getUserAccountRecordsOrderedByDateTimeError: ${e.message}"
+                    "getUserWalletRecordsOrderedByDateTimeError: ${e.message}"
                 )
                 throw e
             }
@@ -385,11 +381,11 @@ class RecordDataSourceImpl @Inject constructor(
     }
 
 
-    fun getUserAccounts(
+    fun getUserWallets(
         userId: String
     ): Flow<List<Wallet>> {
         return Firebase.firestore.collection(
-            "account"
+            "wallet"
         ).whereEqualTo(
             "userIdFk", userId
         ).snapshots().map { it.toObjects() }
@@ -407,14 +403,14 @@ class RecordDataSourceImpl @Inject constructor(
 
     private suspend fun getTrueRecord(record: Record) = coroutineScope {
         withContext(Dispatchers.IO) {
-            val fromAccountDeferred = async {
-                Firebase.firestore.collection("account").document(
+            val fromWalletDeferred = async {
+                Firebase.firestore.collection("wallet").document(
                     record.walletIdFromFk
                 ).get().await()
             }
 
-            val toAccountDeferred = async {
-                Firebase.firestore.collection("account").document(
+            val toWalletDeferred = async {
+                Firebase.firestore.collection("wallet").document(
                     record.walletIdToFk
                 ).get().await()
             }
@@ -427,8 +423,8 @@ class RecordDataSourceImpl @Inject constructor(
 
             TrueRecord(
                 record = record,
-                fromWallet = fromAccountDeferred.await().toObject<Wallet>()!!,
-                toWallet = toAccountDeferred.await().toObject<Wallet>()!!,
+                fromWallet = fromWalletDeferred.await().toObject<Wallet>()!!,
+                toWallet = toWalletDeferred.await().toObject<Wallet>()!!,
                 toCategory = toCategoryDeferred.await().toObject<Category>()!!
             )
         }
@@ -438,8 +434,8 @@ class RecordDataSourceImpl @Inject constructor(
         userId: String
     ) = coroutineScope {
         withContext(Dispatchers.IO) {
-            val userAccounts = async {
-                getUserAccounts(userId).first()
+            val userWallets = async {
+                getUserWallets(userId).first()
             }
 
             val userCategories = async {
@@ -447,8 +443,8 @@ class RecordDataSourceImpl @Inject constructor(
             }
 
             TrueRecordComponentResult(
-                fromWallet = userAccounts.await(),
-                toWallet = userAccounts.await(),
+                fromWallet = userWallets.await(),
+                toWallet = userWallets.await(),
                 toCategory = userCategories.await()
             )
         }
@@ -461,13 +457,12 @@ class RecordDataSourceImpl @Inject constructor(
     )
 
 
-
 //    suspend fun getUserTrueRecords(
 //        userId: String,
 //        startDate: LocalDateTime? = null,
 //        endDate: LocalDateTime? = null,
 //        categoryId: String? = null,
-//        accountId: String? = null
+//        walletId: String? = null
 //    ): Flow<List<TrueRecord>> {
 //        val trueRecordComponentResult = getTrueRecordsComponent(userId)
 //
@@ -482,8 +477,8 @@ class RecordDataSourceImpl @Inject constructor(
 //                if (categoryId != null) {
 //                    query = query.whereEqualTo("categoryIdFk", categoryId)
 //                }
-//                if (accountId != null) {
-//                    query = query.where(Filter.or(Filter.equalTo("accountIdFromFk", accountId), Filter.equalTo("accountIdToFk", accountId)))
+//                if (walletId != null) {
+//                    query = query.where(Filter.or(Filter.equalTo("walletIdFromFk", walletId), Filter.equalTo("walletIdToFk", walletId)))
 //                }
 //
 //                query = query.orderBy("recordTimestamp", Query.Direction.DESCENDING)

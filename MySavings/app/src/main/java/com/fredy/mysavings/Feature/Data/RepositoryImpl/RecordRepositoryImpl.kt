@@ -140,9 +140,9 @@ class RecordRepositoryImpl @Inject constructor(
         accountId: String,
         sortType: SortType,
     ): Flow<List<RecordMap>> {
-        Log.i("getUserAccountRecordsOrderedByDateTimeRepo: $userId")
+        Log.i("getUserAccountRecordsOrderedByDateTimeRepo: $accountId")
         return flow {
-            recordDataSource.getUserAccountRecordsOrderedByDateTime(userId, accountId)
+            recordDataSource.getUserWalletRecordsOrderedByDateTime(userId, accountId)
                 .collect { records ->
                     Log.i("getUserAccountRecordsOrderedByDateTimeRepo.Data: $records")
                     emit(records.toRecordSortedMaps())
