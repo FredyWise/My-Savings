@@ -304,10 +304,11 @@ fun MainScreen(
 //                },
         ) {
             Column(
-                modifier = Modifier
+                modifier = modifier
                     .shadow(elevation = 4.dp, clip = true)
             ) {
                 AppBar(
+                    modifier = Modifier,
                     backgroundColor = contentColor,
                     contentColor = onContentColor,
                     onNavigationIconClick = {
@@ -323,7 +324,7 @@ fun MainScreen(
                     currentUser = currentUser
                 )
                 MainFilterAppBar(
-                    modifier = modifier,
+                    modifier = Modifier,
                     onShowAppBar = currentScreen == NavigationRoute.Records || currentScreen == NavigationRoute.Analysis,
                     selectedDate = state.filterState.selectedDate,
                     onDateChange = {

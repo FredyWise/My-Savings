@@ -67,7 +67,7 @@ fun WalletsScreen(
                 )
                 .clip(MaterialTheme.shapes.large)
                 .background(
-                    MaterialTheme.colorScheme.surface
+                    MaterialTheme.colorScheme.surfaceVariant
                 ), state = state
         )
         SearchBar(

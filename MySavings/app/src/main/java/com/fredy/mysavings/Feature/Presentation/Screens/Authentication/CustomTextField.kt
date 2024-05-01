@@ -39,18 +39,18 @@ fun CustomTextField(
         },
         enabled = enabled,
         colors = OutlinedTextFieldDefaults.colors(
-            focusedContainerColor = MaterialTheme.colorScheme.secondary,
-            focusedTextColor = MaterialTheme.colorScheme.onSecondary,
-            unfocusedTextColor = MaterialTheme.colorScheme.onSecondary.copy(
-                0.9f
-            ),
-            unfocusedContainerColor = MaterialTheme.colorScheme.secondary.copy(
-                0.7f
-            ),
-            disabledLabelColor = MaterialTheme.colorScheme.onSecondary.copy(
-                0.7f
-            ),
-            focusedPlaceholderColor = MaterialTheme.colorScheme.onBackground,
+//            focusedContainerColor = MaterialTheme.colorScheme.secondary,
+//            focusedTextColor = MaterialTheme.colorScheme.onSecondary,
+//            unfocusedTextColor = MaterialTheme.colorScheme.onSecondary.copy(
+//                0.9f
+//            ),
+//            unfocusedContainerColor = MaterialTheme.colorScheme.secondary.copy(
+//                0.7f
+//            ),
+//            disabledLabelColor = MaterialTheme.colorScheme.onSecondary.copy(
+//                0.7f
+//            ),
+//            focusedPlaceholderColor = MaterialTheme.colorScheme.onBackground,
 
             ),
         label = {

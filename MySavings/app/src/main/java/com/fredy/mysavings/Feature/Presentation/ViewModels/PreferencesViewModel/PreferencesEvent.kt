@@ -12,7 +12,7 @@ sealed interface PreferencesEvent {
     object ToggleAutoLogin : PreferencesEvent
     object ShowColorPallet : PreferencesEvent
     object HideColorPallet : PreferencesEvent
-    data class ChangeColor(val changeColorType: ChangeColorType, val color: Color?) : PreferencesEvent
+    data class ChangeColor(val changeColorType: ChangeColorType, val color: Color?, val isSystemDarkTheme:Boolean) : PreferencesEvent
     data class SetDailyNotificationTime(val time: LocalTime) : PreferencesEvent
 
 }

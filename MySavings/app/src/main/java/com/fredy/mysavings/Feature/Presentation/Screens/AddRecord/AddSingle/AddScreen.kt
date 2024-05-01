@@ -409,7 +409,7 @@ fun AddScreen(
                     text = if (isTransfer(
                             state.recordType
                         )
-                    ) "From" else "Account",
+                    ) "From" else "Wallet",
                     color = onBackground,
                 )
                 SimpleButton(

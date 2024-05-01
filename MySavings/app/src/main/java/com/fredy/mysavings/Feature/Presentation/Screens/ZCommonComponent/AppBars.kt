@@ -40,7 +40,7 @@ import com.fredy.mysavings.Feature.Domain.Model.RecordMap
 @Composable
 fun DetailAppBar(
     modifier: Modifier = Modifier,
-    backgroundColor: Color = MaterialTheme.colorScheme.surface,
+    backgroundColor: Color = MaterialTheme.colorScheme.surfaceVariant,
     onBackgroundColor: Color = MaterialTheme.colorScheme.onSurface,
     title: String,
     resource: Resource<List<RecordMap>>,

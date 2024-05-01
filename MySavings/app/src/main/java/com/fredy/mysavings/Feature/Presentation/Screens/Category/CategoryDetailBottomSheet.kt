@@ -12,6 +12,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.Feature.Presentation.Util.formatBalanceAmount
 import com.fredy.mysavings.Feature.Presentation.Util.formatTime
@@ -20,11 +21,14 @@ import com.fredy.mysavings.Feature.Presentation.ViewModels.CategoryViewModel.Cat
 import com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel.RecordEvent
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.DetailAppBar
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SimpleEntityItem
+import com.google.firebase.annotations.concurrent.Background
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun CategoryDetailBottomSheet(
     modifier: Modifier = Modifier,
+    sheetBackgroundColor: Color = MaterialTheme.colorScheme.surfaceVariant,
+    sheetTextColor: Color = MaterialTheme.colorScheme.surfaceVariant,
     isSheetOpen: Boolean,
     onCloseBottomSheet: (Boolean) -> Unit,
     recordEvent: (RecordEvent) -> Unit,
@@ -38,7 +42,7 @@ fun CategoryDetailBottomSheet(
         ModalBottomSheet(
             modifier = modifier.padding(top = 24.dp),
             sheetState = sheetState,
-            containerColor = MaterialTheme.colorScheme.surface,
+            containerColor = sheetBackgroundColor,
             onDismissRequest = {
                 onCloseBottomSheet(false)
             },

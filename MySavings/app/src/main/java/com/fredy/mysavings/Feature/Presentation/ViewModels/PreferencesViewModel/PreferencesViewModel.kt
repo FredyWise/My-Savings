@@ -7,10 +7,17 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.fredy.mysavings.Feature.Data.Enum.ChangeColorType
+import com.fredy.mysavings.Feature.Data.Enum.DisplayState
 import com.fredy.mysavings.Feature.Domain.Notification.NotificationCredentials
 import com.fredy.mysavings.Feature.Domain.Notification.NotificationWorker
 import com.fredy.mysavings.Feature.Domain.Repository.PreferencesRepository
 import com.fredy.mysavings.Feature.Presentation.Util.BalanceColor
+import com.fredy.mysavings.Feature.Presentation.Util.defaultDarkExpenseColor
+import com.fredy.mysavings.Feature.Presentation.Util.defaultDarkIncomeColor
+import com.fredy.mysavings.Feature.Presentation.Util.defaultDarkTransferColor
+import com.fredy.mysavings.Feature.Presentation.Util.defaultLightExpenseColor
+import com.fredy.mysavings.Feature.Presentation.Util.defaultLightIncomeColor
+import com.fredy.mysavings.Feature.Presentation.Util.defaultLightTransferColor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,8 +38,8 @@ class PreferencesViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             preferencesRepository.getAllPreferenceSettings().collect { savedState ->
-                BalanceColor.Expense = savedState.selectedExpenseColor
-                BalanceColor.Income = savedState.selectedIncomeColor
+                BalanceColor.Expense = savedState.selectedExpenseColor!!
+                BalanceColor.Income = savedState.selectedIncomeColor!!
                 _state.update {
                     savedState
                 }
@@ -127,32 +134,33 @@ class PreferencesViewModel @Inject constructor(
                         }
 
                         ChangeColorType.Income -> {
-                            event.color?.let {
-                                preferencesRepository.saveIncomeColor(event.color)
-                                BalanceColor.Income = event.color
-                                _state.update {
-                                    it.copy(selectedIncomeColor = event.color)
-                                }
+                            preferencesRepository.saveIncomeColor(event.color)
+                            val incomeColor = event.color
+                                ?: if (event.isSystemDarkTheme) defaultDarkIncomeColor else defaultLightIncomeColor
+                            BalanceColor.Income = incomeColor
+                            _state.update {
+                                it.copy(selectedIncomeColor = incomeColor)
                             }
                         }
 
                         ChangeColorType.Expense -> {
-                            event.color?.let {
-                                preferencesRepository.saveExpenseColor(event.color)
-                                BalanceColor.Expense = event.color
-                                _state.update {
-                                    it.copy(selectedExpenseColor = event.color)
-                                }
+                            preferencesRepository.saveExpenseColor(event.color)
+                            val expenseColor = event.color
+                                ?: if (event.isSystemDarkTheme) defaultDarkExpenseColor else defaultLightExpenseColor
+                            BalanceColor.Expense = expenseColor
+                            _state.update {
+                                it.copy(selectedExpenseColor = expenseColor)
                             }
+
                         }
 
                         ChangeColorType.Transfer -> {
-                            event.color?.let {
-                                preferencesRepository.saveTransferColor(event.color)
-                                BalanceColor.Transfer = event.color
-                                _state.update {
-                                    it.copy(selectedTransferColor = event.color)
-                                }
+                            preferencesRepository.saveTransferColor(event.color)
+                            val transferColor = event.color
+                                ?: if (event.isSystemDarkTheme) defaultDarkTransferColor else defaultLightTransferColor
+                            BalanceColor.Transfer = transferColor
+                            _state.update {
+                                it.copy(selectedTransferColor = transferColor)
                             }
                         }
                     }

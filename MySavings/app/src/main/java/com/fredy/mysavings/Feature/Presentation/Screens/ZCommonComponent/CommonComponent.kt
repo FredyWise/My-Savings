@@ -13,6 +13,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.indication
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -68,8 +69,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.fredy.mysavings.Feature.Presentation.Util.ActionWithName
 import com.fredy.mysavings.Feature.Domain.Util.Resource
+import com.fredy.mysavings.Feature.Presentation.Util.ActionWithName
 import com.fredy.mysavings.Feature.Presentation.Util.SavingsIcon
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -200,7 +201,7 @@ fun <T> ResourceHandler(
 @Composable
 fun SearchBar(
     modifier: Modifier = Modifier,
-    backgroundColor: Color = MaterialTheme.colorScheme.surface,
+    backgroundColor: Color = MaterialTheme.colorScheme.surfaceVariant,
     searchText: String,
     onValueChange: (String) -> Unit,
     placeholder: String = "Search",
@@ -220,7 +221,8 @@ fun SearchBar(
                     .weight(1f)
                     .clip(
                         CircleShape
-                    ),
+                    )
+                    .border(1.dp, MaterialTheme.colorScheme.secondary, CircleShape),
                 placeholder = { Text(text = placeholder) },
                 colors = TextFieldDefaults.colors(
                     focusedIndicatorColor = Color.Unspecified,
@@ -450,7 +452,7 @@ fun TypeRadioButton(
 fun ChooseIcon(
     modifier: Modifier = Modifier,
     iconModifier: Modifier = Modifier,
-    selectedColor: Color = MaterialTheme.colorScheme.secondary,
+    selectedColor: Color = MaterialTheme.colorScheme.secondary.copy(0.3f),
     normalColor: Color = Color.Unspecified,
     onClick: (SavingsIcon) -> Unit,
     selectedIcon: Int,
@@ -458,7 +460,7 @@ fun ChooseIcon(
 ) {
     LazyHorizontalGrid(
         modifier = modifier
-            .height(132.dp)
+            .height(138.dp)
             .clip(
                 shape = MaterialTheme.shapes.medium
             )
@@ -470,6 +472,7 @@ fun ChooseIcon(
         items(icons, key = { it.image }) { icon ->
             Box(
                 modifier = Modifier
+                    .padding(3.dp)
                     .clip(
                         shape = MaterialTheme.shapes.medium
                     )

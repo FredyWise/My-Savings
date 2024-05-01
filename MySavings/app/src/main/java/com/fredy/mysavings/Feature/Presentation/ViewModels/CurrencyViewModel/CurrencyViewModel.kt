@@ -127,7 +127,8 @@ class CurrencyViewModel @Inject constructor(
 
                 is CurrencyEvent.ShowDialog -> {
                     _state.update {
-                        it.copy(currency = event.currency)
+                        it.copy(currency = event.currency,
+                            updatedValue = event.currency.value.toString())
                     }
                 }
 

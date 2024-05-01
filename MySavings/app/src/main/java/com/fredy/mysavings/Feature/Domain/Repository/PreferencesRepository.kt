@@ -14,13 +14,13 @@ interface PreferencesRepository {
     suspend fun saveDisplayMode(displayMode: DisplayState)
     fun getThemeColor(): Flow<Color?>
     suspend fun saveThemeColor(color: Color?)
-    fun getIncomeColor(): Flow<Color>
-    suspend fun saveIncomeColor(color: Color)
-    fun getExpenseColor(): Flow<Color>
-    suspend fun saveExpenseColor(color: Color)
+    fun getIncomeColor(displayMode: DisplayState): Flow<Color>
+    suspend fun saveIncomeColor(color: Color?)
+    fun getExpenseColor(displayMode: DisplayState): Flow<Color>
+    suspend fun saveExpenseColor(color: Color?)
 
-    fun getTransferColor(): Flow<Color>
-    suspend fun saveTransferColor(color: Color)
+    fun getTransferColor(displayMode: DisplayState): Flow<Color>
+    suspend fun saveTransferColor(color: Color?)
 
     // Notifications
     fun getDailyNotification(): Flow<Boolean>

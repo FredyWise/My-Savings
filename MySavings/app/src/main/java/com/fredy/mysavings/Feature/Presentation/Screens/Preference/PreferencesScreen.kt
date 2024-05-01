@@ -39,24 +39,18 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.fredy.mysavings.Feature.Data.Enum.ChangeColorType
 import com.fredy.mysavings.Feature.Data.Enum.DisplayState
+import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.CustomStickyHeader
+import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.DefaultAppBar
+import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SimpleButton
+import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SimpleDialog
+import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SimpleItem
 import com.fredy.mysavings.Feature.Presentation.Util.ActionWithName
-import com.fredy.mysavings.Feature.Presentation.Util.defaultDarkExpenseColor
-import com.fredy.mysavings.Feature.Presentation.Util.defaultDarkIncomeColor
-import com.fredy.mysavings.Feature.Presentation.Util.defaultDarkTransferColor
-import com.fredy.mysavings.Feature.Presentation.Util.defaultLightExpenseColor
-import com.fredy.mysavings.Feature.Presentation.Util.defaultLightIncomeColor
-import com.fredy.mysavings.Feature.Presentation.Util.defaultLightTransferColor
 import com.fredy.mysavings.Feature.Presentation.Util.formatBalanceAmount
 import com.fredy.mysavings.Feature.Presentation.Util.formatTime
 import com.fredy.mysavings.Feature.Presentation.Util.initialDarkThemeDefaultColor
 import com.fredy.mysavings.Feature.Presentation.Util.initialLightThemeDefaultColor
 import com.fredy.mysavings.Feature.Presentation.ViewModels.PreferencesViewModel.PreferencesEvent
 import com.fredy.mysavings.Feature.Presentation.ViewModels.PreferencesViewModel.PreferencesState
-import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.CustomStickyHeader
-import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.DefaultAppBar
-import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SimpleButton
-import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SimpleDialog
-import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SimpleItem
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
@@ -114,6 +108,7 @@ fun PreferencesScreen(
                     state.selectedThemeColor
                         ?: if (isSystemDarkTheme) initialDarkThemeDefaultColor else initialLightThemeDefaultColor
                 }
+
                 ChangeColorType.Income -> state.selectedIncomeColor
                 ChangeColorType.Expense -> state.selectedExpenseColor
                 ChangeColorType.Transfer -> state.selectedTransferColor
@@ -131,19 +126,21 @@ fun PreferencesScreen(
             title = "Color Picker",
             onDismissRequest = { onEvent(PreferencesEvent.HideColorPallet) },
             onSaveClicked = {
-                onEvent(PreferencesEvent.ChangeColor(selectedColorType, selectedColor))
+                val isSystemDarkThemes =
+                    isSystemDarkTheme && state.displayMode == DisplayState.System
+                val isDisplayDark = state.displayMode == DisplayState.Dark
+                onEvent(
+                    PreferencesEvent.ChangeColor(
+                        selectedColorType,
+                        selectedColor,
+                        isSystemDarkThemes || isDisplayDark
+                    )
+                )
             },
         ) {
             ColorPicker(onColorChange = { selectedColor = it }, initialColor = initialColor)
             SimpleButton(onClick = {
-                val isSystemDarkThemes = isSystemDarkTheme && state.displayMode == DisplayState.System
-                val isDisplayDark = state.displayMode == DisplayState.Dark
-                selectedColor = when (selectedColorType) {
-                    ChangeColorType.Surface -> null
-                    ChangeColorType.Income -> if (isSystemDarkThemes || isDisplayDark ) defaultDarkIncomeColor else defaultLightIncomeColor
-                    ChangeColorType.Expense -> if (isSystemDarkThemes || isDisplayDark ) defaultDarkExpenseColor else defaultLightExpenseColor
-                    ChangeColorType.Transfer ->if (isSystemDarkThemes || isDisplayDark ) defaultDarkTransferColor else defaultLightTransferColor
-                }
+                selectedColor = null
             }, title = "Set Back To Initial Color")
         }
     }

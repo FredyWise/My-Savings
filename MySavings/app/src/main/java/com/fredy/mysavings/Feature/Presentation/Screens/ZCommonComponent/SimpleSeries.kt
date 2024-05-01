@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -71,6 +72,10 @@ fun SimpleWarningDialog(
 @Composable
 fun SimpleAlertDialog(
     modifier: Modifier = Modifier,
+    containerColor: Color = AlertDialogDefaults.containerColor,
+    iconContentColor: Color = AlertDialogDefaults.iconContentColor,
+    titleContentColor: Color = AlertDialogDefaults.titleContentColor,
+    textContentColor: Color = AlertDialogDefaults.textContentColor,
     title: String,
     onDismissRequest: () -> Unit,
     leftButton: @Composable (() -> Unit)? = null,
@@ -79,6 +84,10 @@ fun SimpleAlertDialog(
 ) {
     AlertDialog(
         modifier = modifier,
+        containerColor = containerColor,
+        iconContentColor = iconContentColor,
+        titleContentColor = titleContentColor,
+        textContentColor = textContentColor,
         title = {
             Text(
                 modifier = Modifier.fillMaxWidth(),
@@ -105,6 +114,10 @@ fun SimpleAlertDialog(
 @Composable
 fun SimpleDialog(
     modifier: Modifier = Modifier,
+    containerColor: Color = AlertDialogDefaults.containerColor,
+    iconContentColor: Color = AlertDialogDefaults.iconContentColor,
+    titleContentColor: Color = AlertDialogDefaults.titleContentColor,
+    textContentColor: Color = AlertDialogDefaults.textContentColor,
     dismissOnSave: Boolean = true,
     title: String,
     cancelName: String = "Cancel",
@@ -116,6 +129,10 @@ fun SimpleDialog(
 ) {
     AlertDialog(
         modifier = modifier,
+        containerColor = containerColor,
+        iconContentColor = iconContentColor,
+        titleContentColor = titleContentColor,
+        textContentColor = textContentColor,
         title = {
             Box {
                 Text(

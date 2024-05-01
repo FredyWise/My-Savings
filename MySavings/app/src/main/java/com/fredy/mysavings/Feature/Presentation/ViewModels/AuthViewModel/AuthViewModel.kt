@@ -194,7 +194,7 @@ class AuthViewModel @Inject constructor(
                             event.username,
                             event.oldPassword,
                             event.password
-                        ).collectLatest { updateResource ->
+                        ).collect { updateResource ->
                             when (updateResource) {
                                 is Resource.Success -> {
                                     val user = UserData(
@@ -227,7 +227,8 @@ class AuthViewModel @Inject constructor(
                                     _state.update {
                                         it.copy(
                                             signedInUser = user,
-                                            isSignedIn = true
+                                            isSignedIn = true,
+                                            updateResource = Resource.Success(""),
                                         )
                                     }
                                 }

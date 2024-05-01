@@ -78,8 +78,9 @@ fun AppBar(
                     )
                 } ?: CircularProgressIndicator(
                     modifier = Modifier
+                        .padding(2.dp)
                         .size(
-                            16.dp
+                            36.dp
                         ),
                     strokeWidth = 2.dp,
                     color = contentColor

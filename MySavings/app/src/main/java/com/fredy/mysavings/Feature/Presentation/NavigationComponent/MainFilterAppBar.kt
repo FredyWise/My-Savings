@@ -81,7 +81,10 @@ fun MainFilterAppBar(
         )
     }
     Column(
-        modifier = Modifier
+        modifier = modifier
+            .background(
+                MaterialTheme.colorScheme.surface
+            )
             .animateContentSize(
                 animationSpec = spring(
                     stiffness = Spring.StiffnessLow,

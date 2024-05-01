@@ -45,6 +45,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
 import com.fredy.mysavings.Feature.Data.Enum.AuthMethod
 import com.fredy.mysavings.R
@@ -59,8 +60,8 @@ import com.google.firebase.auth.GoogleAuthProvider
 @Composable
 fun SignUp(
     navController: NavHostController,
-    primaryColor: Color = MaterialTheme.colorScheme.primary,
-    onPrimaryColor: Color = MaterialTheme.colorScheme.onPrimary,
+    buttonColor: Color = MaterialTheme.colorScheme.primary.copy(0.4f),
+    onButtonColor: Color = MaterialTheme.colorScheme.onPrimary,
     onBackgroundColor: Color = MaterialTheme.colorScheme.onBackground,
     state: AuthState,
     onEvent: (AuthEvent) -> Unit
@@ -137,7 +138,7 @@ fun SignUp(
         Box(contentAlignment = Alignment.BottomEnd) {
             if (profilePictureUri != Uri.EMPTY) {
                 Image(
-                    painter = rememberImagePainter(
+                    painter = rememberAsyncImagePainter(
                         profilePictureUri
                     ),
                     contentDescription = "Profile picture",
@@ -182,7 +183,7 @@ fun SignUp(
                     }
                     .size(40.dp)
                     .background(
-                        MaterialTheme.colorScheme.surface
+                        MaterialTheme.colorScheme.surfaceVariant
                     )
                     .padding(7.dp))
         }
@@ -248,9 +249,7 @@ fun SignUp(
             },
             enabled = email.isNotEmpty() && username.isNotEmpty() && password.isNotEmpty() && confirmPassword.isNotEmpty(),
             colors = ButtonDefaults.buttonColors(
-                disabledContainerColor = primaryColor.copy(
-                    0.7f
-                )
+                disabledContainerColor = buttonColor
             ),
             modifier = Modifier
                 .fillMaxWidth()
@@ -262,12 +261,12 @@ fun SignUp(
             shape = RoundedCornerShape(15.dp)
         ) {
             if (state.authResource is Resource.Loading && state.authType == AuthMethod.Email) {
-                CircularProgressIndicator(color = onPrimaryColor)
+                CircularProgressIndicator(color = onButtonColor)
             } else {
                 Text(
                     text = "Sign Up",
                     style = MaterialTheme.typography.titleMedium,
-                    color = onPrimaryColor,
+                    color = onButtonColor,
                     modifier = Modifier.padding(10.dp)
                 )
             }

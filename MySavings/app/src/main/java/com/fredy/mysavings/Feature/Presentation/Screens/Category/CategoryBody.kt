@@ -19,6 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -35,6 +36,8 @@ import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SimpleW
 @Composable
 fun CategoryBody(
     modifier: Modifier = Modifier,
+    itemBackgroundColor: Color = MaterialTheme.colorScheme.surfaceVariant,
+    itemTextColor: Color = MaterialTheme.colorScheme.onSurface,
     categoryMaps: List<CategoryMap>,
     topItem: @Composable () -> Unit = {},
     onDeleteCategory: () -> Unit = {},
@@ -83,7 +86,7 @@ fun CategoryBody(
                             shape = MaterialTheme.shapes.medium
                         )
                         .background(
-                            MaterialTheme.colorScheme.surface
+                            itemBackgroundColor
                         )
                         .clickable {
                             onEntityClick()
@@ -126,7 +129,7 @@ fun CategoryBody(
                         style = MaterialTheme.typography.titleMedium.copy(
                             fontWeight = FontWeight.SemiBold
                         ),
-                        color = MaterialTheme.colorScheme.onSurface,
+                        color = itemTextColor,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )

@@ -17,11 +17,14 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.fredy.mysavings.Feature.Data.Database.Converter.LocalTimeConverter
 import com.fredy.mysavings.Feature.Data.Enum.DisplayState
 import com.fredy.mysavings.Feature.Domain.Repository.PreferencesRepository
-import com.fredy.mysavings.Feature.Presentation.ViewModels.PreferencesViewModel.PreferencesState
-import com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel.FilterState
 import com.fredy.mysavings.Feature.Presentation.Util.defaultDarkExpenseColor
 import com.fredy.mysavings.Feature.Presentation.Util.defaultDarkIncomeColor
 import com.fredy.mysavings.Feature.Presentation.Util.defaultDarkTransferColor
+import com.fredy.mysavings.Feature.Presentation.Util.defaultLightExpenseColor
+import com.fredy.mysavings.Feature.Presentation.Util.defaultLightIncomeColor
+import com.fredy.mysavings.Feature.Presentation.Util.defaultLightTransferColor
+import com.fredy.mysavings.Feature.Presentation.ViewModels.PreferencesViewModel.PreferencesState
+import com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel.FilterState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
@@ -73,37 +76,61 @@ class PreferencesRepositoryImpl @Inject constructor(private val context: Context
         }
     }
 
-    override fun getIncomeColor(): Flow<Color> = context.dataStore.data
+    override fun getIncomeColor(displayMode: DisplayState): Flow<Color> = context.dataStore.data
         .map { preferences ->
-            Color(preferences[INCOME_COLOR] ?: defaultDarkIncomeColor.toArgb())
+            Color(
+                preferences[INCOME_COLOR] ?: when (displayMode) {
+                    DisplayState.Light -> defaultLightIncomeColor.toArgb()
+                    DisplayState.Dark -> defaultDarkIncomeColor.toArgb()
+                    DisplayState.System -> defaultLightIncomeColor.toArgb()
+                }
+            )
         }
 
-    override suspend fun saveIncomeColor(color: Color) {
+    override suspend fun saveIncomeColor(color: Color?) {
         context.dataStore.edit { preferences ->
-            preferences[INCOME_COLOR] = color.toArgb()
+            color?.let {
+                preferences[INCOME_COLOR] = color.toArgb()
+            } ?: preferences.remove(INCOME_COLOR)
         }
     }
 
-    override fun getExpenseColor(): Flow<Color> = context.dataStore.data
+    override fun getExpenseColor(displayMode: DisplayState): Flow<Color> = context.dataStore.data
         .map { preferences ->
-            Color(preferences[EXPENSE_COLOR] ?: defaultDarkExpenseColor.toArgb())
+            Color(
+                preferences[EXPENSE_COLOR] ?: when (displayMode) {
+                    DisplayState.Light -> defaultLightExpenseColor.toArgb()
+                    DisplayState.Dark -> defaultDarkExpenseColor.toArgb()
+                    DisplayState.System -> defaultLightExpenseColor.toArgb()
+                }
+            )
         }
 
-    override suspend fun saveExpenseColor(color: Color) {
+    override suspend fun saveExpenseColor(color: Color?) {
         context.dataStore.edit { preferences ->
-            preferences[EXPENSE_COLOR] = color.toArgb()
+            color?.let {
+                preferences[EXPENSE_COLOR] = color.toArgb()
+            } ?: preferences.remove(EXPENSE_COLOR)
         }
     }
 
 
-    override fun getTransferColor(): Flow<Color> = context.dataStore.data
+    override fun getTransferColor(displayMode: DisplayState): Flow<Color> = context.dataStore.data
         .map { preferences ->
-            Color(preferences[TRANSFER_COLOR] ?: defaultDarkTransferColor.toArgb())
+            Color(
+                preferences[TRANSFER_COLOR] ?: when (displayMode) {
+                    DisplayState.Light -> defaultLightTransferColor.toArgb()
+                    DisplayState.Dark -> defaultDarkTransferColor.toArgb()
+                    DisplayState.System -> defaultLightTransferColor.toArgb()
+                }
+            )
         }
 
-    override suspend fun saveTransferColor(color: Color) {
+    override suspend fun saveTransferColor(color: Color?) {
         context.dataStore.edit { preferences ->
-            preferences[TRANSFER_COLOR] = color.toArgb()
+            color?.let {
+                preferences[TRANSFER_COLOR] = color.toArgb()
+            } ?: preferences.remove(TRANSFER_COLOR)
         }
     }
 
@@ -193,16 +220,17 @@ class PreferencesRepositoryImpl @Inject constructor(private val context: Context
     }
 
     override fun getAllPreferenceSettings(): Flow<PreferencesState> = flow {
+        val displayMode = getDisplayMode().first()
         val result = PreferencesState(
-            displayMode = getDisplayMode().first(),
+            displayMode = displayMode,
             autoLogin = getAutoLogin().first(),
             bioAuth = getBioAuth().first(),
             dailyNotification = getDailyNotification().first(),
             dailyNotificationTime = getDailyNotificationTime().first(),
             selectedThemeColor = getThemeColor().first(),
-            selectedExpenseColor = getExpenseColor().first(),
-            selectedIncomeColor = getIncomeColor().first(),
-            selectedTransferColor = getTransferColor().first(),
+            selectedExpenseColor = getExpenseColor(displayMode).first(),
+            selectedIncomeColor = getIncomeColor(displayMode).first(),
+            selectedTransferColor = getTransferColor(displayMode).first(),
             isBioAuthPossible = bioAuthStatus(),
             updated = true
         )

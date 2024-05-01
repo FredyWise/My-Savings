@@ -64,8 +64,8 @@ import com.google.firebase.auth.GoogleAuthProvider
 @Composable
 fun SignIn(
     navController: NavHostController,
-    primaryColor: Color = MaterialTheme.colorScheme.primary,
-    onPrimaryColor: Color = MaterialTheme.colorScheme.onPrimary,
+    buttonColor: Color = MaterialTheme.colorScheme.primary.copy(0.4f),
+    onButtonColor: Color = MaterialTheme.colorScheme.onPrimary,
     onBackgroundColor: Color = MaterialTheme.colorScheme.onBackground,
     isUsingBioAuth: Boolean = false,
     state: AuthState,
@@ -233,22 +233,20 @@ fun SignIn(
                     }
                 },
                 colors = ButtonDefaults.buttonColors(
-                    disabledContainerColor = primaryColor.copy(
-                        0.7f
-                    )
+                    disabledContainerColor = buttonColor
                 ),
                 modifier = Modifier.weight(0.8f),
                 shape = RoundedCornerShape(15.dp)
             ) {
                 if (state.authResource is Resource.Loading && (state.authType == AuthMethod.Email || state.authType == AuthMethod.SendOTP)) {
                     CircularProgressIndicator(
-                        color = onPrimaryColor
+                        color = onButtonColor
                     )
                 } else {
                     Text(
                         text = if (switchState) "Sign In" else "Get OTP",
                         style = MaterialTheme.typography.titleMedium,
-                        color = onPrimaryColor,
+                        color = onButtonColor,
                         modifier = Modifier.padding(10.dp)
                     )
                 }
@@ -259,6 +257,9 @@ fun SignIn(
                     onClick = {
                         onEvent(AuthEvent.BioAuth)
                     },
+                    colors = ButtonDefaults.buttonColors(
+                        disabledContainerColor = buttonColor
+                    ),
                     modifier = Modifier.weight(0.2f),
                     contentPadding = PaddingValues(10.dp),
                     shape = RoundedCornerShape(15.dp),

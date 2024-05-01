@@ -24,9 +24,8 @@ fun RecordsScreen(
     bookState: BookState,
     bookEvent: (BookEvent) -> Unit,
 ) {
-
     BookAddDialog(state = bookState, onEvent = bookEvent)
-    Column {
+    Column (modifier = modifier){
         bookState.bookResource.let { bookResource ->
             ResourceHandler(
                 resource = bookResource,

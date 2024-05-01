@@ -19,22 +19,25 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.Feature.Domain.Model.Wallet
+import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.AdvancedEntityItem
+import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.CustomStickyHeader
+import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SimpleWarningDialog
 import com.fredy.mysavings.Feature.Presentation.Util.ActionWithName
 import com.fredy.mysavings.Feature.Presentation.Util.BalanceColor
 import com.fredy.mysavings.Feature.Presentation.Util.formatBalanceAmount
 import com.fredy.mysavings.Feature.Presentation.ViewModels.WalletViewModel.WalletEvent
-import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.AdvancedEntityItem
-import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.CustomStickyHeader
-import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SimpleWarningDialog
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun WalletBody(
     modifier: Modifier = Modifier,
+    itemBackgroundColor: Color = MaterialTheme.colorScheme.surfaceVariant,
+    itemTextColor: Color = MaterialTheme.colorScheme.onSurface,
     wallets: List<Wallet>,
     topItem: @Composable () -> Unit = {},
     onEvent: (WalletEvent) -> Unit,
@@ -84,7 +87,7 @@ fun WalletBody(
                         onEvent(WalletEvent.GetWalletDetail(wallet))
                     }
                     .background(
-                        MaterialTheme.colorScheme.surface
+                        itemBackgroundColor
                     ),
                 icon = wallet.walletIcon,
                 iconDescription = wallet.walletIconDescription,
@@ -117,7 +120,7 @@ fun WalletBody(
                     style = MaterialTheme.typography.titleLarge.copy(
                         fontWeight = FontWeight.SemiBold
                     ),
-                    color = MaterialTheme.colorScheme.onSurface,
+                    color = itemTextColor,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )

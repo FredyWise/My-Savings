@@ -56,12 +56,13 @@ import com.fredy.mysavings.Util.isValidPassword
 import com.fredy.mysavings.Feature.Presentation.ViewModels.AuthViewModel.AuthState
 import com.fredy.mysavings.Feature.Presentation.ViewModels.AuthViewModel.AuthEvent
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.DefaultAppBar
+import kotlinx.coroutines.flow.update
 
 @Composable
 fun ProfileScreen(
     modifier: Modifier = Modifier,
-    primaryColor: Color = MaterialTheme.colorScheme.primary,
-    onPrimaryColor: Color = MaterialTheme.colorScheme.onPrimary,
+    buttonColor: Color = MaterialTheme.colorScheme.primary.copy(0.4f),
+    onPrimaryColor: Color = MaterialTheme.colorScheme.onSecondary,
     onBackgroundColor: Color = MaterialTheme.colorScheme.onBackground,
     rootNavController: NavController,
     title: String,
@@ -198,7 +199,7 @@ fun ProfileScreen(
                         }
                         .size(40.dp)
                         .background(
-                            MaterialTheme.colorScheme.surface
+                            MaterialTheme.colorScheme.surfaceVariant
                         )
                         .padding(7.dp),
                 )
@@ -290,9 +291,7 @@ fun ProfileScreen(
                     newPassword.isNotEmpty() && oldPassword.isNotEmpty() && confirmPassword.isNotEmpty()
                 } else (username.isNotEmpty() && username != currentUserData.username) || profilePictureUri != Uri.EMPTY,
                 colors = ButtonDefaults.buttonColors(
-                    disabledContainerColor = primaryColor.copy(
-                        0.7f
-                    )
+                    disabledContainerColor = buttonColor
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
