@@ -10,7 +10,7 @@ import java.time.LocalDateTime
 @Entity
 data class Record(
     @PrimaryKey
-    var recordId: String = "",
+    val recordId: String = "",
     val walletIdFromFk: String = "",
     val walletIdToFk: String = "",
     val categoryIdFk: String = "",
