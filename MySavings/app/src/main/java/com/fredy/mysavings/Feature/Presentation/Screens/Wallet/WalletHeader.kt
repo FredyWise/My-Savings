@@ -1,5 +1,6 @@
 package com.fredy.mysavings.Feature.Presentation.Screens.Wallet
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.Feature.Presentation.ViewModels.WalletViewModel.WalletState
 import com.fredy.mysavings.Feature.Presentation.Screens.Record.BalanceItem
@@ -21,10 +23,16 @@ import com.fredy.mysavings.Feature.Presentation.Screens.Record.BalanceItem
 @Composable
 fun WalletHeader(
     modifier: Modifier = Modifier,
+    borderSize: Dp = 3.dp/2,
     state: WalletState
 ) {
     Column(
         modifier = modifier.fillMaxWidth()
+            .border(
+                width = borderSize,
+                color = MaterialTheme.colorScheme.secondary,
+                shape = MaterialTheme.shapes.large
+            )
             ,
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceAround
@@ -56,7 +64,7 @@ fun WalletHeader(
                 modifier = Modifier
                     .fillMaxHeight()
                     .width(
-                        2.dp
+                        borderSize
                     ),
                 color = MaterialTheme.colorScheme.secondary
             )
@@ -79,7 +87,7 @@ fun WalletHeader(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(
-                    2.dp
+                    borderSize
                 ),
             color = MaterialTheme.colorScheme.secondary
         )

@@ -78,7 +78,7 @@ fun WalletBody(
                     )
                     .clip(MaterialTheme.shapes.medium)
                     .border(
-                        width = 2.dp,
+                        width = 3.dp/2,
                         color = MaterialTheme.colorScheme.secondary,
                         shape = MaterialTheme.shapes.medium
                     )

@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Icon
@@ -23,10 +24,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.Feature.Domain.Model.Book
-import com.fredy.mysavings.R
 import com.fredy.mysavings.Feature.Presentation.Util.DefaultData
+import com.fredy.mysavings.R
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -50,7 +52,8 @@ fun RecordHeader(
         items(items) { item ->
             Column(
                 modifier = Modifier
-                    .width(80.dp)
+                    .widthIn(max = 100.dp, min = 100.dp)
+                    .padding(4.dp)
                     .clip(MaterialTheme.shapes.medium)
                     .combinedClickable(
                         onLongClick = {
@@ -61,9 +64,7 @@ fun RecordHeader(
                         },
                     )
                     .background(if (selectedItem == item) selectedColor else normalColor)
-                    .padding(
-                        vertical = 4.dp
-                    ),
+                    .padding(4.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
             ) {
@@ -80,11 +81,13 @@ fun RecordHeader(
                     tint = Color.Unspecified
                 )
                 Text(
+                    modifier = Modifier.widthIn(max = 90.dp),
                     text = item.bookName,
                     style = MaterialTheme.typography.titleSmall,
                     color = textColor,
                     textAlign = TextAlign.Center,
-                    maxLines = 1
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
             Spacer(modifier = Modifier.width(8.dp))

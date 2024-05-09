@@ -171,6 +171,7 @@ dependencies {
 
     // Navigation
     implementation("androidx.navigation:navigation-compose:2.7.7")
+    implementation("com.exyte:animated-navigation-bar:1.0.0")
 
     // Custom compose versions (if needed)
     val composeVersion = "1.6.1"

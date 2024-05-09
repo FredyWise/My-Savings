@@ -13,4 +13,4 @@ buildscript {
         classpath("com.google.dagger:hilt-android-gradle-plugin:2.45")
     }
 }
-val MySavingsKey by extra("C:\\Users\\ASUS\\OneDrive - Universitas Atma Jaya Yogyakarta\\Github\\My-Savings\\mysavingskey.jks")
+//val MySavingsKey by extra("C:\\Users\\ASUS\\OneDrive - Universitas Atma Jaya Yogyakarta\\Github\\My-Savings\\mysavingskey.jks")

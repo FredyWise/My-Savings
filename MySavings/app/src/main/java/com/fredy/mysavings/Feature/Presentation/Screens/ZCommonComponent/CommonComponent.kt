@@ -222,7 +222,7 @@ fun SearchBar(
                     .clip(
                         CircleShape
                     )
-                    .border(1.dp, MaterialTheme.colorScheme.secondary, CircleShape),
+                    .border(3.dp/2, MaterialTheme.colorScheme.secondary, CircleShape),
                 placeholder = { Text(text = placeholder) },
                 colors = TextFieldDefaults.colors(
                     focusedIndicatorColor = Color.Unspecified,

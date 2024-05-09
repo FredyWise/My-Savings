@@ -60,11 +60,6 @@ fun WalletsScreen(
                 .padding(
                     vertical = 4.dp
                 )
-                .border(
-                    width = 2.dp,
-                    color = MaterialTheme.colorScheme.secondary,
-                    shape = MaterialTheme.shapes.large
-                )
                 .clip(MaterialTheme.shapes.large)
                 .background(
                     MaterialTheme.colorScheme.surfaceVariant
@@ -116,7 +111,7 @@ fun WalletsScreen(
                                     MaterialTheme.shapes.medium
                                 )
                                 .border(
-                                    width = 2.dp,
+                                    width = 3.dp/2,
                                     color = MaterialTheme.colorScheme.secondary,
                                     shape = MaterialTheme.shapes.medium
                                 ),
