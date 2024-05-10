@@ -241,7 +241,7 @@ fun BulkAddScreen(
                     )
                 )
             },
-            hintText = "Add Note",
+            hintText = "Text extraction result will show here",
             isImageExist = capturedImageUri != Uri.EMPTY,
             onImageButtonClick = { isShowImage = true },
             onCameraButtonClick = {

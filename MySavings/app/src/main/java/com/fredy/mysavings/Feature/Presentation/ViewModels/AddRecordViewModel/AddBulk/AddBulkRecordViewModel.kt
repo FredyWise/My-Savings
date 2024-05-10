@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fredy.mysavings.Feature.Data.Database.Converter.TimestampConverter
 import com.fredy.mysavings.Feature.Data.Enum.RecordType
+import com.fredy.mysavings.Feature.Data.Enum.RecordType.*
 import com.fredy.mysavings.Feature.Domain.Model.Record
 import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.CurrencyUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.RecordUseCases
@@ -25,8 +26,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddBulkRecordViewModel @Inject constructor(
-    private val recordUseCases: RecordUseCases,
-    private val currencyUseCase: CurrencyUseCases,
+//    private val recordUseCases: RecordUseCases,
+//    private val currencyUseCase: CurrencyUseCases,
     private val tabScannerUseCases: TabScannerUseCases,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
@@ -85,7 +86,6 @@ class AddBulkRecordViewModel @Inject constructor(
                     Log.e("babi: $records")
 
                     records?.let {
-                        state.fromWallet.walletAmount -= records.sumOf { it.recordAmount }
                         tabScannerUseCases.upsertRecords(records)
 
                         resource.update {
@@ -176,7 +176,7 @@ class AddBulkRecordViewModel @Inject constructor(
         )
         var calculationResult = recordAmount
         val recordCurrency = state.recordCurrency
-        val recordType = RecordType.Expense
+        val recordType = recordType
 
         if (recordDateTime == null || calculationResult == 0.0 || recordCurrency.isBlank() || walletIdFromFk == null || walletIdToFk == null || categoryIdToFk == null) {
             resource.update {
@@ -187,15 +187,27 @@ class AddBulkRecordViewModel @Inject constructor(
             return null
         }
 
-        if (state.fromWallet.walletAmount < calculationResult) {
-            resource.update {
-                Resource.Error(
-                    "Account balance is not enough"
-                )
+        when (recordType) {
+            Income -> {
+                state.fromWallet.walletAmount += calculationResult
             }
-            return null
+
+            Expense -> {
+                if (state.fromWallet.walletAmount < calculationResult) {
+                    resource.update {
+                        Resource.Error(
+                            "Account balance is not enough"
+                        )
+                    }
+                    return null
+                }
+                state.fromWallet.walletAmount -= calculationResult
+                calculationResult = -calculationResult
+            }
+
+            Transfer -> {}
         }
-        calculationResult = -calculationResult
+
 
 
         return this.copy(
