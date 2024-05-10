@@ -1,4 +1,4 @@
-package com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel
+package com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel.AddSingle
 
 data class CalcState(
     val number1: String = "0",

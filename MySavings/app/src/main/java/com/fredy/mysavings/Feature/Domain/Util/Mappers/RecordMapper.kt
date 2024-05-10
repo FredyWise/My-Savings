@@ -1,12 +1,21 @@
 package com.fredy.mysavings.Feature.Domain.Util.Mappers
 
+import com.fredy.mysavings.Feature.Data.APIs.TabScannerModel.Response.ResultResponse
+import com.fredy.mysavings.Feature.Data.Database.Converter.DateTimeConverter
+import com.fredy.mysavings.Feature.Data.Database.Converter.TimestampConverter
 import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.RecordDataSourceImpl.TrueRecordComponentResult
+import com.fredy.mysavings.Feature.Data.Enum.RecordType
 import com.fredy.mysavings.Feature.Domain.Model.Book
 import com.fredy.mysavings.Feature.Domain.Model.Record
 import com.fredy.mysavings.Feature.Domain.Model.TrueRecord
 import com.fredy.mysavings.Feature.Data.Enum.SortType
 import com.fredy.mysavings.Feature.Domain.Model.BookMap
 import com.fredy.mysavings.Feature.Domain.Model.RecordMap
+import com.fredy.mysavings.Util.Log
+import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeFormatterBuilder
 
 fun List<Record>.toTrueRecords(trueRecordComponentResult: TrueRecordComponentResult): List<TrueRecord> {
     return this.map { record ->
@@ -62,4 +71,62 @@ fun List<TrueRecord>.filterTrueRecordCurrency(currency: List<String>): List<True
             it.record.recordCurrency
         ) || currency.isEmpty()
     }
+}
+
+fun ResultResponse.convertToRecords(): List<Record> {
+    val records = mutableListOf<Record>()
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+    val recordTimestamp = TimestampConverter.fromDateTime(LocalDateTime.parse(this.result.date, formatter))
+
+    this.result.lineItems.forEach { item ->
+        val discount = item.discount.replace(".000","").replace(",","").toDoubleOrNull() ?: 0.0
+        val recordAmount = item.lineTotal.replace(".000","").replace(",","").toDoubleOrNull() ?: 0.0
+        Log.e("${recordAmount}")
+        val recordNotes = """
+            Address: ${this.result.address}
+            Establishment: ${this.result.establishment}
+            Document Type: ${this.result.documentType}
+            Item Description: ${item.desc}
+            Item Quantity: ${item.qty}
+            """.trimIndent()
+
+        val record = Record(
+            recordId = "",
+            walletIdFromFk = "",
+            walletIdToFk = "",
+            categoryIdFk = "",
+            userIdFk = "",
+            bookIdFk = "",
+            recordTimestamp = recordTimestamp,
+            recordAmount = recordAmount,
+            recordCurrency = this.result.currency,
+            recordType = RecordType.Expense,
+            recordNotes = recordNotes
+        )
+
+        records.add(record)
+    }
+
+    this.result.summaryItems.firstOrNull{it.lineType == "Discount"}?.let {item->
+
+
+        val recordAmount = item.lineTotal.replace(".000","").replace(",","").toDoubleOrNull() ?: 0.0
+        val record = Record(
+            recordId = "",
+            walletIdFromFk = "",
+            walletIdToFk = "",
+            categoryIdFk = "",
+            userIdFk = "",
+            bookIdFk = "",
+            recordTimestamp = recordTimestamp,
+            recordAmount = recordAmount,
+            recordCurrency = this.result.currency,
+            recordType = RecordType.Expense,
+            recordNotes = "Item Description: Total Discount\n"
+        )
+
+        records.add(record)
+    }
+
+    return records
 }

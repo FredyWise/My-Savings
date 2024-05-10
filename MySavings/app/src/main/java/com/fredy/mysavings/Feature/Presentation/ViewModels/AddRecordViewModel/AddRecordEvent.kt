@@ -1,5 +1,7 @@
 package com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel
 
+import android.content.Context
+import android.net.Uri
 import com.fredy.mysavings.Feature.Domain.Model.Wallet
 import com.fredy.mysavings.Feature.Domain.Model.Category
 import com.fredy.mysavings.Feature.Data.Enum.RecordType
@@ -20,4 +22,6 @@ sealed interface AddRecordEvent {
     object DismissWarning: AddRecordEvent
     object ConvertCurrency: AddRecordEvent
 
+    //special Bulk
+    data class ImageToRecords (val imageUri: Uri):AddRecordEvent
 }

@@ -216,7 +216,7 @@ fun SimpleEntityItem(
     contentModifier: Modifier = Modifier,
     icon: Int? = null,
     iconModifier: Modifier = Modifier,
-    iconDescription: String,
+    iconDescription: String = "",
     iconColor: Color = Color.Unspecified,
     contentWeight: Float = 1f,
     endContent: @Composable () -> Unit = {},

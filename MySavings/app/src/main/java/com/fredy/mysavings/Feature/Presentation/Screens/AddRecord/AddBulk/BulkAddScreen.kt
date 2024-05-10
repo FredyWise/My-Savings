@@ -1,4 +1,5 @@
 import android.net.Uri
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -18,6 +19,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,6 +34,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.rememberAsyncImagePainter
+import com.fredy.mysavings.Feature.Domain.Util.Resource
 import com.fredy.mysavings.Feature.Presentation.Screens.AddRecord.AddBottomSheet
 import com.fredy.mysavings.Feature.Presentation.Screens.AddRecord.AddBulk.RecordList
 import com.fredy.mysavings.Feature.Presentation.Screens.AddRecord.AddConfirmationRow
@@ -43,8 +46,9 @@ import com.fredy.mysavings.Feature.Presentation.Screens.Category.CategoryAddDial
 import com.fredy.mysavings.Feature.Presentation.Screens.Wallet.WalletAddDialog
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SimpleAlertDialog
 import com.fredy.mysavings.Feature.Presentation.Util.isTransfer
+import com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel.AddBulk.AddBulkRecordViewModel
 import com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel.AddRecordEvent
-import com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel.AddSingleRecordViewModel
+import com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel.AddSingle.AddSingleRecordViewModel
 import com.fredy.mysavings.Feature.Presentation.ViewModels.CategoryViewModel.CategoryViewModel
 import com.fredy.mysavings.Feature.Presentation.ViewModels.WalletViewModel.WalletEvent
 import com.fredy.mysavings.Feature.Presentation.ViewModels.WalletViewModel.WalletViewModel
@@ -59,12 +63,13 @@ fun BulkAddScreen(
     modifier: Modifier = Modifier,
     onBackground: Color = MaterialTheme.colorScheme.onBackground,
     navigateUp: () -> Unit,
-    viewModel: AddSingleRecordViewModel,
+    viewModel: AddBulkRecordViewModel,
     categoryViewModel: CategoryViewModel,
     walletViewModel: WalletViewModel,
 
     ) {
     val state = viewModel.state
+    val resource by viewModel.resource.collectAsStateWithLifecycle()
     val categoryState by categoryViewModel.state.collectAsStateWithLifecycle()
     val accountState by walletViewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -113,7 +118,10 @@ fun BulkAddScreen(
     LauncherChooserDialog(
         isChoosingLauncher = isChoosingLauncher,
         onDismissRequest = { isChoosingLauncher = false },
-        onCapturingImageUri = { capturedImageUri = it },
+        onCapturingImageUri = {
+            capturedImageUri = it
+            viewModel.onEvent(AddRecordEvent.ImageToRecords(it))
+        },
         detectedText = {
             viewModel.onEvent(
                 AddRecordEvent.RecordNotes(
@@ -122,6 +130,33 @@ fun BulkAddScreen(
             )
         }
     )
+    LaunchedEffect(
+        key1 = resource,
+    ) {
+        when (resource) {
+            is Resource.Error -> {
+                if (!state.isShowWarning) {
+                    Toast.makeText(
+                        context,
+                        resource.message,
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
+
+            is Resource.Loading -> {
+
+            }
+
+            is Resource.Success -> {
+                Toast.makeText(
+                    context,
+                    resource.data,
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
+    }
     val sheetState = rememberModalBottomSheetState()
     var isSheetOpen by rememberSaveable {
         mutableStateOf(false)
@@ -192,16 +227,6 @@ fun BulkAddScreen(
                                 state.fromWallet
                             )
                         )
-                        if (isTransfer(
-                                state.recordType
-                            )
-                        ) {
-                            walletViewModel.onEvent(
-                                WalletEvent.UpdateWalletBalance(
-                                    state.toWallet
-                                )
-                            )
-                        }
                         navigateUp()
                     },
                 )
@@ -253,7 +278,7 @@ fun BulkAddScreen(
                         .weight(
                             1f
                         ),
-                    recordMaps = listOf(),
+                    records = state.records,
                     onItemClick = {}
                 )
             } else {

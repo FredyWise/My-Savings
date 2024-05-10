@@ -1,4 +1,4 @@
-package com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel
+package com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel.AddSingle
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -14,6 +14,8 @@ import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.RecordUseCases
 import com.fredy.mysavings.Feature.Domain.Util.Resource
 import com.fredy.mysavings.Feature.Presentation.Util.DefaultData.transferCategory
 import com.fredy.mysavings.Feature.Presentation.Util.isTransfer
+import com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel.AddRecordEvent
+import com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel.AddRecordState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -49,8 +51,8 @@ class AddSingleRecordViewModel @Inject constructor(
                                 toWallet = it.toWallet,
                                 toCategory = it.toCategory,
                                 recordId = it.record.recordId,
-                                accountIdFromFk = it.record.walletIdFromFk,
-                                accountIdToFk = it.record.walletIdToFk,
+                                walletIdFromFk = it.record.walletIdFromFk,
+                                walletIdToFk = it.record.walletIdToFk,
                                 categoryIdFk = it.record.categoryIdFk,
                                 recordDate = it.record.recordDateTime.toLocalDate(),
                                 recordTime = it.record.recordDateTime.toLocalTime(),
@@ -97,14 +99,14 @@ class AddSingleRecordViewModel @Inject constructor(
                 is AddRecordEvent.AccountIdFromFk -> {
                     state = state.copy(
                         recordCurrency = event.fromWallet.walletCurrency,
-                        accountIdFromFk = event.fromWallet.walletId,
+                        walletIdFromFk = event.fromWallet.walletId,
                         fromWallet = event.fromWallet
                     )
                 }
 
                 is AddRecordEvent.AccountIdToFk -> {
                     state = state.copy(
-                        accountIdToFk = event.toWallet.walletId,
+                        walletIdToFk = event.toWallet.walletId,
                         toWallet = event.toWallet
                     )
                 }
@@ -175,6 +177,8 @@ class AddSingleRecordViewModel @Inject constructor(
                         )
                     }
                 }
+
+                else -> {}
             }
         }
     }
@@ -182,8 +186,8 @@ class AddSingleRecordViewModel @Inject constructor(
     private fun performRecordCalculation(): Record? {
         performCalculation()
         val recordId = state.recordId
-        val accountIdFromFk = state.accountIdFromFk
-        var accountIdToFk = state.accountIdToFk
+        val accountIdFromFk = state.walletIdFromFk
+        var accountIdToFk = state.walletIdToFk
         var categoryIdToFk = state.categoryIdFk
         val bookIdFk = state.bookIdFk
         val recordDateTime = state.recordDate.atTime(

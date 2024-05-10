@@ -3,6 +3,7 @@ package com.fredy.mysavings.DI
 import android.content.Context
 import com.fredy.mysavings.Feature.Data.APIs.CountryModels.CountryApi
 import com.fredy.mysavings.Feature.Data.APIs.CurrencyModels.CurrencyApi
+import com.fredy.mysavings.Feature.Data.APIs.TabScannerModel.TabScannerAPI
 import com.fredy.mysavings.Feature.Data.CSV.CSVDao
 import com.fredy.mysavings.Feature.Data.Database.Dao.BookDao
 import com.fredy.mysavings.Feature.Data.Database.Dao.CategoryDao
@@ -25,6 +26,7 @@ import com.fredy.mysavings.Feature.Data.RepositoryImpl.CurrencyRepositoryImpl
 import com.fredy.mysavings.Feature.Data.RepositoryImpl.PreferencesRepositoryImpl
 import com.fredy.mysavings.Feature.Data.RepositoryImpl.RecordRepositoryImpl
 import com.fredy.mysavings.Feature.Data.RepositoryImpl.SyncRepositoryImpl
+import com.fredy.mysavings.Feature.Data.RepositoryImpl.TabScannerRepositoryImpl
 import com.fredy.mysavings.Feature.Data.RepositoryImpl.UserRepositoryImpl
 import com.fredy.mysavings.Feature.Data.RepositoryImpl.WalletRepositoryImpl
 import com.fredy.mysavings.Feature.Domain.Repository.BookRepository
@@ -34,6 +36,7 @@ import com.fredy.mysavings.Feature.Domain.Repository.CurrencyRepository
 import com.fredy.mysavings.Feature.Domain.Repository.PreferencesRepository
 import com.fredy.mysavings.Feature.Domain.Repository.RecordRepository
 import com.fredy.mysavings.Feature.Domain.Repository.SyncRepository
+import com.fredy.mysavings.Feature.Domain.Repository.TabScannerRepository
 import com.fredy.mysavings.Feature.Domain.Repository.UserRepository
 import com.fredy.mysavings.Feature.Domain.Repository.WalletRepository
 import com.google.android.gms.auth.api.identity.SignInClient
@@ -145,6 +148,14 @@ object RepositoryModule {
         csvDao: CSVDao,
     ): CSVRepository = CSVRepositoryImpl(
         csvDao
+    )
+
+    @Provides
+    @Singleton
+    fun provideTabScannerRepository(
+        tabScannerAPI: TabScannerAPI,
+    ): TabScannerRepository = TabScannerRepositoryImpl(
+        tabScannerAPI
     )
 
     @Provides

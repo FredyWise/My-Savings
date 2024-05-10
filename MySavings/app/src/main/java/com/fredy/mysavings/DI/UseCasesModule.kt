@@ -1,11 +1,13 @@
 package com.fredy.mysavings.DI
 
+import android.content.Context
 import com.fredy.mysavings.Feature.Domain.Repository.UserRepository
 import com.fredy.mysavings.Feature.Domain.Repository.BookRepository
 import com.fredy.mysavings.Feature.Domain.Repository.CSVRepository
 import com.fredy.mysavings.Feature.Domain.Repository.CategoryRepository
 import com.fredy.mysavings.Feature.Domain.Repository.CurrencyRepository
 import com.fredy.mysavings.Feature.Domain.Repository.RecordRepository
+import com.fredy.mysavings.Feature.Domain.Repository.TabScannerRepository
 import com.fredy.mysavings.Feature.Domain.Repository.WalletRepository
 import com.fredy.mysavings.Feature.Domain.UseCases.AuthUseCases.AuthUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.AuthUseCases.GoogleSignIn
@@ -53,6 +55,9 @@ import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.UpdateRecordIt
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.UpdateRecordItemWithDeletedBook
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.UpdateRecordItemWithDeletedCategory
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.UpsertRecordItem
+import com.fredy.mysavings.Feature.Domain.UseCases.TabScannerUseCase.ProcessImage
+import com.fredy.mysavings.Feature.Domain.UseCases.TabScannerUseCase.TabScannerUseCases
+import com.fredy.mysavings.Feature.Domain.UseCases.TabScannerUseCase.UpsertRecords
 import com.fredy.mysavings.Feature.Domain.UseCases.UserUseCases.DeleteUser
 import com.fredy.mysavings.Feature.Domain.UseCases.UserUseCases.GetAllUsersOrderedByName
 import com.fredy.mysavings.Feature.Domain.UseCases.UserUseCases.GetCurrentUser
@@ -74,6 +79,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -267,6 +273,19 @@ object UseCasesModule {
         getCurrencyRates = GetCurrencyRates(currencyRepository),
         convertCurrencyData = ConvertCurrencyData(currencyRepository),
         getCurrencies = GetCurrencies(currencyRepository, userRepository)
+    )
+
+    @Provides
+    @Singleton
+    fun provideTabScannerUseCases(
+        @ApplicationContext
+        context: Context,
+        tabScannerRepository: TabScannerRepository,
+        userRepository: UserRepository,
+        recordRepository: RecordRepository
+    ): TabScannerUseCases = TabScannerUseCases(
+        processImage = ProcessImage(context,tabScannerRepository),
+        upsertRecords = UpsertRecords(userRepository, recordRepository)
     )
 
 }

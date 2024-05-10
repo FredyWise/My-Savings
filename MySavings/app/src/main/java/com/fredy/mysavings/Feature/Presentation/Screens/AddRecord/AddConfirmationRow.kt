@@ -27,7 +27,6 @@ fun AddConfirmationRow(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         SimpleButton(
-            modifier = Modifier,
             onClick = onCancelClick,
             image = R.drawable.ic_close_foreground,
             imageColor = onBackground,

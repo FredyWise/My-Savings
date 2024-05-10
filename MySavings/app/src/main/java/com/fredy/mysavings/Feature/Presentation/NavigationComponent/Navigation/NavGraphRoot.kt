@@ -32,7 +32,8 @@ import com.fredy.mysavings.Feature.Presentation.Screens.Authentication.ProfileSc
 import com.fredy.mysavings.Feature.Presentation.Screens.Currency.CurrencyScreen
 import com.fredy.mysavings.Feature.Presentation.Screens.IO.ExportScreen
 import com.fredy.mysavings.Feature.Presentation.Screens.Preference.PreferencesScreen
-import com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel.AddSingleRecordViewModel
+import com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel.AddBulk.AddBulkRecordViewModel
+import com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel.AddSingle.AddSingleRecordViewModel
 import com.fredy.mysavings.Feature.Presentation.ViewModels.AuthViewModel.AuthEvent
 import com.fredy.mysavings.Feature.Presentation.ViewModels.AuthViewModel.AuthViewModel
 import com.fredy.mysavings.Feature.Presentation.ViewModels.BookViewModel.BookViewModel
@@ -113,17 +114,26 @@ fun NavGraphRoot(
                 )
             }
             composable(
-                route = NavigationRoute.BulkAdd.route,
+                route = "${NavigationRoute.BulkAdd.route}?bookId={bookId}",
                 enterTransition = {
                     fadeIn()
                 },
                 exitTransition = {
                     fadeOut()
                 },
+                arguments = listOf(
+                    navArgument(
+                        name = "bookId"
+                    ) {
+                        type = NavType.StringType
+                        defaultValue = null
+                        nullable = true
+                    },
+                )
             ) { entry ->
                 val walletViewModel: WalletViewModel = hiltViewModel()
                 val categoryViewModel: CategoryViewModel = hiltViewModel()
-                val viewModel: AddSingleRecordViewModel = hiltViewModel()
+                val viewModel: AddBulkRecordViewModel = hiltViewModel()
                 Log.d("NavGraphRoot: BulkAdd")
                 BulkAddScreen(
                     modifier = Modifier.padding(

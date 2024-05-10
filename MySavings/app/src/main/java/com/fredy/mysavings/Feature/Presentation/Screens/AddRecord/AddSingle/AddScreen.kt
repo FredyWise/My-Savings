@@ -49,7 +49,7 @@ import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.TypeRad
 import com.fredy.mysavings.Feature.Presentation.Util.ActionWithName
 import com.fredy.mysavings.Feature.Presentation.Util.isTransfer
 import com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel.AddRecordEvent
-import com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel.AddSingleRecordViewModel
+import com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel.AddSingle.AddSingleRecordViewModel
 import com.fredy.mysavings.Feature.Presentation.ViewModels.CategoryViewModel.CategoryEvent
 import com.fredy.mysavings.Feature.Presentation.ViewModels.CategoryViewModel.CategoryViewModel
 import com.fredy.mysavings.Feature.Presentation.ViewModels.WalletViewModel.WalletEvent
