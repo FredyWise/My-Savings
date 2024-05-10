@@ -85,6 +85,7 @@ class AddBulkRecordViewModel @Inject constructor(
                     Log.e("babi: $records")
 
                     records?.let {
+                        state.fromWallet.walletAmount -= records.sumOf { it.recordAmount }
                         tabScannerUseCases.upsertRecords(records)
 
                         resource.update {
@@ -139,6 +140,10 @@ class AddBulkRecordViewModel @Inject constructor(
                 is AddRecordEvent.ImageToRecords -> {
                     val records = tabScannerUseCases.processImage(event.imageUri)
                     state = state.copy(records = records)
+                    val firstRecordDateTime = records?.firstOrNull()?.recordDateTime
+                    firstRecordDateTime?.let {
+                        state = state.copy(recordDate = it.toLocalDate(), recordTime = it.toLocalTime())
+                    }
                 }
 
                 is AddRecordEvent.RecordNotes -> {
@@ -190,7 +195,6 @@ class AddBulkRecordViewModel @Inject constructor(
             }
             return null
         }
-        state.fromWallet.walletAmount -= calculationResult
         calculationResult = -calculationResult
 
 

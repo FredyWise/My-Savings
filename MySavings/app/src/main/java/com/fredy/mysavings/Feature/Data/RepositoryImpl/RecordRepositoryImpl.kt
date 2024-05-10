@@ -52,8 +52,18 @@ class RecordRepositoryImpl @Inject constructor(
     override suspend fun upsertAllRecordItems(records: List<Record>) {
         return withContext(Dispatchers.IO) {
             Log.i("upsertAllRecordItemsRepo: $records")
-            recordDataSource.upsertAllRecordItem(records)
-            recordDao.upsertAllRecordItem(records)
+            val temRecords = records.map {record ->
+                if (record.recordId.isEmpty()) {
+                    val newRecordRef = recordCollection.document()
+                    record.copy(
+                        recordId = newRecordRef.id
+                    )
+                } else {
+                    record
+                }
+            }
+            recordDataSource.upsertAllRecordItem(temRecords)
+            recordDao.upsertAllRecordItem(temRecords)
         }
     }
 
