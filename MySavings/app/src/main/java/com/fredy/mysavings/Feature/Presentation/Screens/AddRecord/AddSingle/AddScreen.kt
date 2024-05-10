@@ -1,20 +1,18 @@
 package com.fredy.mysavings.Feature.Presentation.Screens.AddRecord.AddSingle
 
-import android.Manifest
 import android.net.Uri
 import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ImageNotSupported
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -26,7 +24,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -34,32 +31,30 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.canhub.cropper.CropImageContract
-import com.canhub.cropper.CropImageContractOptions
-import com.canhub.cropper.CropImageOptions
+import coil.compose.rememberAsyncImagePainter
 import com.fredy.mysavings.Feature.Data.Enum.RecordType
-import com.fredy.mysavings.R
-import com.fredy.mysavings.Feature.Presentation.Util.ActionWithName
 import com.fredy.mysavings.Feature.Domain.Util.Resource
-import com.fredy.mysavings.Feature.Presentation.Util.isTransfer
-import com.fredy.mysavings.Feature.Presentation.ViewModels.WalletViewModel.WalletViewModel
-import com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel.AddSingleRecordViewModel
-import com.fredy.mysavings.Feature.Presentation.ViewModels.CategoryViewModel.CategoryViewModel
-import com.fredy.mysavings.Feature.Presentation.ViewModels.WalletViewModel.WalletEvent
-import com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel.AddRecordEvent
-import com.fredy.mysavings.Feature.Presentation.ViewModels.CategoryViewModel.CategoryEvent
-import com.fredy.mysavings.Feature.Presentation.Screens.Wallet.WalletAddDialog
-import com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel.createImageUri
-import com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel.detectTextFromImage
+import com.fredy.mysavings.Feature.Presentation.Screens.AddRecord.AddBottomSheet
+import com.fredy.mysavings.Feature.Presentation.Screens.AddRecord.AddConfirmationRow
+import com.fredy.mysavings.Feature.Presentation.Screens.AddRecord.AddTextBox
+import com.fredy.mysavings.Feature.Presentation.Screens.AddRecord.ChooseAccountAndCategory
+import com.fredy.mysavings.Feature.Presentation.Screens.AddRecord.DateAndTimePicker
+import com.fredy.mysavings.Feature.Presentation.Screens.AddRecord.LauncherChooserDialog
 import com.fredy.mysavings.Feature.Presentation.Screens.Category.CategoryAddDialog
-import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SimpleButton
+import com.fredy.mysavings.Feature.Presentation.Screens.Wallet.WalletAddDialog
+import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SimpleAlertDialog
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SimpleWarningDialog
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.TypeRadioButton
+import com.fredy.mysavings.Feature.Presentation.Util.ActionWithName
+import com.fredy.mysavings.Feature.Presentation.Util.isTransfer
+import com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel.AddRecordEvent
+import com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel.AddSingleRecordViewModel
+import com.fredy.mysavings.Feature.Presentation.ViewModels.CategoryViewModel.CategoryEvent
+import com.fredy.mysavings.Feature.Presentation.ViewModels.CategoryViewModel.CategoryViewModel
+import com.fredy.mysavings.Feature.Presentation.ViewModels.WalletViewModel.WalletEvent
+import com.fredy.mysavings.Feature.Presentation.ViewModels.WalletViewModel.WalletViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.isGranted
-import com.google.accompanist.permissions.rememberPermissionState
 import kotlinx.coroutines.launch
 
 @OptIn(
@@ -86,110 +81,70 @@ fun AddScreen(
             true
         )
     }
-    val uri = createImageUri(
-        context
-    )
+    var isShowImage by rememberSaveable {
+        mutableStateOf(false)
+    }
     var capturedImageUri by remember {
         mutableStateOf<Uri>(
             Uri.EMPTY
         )
     }
-    val permissionsState = rememberPermissionState(
-        Manifest.permission.CAMERA
-    )
-    var isChoosingLauncher by rememberSaveable {
-        mutableStateOf(false)
-    }
-    val imageCropLauncher = rememberLauncherForActivityResult(
-        CropImageContract()
-    ) { result ->
-        if (result.isSuccessful) {
-            capturedImageUri = result.uriContent!!
-            detectTextFromImage(context,
-                capturedImageUri,
-                { text ->
-                    viewModel.onEvent(
-                        AddRecordEvent.RecordNotes(
-                            text
-                        )
-                    )
-                },
-                { error ->
-                    Toast.makeText(
-                        context,
-                        error,
-                        Toast.LENGTH_SHORT
-                    ).show()
-                })
-        } else {
-            Toast.makeText(
-                context,
-                result.error?.message,
-                Toast.LENGTH_LONG
-            ).show()
-        }
-    }
-    val imagePickerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.PickVisualMedia(),
-        onResult = { uri ->
-            uri?.let {
-                isChoosingLauncher = false
-                val cropOption = CropImageContractOptions(it, CropImageOptions())
-                imageCropLauncher.launch(cropOption)
-            }
-        },
-    )
-    val cameraLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.TakePicture()
-    ) { success ->
-        if (success) {
-            isChoosingLauncher = false
-            val cropOption = CropImageContractOptions(uri, CropImageOptions())
-            imageCropLauncher.launch(cropOption)
-
-        }
-    }
-    val permissionLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted: Boolean ->
-        if (isGranted) {
-            Toast.makeText(
-                context,
-                "Permission Granted",
-                Toast.LENGTH_SHORT
-            ).show()
-            cameraLauncher.launch(uri)
-        } else {
-            Toast.makeText(
-                context,
-                "Permission Denied",
-                Toast.LENGTH_SHORT
-            ).show()
-        }
-    }
-    if (isChoosingLauncher) {
-        LauncherChooserDialog(
-            onDismissRequest = { isChoosingLauncher = false },
-            onChooseCamera = {
-                if (permissionsState.status.isGranted) {
-                    cameraLauncher.launch(
-                        uri
-                    )
-                } else {
-                    permissionLauncher.launch(
-                        Manifest.permission.CAMERA
+    if (isShowImage) {
+        SimpleAlertDialog(
+            title = "CapturedImage", onDismissRequest = { isShowImage = false },
+            rightButton = {
+                Button(
+                    modifier = Modifier
+                        .clip(
+                            MaterialTheme.shapes.small
+                        ),
+                    onClick = { isShowImage = false },
+                ) {
+                    Text(
+                        modifier = Modifier.padding(vertical = 6.dp),
+                        style = MaterialTheme.typography.titleMedium,
+                        text = "Close"
                     )
                 }
             },
-            onChooseGallery = {
-                imagePickerLauncher.launch(
-                    PickVisualMediaRequest(
-                        ActivityResultContracts.PickVisualMedia.ImageOnly
+        ) {
+            Column {
+                if (capturedImageUri != Uri.EMPTY) {
+                    Image(
+                        contentDescription = "Captured Image",
+                        painter = rememberAsyncImagePainter(
+                            capturedImageUri
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
                     )
-                )
-            },
-        )
+                } else {
+                    Icon(
+                        contentDescription = "Captured Image",
+                        imageVector = Icons.Default.ImageNotSupported,
+                        tint = onBackground,
+                        modifier = Modifier
+                            .size(100.dp)
+                    )
+                }
+            }
+        }
     }
+    var isChoosingLauncher by rememberSaveable {
+        mutableStateOf(false)
+    }
+    LauncherChooserDialog(
+        isChoosingLauncher = isChoosingLauncher,
+        onDismissRequest = { isChoosingLauncher = false },
+        onCapturingImageUri = { capturedImageUri = it },
+        detectedText = {
+            viewModel.onEvent(
+                AddRecordEvent.RecordNotes(
+                    it
+                )
+            )
+        }
+    )
     LaunchedEffect(
         key1 = resource,
     ) {
@@ -267,10 +222,10 @@ fun AddScreen(
             }
         )
     }
-        WalletAddDialog(
-            state = accountState,
-            onEvent = walletViewModel::onEvent
-        )
+    WalletAddDialog(
+        state = accountState,
+        onEvent = walletViewModel::onEvent
+    )
 
     if (categoryState.isAddingCategory) {
         if (state.recordType != categoryState.categoryType) {
@@ -288,52 +243,31 @@ fun AddScreen(
     Column(
         modifier = modifier
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            SimpleButton(
-                modifier = Modifier,
-                onClick = { navigateUp() },
-                image = R.drawable.ic_close_foreground,
-                imageColor = onBackground,
-                title = "CANCEL",
-                titleStyle = MaterialTheme.typography.titleMedium.copy(
-                    onBackground
-                ),
-            )
-            SimpleButton(
-                onClick = {
-                    viewModel.onEvent(
-                        AddRecordEvent.SaveRecord {
+        AddConfirmationRow(
+            onCancelClick = { navigateUp() },
+            onSaveClick = {
+                viewModel.onEvent(
+                    AddRecordEvent.SaveRecord {
+                        walletViewModel.onEvent(
+                            WalletEvent.UpdateWalletBalance(
+                                state.fromWallet
+                            )
+                        )
+                        if (isTransfer(
+                                state.recordType
+                            )
+                        ) {
                             walletViewModel.onEvent(
                                 WalletEvent.UpdateWalletBalance(
-                                    state.fromWallet
+                                    state.toWallet
                                 )
                             )
-                            if (isTransfer(
-                                    state.recordType
-                                )
-                            ) {
-                                walletViewModel.onEvent(
-                                    WalletEvent.UpdateWalletBalance(
-                                        state.toWallet
-                                    )
-                                )
-                            }
-                            navigateUp()
-                        },
-                    )
-                },
-                image = R.drawable.ic_check_foreground,
-                imageColor = onBackground,
-                title = "SAVE",
-                titleStyle = MaterialTheme.typography.titleMedium.copy(
-                    onBackground
-                ),
-            )
-        }
+                        }
+                        navigateUp()
+                    },
+                )
+            },
+        )
         AddTextBox(
             value = state.recordNotes,
             onValueChanged = {
@@ -344,7 +278,9 @@ fun AddScreen(
                 )
             },
             hintText = "Add Note",
-            onButtonClick = {
+            isImageExist = capturedImageUri != Uri.EMPTY,
+            onImageButtonClick = { isShowImage = true },
+            onCameraButtonClick = {
                 isChoosingLauncher = true
             },
             modifier = Modifier
@@ -388,124 +324,21 @@ fun AddScreen(
                 )
             )
         )
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    vertical = 4.dp
-                ),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(
-                4.dp
-            )
-        ) {
-            Column(
-                modifier = Modifier.weight(
-                    1f
-                ),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = if (isTransfer(
-                            state.recordType
-                        )
-                    ) "From" else "Wallet",
-                    color = onBackground,
-                )
-                SimpleButton(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(
-                            50.dp
-                        )
-                        .clip(
-                            MaterialTheme.shapes.small
-                        )
-                        .border(
-                            width = 2.dp,
-                            color = MaterialTheme.colorScheme.secondary,
-                            shape = MaterialTheme.shapes.small
-                        ),
-                    image = state.fromWallet.walletIcon,
-                    imageDescription = state.fromWallet.walletIconDescription,
-                    imageColor = if (state.fromWallet.walletIconDescription == "") onBackground else Color.Unspecified,
-                    onClick = {
-                        isLeading = true
-                        scope.launch {
-                            isSheetOpen = true
-                        }
-                    },
-                    title = state.fromWallet.walletName,
-                    titleStyle = MaterialTheme.typography.headlineSmall.copy(
-                        onBackground
-                    )
-                )
-            }
-
-            Column(
-                modifier = Modifier.weight(
-                    1f
-                ),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = if (isTransfer(
-                            state.recordType
-                        )
-                    ) "To" else "Category",
-                    color = onBackground
-                )
-                SimpleButton(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(
-                            50.dp
-                        )
-                        .clip(
-                            MaterialTheme.shapes.small
-                        )
-                        .border(
-                            width = 2.dp,
-                            color = MaterialTheme.colorScheme.secondary,
-                            shape = MaterialTheme.shapes.small
-                        ),
-                    image = if (isTransfer(
-                            state.recordType
-                        )
-                    ) state.toWallet.walletIcon else state.toCategory.categoryIcon,
-                    imageDescription = if (isTransfer(
-                            state.recordType
-                        )
-                    ) state.toWallet.walletIconDescription else state.toCategory.categoryIconDescription,
-                    imageColor = if (state.toCategory.categoryIconDescription != "" && !isTransfer(
-                            state.recordType
-                        )
-                    ) {
-                        Color.Unspecified
-                    } else if (state.toWallet.walletIconDescription != "" && isTransfer(
-                            state.recordType
-                        )
-                    ) {
-                        Color.Unspecified
-                    } else {
-                        onBackground
-                    },
-                    onClick = {
-                        isLeading = false
-                        scope.launch {
-                            isSheetOpen = true
-                        }
-                    },
-                    title = if (isTransfer(
-                            state.recordType
-                        )
-                    ) state.toWallet.walletName else state.toCategory.categoryName,
-                    titleStyle = MaterialTheme.typography.headlineSmall.copy(
-                        onBackground
-                    )
-                )
-            }
-        }
+        ChooseAccountAndCategory(
+            state = state,
+            onLeftButtonClick = {
+                isLeading = true
+                scope.launch {
+                    isSheetOpen = true
+                }
+            },
+            onRightButtonClick = {
+                isLeading = false
+                scope.launch {
+                    isSheetOpen = true
+                }
+            },
+        )
         Calculator(
             modifier = Modifier
                 .fillMaxWidth()

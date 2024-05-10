@@ -1,4 +1,4 @@
-package com.fredy.mysavings.Feature.Presentation.Screens.AddRecord.AddSingle
+package com.fredy.mysavings.Feature.Presentation.Screens.AddRecord
 
 import android.content.Context
 import android.widget.Toast

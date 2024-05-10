@@ -1,9 +1,13 @@
-package com.fredy.mysavings.Feature.Presentation.Screens.AddRecord.AddSingle
+package com.fredy.mysavings.Feature.Presentation.Screens.AddRecord
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -20,17 +24,19 @@ import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.TextBox
 
 @Composable
 fun AddTextBox(
-    value: String,
-    onValueChanged: (String) -> Unit,
     modifier: Modifier = Modifier,
-    hintText: String = "",
     textStyle: TextStyle = TextStyle(MaterialTheme.colorScheme.secondary) + MaterialTheme.typography.bodyMedium,
     shape: Shape = MaterialTheme.shapes.small,
     backgroundColor: Color = Color.Unspecified,
     borderColor: Color = Color.Unspecified,
     buttonColor: Color = Color.Unspecified,
-    buttonIconColor:Color = MaterialTheme.colorScheme.onSurface,
-    onButtonClick: () -> Unit,
+    buttonIconColor: Color = MaterialTheme.colorScheme.onSurface,
+    hintText: String = "",
+    value: String,
+    onValueChanged: (String) -> Unit,
+    isImageExist: Boolean,
+    onImageButtonClick: () -> Unit,
+    onCameraButtonClick: () -> Unit,
 ) {
     Box(
         modifier = modifier
@@ -45,14 +51,33 @@ fun AddTextBox(
             backgroundColor = backgroundColor,
             borderColor = borderColor
         )
-        Button(
-            onClick = onButtonClick,
-            colors = ButtonDefaults.buttonColors(containerColor = buttonColor),
+        Row(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(8.dp)
+                .padding(8.dp),
         ) {
-            Icon(imageVector = Icons.Default.PhotoCamera, contentDescription = "Camera",tint = buttonIconColor)
+            if (isImageExist) {
+                Button(
+                    onClick = onImageButtonClick,
+                    colors = ButtonDefaults.buttonColors(containerColor = buttonColor),
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Image,
+                        contentDescription = "Show Image",
+                        tint = buttonIconColor
+                    )
+                }
+            }
+            Button(
+                onClick = onCameraButtonClick,
+                colors = ButtonDefaults.buttonColors(containerColor = buttonColor),
+            ) {
+                Icon(
+                    imageVector = Icons.Default.PhotoCamera,
+                    contentDescription = "Camera",
+                    tint = buttonIconColor
+                )
+            }
         }
     }
 }

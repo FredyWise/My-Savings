@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.Icon
@@ -21,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.unit.dp
 import com.exyte.animatednavbar.AnimatedNavigationBar
 import com.exyte.animatednavbar.utils.noRippleClickable
 import com.fredy.mysavings.Feature.Presentation.NavigationComponent.Navigation.NavigationRoute
@@ -48,6 +50,7 @@ fun BottomBar(
     ) {
         allScreens.forEachIndexed { index, screen ->
             BottomBarItem(
+                modifier = Modifier.padding(vertical = 8.dp),
                 onClick = {
                     selectedIndex = index
                     onTabSelected(screen)
