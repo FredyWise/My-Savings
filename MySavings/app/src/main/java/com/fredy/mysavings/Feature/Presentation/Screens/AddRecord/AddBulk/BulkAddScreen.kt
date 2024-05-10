@@ -70,8 +70,11 @@ fun BulkAddScreen(
     ) {
     val state = viewModel.state
     val resource by viewModel.resource.collectAsStateWithLifecycle()
+    val onEvent = viewModel::onEvent
     val categoryState by categoryViewModel.state.collectAsStateWithLifecycle()
-    val accountState by walletViewModel.state.collectAsStateWithLifecycle()
+    val categoryEvent = categoryViewModel::onEvent
+    val walletState by walletViewModel.state.collectAsStateWithLifecycle()
+    val walletEvent = walletViewModel::onEvent
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     var isShowImage by rememberSaveable {
@@ -120,10 +123,10 @@ fun BulkAddScreen(
         onDismissRequest = { isChoosingLauncher = false },
         onCapturingImageUri = {
             capturedImageUri = it
-            viewModel.onEvent(AddRecordEvent.ImageToRecords(it))
+            onEvent(AddRecordEvent.ImageToRecords(it))
         },
         detectedText = {
-            viewModel.onEvent(
+            onEvent(
                 AddRecordEvent.RecordNotes(
                     it
                 )
@@ -176,26 +179,26 @@ fun BulkAddScreen(
             },
             isLeading = isLeading,
             recordType = state.recordType,
-            walletState = accountState,
+            walletState = walletState,
             categoryState = categoryState,
-            onEventAccount = walletViewModel::onEvent,
-            onEventCategory = categoryViewModel::onEvent,
+            onEventAccount = walletEvent,
+            onEventCategory = categoryEvent,
             onSelectFromAccount = {
-                viewModel.onEvent(
+                onEvent(
                     AddRecordEvent.AccountIdFromFk(
                         it
                     )
                 )
             },
             onSelectToAccount = {
-                viewModel.onEvent(
+                onEvent(
                     AddRecordEvent.AccountIdToFk(
                         it
                     )
                 )
             },
             onSelectCategory = {
-                viewModel.onEvent(
+                onEvent(
                     AddRecordEvent.CategoryIdFk(
                         it
                     )
@@ -204,12 +207,12 @@ fun BulkAddScreen(
         )
     }
     WalletAddDialog(
-        state = accountState,
-        onEvent = walletViewModel::onEvent
+        state = walletState,
+        onEvent = walletEvent
     )
     CategoryAddDialog(
         state = categoryState,
-        onEvent = categoryViewModel::onEvent
+        onEvent = categoryEvent
     )
 
     Column(
@@ -220,7 +223,7 @@ fun BulkAddScreen(
         AddConfirmationRow(
             onCancelClick = { navigateUp() },
             onSaveClick = {
-                viewModel.onEvent(
+                onEvent(
                     AddRecordEvent.SaveRecord {
                         walletViewModel.onEvent(
                             WalletEvent.UpdateWalletBalance(
@@ -235,7 +238,7 @@ fun BulkAddScreen(
         AddTextBox(
             value = state.recordNotes,
             onValueChanged = {
-                viewModel.onEvent(
+                onEvent(
                     AddRecordEvent.RecordNotes(
                         it
                     )
@@ -279,7 +282,7 @@ fun BulkAddScreen(
                             1f
                         ),
                     records = state.records,
-                    onItemClick = {}
+                    onItemClick = {onEvent(AddRecordEvent.UpdateRecord(it))}
                 )
             } else {
                 Icon(
@@ -296,7 +299,6 @@ fun BulkAddScreen(
                 )
             }
         }
-
         DateAndTimePicker(
             applicationContext = context,
             state = state,

@@ -5,6 +5,7 @@ import android.net.Uri
 import com.fredy.mysavings.Feature.Domain.Model.Wallet
 import com.fredy.mysavings.Feature.Domain.Model.Category
 import com.fredy.mysavings.Feature.Data.Enum.RecordType
+import com.fredy.mysavings.Feature.Domain.Model.Record
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -24,4 +25,5 @@ sealed interface AddRecordEvent {
 
     //special Bulk
     data class ImageToRecords (val imageUri: Uri):AddRecordEvent
+    data class UpdateRecord(val record: Record): AddRecordEvent
 }

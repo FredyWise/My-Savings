@@ -26,5 +26,6 @@ data class AddRecordState(
     val isShowWarning: Boolean = false,
     val isAgreeToConvert: Boolean = false,
     //special Bulk
-    val records: List<Record>? = emptyList()
+    val records: List<Record>? = emptyList(),
+    val record: Record? = null
 )

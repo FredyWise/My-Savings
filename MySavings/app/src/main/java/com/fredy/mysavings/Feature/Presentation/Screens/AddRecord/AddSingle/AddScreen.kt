@@ -69,11 +69,14 @@ fun AddScreen(
     categoryViewModel: CategoryViewModel,
     walletViewModel: WalletViewModel
 ) {
+    val context = LocalContext.current
     val state = viewModel.state
     val resource by viewModel.resource.collectAsStateWithLifecycle()
-    val context = LocalContext.current
+    val onEvent = viewModel::onEvent
     val categoryState by categoryViewModel.state.collectAsStateWithLifecycle()
-    val accountState by walletViewModel.state.collectAsStateWithLifecycle()
+    val categoryEvent = categoryViewModel::onEvent
+    val walletState by walletViewModel.state.collectAsStateWithLifecycle()
+    val walletEvent = walletViewModel::onEvent
     val calculatorState = viewModel.calcState
     val scope = rememberCoroutineScope()
     var isLeading by remember {
@@ -138,7 +141,7 @@ fun AddScreen(
         onDismissRequest = { isChoosingLauncher = false },
         onCapturingImageUri = { capturedImageUri = it },
         detectedText = {
-            viewModel.onEvent(
+            onEvent(
                 AddRecordEvent.RecordNotes(
                     it
                 )
@@ -174,9 +177,9 @@ fun AddScreen(
     }
     SimpleWarningDialog(
         isShowWarning = state.isShowWarning,
-        onDismissRequest = { viewModel.onEvent(AddRecordEvent.DismissWarning) },
+        onDismissRequest = { onEvent(AddRecordEvent.DismissWarning) },
         onSaveClicked = {
-            viewModel.onEvent(AddRecordEvent.ConvertCurrency)
+            onEvent(AddRecordEvent.ConvertCurrency)
         },
         warningText = resource.message.toString()
     )
@@ -195,26 +198,26 @@ fun AddScreen(
             },
             isLeading = isLeading,
             recordType = state.recordType,
-            walletState = accountState,
+            walletState = walletState,
             categoryState = categoryState,
-            onEventAccount = walletViewModel::onEvent,
-            onEventCategory = categoryViewModel::onEvent,
+            onEventAccount = walletEvent,
+            onEventCategory = categoryEvent,
             onSelectFromAccount = {
-                viewModel.onEvent(
+                onEvent(
                     AddRecordEvent.AccountIdFromFk(
                         it
                     )
                 )
             },
             onSelectToAccount = {
-                viewModel.onEvent(
+                onEvent(
                     AddRecordEvent.AccountIdToFk(
                         it
                     )
                 )
             },
             onSelectCategory = {
-                viewModel.onEvent(
+                onEvent(
                     AddRecordEvent.CategoryIdFk(
                         it
                     )
@@ -223,8 +226,8 @@ fun AddScreen(
         )
     }
     WalletAddDialog(
-        state = accountState,
-        onEvent = walletViewModel::onEvent
+        state = walletState,
+        onEvent = walletEvent
     )
 
     if (categoryState.isAddingCategory) {
@@ -237,7 +240,7 @@ fun AddScreen(
         }
         CategoryAddDialog(
             state = categoryState,
-            onEvent = categoryViewModel::onEvent
+            onEvent = categoryEvent
         )
     }
     Column(
@@ -246,7 +249,7 @@ fun AddScreen(
         AddConfirmationRow(
             onCancelClick = { navigateUp() },
             onSaveClick = {
-                viewModel.onEvent(
+                onEvent(
                     AddRecordEvent.SaveRecord {
                         walletViewModel.onEvent(
                             WalletEvent.UpdateWalletBalance(
@@ -271,7 +274,7 @@ fun AddScreen(
         AddTextBox(
             value = state.recordNotes,
             onValueChanged = {
-                viewModel.onEvent(
+                onEvent(
                     AddRecordEvent.RecordNotes(
                         it
                     )
@@ -297,7 +300,7 @@ fun AddScreen(
                 ActionWithName(
                     name = RecordType.Expense.name,
                     action = {
-                        viewModel.onEvent(
+                        onEvent(
                             AddRecordEvent.RecordTypes(
                                 RecordType.Expense
                             )
@@ -306,7 +309,7 @@ fun AddScreen(
                 ), ActionWithName(
                     name = RecordType.Income.name,
                     action = {
-                        viewModel.onEvent(
+                        onEvent(
                             AddRecordEvent.RecordTypes(
                                 RecordType.Income
                             )
@@ -315,7 +318,7 @@ fun AddScreen(
                 ), ActionWithName(
                     name = RecordType.Transfer.name,
                     action = {
-                        viewModel.onEvent(
+                        onEvent(
                             AddRecordEvent.RecordTypes(
                                 RecordType.Transfer
                             )

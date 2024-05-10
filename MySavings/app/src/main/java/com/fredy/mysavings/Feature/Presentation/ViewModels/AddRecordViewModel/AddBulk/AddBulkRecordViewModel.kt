@@ -158,6 +158,12 @@ class AddBulkRecordViewModel @Inject constructor(
                     )
                 }
 
+                is AddRecordEvent.UpdateRecord -> {
+                    state = state.copy(
+                        record = event.record
+                    )
+                }
+
                 else -> {}
             }
         }
