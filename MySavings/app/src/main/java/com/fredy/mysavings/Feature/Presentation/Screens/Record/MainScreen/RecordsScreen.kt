@@ -71,8 +71,6 @@ fun RecordsScreen(
                 )
             }
         }
-
-
     }
 }
 

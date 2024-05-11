@@ -154,7 +154,7 @@ fun AnalysisOverview(
                                         )
                                     )
                                     Text(
-                                        text = categoryWithAmount.category.categoryName + " - " + categoryWithAmount.currency,
+                                        text = categoryWithAmount.category.categoryName + " | " + categoryWithAmount.currency,
                                         style = MaterialTheme.typography.titleSmall.copy(
                                             fontWeight = FontWeight.SemiBold
                                         ),

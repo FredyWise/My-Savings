@@ -19,8 +19,10 @@ import com.fredy.mysavings.Feature.Presentation.Screens.Wallet.WalletsScreen
 import com.fredy.mysavings.Feature.Presentation.Screens.Record.Analysis.AnalysisScreen
 import com.fredy.mysavings.Feature.Presentation.Screens.Category.CategoriesScreen
 import com.fredy.mysavings.Feature.Presentation.Screens.Record.MainScreen.RecordsScreen
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @Composable
 fun HomeNavGraph(
     rootNavController: NavHostController,
@@ -89,14 +91,11 @@ fun HomeNavGraph(
             },
         ) {
             val state by walletViewModel.state.collectAsStateWithLifecycle()
-//            val recordState by recordViewModel.state.collectAsStateWithLifecycle()
-
             WalletsScreen(
                 modifier = Modifier.padding(8.dp),
                 rootNavController = rootNavController,
                 state = state,
                 onEvent = walletViewModel::onEvent,
-//                recordState = recordState,
                 recordEvent = recordViewModel::onEvent,
             )
         }
@@ -110,14 +109,11 @@ fun HomeNavGraph(
             },
         ) {
             val state by categoryViewModel.state.collectAsStateWithLifecycle()
-//            val recordState by recordViewModel.state.collectAsStateWithLifecycle()
-
             CategoriesScreen(
                 modifier = Modifier.padding(8.dp),
                 rootNavController = rootNavController,
                 state = state,
                 onEvent = categoryViewModel::onEvent,
-//                recordState = recordState,
                 recordEvent = recordViewModel::onEvent,
             )
         }

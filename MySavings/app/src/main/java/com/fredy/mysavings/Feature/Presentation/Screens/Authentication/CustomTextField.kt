@@ -50,7 +50,7 @@ fun CustomTextField(
 //            disabledLabelColor = MaterialTheme.colorScheme.onSecondary.copy(
 //                0.7f
 //            ),
-//            focusedPlaceholderColor = MaterialTheme.colorScheme.onBackground,
+            focusedPlaceholderColor = MaterialTheme.colorScheme.onBackground,
 
             ),
         label = {
@@ -64,7 +64,7 @@ fun CustomTextField(
         placeholder = {
             Text(
                 text = placeholder,
-                color = MaterialTheme.colorScheme.onSecondary
+                color = MaterialTheme.colorScheme.onBackground
             )
         },
         textStyle = MaterialTheme.typography.titleLarge,
