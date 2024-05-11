@@ -9,6 +9,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -64,13 +65,6 @@ fun RecordList(
                     .fillMaxSize()
             ) {
                 items(records) { item ->
-                    Divider(
-                        modifier = Modifier.height(0.3.dp),
-                        color = onBackgroundColor.copy(
-                            alpha = 0.4f
-                        )
-                    )
-
                     SimpleEntityItem(
                         modifier = modifier
                             .background(
@@ -78,7 +72,8 @@ fun RecordList(
                             )
                             .clickable {
                                 onItemClick(item)
-                            },
+                            }
+                            .padding(vertical = 6.dp),
                         endContent = {
                             Text(
                                 text = formatBalanceAmount(
@@ -118,12 +113,28 @@ fun RecordList(
                             overflow = TextOverflow.Ellipsis,
                         )
                     }
+                    Divider(
+                        modifier = Modifier.height(0.3.dp),
+                        color = onBackgroundColor.copy(
+                            alpha = 0.4f
+                        )
+                    )
                 }
                 item {
                     val firstRecord = records.first()
-                    val totalAmount = records.sumOf { if (isExpense(it.recordType)) it.recordAmount else 0.0 }
+                    val totalAmount =
+                        records.sumOf { if (isExpense(it.recordType)) it.recordAmount else 0.0 }
+                    Divider(
+                        modifier = Modifier
+                            .height(
+                                2.dp
+                            )
+                            .padding(start = 4.dp),
+                        color = MaterialTheme.colorScheme.primary
+                    )
                     SimpleEntityItem(
                         modifier = modifier
+                            .padding(vertical = 6.dp)
                             .background(
                                 backgroundColor
                             ),
@@ -160,9 +171,9 @@ fun RecordList(
                             overflow = TextOverflow.Ellipsis,
                         )
                     }
-
                 }
             }
+
         } else {
             Box(
                 modifier = Modifier.fillMaxSize(),

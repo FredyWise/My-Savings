@@ -6,14 +6,9 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.fredy.mysavings.Feature.Data.Database.Converter.TimestampConverter
-import com.fredy.mysavings.Feature.Data.Enum.RecordType
-import com.fredy.mysavings.Feature.Data.Enum.RecordType.*
-import com.fredy.mysavings.Feature.Domain.Model.Record
-import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.CurrencyUseCases
-import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.RecordUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.TabScannerUseCase.TabScannerUseCases
 import com.fredy.mysavings.Feature.Domain.Util.Resource
+import com.fredy.mysavings.Feature.Presentation.Util.isExpense
 import com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel.AddRecordEvent
 import com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel.AddRecordState
 import com.fredy.mysavings.Util.Log
@@ -33,39 +28,13 @@ class AddBulkRecordViewModel @Inject constructor(
 ) : ViewModel() {
     var state by mutableStateOf(AddRecordState())
 
-    val resource = MutableStateFlow<Resource<String>>(
+    val resource = MutableStateFlow<Resource<AddRecordState>>(
         Resource.Loading()
     )
 
     init {
         viewModelScope.launch {
             savedStateHandle.get<String>("bookId")?.let { bookId ->
-//                savedStateHandle.get<String>("recordId")?.let { recordId ->
-//                    if (recordId != "-1") {
-//                        recordUseCases.getRecordById(
-//                            recordId
-//                        ).collectLatest {
-//                            state = state.copy(
-//                                fromWallet = it.fromWallet,
-//                                toWallet = it.toWallet,
-//                                toCategory = it.toCategory,
-//                                recordId = it.record.recordId,
-//                                walletIdFromFk = it.record.walletIdFromFk,
-//                                walletIdToFk = it.record.walletIdToFk,
-//                                categoryIdFk = it.record.categoryIdFk,
-//                                recordDate = it.record.recordDateTime.toLocalDate(),
-//                                recordTime = it.record.recordDateTime.toLocalTime(),
-//                                recordAmount = it.record.recordAmount,
-//                                recordCurrency = it.record.recordCurrency,
-//                                recordType = it.record.recordType,
-//                                recordNotes = it.record.recordNotes,
-//                            )
-//                            calcState = calcState.copy(
-//                                number1 = it.record.recordAmount.absoluteValue.toString()
-//                            )
-//                        }
-//                    }
-//                }
                 state = state.copy(bookIdFk = bookId)
             }
         }
@@ -75,25 +44,16 @@ class AddBulkRecordViewModel @Inject constructor(
         viewModelScope.launch {
             when (event) {
                 is AddRecordEvent.SaveRecord -> {
-                    Log.e("babi: start")
-                    resource.update {
-                        Resource.Loading()
-                    }
-                    val records = state.records?.map {
-                        Log.e("babi: $it")
-                        it.fillRequiredInformation() ?: return@launch
-                    }
-                    Log.e("babi: $records")
-
-                    records?.let {
-                        tabScannerUseCases.upsertRecords(records)
-
-                        resource.update {
-                            Resource.Success("Record Data Successfully Added")
+                    viewModelScope.launch {
+                        tabScannerUseCases.upsertRecords(state).collect { result ->
+                            Log.i(result.message + "\n" + result.data)
+                            resource.update { result }
+                            if (result is Resource.Success) {
+                                state = result.data!!
+                                event.sideEffect()
+                                state = AddRecordState()
+                            }
                         }
-
-                        state = AddRecordState()
-                        event.sideEffect()
                     }
                 }
 
@@ -113,10 +73,17 @@ class AddBulkRecordViewModel @Inject constructor(
                 }
 
                 is AddRecordEvent.CategoryIdFk -> {
-                    state = state.copy(
-                        categoryIdFk = event.toCategory.categoryId,
-                        toCategory = event.toCategory
-                    )
+                    state = if (isExpense(event.toCategory.categoryType)) {
+                        state.copy(
+                            categoryIdFk = event.toCategory.categoryId,
+                            toCategory = event.toCategory
+                        )
+                    } else {
+                        state.copy(
+                            categoryIncomeIdFk = event.toCategory.categoryId,
+                            toIncomeCategory = event.toCategory
+                        )
+                    }
                 }
 
                 is AddRecordEvent.RecordDate -> {
@@ -142,7 +109,8 @@ class AddBulkRecordViewModel @Inject constructor(
                     state = state.copy(records = records)
                     val firstRecordDateTime = records?.firstOrNull()?.recordDateTime
                     firstRecordDateTime?.let {
-                        state = state.copy(recordDate = it.toLocalDate(), recordTime = it.toLocalTime())
+                        state =
+                            state.copy(recordDate = it.toLocalDate(), recordTime = it.toLocalTime())
                     }
                 }
 
@@ -159,77 +127,34 @@ class AddBulkRecordViewModel @Inject constructor(
                 }
 
                 is AddRecordEvent.UpdateRecord -> {
+                    if (event.save) {
+                        val records = state.records
+                        records?.let {
+                            state = state.copy(
+                                records = records.map { record ->
+                                    if (record.recordId == event.record.recordId) {
+                                        event.record
+                                    } else {
+                                        record
+                                    }
+                                },
+                            )
+                            onEvent(AddRecordEvent.CloseUpdateRecordDialog)
+                        }
+                    }
                     state = state.copy(
                         record = event.record
                     )
+                }
+
+                AddRecordEvent.CloseUpdateRecordDialog -> {
+                    state = state.copy(record = null)
                 }
 
                 else -> {}
             }
         }
     }
-
-    private fun Record.fillRequiredInformation(): Record? {
-        val recordId= state.recordId
-        val walletIdFromFk = state.walletIdFromFk
-        val walletIdToFk = walletIdFromFk
-        val categoryIdToFk = state.categoryIdFk
-        val bookIdFk = state.bookIdFk
-        val recordDateTime = state.recordDate.atTime(
-            state.recordTime.withNano(
-                (state.recordTime.nano.div(1000000)).times(1000000)
-            )
-        )
-        var calculationResult = recordAmount
-        val recordCurrency = state.recordCurrency
-        val recordType = recordType
-
-        if (recordDateTime == null || calculationResult == 0.0 || recordCurrency.isBlank() || walletIdFromFk == null || walletIdToFk == null || categoryIdToFk == null) {
-            resource.update {
-                Resource.Error(
-                    "Please fill all required information"
-                )
-            }
-            return null
-        }
-
-        when (recordType) {
-            Income -> {
-                state.fromWallet.walletAmount += calculationResult
-            }
-
-            Expense -> {
-                if (state.fromWallet.walletAmount < calculationResult) {
-                    resource.update {
-                        Resource.Error(
-                            "Account balance is not enough"
-                        )
-                    }
-                    return null
-                }
-                state.fromWallet.walletAmount -= calculationResult
-                calculationResult = -calculationResult
-            }
-
-            Transfer -> {}
-        }
-
-
-
-        return this.copy(
-            recordId = recordId,
-            walletIdFromFk = walletIdFromFk,
-            walletIdToFk = walletIdToFk,
-            categoryIdFk = categoryIdToFk,
-            bookIdFk = bookIdFk,
-            recordTimestamp = TimestampConverter.fromDateTime(recordDateTime),
-            recordAmount = calculationResult,
-            recordCurrency = recordCurrency,
-            recordType = recordType,
-            recordNotes = recordNotes,
-        )
-    }
-
 }
 
 

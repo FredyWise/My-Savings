@@ -38,7 +38,6 @@ import com.fredy.mysavings.Feature.Domain.Util.Resource
 import com.fredy.mysavings.Feature.Presentation.Screens.AddRecord.AddBottomSheet
 import com.fredy.mysavings.Feature.Presentation.Screens.AddRecord.AddConfirmationRow
 import com.fredy.mysavings.Feature.Presentation.Screens.AddRecord.AddTextBox
-import com.fredy.mysavings.Feature.Presentation.Screens.AddRecord.ChooseAccountAndCategory
 import com.fredy.mysavings.Feature.Presentation.Screens.AddRecord.DateAndTimePicker
 import com.fredy.mysavings.Feature.Presentation.Screens.AddRecord.LauncherChooserDialog
 import com.fredy.mysavings.Feature.Presentation.Screens.Category.CategoryAddDialog
@@ -169,7 +168,7 @@ fun AddScreen(
             is Resource.Success -> {
                 Toast.makeText(
                     context,
-                    resource.data,
+                    "Record Data Successfully Added",
                     Toast.LENGTH_LONG
                 ).show()
             }

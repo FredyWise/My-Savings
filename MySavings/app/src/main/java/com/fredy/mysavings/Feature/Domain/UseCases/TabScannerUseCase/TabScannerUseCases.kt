@@ -4,16 +4,22 @@ import android.content.ContentResolver
 import android.content.Context
 import android.net.Uri
 import android.provider.OpenableColumns
-import co.yml.charts.common.extensions.isNotNull
 import com.fredy.mysavings.Feature.Data.APIs.TabScannerModel.Response.ResultResponse
+import com.fredy.mysavings.Feature.Data.Database.Converter.TimestampConverter
+import com.fredy.mysavings.Feature.Data.Enum.RecordType
 import com.fredy.mysavings.Feature.Domain.Model.Record
 import com.fredy.mysavings.Feature.Domain.Repository.RecordRepository
 import com.fredy.mysavings.Feature.Domain.Repository.TabScannerRepository
 import com.fredy.mysavings.Feature.Domain.Repository.UserRepository
 import com.fredy.mysavings.Feature.Domain.Util.Mappers.convertToRecords
+import com.fredy.mysavings.Feature.Domain.Util.Resource
+import com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel.AddRecordState
 import com.fredy.mysavings.Util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -33,7 +39,7 @@ class ProcessImage(
 ) {
     suspend operator fun invoke(
         imageUri: Uri
-    ):List<Record>? {
+    ): List<Record>? {
         return withContext(Dispatchers.IO) {
             Log.i(
                 "processImage: start",
@@ -132,12 +138,87 @@ class ProcessImage(
 class UpsertRecords(
     val userRepository: UserRepository,
     val recordRepository: RecordRepository,
-){
-    suspend operator fun invoke(
-        records: List<Record>
-    ) {
-        val currentUserId = userRepository.getCurrentUser()!!.firebaseUserId
-        recordRepository.upsertAllRecordItems(records.map { it.copy(userIdFk = currentUserId) })
-    }
+) {
+    operator fun invoke(
+        state: AddRecordState,
+    ): Flow<Resource<AddRecordState>> {
+        return flow {
+            Log.i("UpsertRecords: start")
+            emit(Resource.Loading())
+            val currentUserId = userRepository.getCurrentUser()!!.firebaseUserId
 
+            if (state.records.isNullOrEmpty()) {
+                throw Exception("Records is Empty")
+            }
+            val records = state.records.map {
+                val recordId = state.recordId
+                val walletIdFromFk = state.walletIdFromFk
+                val walletIdToFk = walletIdFromFk
+                val categoryExpenseIdToFk = state.categoryIdFk
+                val categoryIncomeIdToFk = state.categoryIncomeIdFk
+                var categoryIdFk = categoryExpenseIdToFk
+                val bookIdFk = state.bookIdFk
+                val recordDateTime = state.recordDate.atTime(
+                    state.recordTime.withNano(
+                        (state.recordTime.nano.div(1000000)).times(1000000)
+                    )
+                )
+                var calculationResult = it.recordAmount
+                val recordCurrency = state.recordCurrency
+                val recordType = it.recordType
+
+                if (recordDateTime == null || calculationResult == 0.0 || recordCurrency.isBlank() || walletIdFromFk == null || walletIdToFk == null || categoryExpenseIdToFk == null || categoryIncomeIdToFk == null) {
+                    Log.e(
+                        "UpsertRecords.Error: Please fill all required information"
+                    )
+                    throw Exception("Please fill all required information")
+                } else {
+                    when (recordType) {
+                        RecordType.Income -> {
+                            Log.i("UpsertRecords: income: $it")
+                            state.fromWallet.walletAmount += calculationResult
+                            categoryIdFk = categoryIncomeIdToFk
+                        }
+
+                        RecordType.Expense -> {
+                            Log.i("UpsertRecords: expense: $it")
+                            if (state.fromWallet.walletAmount < calculationResult) {
+                                Log.e(
+                                    "UpsertRecords.Error: Account balance is not enough"
+                                )
+                                throw Exception("Account balance is not enough")
+                            }
+                            state.fromWallet.walletAmount -= calculationResult
+                            calculationResult = -calculationResult
+                            categoryIdFk = categoryExpenseIdToFk
+                        }
+
+                        RecordType.Transfer -> {}
+                    }
+
+                    it.copy(
+                        recordId = recordId,
+                        walletIdFromFk = walletIdFromFk,
+                        walletIdToFk = walletIdToFk,
+                        categoryIdFk = categoryIdFk!!,
+                        bookIdFk = bookIdFk,
+                        recordTimestamp = TimestampConverter.fromDateTime(recordDateTime),
+                        recordAmount = calculationResult,
+                        recordCurrency = recordCurrency,
+                        recordType = recordType,
+                        recordNotes = it.recordNotes,
+                    )
+                }
+            }
+
+            recordRepository.upsertAllRecordItems(records.map { it.copy(userIdFk = currentUserId) })
+            Log.i("UpsertRecords: finish")
+            emit(Resource.Success(state))
+        }.catch { e ->
+            Log.e(
+                "UpsertRecords.Error: $e"
+            )
+            emit(Resource.Error(e.message.toString()))
+        }
+    }
 }

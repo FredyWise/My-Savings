@@ -1,6 +1,5 @@
 package com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel
 
-import android.content.Context
 import android.net.Uri
 import com.fredy.mysavings.Feature.Domain.Model.Wallet
 import com.fredy.mysavings.Feature.Domain.Model.Category
@@ -16,7 +15,7 @@ sealed interface AddRecordEvent {
     data class CategoryIdFk(val toCategory: Category): AddRecordEvent
     data class RecordDate(val date: LocalDate): AddRecordEvent
     data class RecordTime(val time: LocalTime): AddRecordEvent
-    data class RecordAmount(val amount: Double): AddRecordEvent
+    object RecordAmount: AddRecordEvent
     data class RecordCurrency(val currency: String): AddRecordEvent
     data class RecordTypes(val recordType: RecordType): AddRecordEvent
     data class RecordNotes(val notes: String): AddRecordEvent
@@ -25,5 +24,6 @@ sealed interface AddRecordEvent {
 
     //special Bulk
     data class ImageToRecords (val imageUri: Uri):AddRecordEvent
-    data class UpdateRecord(val record: Record): AddRecordEvent
+    data class UpdateRecord(val record: Record, val save:Boolean = false): AddRecordEvent
+    object CloseUpdateRecordDialog: AddRecordEvent
 }

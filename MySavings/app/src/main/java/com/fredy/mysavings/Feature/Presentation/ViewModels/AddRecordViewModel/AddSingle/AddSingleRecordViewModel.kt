@@ -16,6 +16,7 @@ import com.fredy.mysavings.Feature.Presentation.Util.DefaultData.transferCategor
 import com.fredy.mysavings.Feature.Presentation.Util.isTransfer
 import com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel.AddRecordEvent
 import com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel.AddRecordState
+import com.fredy.mysavings.Util.Log
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -34,7 +35,7 @@ class AddSingleRecordViewModel @Inject constructor(
     var state by mutableStateOf(AddRecordState())
     var calcState by mutableStateOf(CalcState())
 
-    val resource = MutableStateFlow<Resource<String>>(
+    val resource = MutableStateFlow<Resource<AddRecordState>>(
         Resource.Loading()
     )
 
@@ -76,24 +77,21 @@ class AddSingleRecordViewModel @Inject constructor(
         viewModelScope.launch {
             when (event) {
                 is AddRecordEvent.SaveRecord -> {
-                    resource.update {
-                        Resource.Loading()
+                    viewModelScope.launch {
+                        performCalculation()
+                        recordUseCases.upsertRecordItem(state.copy(recordAmount = calcState.number1.toDouble())).collect { result ->
+                            Log.i(result.message + "\n" + result.data)
+                            resource.update { result }
+                            if (result is Resource.Success) {
+                                state = result.data!!
+                                if (state.previousAmount != 0.0 && !state.isAgreeToConvert){
+                                    return@collect
+                                }
+                                event.sideEffect()
+                                state = AddRecordState()
+                            }
+                        }
                     }
-
-                    val record = performRecordCalculation()
-                    record?.let {
-                        recordUseCases.upsertRecordItem(
-                            record
-                        )
-
-                    } ?: return@launch
-
-                    resource.update {
-                        Resource.Success("Record Data Successfully Added")
-                    }
-
-                    state = AddRecordState()
-                    event.sideEffect()
                 }
 
                 is AddRecordEvent.AccountIdFromFk -> {
@@ -130,9 +128,9 @@ class AddSingleRecordViewModel @Inject constructor(
                     )
                 }
 
-                is AddRecordEvent.RecordAmount -> {//useless
+                is AddRecordEvent.RecordAmount -> {
                     state = state.copy(
-                        recordAmount = calcState.number1.toDouble()//useless
+                        recordAmount = calcState.number1.toDouble()
                     )
                 }
 
@@ -183,131 +181,6 @@ class AddSingleRecordViewModel @Inject constructor(
         }
     }
 
-    private fun performRecordCalculation(): Record? {
-        performCalculation()
-        val recordId = state.recordId
-        val accountIdFromFk = state.walletIdFromFk
-        var accountIdToFk = state.walletIdToFk
-        var categoryIdToFk = state.categoryIdFk
-        val bookIdFk = state.bookIdFk
-        val recordDateTime = state.recordDate.atTime(
-            state.recordTime.withNano(
-                (state.recordTime.nano.div(1000000)).times(1000000)
-            )
-        )
-        var calculationResult = calcState.number1.toDouble().absoluteValue
-        val recordCurrency = state.recordCurrency
-        val fromAccountCurrency = state.fromWallet.walletCurrency
-        val toAccountCurrency = state.toWallet.walletCurrency
-        val recordType = state.recordType
-        val recordNotes = state.recordNotes
-        val previousAmount = state.previousAmount.absoluteValue
-        var difference = 0.0
-
-        if (recordId == "") {
-            difference = calculationResult
-        } else {
-            difference = state.recordAmount.absoluteValue
-            difference -= calculationResult
-            difference = -difference
-        }
-
-        if (isTransfer(recordType)) {
-            categoryIdToFk = transferCategory.categoryId
-        } else {
-            accountIdToFk = accountIdFromFk
-        }
-
-        if (recordDateTime == null || calculationResult == 0.0 || recordCurrency.isBlank() || accountIdFromFk == null || accountIdToFk == null || categoryIdToFk == null) {
-            resource.update {
-                Resource.Error(
-                    "Please fill all required information"
-                )
-            }
-            return null
-        }
-
-        when (recordType) {
-            RecordType.Income -> {
-                state.fromWallet.walletAmount += difference
-            }
-
-            RecordType.Expense -> {
-                if (state.fromWallet.walletAmount < difference) {
-                    resource.update {
-                        Resource.Error(
-                            "Account balance is not enough"
-                        )
-                    }
-                    return null
-                }
-                state.fromWallet.walletAmount -= difference
-                calculationResult = -calculationResult
-            }
-
-            RecordType.Transfer -> {
-                if (state.fromWallet == state.toWallet) {
-                    resource.update {
-                        Resource.Error(
-                            "You Can't transfer into the same account"
-                        )
-                    }
-                    return null
-                }
-
-                if (fromAccountCurrency == toAccountCurrency) {
-                    if ((state.fromWallet.walletAmount < difference)) {
-                        resource.update {
-                            Resource.Error(
-                                "Account balance is not enough"
-                            )
-                        }
-                        return null
-                    }
-                    state.fromWallet.walletAmount -= difference
-                    state.toWallet.walletAmount += difference
-                } else {
-                    if (!state.isAgreeToConvert) {
-                        if (state.fromWallet.walletAmount < difference) {
-                            resource.update {
-                                Resource.Error(
-                                    "Account balance is not enough"
-                                )
-                            }
-                            return null
-                        }
-                        resource.update {
-                            Resource.Error(
-                                "Account Currencies Are not The same!!!, " + "Are you sure want to Transfer from $fromAccountCurrency Currency to ${toAccountCurrency} Currency? \n(Result Will be Converted)"
-                            )
-                        }
-                        state = state.copy(
-                            isShowWarning = true,
-                            previousAmount = calculationResult
-                        )
-                        return null
-                    }
-                    state.fromWallet.walletAmount -= previousAmount
-                    state.toWallet.walletAmount += difference
-                }
-            }
-        }
-
-
-
-        return Record(
-            recordId = recordId,
-            accountIdFromFk = accountIdFromFk,
-            accountIdToFk = accountIdToFk,
-            categoryIdFk = categoryIdToFk,
-            bookId = bookIdFk,
-            recordDateTime = recordDateTime,
-            recordAmount = calculationResult,
-            recordCurrency = recordCurrency,
-            recordType = recordType,
-            recordNotes = recordNotes,
-        )
-    }
 
     fun onAction(event: CalcEvent) {
         when (event) {

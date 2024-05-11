@@ -1,6 +1,10 @@
 package com.fredy.mysavings.Feature.Presentation.NavigationComponent
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -30,24 +34,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.fredy.mysavings.Feature.Domain.Model.UserData
-import com.fredy.mysavings.Feature.Presentation.Util.formatRangeOfDate
-import com.fredy.mysavings.Feature.Presentation.ViewModels.WalletViewModel.WalletViewModel
-import com.fredy.mysavings.Feature.Presentation.ViewModels.BookViewModel.BookViewModel
-import com.fredy.mysavings.Feature.Presentation.ViewModels.CategoryViewModel.CategoryViewModel
-import com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel.RecordEvent
-import com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel.RecordViewModel
 import com.fredy.mysavings.Feature.Presentation.NavigationComponent.Navigation.HomeNavGraph
 import com.fredy.mysavings.Feature.Presentation.NavigationComponent.Navigation.NavigationRoute
 import com.fredy.mysavings.Feature.Presentation.NavigationComponent.Navigation.bottomBarScreens
@@ -55,6 +53,12 @@ import com.fredy.mysavings.Feature.Presentation.NavigationComponent.Navigation.d
 import com.fredy.mysavings.Feature.Presentation.NavigationComponent.Navigation.navigateSingleTopTo
 import com.fredy.mysavings.Feature.Presentation.Screens.Record.MainScreen.RecordDialog
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SimpleWarningDialog
+import com.fredy.mysavings.Feature.Presentation.Util.formatRangeOfDate
+import com.fredy.mysavings.Feature.Presentation.ViewModels.BookViewModel.BookViewModel
+import com.fredy.mysavings.Feature.Presentation.ViewModels.CategoryViewModel.CategoryViewModel
+import com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel.RecordEvent
+import com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel.RecordViewModel
+import com.fredy.mysavings.Feature.Presentation.ViewModels.WalletViewModel.WalletViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 
@@ -80,17 +84,16 @@ fun MainScreen(
     val scaffoldState = rememberScaffoldState()
 //    var offsetX by remember { mutableStateOf(0f) }
 //    var offsetY by remember { mutableStateOf(0f) }
-//    var isFabVisible by remember {
-//        mutableStateOf(
-//            true
-//        )
-//    }
-
-//    var isShowingAdd by remember {
-//        mutableStateOf(
-//            false
-//        )
-//    }
+    var isFabVisible by remember {
+        mutableStateOf(
+            true
+        )
+    }
+    var isShowingAdd by remember {
+        mutableStateOf(
+            false
+        )
+    }
     val scope = rememberCoroutineScope()
     val currentBackStack by navController.currentBackStackEntryAsState()
     val currentDestination = currentBackStack?.destination
@@ -194,103 +197,103 @@ fun MainScreen(
             )
         },
         floatingActionButton = {
-//            AnimatedVisibility(visible = isFabVisible) {
-//            Column(
-//                horizontalAlignment = Alignment.CenterHorizontally,
-//            ) {
-//                AnimatedVisibility(
-//                    visible = isShowingAdd,
-//                    enter = fadeIn(animationSpec = tween(300)),
-//                    exit = fadeOut(animationSpec = tween(300)),
-//                ) {
-//                    Column(
-//                        horizontalAlignment = Alignment.CenterHorizontally,
-//                    ) {
-            FloatingActionButton(
-                onClick = {
-                    rootNavController.navigate(
-                        "${NavigationRoute.Add.route}?bookId=${state.filterState.currentBook?.bookId}"
-                    )
-                },
-                backgroundColor = contentColor,
-                modifier = Modifier.border(
-                    1.dp,
-                    MaterialTheme.colorScheme.secondary.copy(
-                        0.3f
-                    ),
-                    CircleShape
-                ),
-            ) {
-                Icon(
-//                                NavigationRoute.Add.icon,
-                    Icons.Default.Add,
-                    modifier = Modifier.size(
-                        30.dp
-                    ),
-                    tint = onContentColor,
-                    contentDescription = ""
-                )
+            AnimatedVisibility(visible = isFabVisible) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    AnimatedVisibility(
+                        visible = isShowingAdd,
+                        enter = fadeIn(animationSpec = tween(300)),
+                        exit = fadeOut(animationSpec = tween(300)),
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                        ) {
+                            FloatingActionButton(
+                                onClick = {
+                                    rootNavController.navigate(
+                                        "${NavigationRoute.Add.route}?bookId=${state.filterState.currentBook?.bookId}"
+                                    )
+                                },
+                                backgroundColor = contentColor,
+                                modifier = Modifier.border(
+                                    1.dp,
+                                    MaterialTheme.colorScheme.secondary.copy(
+                                        0.3f
+                                    ),
+                                    CircleShape
+                                ),
+                            ) {
+                                Icon(
+                                    NavigationRoute.Add.icon,
+//                    Icons.Default.Add,
+                                    modifier = Modifier.size(
+                                        30.dp
+                                    ),
+                                    tint = onContentColor,
+                                    contentDescription = ""
+                                )
+                            }
+                            Spacer(
+                                modifier = Modifier.height(
+                                    8.dp
+                                )
+                            )
+                            FloatingActionButton(
+                                onClick = {
+                                    rootNavController.navigate(
+                                        "${NavigationRoute.BulkAdd.route}?bookId=${state.filterState.currentBook?.bookId}"
+                                    )
+                                },
+                                backgroundColor = contentColor,
+                                modifier = Modifier.border(
+                                    1.dp,
+                                    MaterialTheme.colorScheme.secondary.copy(
+                                        0.3f
+                                    ),
+                                    CircleShape
+                                ),
+                            ) {
+                                Icon(
+                                    NavigationRoute.BulkAdd.icon,
+                                    modifier = Modifier.size(
+                                        30.dp
+                                    ),
+                                    tint = onContentColor,
+                                    contentDescription = ""
+                                )
+                            }
+                            Spacer(
+                                modifier = Modifier.height(
+                                    8.dp
+                                )
+                            )
+                        }
+                    }
+                    FloatingActionButton(
+                        onClick = {
+                            isShowingAdd = !isShowingAdd
+                        },
+                        backgroundColor = contentColor,
+                        modifier = Modifier.border(
+                            1.dp,
+                            MaterialTheme.colorScheme.secondary.copy(
+                                0.3f
+                            ),
+                            CircleShape
+                        ),
+                    ) {
+                        Icon(
+                            Icons.Default.Add,
+                            modifier = Modifier.size(
+                                35.dp
+                            ),
+                            tint = onContentColor,
+                            contentDescription = ""
+                        )
+                    }
+                }
             }
-//                        Spacer(
-//                            modifier = Modifier.height(
-//                                8.dp
-//                            )
-//                        )
-//                        FloatingActionButton(
-//                            onClick = {
-//                                rootNavController.navigate(
-//                                    NavigationRoute.BulkAdd.route
-//                                )
-//                            },
-//                            backgroundColor = contentColor,
-//                            modifier = Modifier.border(
-//                                1.dp,
-//                                MaterialTheme.colorScheme.secondary.copy(
-//                                    0.3f
-//                                ),
-//                                CircleShape
-//                            ),
-//                        ) {
-//                            Icon(
-//                                NavigationRoute.BulkAdd.icon,
-//                                modifier = Modifier.size(
-//                                    30.dp
-//                                ),
-//                                tint = onContentColor,
-//                                contentDescription = ""
-//                            )
-//                        }
-//                        Spacer(
-//                            modifier = Modifier.height(
-//                                8.dp
-//                            )
-//                        )
-//                    }
-//                }
-//                FloatingActionButton(
-//                    onClick = {
-//                        isShowingAdd = !isShowingAdd
-//                    },
-//                    backgroundColor = contentColor,
-//                    modifier = Modifier.border(
-//                        1.dp,
-//                        MaterialTheme.colorScheme.secondary.copy(
-//                            0.3f
-//                        ),
-//                        CircleShape
-//                    ),
-//                ) {
-//                    Icon(
-//                        Icons.Default.Add,
-//                        modifier = Modifier.size(
-//                            35.dp
-//                        ),
-//                        tint = onContentColor,
-//                        contentDescription = ""
-//                    )
-//                }
-//            }
-//            }
         },
 
         ) { innerPadding ->

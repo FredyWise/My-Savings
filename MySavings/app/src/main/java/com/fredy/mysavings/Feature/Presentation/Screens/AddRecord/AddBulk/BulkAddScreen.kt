@@ -34,21 +34,21 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.rememberAsyncImagePainter
+import com.fredy.mysavings.Feature.Data.Enum.RecordType
 import com.fredy.mysavings.Feature.Domain.Util.Resource
 import com.fredy.mysavings.Feature.Presentation.Screens.AddRecord.AddBottomSheet
+import com.fredy.mysavings.Feature.Presentation.Screens.AddRecord.AddBulk.ChooseAccountAndMultiCategory
 import com.fredy.mysavings.Feature.Presentation.Screens.AddRecord.AddBulk.RecordList
+import com.fredy.mysavings.Feature.Presentation.Screens.AddRecord.AddBulk.RecordUpdateDialog
 import com.fredy.mysavings.Feature.Presentation.Screens.AddRecord.AddConfirmationRow
 import com.fredy.mysavings.Feature.Presentation.Screens.AddRecord.AddTextBox
-import com.fredy.mysavings.Feature.Presentation.Screens.AddRecord.ChooseAccountAndCategory
 import com.fredy.mysavings.Feature.Presentation.Screens.AddRecord.DateAndTimePicker
 import com.fredy.mysavings.Feature.Presentation.Screens.AddRecord.LauncherChooserDialog
 import com.fredy.mysavings.Feature.Presentation.Screens.Category.CategoryAddDialog
 import com.fredy.mysavings.Feature.Presentation.Screens.Wallet.WalletAddDialog
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SimpleAlertDialog
-import com.fredy.mysavings.Feature.Presentation.Util.isTransfer
 import com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel.AddBulk.AddBulkRecordViewModel
 import com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel.AddRecordEvent
-import com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel.AddSingle.AddSingleRecordViewModel
 import com.fredy.mysavings.Feature.Presentation.ViewModels.CategoryViewModel.CategoryViewModel
 import com.fredy.mysavings.Feature.Presentation.ViewModels.WalletViewModel.WalletEvent
 import com.fredy.mysavings.Feature.Presentation.ViewModels.WalletViewModel.WalletViewModel
@@ -85,8 +85,11 @@ fun BulkAddScreen(
             Uri.EMPTY
         )
     }
+    var recordType by remember {
+        mutableStateOf(RecordType.Expense)
+    }
     if (isShowImage) {
-        SimpleAlertDialog(title = "CapturedImage", onDismissRequest = { isShowImage = false }) {
+        SimpleAlertDialog(title = "Captured Image", onDismissRequest = { isShowImage = false }) {
             Column {
                 if (capturedImageUri != Uri.EMPTY) {
                     Image(
@@ -96,9 +99,6 @@ fun BulkAddScreen(
                         ),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .weight(
-                                1f
-                            )
                     )
                 } else {
                     Icon(
@@ -107,9 +107,6 @@ fun BulkAddScreen(
                         tint = onBackground,
                         modifier = Modifier
                             .size(100.dp)
-                            .weight(
-                                1f
-                            )
                     )
                 }
             }
@@ -133,6 +130,11 @@ fun BulkAddScreen(
             )
         }
     )
+    RecordUpdateDialog(
+        record = state.record,
+        onDismissRequest = { onEvent(AddRecordEvent.CloseUpdateRecordDialog) },
+        onSaveEffect = { onEvent(AddRecordEvent.UpdateRecord(it, true)) },
+    )
     LaunchedEffect(
         key1 = resource,
     ) {
@@ -154,7 +156,7 @@ fun BulkAddScreen(
             is Resource.Success -> {
                 Toast.makeText(
                     context,
-                    resource.data,
+                    "Record Successfully Added",
                     Toast.LENGTH_LONG
                 ).show()
             }
@@ -178,7 +180,7 @@ fun BulkAddScreen(
                 }
             },
             isLeading = isLeading,
-            recordType = state.recordType,
+            recordType = recordType,
             walletState = walletState,
             categoryState = categoryState,
             onEventAccount = walletEvent,
@@ -250,18 +252,26 @@ fun BulkAddScreen(
             onCameraButtonClick = {
                 isChoosingLauncher = true
             },
-            modifier = Modifier.heightIn(100.dp, 200.dp)
+            modifier = Modifier.heightIn(100.dp, 150.dp)
         )
-        ChooseAccountAndCategory(
+        ChooseAccountAndMultiCategory(
             state = state,
-            onLeftButtonClick = {
+            onTopButtonClick = {
                 isLeading = true
+                scope.launch {
+                    isSheetOpen = true
+                }
+            },
+            onLeftButtonClick = {
+                isLeading = false
+                recordType = RecordType.Expense
                 scope.launch {
                     isSheetOpen = true
                 }
             },
             onRightButtonClick = {
                 isLeading = false
+                recordType = RecordType.Income
                 scope.launch {
                     isSheetOpen = true
                 }
@@ -282,7 +292,7 @@ fun BulkAddScreen(
                             1f
                         ),
                     records = state.records,
-                    onItemClick = {onEvent(AddRecordEvent.UpdateRecord(it))}
+                    onItemClick = { onEvent(AddRecordEvent.UpdateRecord(it)) }
                 )
             } else {
                 Icon(

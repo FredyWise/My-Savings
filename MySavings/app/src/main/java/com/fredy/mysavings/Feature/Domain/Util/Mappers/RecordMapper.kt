@@ -76,7 +76,7 @@ fun ResultResponse.convertToRecords(): List<Record> {
     val recordTimestamp =
         TimestampConverter.fromDateTime(LocalDateTime.parse(this.result.date, formatter))
 
-    this.result.lineItems.forEach { item ->
+    this.result.lineItems.forEachIndexed { index, item ->
         val discount = item.discount.replace(".000", "").replace(",", "").toDoubleOrNull() ?: 0.0
         val recordAmount =
             item.lineTotal.replace(".000", "").replace(",", "").toDoubleOrNull() ?: 0.0
@@ -90,7 +90,7 @@ fun ResultResponse.convertToRecords(): List<Record> {
             """.trimIndent()
 
         val record = Record(
-            recordId = "",
+            recordId = "$index",
             walletIdFromFk = "",
             walletIdToFk = "",
             categoryIdFk = "",
@@ -110,7 +110,7 @@ fun ResultResponse.convertToRecords(): List<Record> {
         val recordAmount =
             item.lineTotal.replace(".000", "").replace(",", "").toDoubleOrNull() ?: 0.0
         val record = Record(
-            recordId = "",
+            recordId = "Discount",
             walletIdFromFk = "",
             walletIdToFk = "",
             categoryIdFk = "",
