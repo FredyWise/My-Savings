@@ -38,8 +38,8 @@ import com.fredy.mysavings.Feature.Data.Enum.RecordType
 import com.fredy.mysavings.Feature.Domain.Util.Resource
 import com.fredy.mysavings.Feature.Presentation.Screens.AddRecord.AddBottomSheet
 import com.fredy.mysavings.Feature.Presentation.Screens.AddRecord.AddBulk.ChooseAccountAndMultiCategory
+import com.fredy.mysavings.Feature.Presentation.Screens.AddRecord.AddBulk.RecordAddDialog
 import com.fredy.mysavings.Feature.Presentation.Screens.AddRecord.AddBulk.RecordList
-import com.fredy.mysavings.Feature.Presentation.Screens.AddRecord.AddBulk.RecordUpdateDialog
 import com.fredy.mysavings.Feature.Presentation.Screens.AddRecord.AddConfirmationRow
 import com.fredy.mysavings.Feature.Presentation.Screens.AddRecord.AddTextBox
 import com.fredy.mysavings.Feature.Presentation.Screens.AddRecord.DateAndTimePicker
@@ -130,23 +130,28 @@ fun BulkAddScreen(
             )
         }
     )
-    RecordUpdateDialog(
+    RecordAddDialog(
         record = state.record,
-        onDismissRequest = { onEvent(AddRecordEvent.CloseUpdateRecordDialog) },
-        onSaveEffect = { onEvent(AddRecordEvent.UpdateRecord(it, true)) },
+        isAdding = state.isAdding,
+        isShowDialog = state.isShowWarning,
+        onDismissRequest = { onEvent(AddRecordEvent.CloseAddRecordItemDialog) },
+        onSave = {
+            onEvent(AddRecordEvent.UpdateRecord(it))
+        },
+        onDelete = {
+            onEvent(AddRecordEvent.DeleteRecord(it))
+        }
     )
     LaunchedEffect(
         key1 = resource,
     ) {
         when (resource) {
             is Resource.Error -> {
-                if (!state.isShowWarning) {
-                    Toast.makeText(
-                        context,
-                        resource.message,
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
+                Toast.makeText(
+                    context,
+                    resource.message,
+                    Toast.LENGTH_LONG
+                ).show()
             }
 
             is Resource.Loading -> {
@@ -292,7 +297,7 @@ fun BulkAddScreen(
                             1f
                         ),
                     records = state.records,
-                    onItemClick = { onEvent(AddRecordEvent.UpdateRecord(it)) }
+                    onItemClick = { onEvent(AddRecordEvent.ShowAddRecordItemDialog(it)) }
                 )
             } else {
                 Icon(

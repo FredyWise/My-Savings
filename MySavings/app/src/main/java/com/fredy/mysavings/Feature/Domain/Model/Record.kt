@@ -4,6 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.fredy.mysavings.Feature.Data.Database.Converter.TimestampConverter
 import com.fredy.mysavings.Feature.Data.Enum.RecordType
+import com.fredy.mysavings.Feature.Presentation.Util.formatDateDay
 import com.google.firebase.Timestamp
 import java.time.LocalDateTime
 
@@ -54,15 +55,19 @@ data class Record(
 
     fun doesMatchSearchQuery(query: String): Boolean {
         val matchingCombinations = listOf(
-            "$recordDateTime",
+            "${formatDateDay(recordDateTime)}",
             "$recordAmount",
             "${recordType.name}",
             "$recordCurrency",
             "$recordNotes",
         )
 
-        return matchingCombinations.any {
-            it.contains(query, ignoreCase = true)
+        val queries = query.split(",", " ")
+
+        return queries.any { singleQuery ->
+            matchingCombinations.any {
+                it.contains(singleQuery.trim(), ignoreCase = true)
+            }
         }
     }
 }

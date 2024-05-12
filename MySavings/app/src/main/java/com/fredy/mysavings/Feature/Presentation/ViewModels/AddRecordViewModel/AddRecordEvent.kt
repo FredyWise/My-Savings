@@ -24,6 +24,8 @@ sealed interface AddRecordEvent {
 
     //special Bulk
     data class ImageToRecords (val imageUri: Uri):AddRecordEvent
-    data class UpdateRecord(val record: Record, val save:Boolean = false): AddRecordEvent
-    object CloseUpdateRecordDialog: AddRecordEvent
+    data class UpdateRecord(val record: Record): AddRecordEvent
+    data class DeleteRecord(val record: Record): AddRecordEvent
+    object CloseAddRecordItemDialog: AddRecordEvent
+    data class ShowAddRecordItemDialog(val record: Record): AddRecordEvent
 }

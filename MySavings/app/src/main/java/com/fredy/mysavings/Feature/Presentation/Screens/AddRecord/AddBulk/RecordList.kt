@@ -65,6 +65,9 @@ fun RecordList(
                     .fillMaxSize()
             ) {
                 items(records) { item ->
+                    val itemDescriptionRegex = "Item Description: (.*?)\\n".toRegex()
+                    val matchResult = itemDescriptionRegex.find(item.recordNotes)
+                    val nameText = matchResult?.groups?.get(1)?.value ?: item.recordNotes
                     SimpleEntityItem(
                         modifier = modifier
                             .background(
@@ -84,9 +87,6 @@ fun RecordList(
                                 fontWeight = FontWeight.Bold,
                                 color = BalanceColor(
                                     amount = item.recordAmount,
-                                    isTransfer = isTransfer(
-                                        item.recordType
-                                    )
                                 ),
                                 modifier = Modifier.padding(
                                     end = 10.dp
@@ -96,13 +96,7 @@ fun RecordList(
                         },
                     ) {
                         Text(
-                            text = if (isTransfer(item.recordType)) {
-                                RecordType.Transfer.name
-                            } else {
-                                val itemDescriptionRegex = "Item Description: (.*?)\\n".toRegex()
-                                val matchResult = itemDescriptionRegex.find(item.recordNotes)
-                                matchResult?.groups?.get(1)?.value ?: item.recordNotes
-                            },
+                            text = nameText,
                             style = MaterialTheme.typography.bodyLarge,
                             fontWeight = FontWeight.Bold,
                             color = onBackgroundColor,
@@ -124,6 +118,28 @@ fun RecordList(
                     val firstRecord = records.first()
                     val totalAmount =
                         records.sumOf { if (isExpense(it.recordType)) it.recordAmount else 0.0 }
+                    SimpleEntityItem(
+                        modifier = modifier
+                            .background(
+                                backgroundColor
+                            )
+                            .clickable {
+                                onItemClick(Record())
+                            }
+                            .padding(vertical = 6.dp),
+                    ) {
+                        Text(
+                            text = "Add New Record (+)",
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontWeight = FontWeight.Bold,
+                            color = onBackgroundColor,
+                            modifier = Modifier.padding(
+                                vertical = 3.dp
+                            ),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    }
                     Divider(
                         modifier = Modifier
                             .height(

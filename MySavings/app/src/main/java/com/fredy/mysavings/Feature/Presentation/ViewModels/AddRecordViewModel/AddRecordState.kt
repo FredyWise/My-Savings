@@ -27,7 +27,8 @@ data class AddRecordState(
     val isAgreeToConvert: Boolean = false,
     //special Bulk
     val records: List<Record>? = emptyList(),
-    val record: Record? = null,
+    val record: Record = Record(),
+    val isAdding: Boolean = false,
     val categoryIncomeIdFk: String? = null,
     val toIncomeCategory: Category = Category(),
 )

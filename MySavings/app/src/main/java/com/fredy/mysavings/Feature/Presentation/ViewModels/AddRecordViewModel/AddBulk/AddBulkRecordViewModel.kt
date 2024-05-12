@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.fredy.mysavings.Feature.Domain.Model.Record
 import com.fredy.mysavings.Feature.Domain.UseCases.TabScannerUseCase.TabScannerUseCases
 import com.fredy.mysavings.Feature.Domain.Util.Resource
 import com.fredy.mysavings.Feature.Presentation.Util.isExpense
@@ -127,28 +128,47 @@ class AddBulkRecordViewModel @Inject constructor(
                 }
 
                 is AddRecordEvent.UpdateRecord -> {
-                    if (event.save) {
-                        val records = state.records
-                        records?.let {
-                            state = state.copy(
-                                records = records.map { record ->
-                                    if (record.recordId == event.record.recordId) {
-                                        event.record
-                                    } else {
-                                        record
-                                    }
-                                },
+                    val records = state.records
+                    records?.let {
+                        state = if (state.isAdding) {
+                            state.copy(
+                                records = records.toMutableList().apply {
+                                    add(event.record)
+                                }.sortedBy { it.recordId }
                             )
-                            onEvent(AddRecordEvent.CloseUpdateRecordDialog)
+                        } else {
+                            state.copy(
+                                records = records.toMutableList().apply {
+                                    removeIf { it.recordId == event.record.recordId }
+                                    add(event.record)
+                                }.sortedBy { it.recordId }
+                            )
                         }
                     }
-                    state = state.copy(
-                        record = event.record
-                    )
                 }
 
-                AddRecordEvent.CloseUpdateRecordDialog -> {
-                    state = state.copy(record = null)
+                is AddRecordEvent.DeleteRecord -> {
+                    val records = state.records
+                    records?.let {
+                        state = state.copy(
+                            records = records.toMutableList().apply {
+                                removeIf { it.recordId == event.record.recordId }
+                            }.sortedBy { it.recordId },
+                            record = Record(),
+                        )
+                    }
+                }
+
+                AddRecordEvent.CloseAddRecordItemDialog -> {
+                    state = state.copy(isShowWarning = false)
+                }
+
+                is AddRecordEvent.ShowAddRecordItemDialog -> {
+                    state = state.copy(
+                        record = event.record,
+                        isAdding = event.record.recordId.isEmpty(),
+                        isShowWarning = true
+                    )
                 }
 
                 else -> {}

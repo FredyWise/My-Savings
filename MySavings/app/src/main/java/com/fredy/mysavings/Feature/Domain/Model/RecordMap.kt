@@ -1,6 +1,5 @@
 package com.fredy.mysavings.Feature.Domain.Model
 
-import com.fredy.mysavings.Feature.Domain.Model.TrueRecord
 import java.time.LocalDate
 
 data class RecordMap(
@@ -8,7 +7,7 @@ data class RecordMap(
     val records: List<TrueRecord>
 ){
     fun doesMatchSearchQuery(query: String): Boolean {
-        return records.any { it.doesMatchSearchQuery(query) }
+        return records.any { it.doesMatchAllSearchQuery(query) }
     }
 
 }

@@ -22,8 +22,12 @@ data class Wallet(
             "$walletCurrency",
         )
 
-        return matchingCombinations.any {
-            it.contains(query, ignoreCase = true)
+        val queries = query.split(",", " ")
+
+        return queries.any { singleQuery ->
+            matchingCombinations.any {
+                it.contains(singleQuery.trim(), ignoreCase = true)
+            }
         }
     }
 }

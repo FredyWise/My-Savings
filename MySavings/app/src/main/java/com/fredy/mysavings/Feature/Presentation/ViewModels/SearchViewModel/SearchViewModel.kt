@@ -35,20 +35,29 @@ class SearchViewModel @Inject constructor(
             )
         }
     }.combine(_trueRecordsResource) { state, trueRecordsResource ->
-        when (trueRecordsResource) {
-            is Resource.Success -> {
-                val searchQuery = state.searchQuery
-                if (searchQuery.isBlank()) {
-                    Resource.Success(trueRecordsResource.data!!.filter { it.recordMaps.isNotEmpty() })
-                } else {
-                    Resource.Success(trueRecordsResource.data!!.filter {
-                        it.doesMatchSearchQuery(searchQuery)
-                    }.filter { it.recordMaps.isNotEmpty() })
-                }
+        if (trueRecordsResource is Resource.Success) {
+            val searchQuery = state.searchQuery
+            if (searchQuery.isBlank()) {
+                Resource.Success(trueRecordsResource.data!!.filter { it.recordMaps.isNotEmpty() })
+            } else {
+                Resource.Success(trueRecordsResource.data!!.filter {
+                    it.doesMatchSearchQuery(searchQuery)
+                }.map { bookMap ->
+                    bookMap.copy(
+                        recordMaps = bookMap.recordMaps.filter {
+                            it.doesMatchSearchQuery(searchQuery)
+                        }.map {
+                            it.copy(
+                                records = it.records.filter { trueRecord ->
+                                    trueRecord.doesMatchSearchQuery(searchQuery)
+                                }
+                            )
+                        }
+                    )
+                }.filter { it.recordMaps.isNotEmpty() })
             }
-
-            is Resource.Error -> Resource.Error(trueRecordsResource.message.toString())
-            is Resource.Loading -> Resource.Loading()
+        } else {
+            trueRecordsResource
         }
     }.onEach {
         _state.update {

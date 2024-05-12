@@ -8,5 +8,4 @@ data class BookMap(
         return book.doesMatchSearchQuery(query) ||
                 recordMaps.any { it.doesMatchSearchQuery(query) }
     }
-
 }
