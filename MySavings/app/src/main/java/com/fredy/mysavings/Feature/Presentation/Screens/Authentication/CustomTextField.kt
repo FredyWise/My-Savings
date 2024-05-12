@@ -56,15 +56,15 @@ fun CustomTextField(
         label = {
             Text(
                 text = label,
-                color = MaterialTheme.colorScheme.onBackground.copy(
-                    0.7f
-                )
+                color = MaterialTheme.colorScheme.onBackground
             )
         },
         placeholder = {
             Text(
                 text = placeholder,
-                color = MaterialTheme.colorScheme.onBackground
+                color = MaterialTheme.colorScheme.onBackground.copy(
+                    0.7f
+                )
             )
         },
         textStyle = MaterialTheme.typography.titleLarge,

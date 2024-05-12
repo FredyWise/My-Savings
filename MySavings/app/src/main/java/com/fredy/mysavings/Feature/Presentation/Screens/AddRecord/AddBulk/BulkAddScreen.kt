@@ -43,6 +43,7 @@ import com.fredy.mysavings.Feature.Presentation.Screens.AddRecord.AddBulk.Record
 import com.fredy.mysavings.Feature.Presentation.Screens.AddRecord.AddConfirmationRow
 import com.fredy.mysavings.Feature.Presentation.Screens.AddRecord.AddTextBox
 import com.fredy.mysavings.Feature.Presentation.Screens.AddRecord.DateAndTimePicker
+import com.fredy.mysavings.Feature.Presentation.Screens.AddRecord.ImageDialog
 import com.fredy.mysavings.Feature.Presentation.Screens.AddRecord.LauncherChooserDialog
 import com.fredy.mysavings.Feature.Presentation.Screens.Category.CategoryAddDialog
 import com.fredy.mysavings.Feature.Presentation.Screens.Wallet.WalletAddDialog
@@ -88,30 +89,11 @@ fun BulkAddScreen(
     var recordType by remember {
         mutableStateOf(RecordType.Expense)
     }
-    if (isShowImage) {
-        SimpleAlertDialog(title = "Captured Image", onDismissRequest = { isShowImage = false }) {
-            Column {
-                if (capturedImageUri != Uri.EMPTY) {
-                    Image(
-                        contentDescription = "Captured Image",
-                        painter = rememberAsyncImagePainter(
-                            capturedImageUri
-                        ),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    )
-                } else {
-                    Icon(
-                        contentDescription = "Captured Image",
-                        imageVector = Icons.Default.AddAPhoto,
-                        tint = onBackground,
-                        modifier = Modifier
-                            .size(100.dp)
-                    )
-                }
-            }
-        }
-    }
+    ImageDialog(
+        isShowImage = isShowImage,
+        capturedImageUri = capturedImageUri,
+        onDismissRequest = { isShowImage = false },
+    )
     var isChoosingLauncher by rememberSaveable {
         mutableStateOf(false)
     }

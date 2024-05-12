@@ -2,17 +2,11 @@ package com.fredy.mysavings.Feature.Presentation.Screens.AddRecord.AddSingle
 
 import android.net.Uri
 import android.widget.Toast
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ImageNotSupported
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -32,17 +26,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil.compose.rememberAsyncImagePainter
 import com.fredy.mysavings.Feature.Data.Enum.RecordType
 import com.fredy.mysavings.Feature.Domain.Util.Resource
 import com.fredy.mysavings.Feature.Presentation.Screens.AddRecord.AddBottomSheet
 import com.fredy.mysavings.Feature.Presentation.Screens.AddRecord.AddConfirmationRow
 import com.fredy.mysavings.Feature.Presentation.Screens.AddRecord.AddTextBox
 import com.fredy.mysavings.Feature.Presentation.Screens.AddRecord.DateAndTimePicker
+import com.fredy.mysavings.Feature.Presentation.Screens.AddRecord.ImageDialog
 import com.fredy.mysavings.Feature.Presentation.Screens.AddRecord.LauncherChooserDialog
 import com.fredy.mysavings.Feature.Presentation.Screens.Category.CategoryAddDialog
 import com.fredy.mysavings.Feature.Presentation.Screens.Wallet.WalletAddDialog
-import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SimpleAlertDialog
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SimpleWarningDialog
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.TypeRadioButton
 import com.fredy.mysavings.Feature.Presentation.Util.ActionWithName
@@ -91,47 +84,11 @@ fun AddScreen(
             Uri.EMPTY
         )
     }
-    if (isShowImage) {
-        SimpleAlertDialog(
-            title = "CapturedImage", onDismissRequest = { isShowImage = false },
-            rightButton = {
-                Button(
-                    modifier = Modifier
-                        .clip(
-                            MaterialTheme.shapes.small
-                        ),
-                    onClick = { isShowImage = false },
-                ) {
-                    Text(
-                        modifier = Modifier.padding(vertical = 6.dp),
-                        style = MaterialTheme.typography.titleMedium,
-                        text = "Close"
-                    )
-                }
-            },
-        ) {
-            Column {
-                if (capturedImageUri != Uri.EMPTY) {
-                    Image(
-                        contentDescription = "Captured Image",
-                        painter = rememberAsyncImagePainter(
-                            capturedImageUri
-                        ),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    )
-                } else {
-                    Icon(
-                        contentDescription = "Captured Image",
-                        imageVector = Icons.Default.ImageNotSupported,
-                        tint = onBackground,
-                        modifier = Modifier
-                            .size(100.dp)
-                    )
-                }
-            }
-        }
-    }
+    ImageDialog(
+        isShowImage = isShowImage,
+        capturedImageUri = capturedImageUri,
+        onDismissRequest = { isShowImage = false },
+    )
     var isChoosingLauncher by rememberSaveable {
         mutableStateOf(false)
     }
