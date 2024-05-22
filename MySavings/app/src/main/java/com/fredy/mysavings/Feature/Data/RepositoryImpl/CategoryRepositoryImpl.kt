@@ -1,7 +1,7 @@
 package com.fredy.mysavings.Feature.Data.RepositoryImpl
 
 import com.fredy.mysavings.Feature.Data.Database.Dao.CategoryDao
-import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.CategoryDataSource
+import com.fredy.mysavings.Feature.Data.Database.FirestoreDataSource.CategoryDataSource
 import com.fredy.mysavings.Feature.Domain.Model.Category
 import com.fredy.mysavings.Feature.Domain.Repository.CategoryRepository
 import com.google.firebase.firestore.FirebaseFirestore

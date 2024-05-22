@@ -33,7 +33,7 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.fredy.mysavings.Feature.Presentation.NavigationComponent.Navigation.NavigationRoute
+import com.fredy.mysavings.Feature.Presentation.Navigation.NavigationRoute
 import java.util.Locale
 
 @Composable

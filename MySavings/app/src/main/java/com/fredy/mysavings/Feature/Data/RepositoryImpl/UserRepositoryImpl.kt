@@ -1,18 +1,16 @@
 package com.fredy.mysavings.Feature.Data.RepositoryImpl
 
 import com.fredy.mysavings.Feature.Data.Database.Dao.UserDao
-import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.UserDataSource
+import com.fredy.mysavings.Feature.Data.Database.FirestoreDataSource.UserDataSource
 import com.fredy.mysavings.Feature.Domain.Model.UserData
 import com.fredy.mysavings.Feature.Domain.Repository.UserRepository
 import com.fredy.mysavings.Util.Log
 import com.fredy.mysavings.Feature.Domain.Util.Resource
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 

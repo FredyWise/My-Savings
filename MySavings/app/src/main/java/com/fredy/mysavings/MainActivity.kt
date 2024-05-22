@@ -13,8 +13,8 @@ import androidx.navigation.compose.rememberNavController
 import com.fredy.mysavings.Feature.Presentation.ViewModels.AuthViewModel.AuthViewModel
 import com.fredy.mysavings.Feature.Presentation.ViewModels.AuthViewModel.AuthEvent
 import com.fredy.mysavings.Feature.Presentation.ViewModels.PreferencesViewModel.PreferencesViewModel
-import com.fredy.mysavings.Feature.Presentation.NavigationComponent.Navigation.Graph
-import com.fredy.mysavings.Feature.Presentation.NavigationComponent.Navigation.NavGraphRoot
+import com.fredy.mysavings.Feature.Presentation.Navigation.Graph
+import com.fredy.mysavings.Feature.Presentation.Navigation.NavGraphRoot
 import com.fredy.mysavings.ui.theme.MySavingsTheme
 import dagger.hilt.android.AndroidEntryPoint
 

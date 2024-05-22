@@ -2,7 +2,7 @@ package com.fredy.mysavings.Feature.Domain.Util.Mappers
 
 import com.fredy.mysavings.Feature.Data.APIs.TabScannerModel.Response.ResultResponse
 import com.fredy.mysavings.Feature.Data.Database.Converter.TimestampConverter
-import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.RecordDataSourceImpl.TrueRecordComponentResult
+import com.fredy.mysavings.Feature.Data.Database.FirestoreDataSource.RecordDataSourceImpl.TrueRecordComponentResult
 import com.fredy.mysavings.Feature.Data.Enum.RecordType
 import com.fredy.mysavings.Feature.Data.Enum.SortType
 import com.fredy.mysavings.Feature.Domain.Model.Book

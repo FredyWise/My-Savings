@@ -1,7 +1,7 @@
 package com.fredy.mysavings.Feature.Data.RepositoryImpl
 
 import com.fredy.mysavings.Feature.Data.Database.Dao.BookDao
-import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.BookDataSource
+import com.fredy.mysavings.Feature.Data.Database.FirestoreDataSource.BookDataSource
 import com.fredy.mysavings.Feature.Domain.Model.Book
 import com.fredy.mysavings.Feature.Domain.Repository.BookRepository
 import com.fredy.mysavings.Util.Log

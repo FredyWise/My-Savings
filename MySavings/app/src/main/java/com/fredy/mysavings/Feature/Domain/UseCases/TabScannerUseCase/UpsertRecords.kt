@@ -29,7 +29,6 @@ class UpsertRecords(
             val records = state.records.map {
                 val recordId = state.recordId
                 val walletIdFromFk = state.walletIdFromFk
-                val walletIdToFk = walletIdFromFk
                 val categoryExpenseIdToFk = state.categoryIdFk
                 val categoryIncomeIdToFk = state.categoryIncomeIdFk
                 var categoryIdFk = categoryExpenseIdToFk
@@ -43,7 +42,7 @@ class UpsertRecords(
                 val recordCurrency = state.recordCurrency
                 val recordType = it.recordType
 
-                if (recordDateTime == null || calculationResult == 0.0 || recordCurrency.isBlank() || walletIdFromFk == null || walletIdToFk == null || categoryExpenseIdToFk == null || categoryIncomeIdToFk == null) {
+                if (recordDateTime == null || calculationResult == 0.0 || recordCurrency.isBlank() || walletIdFromFk == null || walletIdFromFk == null || categoryExpenseIdToFk == null || categoryIncomeIdToFk == null) {
                     Log.e(
                         "UpsertRecords.Error: Please fill all required information"
                     )
@@ -75,7 +74,7 @@ class UpsertRecords(
                     it.copy(
                         recordId = recordId,
                         walletIdFromFk = walletIdFromFk,
-                        walletIdToFk = walletIdToFk,
+                        walletIdToFk = walletIdFromFk,
                         categoryIdFk = categoryIdFk!!,
                         bookIdFk = bookIdFk,
                         recordTimestamp = TimestampConverter.fromDateTime(recordDateTime),

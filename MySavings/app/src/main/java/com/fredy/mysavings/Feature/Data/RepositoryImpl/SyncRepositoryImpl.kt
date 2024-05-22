@@ -6,10 +6,10 @@ import com.fredy.mysavings.Feature.Data.Database.Dao.BookDao
 import com.fredy.mysavings.Feature.Data.Database.Dao.CategoryDao
 import com.fredy.mysavings.Feature.Data.Database.Dao.RecordDao
 import com.fredy.mysavings.Feature.Data.Database.Dao.WalletDao
-import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.BookDataSource
-import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.CategoryDataSource
-import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.RecordDataSource
-import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.WalletDataSource
+import com.fredy.mysavings.Feature.Data.Database.FirestoreDataSource.BookDataSource
+import com.fredy.mysavings.Feature.Data.Database.FirestoreDataSource.CategoryDataSource
+import com.fredy.mysavings.Feature.Data.Database.FirestoreDataSource.RecordDataSource
+import com.fredy.mysavings.Feature.Data.Database.FirestoreDataSource.WalletDataSource
 import com.fredy.mysavings.Feature.Domain.Repository.SyncRepository
 import com.fredy.mysavings.Feature.Presentation.Util.DefaultData
 import com.fredy.mysavings.Util.Log

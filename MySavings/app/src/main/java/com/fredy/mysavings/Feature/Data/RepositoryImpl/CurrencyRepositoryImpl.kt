@@ -8,8 +8,8 @@ import com.fredy.mysavings.Feature.Data.APIs.CurrencyModels.CurrencyApi
 import com.fredy.mysavings.Feature.Data.APIs.CurrencyModels.Response.CurrencyResponse
 import com.fredy.mysavings.Feature.Data.Database.Dao.CurrencyCacheDao
 import com.fredy.mysavings.Feature.Data.Database.Dao.CurrencyDao
-import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.CurrencyDataSource
-import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.CurrencyRatesDataSource
+import com.fredy.mysavings.Feature.Data.Database.FirestoreDataSource.CurrencyDataSource
+import com.fredy.mysavings.Feature.Data.Database.FirestoreDataSource.CurrencyRatesDataSource
 import com.fredy.mysavings.Feature.Domain.Model.Currency
 import com.fredy.mysavings.Feature.Domain.Model.RatesCache
 import com.fredy.mysavings.Feature.Domain.Model.UserData

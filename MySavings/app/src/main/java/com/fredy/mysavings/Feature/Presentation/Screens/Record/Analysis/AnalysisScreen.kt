@@ -16,10 +16,10 @@ import com.fredy.mysavings.Feature.Presentation.ViewModels.WalletViewModel.Walle
 import com.fredy.mysavings.Feature.Presentation.ViewModels.CategoryViewModel.CategoryEvent
 import com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel.RecordEvent
 import com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel.RecordState
-import com.fredy.mysavings.Feature.Presentation.NavigationComponent.Navigation.AnalysisNavGraph
-import com.fredy.mysavings.Feature.Presentation.NavigationComponent.Navigation.NavigationRoute
-import com.fredy.mysavings.Feature.Presentation.NavigationComponent.Navigation.analysisScreens
-import com.fredy.mysavings.Feature.Presentation.NavigationComponent.Navigation.navigateSingleTopTo
+import com.fredy.mysavings.Feature.Presentation.Navigation.AnalysisNavGraph
+import com.fredy.mysavings.Feature.Presentation.Navigation.NavigationRoute
+import com.fredy.mysavings.Feature.Presentation.Navigation.analysisScreens
+import com.fredy.mysavings.Feature.Presentation.Navigation.navigateSingleTopTo
 
 @Composable
 fun AnalysisScreen(

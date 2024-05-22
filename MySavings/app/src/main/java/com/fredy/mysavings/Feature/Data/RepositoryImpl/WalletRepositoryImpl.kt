@@ -1,7 +1,7 @@
 package com.fredy.mysavings.Feature.Data.RepositoryImpl
 
 import com.fredy.mysavings.Feature.Data.Database.Dao.WalletDao
-import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.WalletDataSource
+import com.fredy.mysavings.Feature.Data.Database.FirestoreDataSource.WalletDataSource
 import com.fredy.mysavings.Feature.Domain.Model.Wallet
 import com.fredy.mysavings.Feature.Domain.Repository.WalletRepository
 import com.google.firebase.firestore.FirebaseFirestore

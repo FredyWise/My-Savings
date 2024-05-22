@@ -20,24 +20,7 @@ fun CurrencyInfoResponse.toCurrencyInfoItems(): List<CurrencyInfoItem> {
     return this.requireNoNulls().toList().requireNoNulls()
 }
 
-fun List<CurrencyInfoItem>.toCurrency(rates: Rates, userId: String): List<Currency> {
-    return this.toUsableCurrencyInfoItem().map {
-        val currencyHelper = it.currencies
-        Log.e("toCurrency1: $currencyHelper")
-        val ratesValue = rates.getRateForCurrency(it.code)!!.toDouble()
-        Log.e("toCurrency2: $currencyHelper")
-        Currency(
-            it.code + userId,
-            it.code,
-            userId,
-            currencyHelper.name,
-            currencyHelper.symbol,
-            ratesValue,
-            it.flags.png,
-            it.flags.alt
-        )
-    }.distinctBy { it.code }
-}
+
 
 fun List<CurrencyInfoItem>.toUsableCurrencyInfoItem(): List<UsableCurrencyInfoItem> {
     return this.mapNotNull {

@@ -52,6 +52,8 @@ import com.fredy.mysavings.R
 import com.fredy.mysavings.Feature.Domain.Util.Resource
 import com.fredy.mysavings.Feature.Presentation.ViewModels.AuthViewModel.AuthState
 import com.fredy.mysavings.Feature.Presentation.ViewModels.AuthViewModel.AuthEvent
+import com.fredy.mysavings.Util.isValidEmail
+import com.fredy.mysavings.Util.isValidLogin
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
@@ -224,7 +226,7 @@ fun SignUp(
 
         Button(
             onClick = {
-                if (password == confirmPassword && password.length >= 8) {
+                if (password == confirmPassword && isValidLogin(email,password)) {
                     onEvent(
                         AuthEvent.RegisterUser(
                             username = username,
@@ -233,7 +235,13 @@ fun SignUp(
                             photoUrl = profilePictureUri
                         )
                     )
-                } else if (password.length < 8) {
+                } else if (!isValidEmail(email)) {
+                    Toast.makeText(
+                        context,
+                        "Email is invalid",
+                        Toast.LENGTH_LONG,
+                    ).show()
+                }else if (password.length < 8) {
                     Toast.makeText(
                         context,
                         "Password need to be at least 8 character",

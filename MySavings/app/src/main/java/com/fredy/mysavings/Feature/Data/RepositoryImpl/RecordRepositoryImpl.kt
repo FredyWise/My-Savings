@@ -1,7 +1,7 @@
 package com.fredy.mysavings.Feature.Data.RepositoryImpl
 
 import com.fredy.mysavings.Feature.Data.Database.Dao.RecordDao
-import com.fredy.mysavings.Feature.Data.Database.FirebaseDataSource.RecordDataSource
+import com.fredy.mysavings.Feature.Data.Database.FirestoreDataSource.RecordDataSource
 import com.fredy.mysavings.Feature.Data.Enum.RecordType
 import com.fredy.mysavings.Feature.Data.Enum.SortType
 import com.fredy.mysavings.Feature.Domain.Model.Record

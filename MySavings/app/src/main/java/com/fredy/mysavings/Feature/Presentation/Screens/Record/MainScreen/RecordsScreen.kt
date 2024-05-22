@@ -10,7 +10,7 @@ import com.fredy.mysavings.Feature.Presentation.ViewModels.BookViewModel.BookEve
 import com.fredy.mysavings.Feature.Presentation.ViewModels.BookViewModel.BookEvent.ShowDialog
 import com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel.RecordEvent
 import com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel.RecordState
-import com.fredy.mysavings.Feature.Presentation.NavigationComponent.Navigation.NavigationRoute
+import com.fredy.mysavings.Feature.Presentation.Navigation.NavigationRoute
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.ResourceHandler
 
 

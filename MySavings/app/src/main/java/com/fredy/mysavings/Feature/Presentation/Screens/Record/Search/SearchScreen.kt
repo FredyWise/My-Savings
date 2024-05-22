@@ -12,7 +12,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
-import com.fredy.mysavings.Feature.Presentation.NavigationComponent.Navigation.NavigationRoute
+import com.fredy.mysavings.Feature.Presentation.Navigation.NavigationRoute
 import com.fredy.mysavings.Feature.Presentation.Screens.Record.MainScreen.BookAddDialog
 import com.fredy.mysavings.Feature.Presentation.Screens.Record.MainScreen.RecordDialog
 import com.fredy.mysavings.Feature.Presentation.Screens.Record.Search.SearchBody
