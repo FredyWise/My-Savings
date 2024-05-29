@@ -38,7 +38,7 @@ fun GoogleButton(
     textColor: Color = MaterialTheme.colorScheme.onPrimary,
     progressIndicatorColor: Color = MaterialTheme.colorScheme.onPrimary,
     onClicked: () -> Unit
-) {
+) {// cannot be used when user is already logged in
     Surface(
         modifier = modifier.clickable {
             onClicked()

@@ -299,16 +299,24 @@ fun SignIn(
             loadingText = "Signing In ...",
             isLoading = state.authResource is Resource.Loading && state.authType == AuthMethod.Google
         ) {
-            val gso = GoogleSignInOptions.Builder(
-                GoogleSignInOptions.DEFAULT_SIGN_IN
-            ).requestEmail().requestIdToken(
-                context.getString(R.string.web_client_id)
-            ).build()
+            if (state.signedInUser == null) {
+                val gso = GoogleSignInOptions.Builder(
+                    GoogleSignInOptions.DEFAULT_SIGN_IN
+                ).requestEmail().requestIdToken(
+                    context.getString(R.string.web_client_id)
+                ).build()
 
-            val googleSignInClient = GoogleSignIn.getClient(
-                context, gso
-            )
-            launcher.launch(googleSignInClient.signInIntent)
+                val googleSignInClient = GoogleSignIn.getClient(
+                    context, gso
+                )
+                launcher.launch(googleSignInClient.signInIntent)
+            }else {
+                Toast.makeText(
+                    context,
+                    "You have a session please use biometrics to sign in",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
