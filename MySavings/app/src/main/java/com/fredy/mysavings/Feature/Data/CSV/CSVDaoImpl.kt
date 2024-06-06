@@ -3,6 +3,7 @@ package com.fredy.mysavings.Feature.Data.CSV
 import android.content.Context
 import android.os.Build
 import android.os.storage.StorageManager
+import androidx.compose.runtime.mutableStateOf
 import androidx.core.content.ContextCompat
 import com.fredy.mysavings.Feature.Data.Database.Converter.TimestampConverter
 import com.fredy.mysavings.Feature.Data.Enum.RecordType
@@ -20,6 +21,7 @@ import java.io.Reader
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+import kotlin.math.absoluteValue
 
 class CSVDaoImpl(private val context: Context) : CSVDao {
     override fun inputFromCSV(
@@ -37,6 +39,7 @@ class CSVDaoImpl(private val context: Context) : CSVDao {
             } else {
                 null
             }
+            intArrayOf(1,2,30).get
             val directoryPath = directory.replace("%3A", ":").replace("%20", " ")
                 .replace("%2F", "/").replace("%2C", ",")
                 .replaceBetweenString(
@@ -44,7 +47,6 @@ class CSVDaoImpl(private val context: Context) : CSVDao {
                     uri.toString() + "/",
                     includePrefixSuffix = true
                 )
-
             FileReader(directoryPath).use { reader ->
                 reader.readCsv(delimiter)
             }
@@ -53,7 +55,6 @@ class CSVDaoImpl(private val context: Context) : CSVDao {
             emptyList()
         }
     }
-
     override fun outputToCSV(
         directory: String,
         filename: String,

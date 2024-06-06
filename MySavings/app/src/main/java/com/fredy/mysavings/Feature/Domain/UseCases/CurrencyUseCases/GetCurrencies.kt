@@ -10,7 +10,7 @@ import com.fredy.mysavings.Feature.Domain.Util.Mappers.getRateForCurrency
 import com.fredy.mysavings.Feature.Domain.Util.Mappers.toUsableCurrencyInfoItem
 import com.fredy.mysavings.Feature.Domain.Util.Resource
 import com.fredy.mysavings.Util.Log
-import com.fredy.mysavings.Util.isCacheValid
+import com.fredy.mysavings.Feature.Data.Util.isCacheValid
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch

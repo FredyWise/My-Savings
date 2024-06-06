@@ -18,7 +18,7 @@ import com.fredy.mysavings.Feature.Domain.Repository.CurrencyRepository
 import com.fredy.mysavings.Util.Log
 import com.fredy.mysavings.Feature.Domain.Util.Mappers.toCurrencyInfoItems
 import com.fredy.mysavings.Feature.Domain.Util.Mappers.toRatesCache
-import com.fredy.mysavings.Util.isCacheValid
+import com.fredy.mysavings.Feature.Data.Util.isCacheValid
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

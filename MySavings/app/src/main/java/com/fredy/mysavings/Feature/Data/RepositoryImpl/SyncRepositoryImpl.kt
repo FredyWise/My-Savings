@@ -13,7 +13,7 @@ import com.fredy.mysavings.Feature.Data.Database.FirestoreDataSource.WalletDataS
 import com.fredy.mysavings.Feature.Domain.Repository.SyncRepository
 import com.fredy.mysavings.Feature.Presentation.Util.DefaultData
 import com.fredy.mysavings.Util.Log
-import com.fredy.mysavings.Util.isInternetConnected
+import com.fredy.mysavings.Feature.Data.Util.isInternetConnected
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first

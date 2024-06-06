@@ -48,7 +48,7 @@ fun ChartGroupedBar(
     ).axisLineColor(gridColor).axisStepSize(
         30.dp
     ).bottomPadding(5.dp).startDrawPadding(1.dp)
-        .labelData { index -> truncateString(groupBarData[index].label, 10) }.build()
+        .labelData { index -> groupBarData[index].label.truncateString(10) }.build()
 
     val yAxisData = AxisData.Builder().backgroundColor(
         backgroundColor

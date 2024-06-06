@@ -15,6 +15,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.Feature.Presentation.Util.BalanceColor
 import com.fredy.mysavings.Feature.Presentation.Util.BalanceItem
+import com.fredy.mysavings.Feature.Presentation.Util.Strings
 import com.fredy.mysavings.Feature.Presentation.Util.formatBalanceAmount
 
 @Composable

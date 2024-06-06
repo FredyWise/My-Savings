@@ -1,9 +1,9 @@
 package com.fredy.mysavings.Feature.Presentation.Util
 
-fun truncateString(inputString: String, maxLength: Int): String {
-    return if (inputString.length > maxLength) {
-        inputString.substring(0, maxLength - 2) + ".."
+fun String.truncateString( maxLength: Int): String {
+    return if (this.length > maxLength) {
+        this.substring(0, maxLength - 2) + ".."
     } else {
-        inputString
+        this
     }
 }
