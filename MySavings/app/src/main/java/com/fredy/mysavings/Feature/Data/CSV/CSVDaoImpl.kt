@@ -39,7 +39,6 @@ class CSVDaoImpl(private val context: Context) : CSVDao {
             } else {
                 null
             }
-            intArrayOf(1,2,30).get
             val directoryPath = directory.replace("%3A", ":").replace("%20", " ")
                 .replace("%2F", "/").replace("%2C", ",")
                 .replaceBetweenString(
