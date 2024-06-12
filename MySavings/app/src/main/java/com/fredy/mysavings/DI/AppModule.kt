@@ -66,5 +66,4 @@ object AppModule {
             )
         }
 
-
 }

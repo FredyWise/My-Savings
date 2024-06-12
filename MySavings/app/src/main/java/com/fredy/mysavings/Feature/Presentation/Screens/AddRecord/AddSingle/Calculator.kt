@@ -28,10 +28,8 @@ import com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel.Ad
 
 @Composable
 fun Calculator(
-    state: CalcState,
     modifier: Modifier = Modifier,
     btnSpacing: Dp = 10.dp,
-    onAction: (CalcEvent) -> Unit,
     leadingObject: @Composable () -> Unit = {},
     calculatorShape: Shape = MaterialTheme.shapes.medium,
     textStyle: TextStyle = MaterialTheme.typography.displaySmall,
@@ -42,8 +40,9 @@ fun Calculator(
     operandButtonBackgroundColor: Color = MaterialTheme.colorScheme.onSurface.copy(0.4f),
     borderColor: Color = Color.Transparent,
     buttonAspectRatio: Float = 1f,
-
-    ) {
+    state: CalcState,
+    onAction: (CalcEvent) -> Unit,
+) {
     Box(modifier = modifier) {
         Column(
             modifier = Modifier
