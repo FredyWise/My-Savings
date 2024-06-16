@@ -7,15 +7,12 @@ import android.content.pm.PackageManager
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.app.ActivityCompat
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
-import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.datastore.preferences.preferencesDataStore
 import com.fredy.mysavings.Feature.Data.Database.Converter.LocalTimeConverter
-import com.fredy.mysavings.Feature.Data.Enum.DisplayState
+import com.fredy.mysavings.Feature.Data.Enum.DisplayMode
+import com.fredy.mysavings.Feature.Data.Util.Preferences
 import com.fredy.mysavings.Feature.Domain.Repository.PreferencesRepository
 import com.fredy.mysavings.Feature.Presentation.Util.defaultDarkExpenseColor
 import com.fredy.mysavings.Feature.Presentation.Util.defaultDarkIncomeColor
@@ -34,8 +31,10 @@ import javax.inject.Inject
 
 class PreferencesRepositoryImpl @Inject constructor(private val context: Context) :
     PreferencesRepository {
+
+    private val preferences = Preferences(context)
+
     companion object {
-        private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("Settings")
         val DISPLAY_MODE = stringPreferencesKey("display_mode")
         val AUTO_LOGIN = booleanPreferencesKey("auto_login")
         val BIO_AUTH = booleanPreferencesKey("bio_auth")
@@ -49,157 +48,100 @@ class PreferencesRepositoryImpl @Inject constructor(private val context: Context
         val SHOW_TOTAL = booleanPreferencesKey("show_total")
     }
 
-    override fun getDisplayMode(): Flow<DisplayState> = context.dataStore.data
-        .map { preferences ->
-            DisplayState.valueOf(preferences[DISPLAY_MODE] ?: "System")
+    override fun getDisplayMode(): Flow<DisplayMode> = preferences.getPreference(DISPLAY_MODE, "System")
+        .map { displayMode ->
+            DisplayMode.valueOf(displayMode)
         }
 
-    override suspend fun saveDisplayMode(displayMode: DisplayState) {
-        context.dataStore.edit { preferences ->
-            preferences[DISPLAY_MODE] = displayMode.name
-        }
+    override suspend fun saveDisplayMode(displayMode: DisplayMode) {
+        preferences.savePreference(DISPLAY_MODE, displayMode.name)
     }
 
-    override fun getThemeColor(): Flow<Color?> = context.dataStore.data
-        .map { preferences ->
-            val colorCode = preferences[THEME_COLOR]
-            colorCode?.let {
-                Color(colorCode)
-            }
+    override fun getThemeColor(): Flow<Color?> = preferences.getPreference(THEME_COLOR)
+        .map { colorCode ->
+            colorCode?.let { Color(it) }
         }
 
     override suspend fun saveThemeColor(color: Color?) {
-        context.dataStore.edit { preferences ->
-            color?.let {
-                preferences[THEME_COLOR] = color.toArgb()
-            } ?: preferences.remove(THEME_COLOR)
-        }
+        preferences.savePreference(THEME_COLOR, color?.toArgb())
     }
 
-    override fun getIncomeColor(displayMode: DisplayState): Flow<Color> = context.dataStore.data
-        .map { preferences ->
-            Color(
-                preferences[INCOME_COLOR] ?: when (displayMode) {
-                    DisplayState.Light -> defaultLightIncomeColor.toArgb()
-                    DisplayState.Dark -> defaultDarkIncomeColor.toArgb()
-                    DisplayState.System -> defaultLightIncomeColor.toArgb()
-                }
-            )
+    override fun getIncomeColor(displayMode: DisplayMode): Flow<Color> = preferences.getPreference(INCOME_COLOR)
+        .map { colorCode ->
+            Color(colorCode ?: when (displayMode) {
+                DisplayMode.Light -> defaultLightIncomeColor.toArgb()
+                DisplayMode.Dark -> defaultDarkIncomeColor.toArgb()
+                DisplayMode.System -> defaultLightIncomeColor.toArgb()
+            })
         }
 
     override suspend fun saveIncomeColor(color: Color?) {
-        context.dataStore.edit { preferences ->
-            color?.let {
-                preferences[INCOME_COLOR] = color.toArgb()
-            } ?: preferences.remove(INCOME_COLOR)
-        }
+        preferences.savePreference(INCOME_COLOR, color?.toArgb())
     }
 
-    override fun getExpenseColor(displayMode: DisplayState): Flow<Color> = context.dataStore.data
-        .map { preferences ->
-            Color(
-                preferences[EXPENSE_COLOR] ?: when (displayMode) {
-                    DisplayState.Light -> defaultLightExpenseColor.toArgb()
-                    DisplayState.Dark -> defaultDarkExpenseColor.toArgb()
-                    DisplayState.System -> defaultLightExpenseColor.toArgb()
-                }
-            )
+    override fun getExpenseColor(displayMode: DisplayMode): Flow<Color> = preferences.getPreference(EXPENSE_COLOR)
+        .map { colorCode ->
+            Color(colorCode ?: when (displayMode) {
+                DisplayMode.Light -> defaultLightExpenseColor.toArgb()
+                DisplayMode.Dark -> defaultDarkExpenseColor.toArgb()
+                DisplayMode.System -> defaultLightExpenseColor.toArgb()
+            })
         }
 
     override suspend fun saveExpenseColor(color: Color?) {
-        context.dataStore.edit { preferences ->
-            color?.let {
-                preferences[EXPENSE_COLOR] = color.toArgb()
-            } ?: preferences.remove(EXPENSE_COLOR)
-        }
+        preferences.savePreference(EXPENSE_COLOR, color?.toArgb())
     }
 
-
-    override fun getTransferColor(displayMode: DisplayState): Flow<Color> = context.dataStore.data
-        .map { preferences ->
-            Color(
-                preferences[TRANSFER_COLOR] ?: when (displayMode) {
-                    DisplayState.Light -> defaultLightTransferColor.toArgb()
-                    DisplayState.Dark -> defaultDarkTransferColor.toArgb()
-                    DisplayState.System -> defaultLightTransferColor.toArgb()
-                }
-            )
+    override fun getTransferColor(displayMode: DisplayMode): Flow<Color> = preferences.getPreference(TRANSFER_COLOR)
+        .map { colorCode ->
+            Color(colorCode ?: when (displayMode) {
+                DisplayMode.Light -> defaultLightTransferColor.toArgb()
+                DisplayMode.Dark -> defaultDarkTransferColor.toArgb()
+                DisplayMode.System -> defaultLightTransferColor.toArgb()
+            })
         }
 
     override suspend fun saveTransferColor(color: Color?) {
-        context.dataStore.edit { preferences ->
-            color?.let {
-                preferences[TRANSFER_COLOR] = color.toArgb()
-            } ?: preferences.remove(TRANSFER_COLOR)
-        }
+        preferences.savePreference(TRANSFER_COLOR, color?.toArgb())
     }
 
-    override fun getDailyNotification(): Flow<Boolean> = context.dataStore.data
-        .map { preferences ->
-            preferences[DAILY_NOTIFICATION] ?: false
-        }
+    override fun getDailyNotification(): Flow<Boolean> = preferences.getPreference(DAILY_NOTIFICATION, false)
 
     override suspend fun saveDailyNotification(enableNotification: Boolean) {
-        context.dataStore.edit { preferences ->
-            preferences[DAILY_NOTIFICATION] = enableNotification
-        }
+        preferences.savePreference(DAILY_NOTIFICATION, enableNotification)
     }
 
-    override fun getAutoLogin(): Flow<Boolean> = context.dataStore.data
-        .map { preferences ->
-            preferences[AUTO_LOGIN] ?: false
-        }
+    override fun getAutoLogin(): Flow<Boolean> = preferences.getPreference(AUTO_LOGIN, false)
 
     override suspend fun saveAutoLogin(enableAutoLogin: Boolean) {
-        context.dataStore.edit { preferences ->
-            preferences[AUTO_LOGIN] = enableAutoLogin
-        }
+        preferences.savePreference(AUTO_LOGIN, enableAutoLogin)
     }
 
-    override fun getBioAuth(): Flow<Boolean> = context.dataStore.data
-        .map { preferences ->
-            preferences[BIO_AUTH] ?: false
-        }
+    override fun getBioAuth(): Flow<Boolean> = preferences.getPreference(BIO_AUTH, false)
 
     override suspend fun saveBioAuth(enableBioAuth: Boolean) {
-        context.dataStore.edit { preferences ->
-            preferences[BIO_AUTH] = enableBioAuth
-        }
+        preferences.savePreference(BIO_AUTH, enableBioAuth)
     }
 
-
-    override fun getCarryOn(): Flow<Boolean> = context.dataStore.data
-        .map { preferences ->
-            preferences[CARRY_ON] ?: false
-        }
+    override fun getCarryOn(): Flow<Boolean> = preferences.getPreference(CARRY_ON, false)
 
     override suspend fun saveCarryOn(enableCarryOn: Boolean) {
-        context.dataStore.edit { preferences ->
-            preferences[CARRY_ON] = enableCarryOn
-        }
+        preferences.savePreference(CARRY_ON, enableCarryOn)
     }
 
-    override fun getShowTotal(): Flow<Boolean> = context.dataStore.data
-        .map { preferences ->
-            preferences[SHOW_TOTAL] ?: false
-        }
+    override fun getShowTotal(): Flow<Boolean> = preferences.getPreference(SHOW_TOTAL, false)
 
     override suspend fun saveShowTotal(enableShowTotal: Boolean) {
-        context.dataStore.edit { preferences ->
-            preferences[SHOW_TOTAL] = enableShowTotal
-        }
+        preferences.savePreference(SHOW_TOTAL, enableShowTotal)
     }
 
-    override fun getDailyNotificationTime(): Flow<LocalTime> = context.dataStore.data
-        .map { preferences ->
-            LocalTimeConverter.intToLocalTime(preferences[DAILY_NOTIFICATION_TIME] ?: -1)
+    override fun getDailyNotificationTime(): Flow<LocalTime> = preferences.getPreference(DAILY_NOTIFICATION_TIME, -1)
+        .map { time ->
+            LocalTimeConverter.intToLocalTime(time)
         }
 
     override suspend fun saveDailyNotificationTime(dailyNotificationTime: LocalTime) {
-        context.dataStore.edit { preferences ->
-            preferences[DAILY_NOTIFICATION_TIME] =
-                LocalTimeConverter.localTimeToInt(dailyNotificationTime)
-        }
+        preferences.savePreference(DAILY_NOTIFICATION_TIME, LocalTimeConverter.localTimeToInt(dailyNotificationTime))
     }
 
     override fun bioAuthStatus(): Boolean {
@@ -244,6 +186,4 @@ class PreferencesRepositoryImpl @Inject constructor(private val context: Context
         )
         emit(result)
     }
-
-
 }

@@ -10,7 +10,7 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
-import com.fredy.mysavings.Feature.Data.Enum.DisplayState
+import com.fredy.mysavings.Feature.Data.Enum.DisplayMode
 
 import com.fredy.mysavings.Feature.Presentation.Util.initialDarkThemeDefaultColor
 import com.fredy.mysavings.Feature.Presentation.Util.initialLightThemeDefaultColor
@@ -92,9 +92,9 @@ fun MySavingsTheme(
     val darkColorTheme = DarkColorScheme.copy(surface = state.selectedThemeColor?: initialDarkThemeDefaultColor)
     val lightColorTheme = LightColorScheme.copy(surface = state.selectedThemeColor?: initialLightThemeDefaultColor)
     val colorScheme = when(state.displayMode) {
-        DisplayState.Light -> lightColorTheme
-        DisplayState.Dark -> darkColorTheme
-        DisplayState.System -> {
+        DisplayMode.Light -> lightColorTheme
+        DisplayMode.Dark -> darkColorTheme
+        DisplayMode.System -> {
             if (darkTheme) darkColorTheme else LightColorScheme
         }
     }
@@ -107,9 +107,9 @@ fun MySavingsTheme(
                 window,
                 view
             ).isAppearanceLightStatusBars = when(state.displayMode) {
-                DisplayState.Light -> true
-                DisplayState.Dark -> false
-                DisplayState.System -> !darkTheme
+                DisplayMode.Light -> true
+                DisplayMode.Dark -> false
+                DisplayMode.System -> !darkTheme
 
             }
         }

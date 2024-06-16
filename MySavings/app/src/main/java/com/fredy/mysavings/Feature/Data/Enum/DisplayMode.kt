@@ -1,6 +1,6 @@
 package com.fredy.mysavings.Feature.Data.Enum
 
-enum class DisplayState {
+enum class DisplayMode {
     Light,
     Dark,
     System

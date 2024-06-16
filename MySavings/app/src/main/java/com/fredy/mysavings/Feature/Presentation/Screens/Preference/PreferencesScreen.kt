@@ -38,7 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.fredy.mysavings.Feature.Data.Enum.ChangeColorType
-import com.fredy.mysavings.Feature.Data.Enum.DisplayState
+import com.fredy.mysavings.Feature.Data.Enum.DisplayMode
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.CustomStickyHeader
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.DefaultAppBar
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SimpleButton
@@ -127,8 +127,8 @@ fun PreferencesScreen(
             onDismissRequest = { onEvent(PreferencesEvent.HideColorPallet) },
             onSaveClicked = {
                 val isSystemDarkThemes =
-                    isSystemDarkTheme && state.displayMode == DisplayState.System
-                val isDisplayDark = state.displayMode == DisplayState.Dark
+                    isSystemDarkTheme && state.displayMode == DisplayMode.System
+                val isDisplayDark = state.displayMode == DisplayMode.Dark
                 onEvent(
                     PreferencesEvent.ChangeColor(
                         selectedColorType,
@@ -161,14 +161,14 @@ fun PreferencesScreen(
         SimpleItem(
             menuItems = listOf(
                 ActionWithName(
-                    DisplayState.Light.name,
-                    action = { onEvent(PreferencesEvent.SelectDisplayMode(DisplayState.Light)) }),
+                    DisplayMode.Light.name,
+                    action = { onEvent(PreferencesEvent.SelectDisplayMode(DisplayMode.Light)) }),
                 ActionWithName(
-                    DisplayState.Dark.name,
-                    action = { onEvent(PreferencesEvent.SelectDisplayMode(DisplayState.Dark)) }),
+                    DisplayMode.Dark.name,
+                    action = { onEvent(PreferencesEvent.SelectDisplayMode(DisplayMode.Dark)) }),
                 ActionWithName(
-                    DisplayState.System.name,
-                    action = { onEvent(PreferencesEvent.SelectDisplayMode(DisplayState.System)) }),
+                    DisplayMode.System.name,
+                    action = { onEvent(PreferencesEvent.SelectDisplayMode(DisplayMode.System)) }),
             ),
             endContent = {
                 Text(

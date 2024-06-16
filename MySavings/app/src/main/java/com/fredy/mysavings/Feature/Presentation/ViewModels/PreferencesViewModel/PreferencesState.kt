@@ -1,7 +1,7 @@
 package com.fredy.mysavings.Feature.Presentation.ViewModels.PreferencesViewModel
 
 import androidx.compose.ui.graphics.Color
-import com.fredy.mysavings.Feature.Data.Enum.DisplayState
+import com.fredy.mysavings.Feature.Data.Enum.DisplayMode
 import com.fredy.mysavings.Feature.Presentation.Util.defaultDarkExpenseColor
 import com.fredy.mysavings.Feature.Presentation.Util.defaultDarkIncomeColor
 import com.fredy.mysavings.Feature.Presentation.Util.defaultDarkTransferColor
@@ -11,7 +11,7 @@ import java.time.LocalTime
 data class PreferencesState(
     val startDate: LocalDateTime = LocalDateTime.now(),
     val endDate: LocalDateTime = LocalDateTime.now(),
-    val displayMode: DisplayState = DisplayState.System,
+    val displayMode: DisplayMode = DisplayMode.System,
     val autoLogin: Boolean = false,
     val bioAuth: Boolean = false,
     val isBioAuthPossible: Boolean = false,

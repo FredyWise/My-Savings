@@ -27,3 +27,4 @@ data class FirebaseRatesCache(
     val timestamp: Int = 0,
     val cachedTime: Timestamp = Timestamp.now()
 )
+
