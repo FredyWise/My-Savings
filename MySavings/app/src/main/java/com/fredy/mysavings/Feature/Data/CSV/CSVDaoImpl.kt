@@ -3,7 +3,6 @@ package com.fredy.mysavings.Feature.Data.CSV
 import android.content.Context
 import android.os.Build
 import android.os.storage.StorageManager
-import androidx.compose.runtime.mutableStateOf
 import androidx.core.content.ContextCompat
 import com.fredy.mysavings.Feature.Data.Database.Converter.TimestampConverter
 import com.fredy.mysavings.Feature.Data.Enum.RecordType
@@ -11,7 +10,7 @@ import com.fredy.mysavings.Feature.Domain.Model.Category
 import com.fredy.mysavings.Feature.Domain.Model.Record
 import com.fredy.mysavings.Feature.Domain.Model.TrueRecord
 import com.fredy.mysavings.Feature.Domain.Model.Wallet
-import com.fredy.mysavings.Feature.Presentation.Util.formatDateYearDetailedTime
+import com.fredy.mysavings.Feature.Presentation.Util.formatMonthDateYearDetailedTime
 import com.fredy.mysavings.Util.Log
 import java.io.File
 import java.io.FileReader
@@ -21,7 +20,6 @@ import java.io.Reader
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
-import kotlin.math.absoluteValue
 
 class CSVDaoImpl(private val context: Context) : CSVDao {
     override fun inputFromCSV(
@@ -215,7 +213,7 @@ class CSVDaoImpl(private val context: Context) : CSVDao {
 
     private fun trueRecordToString(trueRecord: TrueRecord): String {
         val values = listOf(
-            formatDateYearDetailedTime(trueRecord.record.recordDateTime).replace(",", ""),
+            formatMonthDateYearDetailedTime(trueRecord.record.recordDateTime).replace(",", ""),
             trueRecord.record.recordType.name,
             trueRecord.fromWallet.walletName + "-" + trueRecord.fromWallet.walletCurrency,
             trueRecord.fromWallet.walletIconDescription,

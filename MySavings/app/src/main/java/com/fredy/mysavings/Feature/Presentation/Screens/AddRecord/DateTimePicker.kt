@@ -16,7 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import com.fredy.mysavings.Feature.Presentation.Util.formatDateYear
+import com.fredy.mysavings.Feature.Presentation.Util.formatMonthDateYear
 import com.fredy.mysavings.Feature.Presentation.Util.formatTime
 import com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel.AddRecordState
 import com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel.AddRecordEvent
@@ -51,7 +51,7 @@ fun DateAndTimePicker(
         SimpleButton(
             modifier = Modifier.weight(1f),
             onClick = { dateDialogState.show() },
-            title = formatDateYear(state.recordDate),
+            title = formatMonthDateYear(state.recordDate),
             titleStyle = MaterialTheme.typography.titleLarge.copy(
                 onBackground
             )

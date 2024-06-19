@@ -24,7 +24,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @Composable
-fun HomeNavGraph(
+fun MainNavGraph(
     rootNavController: NavHostController,
     navController: NavHostController,
     modifier: Modifier = Modifier,

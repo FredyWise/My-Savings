@@ -299,7 +299,13 @@ fun SignIn(
             loadingText = "Signing In ...",
             isLoading = state.authResource is Resource.Loading && state.authType == AuthMethod.Google
         ) {
-            if (state.signedInUser == null) {
+            if (isUsingBioAuth && state.signedInUser != null) {
+                Toast.makeText(
+                    context,
+                    "You have a session please use biometrics to sign in",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }else {
                 val gso = GoogleSignInOptions.Builder(
                     GoogleSignInOptions.DEFAULT_SIGN_IN
                 ).requestEmail().requestIdToken(
@@ -310,12 +316,6 @@ fun SignIn(
                     context, gso
                 )
                 launcher.launch(googleSignInClient.signInIntent)
-            }else {
-                Toast.makeText(
-                    context,
-                    "You have a session please use biometrics to sign in",
-                    Toast.LENGTH_SHORT
-                ).show()
             }
         }
 

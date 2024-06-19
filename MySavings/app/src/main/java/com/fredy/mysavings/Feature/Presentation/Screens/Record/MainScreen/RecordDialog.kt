@@ -34,7 +34,7 @@ import androidx.compose.ui.window.Dialog
 import com.fredy.mysavings.Feature.Domain.Model.Record
 import com.fredy.mysavings.Feature.Domain.Model.TrueRecord
 import com.fredy.mysavings.Feature.Presentation.Util.BalanceColor
-import com.fredy.mysavings.Feature.Presentation.Util.formatDateYearDetailedTime
+import com.fredy.mysavings.Feature.Presentation.Util.formatMonthDateYearDetailedTime
 import com.fredy.mysavings.Feature.Presentation.Util.isTransfer
 import com.fredy.mysavings.Feature.Presentation.Screens.Record.BalanceItem
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SimpleEntityItem
@@ -152,7 +152,7 @@ fun RecordDialog(
                         )
                         Text(
                             modifier = Modifier.fillMaxWidth(),
-                            text = formatDateYearDetailedTime(
+                            text = formatMonthDateYearDetailedTime(
                                 trueRecord.record.recordDateTime
                             ),
                             textAlign = TextAlign.End,

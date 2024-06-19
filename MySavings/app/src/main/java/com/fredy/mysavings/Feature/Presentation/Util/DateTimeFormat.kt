@@ -8,7 +8,7 @@ import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.TemporalAdjusters
 
-fun formatDateYear(date: LocalDate): String {
+fun formatMonthDateYear(date: LocalDate): String {
     return DateTimeFormatter.ofPattern(
         "MMM dd, YYYY "
     ).format(date)
@@ -20,7 +20,7 @@ fun formatMonthYear(date: LocalDate): String {
     ).format(date)
 }
 
-fun formatDateMonth(date: LocalDate):String{
+fun formatMonthDate(date: LocalDate):String{
     return DateTimeFormatter.ofPattern(
         "MMM dd"
     ).format(date)
@@ -33,11 +33,11 @@ fun formatDay(date: LocalDate):String{
 }
 
 fun formatDateDay(date: LocalDate): String {
-    return formatDateMonth(date) + ", " + formatDay(date)
+    return formatMonthDate(date) + ", " + formatDay(date)
 }
 
-fun formatDateMonthTime(dateTime: LocalDateTime): String {
-    return formatDateMonth(dateTime.toLocalDate()) + ", " + formatTime(dateTime.toLocalTime())
+fun formatMonthDateTime(dateTime: LocalDateTime): String {
+    return formatMonthDate(dateTime.toLocalDate()) + ", " + formatTime(dateTime.toLocalTime())
 }
 fun formatDateDay(dateTime: LocalDateTime): String {
     return DateTimeFormatter.ofPattern(
@@ -56,8 +56,8 @@ fun formatDetailedTime(time: LocalTime): String {
     ).format(time)
 }
 
-fun formatDateYearDetailedTime(dateTime: LocalDateTime): String {
-    return formatDateYear(dateTime.toLocalDate()) + formatDetailedTime(
+fun formatMonthDateYearDetailedTime(dateTime: LocalDateTime): String {
+    return formatMonthDateYear(dateTime.toLocalDate()) + formatDetailedTime(
         dateTime.toLocalTime()
     )
 }

@@ -46,7 +46,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.fredy.mysavings.Feature.Domain.Model.UserData
-import com.fredy.mysavings.Feature.Presentation.Navigation.HomeNavGraph
+import com.fredy.mysavings.Feature.Presentation.Navigation.MainNavGraph
 import com.fredy.mysavings.Feature.Presentation.Navigation.NavigationRoute
 import com.fredy.mysavings.Feature.Presentation.Navigation.bottomBarScreens
 import com.fredy.mysavings.Feature.Presentation.Navigation.drawerScreens
@@ -391,7 +391,7 @@ fun MainScreen(
                     },
                 )
             }
-            HomeNavGraph(
+            MainNavGraph(
                 rootNavController = rootNavController,
                 navController = navController,
                 modifier = Modifier.padding(

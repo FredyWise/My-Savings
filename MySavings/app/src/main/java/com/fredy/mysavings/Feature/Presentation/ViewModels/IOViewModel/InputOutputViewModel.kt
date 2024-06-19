@@ -9,7 +9,7 @@ import com.fredy.mysavings.Feature.Domain.UseCases.BookUseCases.BookUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.IOUseCases.IOUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.RecordUseCases
 import com.fredy.mysavings.Feature.Domain.Util.Resource
-import com.fredy.mysavings.Feature.Presentation.Util.formatDateYear
+import com.fredy.mysavings.Feature.Presentation.Util.formatMonthDateYear
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -120,7 +120,7 @@ class InputOutputViewModel @Inject constructor(
                         if (exportRecords.isNotEmpty()) {
                             IOUseCases.outputToCSV(
                                 event.uri,
-                                formatDateYear(startDate.toLocalDate()) + "- " + formatDateYear(
+                                formatMonthDateYear(startDate.toLocalDate()) + "- " + formatMonthDateYear(
                                     endDate.toLocalDate()
                                 ),
                                 exportRecords

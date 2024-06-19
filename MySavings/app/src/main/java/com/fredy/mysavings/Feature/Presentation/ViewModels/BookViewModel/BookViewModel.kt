@@ -21,7 +21,6 @@ class BookViewModel @Inject constructor(
     private val bookUseCases: BookUseCases,
     private val recordUseCases: RecordUseCases
 ): ViewModel() {
-
     private val _sortType = MutableStateFlow(
         SortType.ASCENDING
     )
