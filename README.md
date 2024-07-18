@@ -1,5 +1,5 @@
 # My Savings
-
+---
 ## Description
 
 **My Savings** is a cutting-edge money management system that leverages machine learning to simplify expense tracking. By converting pictures of receipts into text and objects, this Android native application, built with Kotlin and Jetpack Compose, makes it easier to record expenses. The application also supports multiple currencies, providing real-time data updates through an API, and offers advanced features to personalize and secure your financial data.
@@ -25,7 +25,7 @@
 
 #### Steps
 
-1. **Download the APK**: Get the latest release from the [Releases](link-to-releases) section.
+1. **Download the APK**: Get the latest release from the [Releases](https://github.com/FredyWise/My-Savings/tree/main/release) section.
 2. **Install the APK**: Transfer the APK to your Android device and install it.
 3. **Run the Application**: Open the application and start managing your finances!
 
@@ -40,7 +40,7 @@
 
 1. **Clone the Repository**:
     ```sh
-    git clone https://github.com/yourusername/mysavings.git
+    git clone https://github.com/FredyWise/My-Savings.git
     ```
 2. **Open the Project**: Open the project in Android Studio.
 3. **Sync Gradle**: Sync the project with Gradle to download dependencies.
@@ -91,7 +91,6 @@ We welcome contributions to enhance My Savings! To contribute:
     ```
 5. Create a pull request detailing your changes.
 
-
 ## Additional Information
 
 ### Build Configuration
@@ -125,3 +124,5 @@ We welcome contributions to enhance My Savings! To contribute:
   - `androidx.room:room-runtime:2.6.1`
   - `com.squareup.retrofit2:retrofit:2.9.0`
   - `io.coil-kt:coil-compose:2.4.0`
+
+---
