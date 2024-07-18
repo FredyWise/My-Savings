@@ -1,5 +1,8 @@
 # My Savings
----
+<img src="https://github.com/user-attachments/assets/80bcd632-3803-4e0f-9002-543c5111068f" 
+     alt="Image description" 
+     style="display: block; margin: 0 auto; height: 400px;">
+
 ## Description
 
 **My Savings** is a cutting-edge money management system that leverages machine learning to simplify expense tracking. By converting pictures of receipts into text and objects, this Android native application, built with Kotlin and Jetpack Compose, makes it easier to record expenses. The application also supports multiple currencies, providing real-time data updates through an API, and offers advanced features to personalize and secure your financial data.
