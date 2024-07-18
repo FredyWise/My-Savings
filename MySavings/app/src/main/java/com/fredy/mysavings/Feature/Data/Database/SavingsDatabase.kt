@@ -1,0 +1,46 @@
+package com.fredy.mysavings.Feature.Data.Database
+
+import androidx.room.Database
+import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
+import com.fredy.mysavings.Feature.Data.Database.Converter.CurrencyRatesDoubleConverter
+import com.fredy.mysavings.Feature.Data.Database.Converter.CurrencyResponseConverter
+import com.fredy.mysavings.Feature.Data.Database.Converter.DateTimeConverter
+import com.fredy.mysavings.Feature.Data.Database.Converter.TimestampConverter
+import com.fredy.mysavings.Feature.Data.Database.Dao.WalletDao
+import com.fredy.mysavings.Feature.Data.Database.Dao.BookDao
+import com.fredy.mysavings.Feature.Data.Database.Dao.CategoryDao
+import com.fredy.mysavings.Feature.Data.Database.Dao.CurrencyCacheDao
+import com.fredy.mysavings.Feature.Data.Database.Dao.CurrencyDao
+import com.fredy.mysavings.Feature.Data.Database.Dao.RecordDao
+import com.fredy.mysavings.Feature.Data.Database.Dao.UserDao
+import com.fredy.mysavings.Feature.Domain.Model.Wallet
+import com.fredy.mysavings.Feature.Domain.Model.Book
+import com.fredy.mysavings.Feature.Domain.Model.Category
+import com.fredy.mysavings.Feature.Domain.Model.Currency
+import com.fredy.mysavings.Feature.Domain.Model.RatesCache
+import com.fredy.mysavings.Feature.Domain.Model.Record
+import com.fredy.mysavings.Feature.Domain.Model.UserData
+
+@TypeConverters(value = [DateTimeConverter::class, TimestampConverter::class, CurrencyRatesDoubleConverter::class, CurrencyResponseConverter::class])
+@Database(
+    entities = [Record::class, Wallet::class, Category::class, UserData::class, RatesCache::class, Currency::class, Book::class],
+    version = 1,
+//    exportSchema = true,
+//    autoMigrations = [
+//        AutoMigration (
+//            from = 1,
+//            to = 2,
+//        )
+//    ]
+)
+abstract class SavingsDatabase : RoomDatabase() {
+    abstract val recordDao: RecordDao
+    abstract val walletDao: WalletDao
+    abstract val categoryDao: CategoryDao
+    abstract val bookDao: BookDao
+    abstract val userDao: UserDao
+    abstract val currencyCache: CurrencyCacheDao
+    abstract val currency: CurrencyDao
+}
+
