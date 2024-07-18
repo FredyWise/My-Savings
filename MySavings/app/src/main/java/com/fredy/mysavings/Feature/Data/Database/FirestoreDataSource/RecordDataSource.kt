@@ -257,6 +257,9 @@ class RecordDataSourceImpl @Inject constructor(
                     Filter.or(
                         Filter.equalTo(
                             "walletIdFromFk", walletId
+                        ),
+                        Filter.equalTo(
+                            "walletIdToFk", walletId
                         )
                     )
                 ).whereEqualTo(

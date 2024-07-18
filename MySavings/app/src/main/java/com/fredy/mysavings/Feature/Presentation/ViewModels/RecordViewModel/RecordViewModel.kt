@@ -2,11 +2,11 @@
 
 package com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fredy.mysavings.Feature.Data.Enum.RecordType
 import com.fredy.mysavings.Feature.Data.Enum.SortType
-import com.fredy.mysavings.Feature.Domain.Repository.PreferencesRepository
 import com.fredy.mysavings.Feature.Domain.Repository.SyncRepository
 import com.fredy.mysavings.Feature.Domain.UseCases.BookUseCases.BookUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.RecordUseCases
@@ -14,6 +14,7 @@ import com.fredy.mysavings.Feature.Domain.UseCases.WalletUseCases.WalletUseCases
 import com.fredy.mysavings.Feature.Domain.Util.Resource
 import com.fredy.mysavings.Feature.Presentation.Util.BalanceBar
 import com.fredy.mysavings.Feature.Presentation.Util.BalanceItem
+import com.fredy.mysavings.Feature.Presentation.Util.update
 import com.fredy.mysavings.Util.Log
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -35,18 +36,14 @@ class RecordViewModel @Inject constructor(
     private val recordUseCases: RecordUseCases,
     private val walletUseCases: WalletUseCases,
     private val bookUseCases: BookUseCases,
-    private val preferencesRepository: PreferencesRepository,
     private val syncRepository: SyncRepository,
+    private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
+    companion object{
+        const val FILTER_STATE_KEY = "filterState"
+    }
     init {
         viewModelScope.launch {
-//            settingsRepository.getAllPreferenceView().collectLatest{ filterState->
-//                filterState?.let{
-//                    _filterState.update {
-//                        filterState
-//                    }
-//                }
-//            }
             async {
                 syncRepository.syncAll()
             }.await()
@@ -54,13 +51,14 @@ class RecordViewModel @Inject constructor(
                 _state.update {
                     it.copy(selectedCheckbox = currency)
                 }
-                _filterState.update {
+                savedStateHandle.update<FilterState>(FILTER_STATE_KEY) {
                     it.copy(currencies = currency)
                 }
+
                 bookUseCases.getUserBooks().collectLatest { bookResource ->
                     when (bookResource) {
                         is Resource.Success -> {
-                            _filterState.update {
+                            savedStateHandle.update<FilterState>(FILTER_STATE_KEY) {
                                 it.copy(currentBook = bookResource.data!!.first())
                             }
                         }
@@ -72,9 +70,11 @@ class RecordViewModel @Inject constructor(
         }
     }
 
-    private val _filterState = MutableStateFlow(
-        FilterState()
-    )
+//    private val _filterState = MutableStateFlow(
+//        FilterState()
+//    )
+
+    private val _filterState = savedStateHandle.getStateFlow(FILTER_STATE_KEY, FilterState())
 
     private val _availableCurrency = walletUseCases.getWalletsCurrencies().stateIn(
         viewModelScope,
@@ -302,19 +302,6 @@ class RecordViewModel @Inject constructor(
                     }
                 }
 
-                is RecordEvent.ToggleRecordType -> {
-                    _filterState.update {
-                        it.copy(
-                            recordType = when (it.recordType) {
-                                RecordType.Expense -> RecordType.Income
-                                RecordType.Income -> RecordType.Transfer
-                                RecordType.Transfer -> RecordType.Expense
-                            }
-                        )
-                    }
-
-                }
-
                 is RecordEvent.DeleteRecord -> {
                     viewModelScope.launch {
                         recordUseCases.deleteRecordItem(
@@ -323,46 +310,56 @@ class RecordViewModel @Inject constructor(
                     }
                 }
 
+                is RecordEvent.ToggleRecordType -> {
+                    savedStateHandle.update<FilterState>(FILTER_STATE_KEY) {
+                        it.copy(
+                            recordType = when (it.recordType) {
+                                RecordType.Expense -> RecordType.Income
+                                RecordType.Income -> RecordType.Transfer
+                                RecordType.Transfer -> RecordType.Expense
+                            }
+                        )
+                    }
+                }
+
                 is RecordEvent.FilterRecord -> {
-                    _filterState.update {
+                    savedStateHandle.update<FilterState>(FILTER_STATE_KEY) {
                         it.updateType(event.filterType)
                     }
                 }
 
                 is RecordEvent.ShowNextList -> {
-                    _filterState.update {
+                    savedStateHandle.update<FilterState>(FILTER_STATE_KEY) {
                         it.plusDate()
                     }
                 }
 
                 is RecordEvent.ShowPreviousList -> {
-                    _filterState.update {
+                    savedStateHandle.update<FilterState>(FILTER_STATE_KEY) {
                         it.minusDate()
                     }
                 }
 
                 is RecordEvent.ChangeDate -> {
-                    _filterState.update {
+                    savedStateHandle.update<FilterState>(FILTER_STATE_KEY) {
                         it.updateDate(event.selectedDate)
                     }
                 }
 
                 is RecordEvent.SelectedCurrencies -> {
-                    Log.i(
-                        "onEvent: ${state.value.availableCurrency}"
-                    )
-                    _filterState.update {
+                    Log.i("onEvent: ${state.value.availableCurrency}")
+                    savedStateHandle.update<FilterState>(FILTER_STATE_KEY) {
                         it.copy(
                             currencies = event.selectedCurrencies
                         )
                     }
-                    _state.update {
+                    _state.update { // Assuming _state is still a MutableState
                         it.copy(selectedCheckbox = event.selectedCurrencies)
                     }
                 }
 
                 is RecordEvent.ToggleSortType -> {
-                    _filterState.update {
+                    savedStateHandle.update<FilterState>(FILTER_STATE_KEY) {
                         it.copy(
                             sortType = when (it.sortType) {
                                 SortType.ASCENDING -> SortType.DESCENDING
@@ -373,37 +370,31 @@ class RecordViewModel @Inject constructor(
                 }
 
                 RecordEvent.ToggleCarryOn -> {
-                    viewModelScope.launch {
-                        preferencesRepository.saveCarryOn(!_filterState.value.carryOn)
-                    }
-                    _filterState.update {
+                    savedStateHandle.update<FilterState>(FILTER_STATE_KEY) {
                         it.copy(carryOn = !it.carryOn)
                     }
                 }
 
                 RecordEvent.ToggleShowTotal -> {
-                    viewModelScope.launch {
-                        preferencesRepository.saveShowTotal(!_filterState.value.showTotal)
-                    }
-                    _filterState.update {
+                    savedStateHandle.update<FilterState>(FILTER_STATE_KEY) {
                         it.copy(showTotal = !it.showTotal)
                     }
                 }
 
                 RecordEvent.ToggleUserCurrency -> {
-                    _filterState.update {
+                    savedStateHandle.update<FilterState>(FILTER_STATE_KEY) {
                         it.copy(useUserCurrency = !it.useUserCurrency)
                     }
                 }
 
                 RecordEvent.UpdateRecord -> {
-                    _filterState.update {
+                    savedStateHandle.update<FilterState>(FILTER_STATE_KEY) {
                         it.copy(updating = !it.updating)
                     }
                 }
 
                 is RecordEvent.ClickBook -> {
-                    _filterState.update {
+                    savedStateHandle.update<FilterState>(FILTER_STATE_KEY) {
                         it.copy(currentBook = event.book)
                     }
                 }
@@ -411,6 +402,5 @@ class RecordViewModel @Inject constructor(
         }
     }
 }
-
 
 

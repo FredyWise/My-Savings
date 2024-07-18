@@ -38,13 +38,13 @@ interface PreferencesRepository {
     fun bioAuthStatus(): Boolean
 
     // View
-    fun getCarryOn(): Flow<Boolean>
-    suspend fun saveCarryOn(enableCarryOn: Boolean)
-    fun getShowTotal(): Flow<Boolean>
-    suspend fun saveShowTotal(enableShowTotal: Boolean)
+//    fun getCarryOn(): Flow<Boolean>
+//    suspend fun saveCarryOn(enableCarryOn: Boolean)
+//    fun getShowTotal(): Flow<Boolean>
+//    suspend fun saveShowTotal(enableShowTotal: Boolean)
 
     // ALL
     fun getAllPreferenceSettings(): Flow<PreferencesState>
-    fun getAllPreferenceView(): Flow<FilterState>
+//    fun getAllPreferenceView(): Flow<FilterState>
 }
 

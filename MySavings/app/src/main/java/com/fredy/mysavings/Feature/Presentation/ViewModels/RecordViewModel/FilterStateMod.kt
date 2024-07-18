@@ -1,15 +1,19 @@
 package com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel
 
+import android.os.Parcel
+import android.os.Parcelable
 import com.fredy.mysavings.Feature.Domain.Model.Book
 import com.fredy.mysavings.Feature.Data.Enum.FilterType
 import com.fredy.mysavings.Feature.Data.Enum.RecordType
 import com.fredy.mysavings.Feature.Data.Enum.SortType
+import kotlinx.parcelize.Parcelize
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.temporal.TemporalAdjusters
 
+@Parcelize
 data class FilterState(
     val recordType: RecordType = RecordType.Expense,
     val filterType: FilterType = FilterType.Monthly,
@@ -31,7 +35,7 @@ data class FilterState(
         ), LocalTime.MAX
     ),
     val updating:Boolean = false
-)
+): Parcelable
 
 fun FilterState.isFilterTypeMonthBelow(): Boolean{
     return when(filterType){

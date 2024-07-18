@@ -6,6 +6,7 @@ import com.fredy.mysavings.Feature.Data.Database.Converter.TimestampConverter
 import com.fredy.mysavings.Feature.Data.Enum.RecordType
 import com.fredy.mysavings.Feature.Presentation.Util.formatDateDay
 import com.google.firebase.Timestamp
+import com.google.firebase.firestore.ServerTimestamp
 import java.time.LocalDateTime
 
 @Entity

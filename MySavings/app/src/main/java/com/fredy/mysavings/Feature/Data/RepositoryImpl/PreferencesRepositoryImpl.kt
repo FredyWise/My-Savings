@@ -123,17 +123,17 @@ class PreferencesRepositoryImpl @Inject constructor(private val context: Context
         preferences.savePreference(BIO_AUTH, enableBioAuth)
     }
 
-    override fun getCarryOn(): Flow<Boolean> = preferences.getPreference(CARRY_ON, false)
+//    override fun getCarryOn(): Flow<Boolean> = preferences.getPreference(CARRY_ON, false)
+//
+//    override suspend fun saveCarryOn(enableCarryOn: Boolean) {
+//        preferences.savePreference(CARRY_ON, enableCarryOn)
+//    }
 
-    override suspend fun saveCarryOn(enableCarryOn: Boolean) {
-        preferences.savePreference(CARRY_ON, enableCarryOn)
-    }
-
-    override fun getShowTotal(): Flow<Boolean> = preferences.getPreference(SHOW_TOTAL, false)
-
-    override suspend fun saveShowTotal(enableShowTotal: Boolean) {
-        preferences.savePreference(SHOW_TOTAL, enableShowTotal)
-    }
+//    override fun getShowTotal(): Flow<Boolean> = preferences.getPreference(SHOW_TOTAL, false)
+//
+//    override suspend fun saveShowTotal(enableShowTotal: Boolean) {
+//        preferences.savePreference(SHOW_TOTAL, enableShowTotal)
+//    }
 
     override fun getDailyNotificationTime(): Flow<LocalTime> = preferences.getPreference(DAILY_NOTIFICATION_TIME, -1)
         .map { time ->
@@ -175,14 +175,6 @@ class PreferencesRepositoryImpl @Inject constructor(private val context: Context
             selectedTransferColor = getTransferColor(displayMode).first(),
             isBioAuthPossible = bioAuthStatus(),
             updated = true
-        )
-        emit(result)
-    }
-
-    override fun getAllPreferenceView(): Flow<FilterState> = flow {
-        val result = FilterState(
-            carryOn = getCarryOn().first(),
-            showTotal = getShowTotal().first(),
         )
         emit(result)
     }
