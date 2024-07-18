@@ -1,7 +1,7 @@
 # My Savings
 <img src="https://github.com/user-attachments/assets/80bcd632-3803-4e0f-9002-543c5111068f" 
      alt="Image description" 
-     style=" margin: 0 auto; height: 500px;">
+     style="margin: 0 auto; width: auto;">
 
 ## Description
 
