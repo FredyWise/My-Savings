@@ -17,4 +17,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "My Savings"
 include(":app")
- 
+include(":features:auth")
+include(":core")
