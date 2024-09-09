@@ -1,11 +1,10 @@
 package com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases
 
 import co.yml.charts.common.extensions.isNotNull
-import com.fredy.mysavings.Feature.Data.Enum.SortType
-import com.fredy.mysavings.Feature.Domain.Model.RecordMap
-import com.fredy.mysavings.Feature.Domain.Repository.UserRepository
-import com.fredy.mysavings.Feature.Domain.Repository.RecordRepository
-import com.fredy.mysavings.Feature.Domain.Util.Resource
+import com.fredy.data.enums.SortType
+import com.fredy.domain.model.RecordMap
+import com.fredy.domain.repository.UserRepository
+import com.fredy.domain.repository.RecordRepository
 import com.fredy.mysavings.Util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow

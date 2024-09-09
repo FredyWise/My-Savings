@@ -45,7 +45,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.fredy.mysavings.Feature.Domain.Model.UserData
+import com.fredy.domain.model.UserData
 import com.fredy.mysavings.Feature.Presentation.Navigation.MainNavGraph
 import com.fredy.mysavings.Feature.Presentation.Navigation.NavigationRoute
 import com.fredy.mysavings.Feature.Presentation.Navigation.bottomBarScreens

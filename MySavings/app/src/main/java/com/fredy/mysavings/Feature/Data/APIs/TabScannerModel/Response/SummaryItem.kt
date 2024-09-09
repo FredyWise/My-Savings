@@ -1,5 +1,7 @@
 package com.fredy.mysavings.Feature.Data.APIs.TabScannerModel.Response
 
+import com.fredy.data.api.tabScannerModel.tabScannerDTO.CustomFields
+
 data class SummaryItem(
     val customFields: CustomFields,
     val desc: String,

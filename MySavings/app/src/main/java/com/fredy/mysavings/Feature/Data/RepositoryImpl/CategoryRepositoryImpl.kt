@@ -1,9 +1,9 @@
 package com.fredy.mysavings.Feature.Data.RepositoryImpl
 
-import com.fredy.mysavings.Feature.Data.Database.Dao.CategoryDao
-import com.fredy.mysavings.Feature.Data.Database.FirestoreDataSource.CategoryDataSource
-import com.fredy.mysavings.Feature.Domain.Model.Category
-import com.fredy.mysavings.Feature.Domain.Repository.CategoryRepository
+import com.fredy.data.database.dao.CategoryDao
+import com.fredy.data.database.firestoreDataSource.CategoryDataSource
+import com.fredy.domain.model.Category
+import com.fredy.domain.repository.CategoryRepository
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow

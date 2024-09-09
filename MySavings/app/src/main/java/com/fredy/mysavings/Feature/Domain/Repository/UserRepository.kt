@@ -1,7 +1,6 @@
 package com.fredy.mysavings.Feature.Domain.Repository
 
-import com.fredy.mysavings.Feature.Domain.Model.UserData
-import com.fredy.mysavings.Feature.Domain.Util.Resource
+import com.fredy.domain.model.UserData
 
 import kotlinx.coroutines.flow.Flow
 

@@ -1,7 +1,7 @@
 package com.fredy.mysavings.Feature.Domain.UseCases.UserUseCasesTest
 
 import com.fredy.mysavings.BaseUseCaseTest
-import com.fredy.mysavings.Feature.Domain.Model.UserData
+import com.fredy.domain.model.UserData
 import com.fredy.mysavings.Feature.Domain.UseCases.UserUseCases.DeleteUser
 import com.fredy.mysavings.Feature.Domain.UseCases.UserUseCases.GetAllUsersOrderedByName
 import com.fredy.mysavings.Feature.Domain.UseCases.UserUseCases.GetCurrentUser
@@ -9,8 +9,6 @@ import com.fredy.mysavings.Feature.Domain.UseCases.UserUseCases.GetUser
 import com.fredy.mysavings.Feature.Domain.UseCases.UserUseCases.InsertUser
 import com.fredy.mysavings.Feature.Domain.UseCases.UserUseCases.SearchUsers
 import com.fredy.mysavings.Feature.Domain.UseCases.UserUseCases.UpdateUser
-import com.fredy.mysavings.Feature.Domain.Util.Resource
-import com.fredy.mysavings.Feature.Presentation.ViewModels.AuthViewModel.AuthEvent
 import junit.framework.TestCase
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertNull

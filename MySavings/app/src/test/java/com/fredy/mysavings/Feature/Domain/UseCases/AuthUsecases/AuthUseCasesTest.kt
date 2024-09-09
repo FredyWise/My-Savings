@@ -1,21 +1,16 @@
 package com.fredy.mysavings.Feature.Domain.UseCases.AuthUsecases
 
 import android.content.Context
-import android.net.Uri
 import com.fredy.mysavings.BaseUseCaseTest
-import com.fredy.mysavings.Feature.Domain.UseCases.AuthUseCases.GoogleSignIn
-import com.fredy.mysavings.Feature.Domain.UseCases.AuthUseCases.LoginUser
-import com.fredy.mysavings.Feature.Domain.UseCases.AuthUseCases.RegisterUser
-import com.fredy.mysavings.Feature.Domain.UseCases.AuthUseCases.SendOtp
-import com.fredy.mysavings.Feature.Domain.UseCases.AuthUseCases.SignOut
-import com.fredy.mysavings.Feature.Domain.UseCases.AuthUseCases.UpdateUserInformation
-import com.fredy.mysavings.Feature.Domain.UseCases.AuthUseCases.VerifyPhoneNumber
-import com.fredy.mysavings.Feature.Domain.Util.Resource
-import com.fredy.mysavings.MainActivity
+import com.fredy.auth.useCases.GoogleSignIn
+import com.fredy.auth.useCases.LoginUser
+import com.fredy.auth.useCases.RegisterUser
+import com.fredy.domain.useCases.authUseCases.SendOtp
+import com.fredy.auth.useCases.SignOut
+import com.fredy.auth.useCases.UpdateUserInformation
+import com.fredy.auth.useCases.VerifyPhoneNumber
 import com.google.android.gms.auth.api.identity.SignInClient
-import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
-import com.google.common.truth.Truth.assertThat
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
@@ -29,7 +24,6 @@ import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.mockito.Mockito.mock
-import org.mockito.Mockito.verify
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

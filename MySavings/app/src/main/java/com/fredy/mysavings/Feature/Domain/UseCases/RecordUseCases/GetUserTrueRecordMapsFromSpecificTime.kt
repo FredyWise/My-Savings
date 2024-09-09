@@ -1,18 +1,17 @@
 package com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases
 
 import co.yml.charts.common.extensions.isNotNull
-import com.fredy.mysavings.Feature.Data.Enum.SortType
-import com.fredy.mysavings.Feature.Domain.Model.Book
-import com.fredy.mysavings.Feature.Domain.Model.BookMap
-import com.fredy.mysavings.Feature.Domain.Model.TrueRecord
-import com.fredy.mysavings.Feature.Domain.Repository.UserRepository
-import com.fredy.mysavings.Feature.Domain.Repository.BookRepository
-import com.fredy.mysavings.Feature.Domain.Repository.RecordRepository
+import com.fredy.data.enums.SortType
+import com.fredy.domain.model.Book
+import com.fredy.domain.model.BookMap
+import com.fredy.domain.model.TrueRecord
+import com.fredy.domain.repository.UserRepository
+import com.fredy.domain.repository.BookRepository
+import com.fredy.domain.repository.RecordRepository
 import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.CurrencyUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.currencyConverter
-import com.fredy.mysavings.Feature.Domain.Util.Mappers.filterTrueRecordCurrency
-import com.fredy.mysavings.Feature.Domain.Util.Mappers.toBookSortedMaps
-import com.fredy.mysavings.Feature.Domain.Util.Resource
+import com.fredy.domain.util.mappers.filterTrueRecordCurrency
+import com.fredy.domain.util.mappers.toBookSortedMaps
 import com.fredy.mysavings.Util.Log
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch

@@ -1,7 +1,6 @@
 package com.fredy.mysavings.Util
 
 import android.util.Log
-import io.grpc.android.BuildConfig
 
 object Log {
     private const val TAG = "BABI"
@@ -10,6 +9,7 @@ object Log {
     fun setDebuggable(debuggable: Boolean) {
         isDebuggable = debuggable
     }
+
 
     fun d(message: String, tag: String = TAG) {
         if (isDebuggable) {

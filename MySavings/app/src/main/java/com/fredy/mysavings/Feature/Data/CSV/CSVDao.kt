@@ -1,6 +1,6 @@
 package com.fredy.mysavings.Feature.Data.CSV
 
-import com.fredy.mysavings.Feature.Domain.Model.TrueRecord
+import com.fredy.domain.model.TrueRecord
 
 
 interface CSVDao {

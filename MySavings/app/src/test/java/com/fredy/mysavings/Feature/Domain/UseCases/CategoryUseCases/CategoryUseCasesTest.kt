@@ -1,9 +1,8 @@
 package com.fredy.mysavings.Feature.Domain.UseCases.CategoryUseCases
 
 import com.fredy.mysavings.BaseUseCaseTest
-import com.fredy.mysavings.Feature.Data.Enum.RecordType
-import com.fredy.mysavings.Feature.Domain.Model.Category
-import com.fredy.mysavings.Feature.Domain.Util.Resource
+import com.fredy.data.enums.RecordType
+import com.fredy.domain.model.Category
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.flow.first

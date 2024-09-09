@@ -26,7 +26,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.fredy.mysavings.Feature.Domain.Model.Book
+import com.fredy.domain.model.Book
 import com.fredy.mysavings.Feature.Presentation.Util.DefaultData
 import com.fredy.mysavings.R
 

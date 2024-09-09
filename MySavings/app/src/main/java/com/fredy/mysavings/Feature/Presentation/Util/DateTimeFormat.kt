@@ -1,6 +1,6 @@
 package com.fredy.mysavings.Feature.Presentation.Util
 
-import com.fredy.mysavings.Feature.Data.Enum.FilterType
+import com.fredy.data.enums.FilterType
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime

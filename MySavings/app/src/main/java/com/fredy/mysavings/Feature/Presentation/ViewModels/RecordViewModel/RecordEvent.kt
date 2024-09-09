@@ -1,9 +1,9 @@
 package com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel
 
-import com.fredy.mysavings.Feature.Domain.Model.Book
-import com.fredy.mysavings.Feature.Domain.Model.Record
-import com.fredy.mysavings.Feature.Domain.Model.TrueRecord
-import com.fredy.mysavings.Feature.Data.Enum.FilterType
+import com.fredy.domain.model.Book
+import com.fredy.domain.model.Record
+import com.fredy.domain.model.TrueRecord
+import com.fredy.data.enums.FilterType
 import java.time.LocalDate
 
 sealed interface RecordEvent {

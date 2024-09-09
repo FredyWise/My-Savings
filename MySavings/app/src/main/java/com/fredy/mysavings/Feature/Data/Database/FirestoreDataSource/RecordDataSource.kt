@@ -1,12 +1,13 @@
 package com.fredy.mysavings.Feature.Data.Database.FirestoreDataSource
 
-import com.fredy.mysavings.Feature.Data.Database.Converter.TimestampConverter
-import com.fredy.mysavings.Feature.Data.Enum.RecordType
-import com.fredy.mysavings.Feature.Domain.Model.Category
-import com.fredy.mysavings.Feature.Domain.Model.Record
-import com.fredy.mysavings.Feature.Domain.Model.TrueRecord
-import com.fredy.mysavings.Feature.Domain.Model.Wallet
-import com.fredy.mysavings.Feature.Domain.Util.Mappers.toTrueRecords
+import com.fredy.data.database.converter.TimestampConverter
+import com.fredy.data.database.firestoreDataSource.RecordDataSource
+import com.fredy.data.enums.RecordType
+import com.fredy.domain.model.Category
+import com.fredy.domain.model.Record
+import com.fredy.domain.model.TrueRecord
+import com.fredy.domain.model.Wallet
+import com.fredy.domain.util.mappers.toTrueRecords
 import com.fredy.mysavings.Util.Log
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.Filter

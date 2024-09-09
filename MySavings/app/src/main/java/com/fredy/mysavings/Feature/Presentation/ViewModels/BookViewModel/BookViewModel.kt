@@ -2,11 +2,10 @@ package com.fredy.mysavings.Feature.Presentation.ViewModels.BookViewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.fredy.mysavings.Feature.Data.Enum.SortType
-import com.fredy.mysavings.Feature.Domain.Model.Book
+import com.fredy.data.enums.SortType
+import com.fredy.domain.model.Book
 import com.fredy.mysavings.Feature.Domain.UseCases.BookUseCases.BookUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.RecordUseCases
-import com.fredy.mysavings.Feature.Domain.Util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted

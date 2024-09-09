@@ -1,10 +1,9 @@
 package com.fredy.mysavings.Feature.Domain.UseCases.WalletUseCases
 
 import co.yml.charts.common.extensions.isNotNull
-import com.fredy.mysavings.Feature.Domain.Model.Wallet
-import com.fredy.mysavings.Feature.Domain.Repository.UserRepository
-import com.fredy.mysavings.Feature.Domain.Repository.WalletRepository
-import com.fredy.mysavings.Feature.Domain.Util.Resource
+import com.fredy.domain.model.Wallet
+import com.fredy.domain.repository.UserRepository
+import com.fredy.domain.repository.WalletRepository
 import com.fredy.mysavings.Feature.Presentation.Util.DefaultData
 import com.fredy.mysavings.Util.Log
 import kotlinx.coroutines.Dispatchers

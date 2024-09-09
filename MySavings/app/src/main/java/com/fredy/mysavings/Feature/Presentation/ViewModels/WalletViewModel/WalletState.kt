@@ -1,10 +1,9 @@
 package com.fredy.mysavings.Feature.Presentation.ViewModels.WalletViewModel
 
-import com.fredy.mysavings.Feature.Data.Enum.SortType
-import com.fredy.mysavings.Feature.Domain.Model.RecordMap
-import com.fredy.mysavings.Feature.Domain.Model.UserData
-import com.fredy.mysavings.Feature.Domain.Model.Wallet
-import com.fredy.mysavings.Feature.Domain.Util.Resource
+import com.fredy.data.enums.SortType
+import com.fredy.domain.model.RecordMap
+import com.fredy.domain.model.UserData
+import com.fredy.domain.model.Wallet
 import com.fredy.mysavings.Feature.Presentation.Util.BalanceBar
 
 data class WalletState(

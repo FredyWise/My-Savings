@@ -2,7 +2,6 @@ package com.fredy.mysavings.Feature.Presentation.Screens.NavigationComponent
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -23,7 +22,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.fredy.mysavings.Feature.Domain.Model.UserData
+import com.fredy.domain.model.UserData
 import com.fredy.mysavings.R
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.AsyncImageHandler
 

@@ -1,8 +1,7 @@
 package com.fredy.mysavings.Feature.Domain.UseCases.BookUseCases
 
 import com.fredy.mysavings.BaseUseCaseTest
-import com.fredy.mysavings.Feature.Domain.Model.Book
-import com.fredy.mysavings.Feature.Domain.Util.Resource
+import com.fredy.domain.model.Book
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.flow.first

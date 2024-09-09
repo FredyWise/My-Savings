@@ -1,9 +1,9 @@
 package com.fredy.mysavings.Feature.Data.RepositoryImpl
 
-import com.fredy.mysavings.Feature.Data.APIs.TabScannerModel.Response.ProcessResponse
-import com.fredy.mysavings.Feature.Data.APIs.TabScannerModel.Response.ResultResponse
-import com.fredy.mysavings.Feature.Data.APIs.TabScannerModel.TabScannerAPI
-import com.fredy.mysavings.Feature.Domain.Repository.TabScannerRepository
+import com.fredy.data.api.tabScannerModel.tabScannerDTO.ProcessResponse
+import com.fredy.data.api.tabScannerModel.tabScannerDTO.ResultResponse
+import com.fredy.data.api.tabScannerModel.TabScannerAPI
+import com.fredy.domain.repository.TabScannerRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.MultipartBody

@@ -1,7 +1,7 @@
 package com.fredy.mysavings.Feature.Domain.UseCases.UserUseCases
 
-import com.fredy.mysavings.Feature.Domain.Model.UserData
-import com.fredy.mysavings.Feature.Domain.Repository.UserRepository
+import com.fredy.domain.model.UserData
+import com.fredy.domain.repository.UserRepository
 import kotlinx.coroutines.flow.Flow
 
 class SearchUsers(

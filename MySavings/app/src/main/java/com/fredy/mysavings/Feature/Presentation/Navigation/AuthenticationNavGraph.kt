@@ -12,9 +12,8 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
-import com.fredy.mysavings.Feature.Domain.Util.Resource
-import com.fredy.mysavings.Feature.Presentation.ViewModels.AuthViewModel.AuthViewModel
-import com.fredy.mysavings.Feature.Presentation.ViewModels.AuthViewModel.AuthEvent
+import com.fredy.auth.viewModel.AuthViewModel
+import com.fredy.auth.viewModel.AuthEvent
 import com.fredy.mysavings.Feature.Presentation.ViewModels.PreferencesViewModel.PreferencesViewModel
 import com.fredy.mysavings.Feature.Presentation.Screens.Authentication.SignIn
 import com.fredy.mysavings.Feature.Presentation.Screens.Authentication.SignUp

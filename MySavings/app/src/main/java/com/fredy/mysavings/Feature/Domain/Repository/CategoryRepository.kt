@@ -1,6 +1,6 @@
 package com.fredy.mysavings.Feature.Domain.Repository
 
-import com.fredy.mysavings.Feature.Domain.Model.Category
+import com.fredy.domain.model.Category
 
 import kotlinx.coroutines.flow.Flow
 

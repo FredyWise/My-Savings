@@ -6,9 +6,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.fredy.mysavings.Feature.Domain.Model.Record
+import com.fredy.domain.model.Record
 import com.fredy.mysavings.Feature.Domain.UseCases.TabScannerUseCase.TabScannerUseCases
-import com.fredy.mysavings.Feature.Domain.Util.Resource
 import com.fredy.mysavings.Feature.Presentation.Util.isExpense
 import com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel.AddRecordEvent
 import com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel.AddRecordState

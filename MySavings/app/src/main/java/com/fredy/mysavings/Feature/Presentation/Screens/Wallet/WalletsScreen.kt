@@ -20,7 +20,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.fredy.mysavings.Feature.Domain.Model.Wallet
+import com.fredy.domain.model.Wallet
 import com.fredy.mysavings.R
 import com.fredy.mysavings.Feature.Presentation.ViewModels.WalletViewModel.WalletState
 import com.fredy.mysavings.Feature.Presentation.ViewModels.WalletViewModel.WalletEvent

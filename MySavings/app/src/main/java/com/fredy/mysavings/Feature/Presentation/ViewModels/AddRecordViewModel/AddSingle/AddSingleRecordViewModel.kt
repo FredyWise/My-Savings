@@ -6,14 +6,9 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.fredy.mysavings.Feature.Data.Enum.RecordType
-import com.fredy.mysavings.Feature.Domain.Model.Category
-import com.fredy.mysavings.Feature.Domain.Model.Record
+import com.fredy.domain.model.Category
 import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.CurrencyUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.RecordUseCases
-import com.fredy.mysavings.Feature.Domain.Util.Resource
-import com.fredy.mysavings.Feature.Presentation.Util.DefaultData.transferCategory
-import com.fredy.mysavings.Feature.Presentation.Util.isTransfer
 import com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel.AddRecordEvent
 import com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel.AddRecordState
 import com.fredy.mysavings.Util.Log

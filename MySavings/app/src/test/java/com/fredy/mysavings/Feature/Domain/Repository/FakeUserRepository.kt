@@ -1,14 +1,9 @@
 package com.fredy.mysavings.Feature.Domain.Repository
 
-import android.content.Context
-import android.net.Uri
-import com.fredy.mysavings.Feature.Domain.Model.UserData
-import com.fredy.mysavings.Feature.Domain.Util.Resource
-import com.google.firebase.auth.AuthCredential
-import com.google.firebase.auth.AuthResult
+import com.fredy.domain.repository.UserRepository
+import com.fredy.domain.model.UserData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOf
 
 class FakeUserRepository : UserRepository {
 

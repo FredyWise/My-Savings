@@ -14,7 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.Feature.Presentation.Util.formatDateDay
 import com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel.RecordEvent
-import com.fredy.mysavings.Feature.Domain.Model.RecordMap
+import com.fredy.domain.model.RecordMap
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.CustomStickyHeader
 
 @OptIn(ExperimentalFoundationApi::class)

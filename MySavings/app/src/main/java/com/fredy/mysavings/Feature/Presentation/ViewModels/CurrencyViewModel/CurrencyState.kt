@@ -1,9 +1,8 @@
 package com.fredy.mysavings.Feature.Presentation.ViewModels.CurrencyViewModel
 
-import com.fredy.mysavings.Feature.Data.APIs.CurrencyModels.Response.Rates
-import com.fredy.mysavings.Feature.Domain.Model.Currency
-import com.fredy.mysavings.Feature.Domain.Model.UserData
-import com.fredy.mysavings.Feature.Domain.Util.Resource
+import com.fredy.data.api.currencyModels.currencyDTO.Rates
+import com.fredy.domain.model.Currency
+import com.fredy.domain.model.UserData
 
 data class CurrencyState(
     val ratesResource: Resource<Rates> = Resource.Loading(),

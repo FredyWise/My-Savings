@@ -1,7 +1,7 @@
 package com.fredy.mysavings.Feature.Presentation.ViewModels.PreferencesViewModel
 
 import androidx.compose.ui.graphics.Color
-import com.fredy.mysavings.Feature.Data.Enum.DisplayMode
+import com.fredy.data.enums.DisplayMode
 import com.fredy.mysavings.Feature.Presentation.Util.defaultDarkExpenseColor
 import com.fredy.mysavings.Feature.Presentation.Util.defaultDarkIncomeColor
 import com.fredy.mysavings.Feature.Presentation.Util.defaultDarkTransferColor

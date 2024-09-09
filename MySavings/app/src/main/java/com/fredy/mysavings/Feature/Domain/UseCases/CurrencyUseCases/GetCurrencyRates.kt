@@ -1,8 +1,7 @@
 package com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases
 
-import com.fredy.mysavings.Feature.Data.APIs.CurrencyModels.Response.Rates
-import com.fredy.mysavings.Feature.Domain.Repository.CurrencyRepository
-import com.fredy.mysavings.Feature.Domain.Util.Resource
+import com.fredy.data.api.currencyModels.currencyDTO.Rates
+import com.fredy.domain.repository.CurrencyRepository
 import com.fredy.mysavings.Util.Log
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch

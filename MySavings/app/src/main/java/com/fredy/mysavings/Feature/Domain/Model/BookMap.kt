@@ -1,5 +1,8 @@
 package com.fredy.mysavings.Feature.Domain.Model
 
+import com.fredy.domain.model.Book
+import com.fredy.domain.model.RecordMap
+
 data class BookMap(
     val book: Book,
     val recordMaps: List<RecordMap>

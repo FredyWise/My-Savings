@@ -1,5 +1,7 @@
 package com.fredy.mysavings.Feature.Data.APIs.CountryModels.Response
 
+import com.fredy.data.api.countryModels.countryDTO.CurrencyHelper
+
 data class Currencies(
     val AED: CurrencyHelper?,
     val AFN: CurrencyHelper?,

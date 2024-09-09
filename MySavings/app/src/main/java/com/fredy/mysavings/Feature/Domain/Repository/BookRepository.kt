@@ -1,6 +1,6 @@
 package com.fredy.mysavings.Feature.Domain.Repository
 
-import com.fredy.mysavings.Feature.Domain.Model.Book
+import com.fredy.domain.model.Book
 import kotlinx.coroutines.flow.Flow
 
 interface BookRepository {

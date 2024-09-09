@@ -1,10 +1,10 @@
 package com.fredy.mysavings.DI
 
-import com.fredy.mysavings.Feature.Data.APIs.ApiCredentials
-import com.fredy.mysavings.Feature.Data.APIs.CountryModels.CountryApi
-import com.fredy.mysavings.Feature.Data.APIs.CurrencyModels.CurrencyApi
-import com.fredy.mysavings.Data.APIs.TextCorrectionModels.TypeWiseApi
-import com.fredy.mysavings.Feature.Data.APIs.TabScannerModel.TabScannerAPI
+import com.fredy.core.credentials.ApiCredentials
+import com.fredy.data.api.countryModels.CountryApi
+import com.fredy.data.api.currencyModels.CurrencyApi
+import com.fredy.data.api.textCorrectionModels.TypeWiseApi
+import com.fredy.data.api.tabScannerModel.TabScannerAPI
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

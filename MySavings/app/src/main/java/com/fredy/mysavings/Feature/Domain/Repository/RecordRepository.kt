@@ -1,10 +1,10 @@
 package com.fredy.mysavings.Feature.Domain.Repository
 
-import com.fredy.mysavings.Feature.Data.Enum.RecordType
-import com.fredy.mysavings.Feature.Data.Enum.SortType
-import com.fredy.mysavings.Feature.Domain.Model.Record
-import com.fredy.mysavings.Feature.Domain.Model.RecordMap
-import com.fredy.mysavings.Feature.Domain.Model.TrueRecord
+import com.fredy.data.enums.RecordType
+import com.fredy.data.enums.SortType
+import com.fredy.domain.model.Record
+import com.fredy.domain.model.RecordMap
+import com.fredy.domain.model.TrueRecord
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDateTime
 

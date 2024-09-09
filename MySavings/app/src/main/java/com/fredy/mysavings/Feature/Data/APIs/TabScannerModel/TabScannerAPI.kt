@@ -1,11 +1,10 @@
 package com.fredy.mysavings.Feature.Data.APIs.TabScannerModel
 
-import com.fredy.mysavings.Feature.Data.APIs.ApiCredentials
-import com.fredy.mysavings.Feature.Data.APIs.TabScannerModel.Response.ProcessResponse
-import com.fredy.mysavings.Feature.Data.APIs.TabScannerModel.Response.ResultResponse
+import com.fredy.core.credentials.ApiCredentials
+import com.fredy.data.api.tabScannerModel.tabScannerDTO.ProcessResponse
+import com.fredy.data.api.tabScannerModel.tabScannerDTO.ResultResponse
 import okhttp3.MultipartBody
 import retrofit2.Call
-import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Multipart

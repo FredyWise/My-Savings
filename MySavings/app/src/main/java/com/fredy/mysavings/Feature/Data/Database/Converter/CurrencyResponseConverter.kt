@@ -1,7 +1,7 @@
 package com.fredy.mysavings.Feature.Data.Database.Converter
 
 import androidx.room.TypeConverter
-import com.fredy.mysavings.Feature.Data.APIs.CurrencyModels.Response.CurrencyResponse
+import com.fredy.data.api.currencyModels.currencyDTO.CurrencyResponse
 import com.google.gson.Gson
 
 object CurrencyResponseConverter {

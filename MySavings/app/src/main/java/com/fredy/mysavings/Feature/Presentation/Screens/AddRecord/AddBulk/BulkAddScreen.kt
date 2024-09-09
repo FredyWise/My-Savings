@@ -1,12 +1,10 @@
 import android.net.Uri
 import android.widget.Toast
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -33,9 +31,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil.compose.rememberAsyncImagePainter
-import com.fredy.mysavings.Feature.Data.Enum.RecordType
-import com.fredy.mysavings.Feature.Domain.Util.Resource
+import com.fredy.data.enums.RecordType
 import com.fredy.mysavings.Feature.Presentation.Screens.AddRecord.AddBottomSheet
 import com.fredy.mysavings.Feature.Presentation.Screens.AddRecord.AddBulk.ChooseAccountAndMultiCategory
 import com.fredy.mysavings.Feature.Presentation.Screens.AddRecord.AddBulk.RecordAddDialog
@@ -47,7 +43,6 @@ import com.fredy.mysavings.Feature.Presentation.Screens.AddRecord.ImageDialog
 import com.fredy.mysavings.Feature.Presentation.Screens.AddRecord.LauncherChooserDialog
 import com.fredy.mysavings.Feature.Presentation.Screens.Category.CategoryAddDialog
 import com.fredy.mysavings.Feature.Presentation.Screens.Wallet.WalletAddDialog
-import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SimpleAlertDialog
 import com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel.AddBulk.AddBulkRecordViewModel
 import com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel.AddRecordEvent
 import com.fredy.mysavings.Feature.Presentation.ViewModels.CategoryViewModel.CategoryViewModel

@@ -2,7 +2,7 @@ package com.fredy.mysavings.Feature.Domain.Model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.fredy.mysavings.Feature.Data.APIs.CurrencyModels.Response.Rates
+import com.fredy.data.api.currencyModels.currencyDTO.Rates
 import com.google.firebase.Timestamp
 
 @Entity

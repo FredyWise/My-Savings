@@ -2,7 +2,6 @@ package com.fredy.mysavings.Feature.Domain.UseCases.AuthUseCases
 
 import android.content.Context
 import co.yml.charts.common.extensions.isNotNull
-import com.fredy.mysavings.Feature.Domain.Util.Resource
 import com.fredy.mysavings.MainActivity
 import com.fredy.mysavings.Util.Log
 import com.google.firebase.FirebaseException

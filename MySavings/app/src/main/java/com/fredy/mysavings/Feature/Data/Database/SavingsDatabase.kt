@@ -3,24 +3,24 @@ package com.fredy.mysavings.Feature.Data.Database
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.fredy.mysavings.Feature.Data.Database.Converter.CurrencyRatesDoubleConverter
-import com.fredy.mysavings.Feature.Data.Database.Converter.CurrencyResponseConverter
-import com.fredy.mysavings.Feature.Data.Database.Converter.DateTimeConverter
-import com.fredy.mysavings.Feature.Data.Database.Converter.TimestampConverter
-import com.fredy.mysavings.Feature.Data.Database.Dao.WalletDao
-import com.fredy.mysavings.Feature.Data.Database.Dao.BookDao
-import com.fredy.mysavings.Feature.Data.Database.Dao.CategoryDao
-import com.fredy.mysavings.Feature.Data.Database.Dao.CurrencyCacheDao
-import com.fredy.mysavings.Feature.Data.Database.Dao.CurrencyDao
-import com.fredy.mysavings.Feature.Data.Database.Dao.RecordDao
-import com.fredy.mysavings.Feature.Data.Database.Dao.UserDao
-import com.fredy.mysavings.Feature.Domain.Model.Wallet
-import com.fredy.mysavings.Feature.Domain.Model.Book
-import com.fredy.mysavings.Feature.Domain.Model.Category
-import com.fredy.mysavings.Feature.Domain.Model.Currency
-import com.fredy.mysavings.Feature.Domain.Model.RatesCache
-import com.fredy.mysavings.Feature.Domain.Model.Record
-import com.fredy.mysavings.Feature.Domain.Model.UserData
+import com.fredy.data.database.converter.CurrencyRatesDoubleConverter
+import com.fredy.data.database.converter.CurrencyResponseConverter
+import com.fredy.data.database.converter.DateTimeConverter
+import com.fredy.data.database.converter.TimestampConverter
+import com.fredy.data.database.dao.WalletDao
+import com.fredy.data.database.dao.BookDao
+import com.fredy.data.database.dao.CategoryDao
+import com.fredy.data.database.dao.CurrencyCacheDao
+import com.fredy.data.database.dao.CurrencyDao
+import com.fredy.data.database.dao.RecordDao
+import com.fredy.data.database.dao.UserDao
+import com.fredy.domain.model.Wallet
+import com.fredy.domain.model.Book
+import com.fredy.domain.model.Category
+import com.fredy.domain.model.Currency
+import com.fredy.domain.model.RatesCache
+import com.fredy.domain.model.Record
+import com.fredy.domain.model.UserData
 
 @TypeConverters(value = [DateTimeConverter::class, TimestampConverter::class, CurrencyRatesDoubleConverter::class, CurrencyResponseConverter::class])
 @Database(

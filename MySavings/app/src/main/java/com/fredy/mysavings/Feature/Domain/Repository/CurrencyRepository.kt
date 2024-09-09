@@ -1,9 +1,9 @@
 package com.fredy.mysavings.Feature.Domain.Repository
 
-import com.fredy.mysavings.Feature.Data.APIs.ApiCredentials
-import com.fredy.mysavings.Feature.Data.APIs.CountryModels.Response.CurrencyInfoItem
-import com.fredy.mysavings.Feature.Domain.Model.Currency
-import com.fredy.mysavings.Feature.Domain.Model.RatesCache
+import com.fredy.core.credentials.ApiCredentials
+import com.fredy.data.api.countryModels.countryDTO.CurrencyInfoItem
+import com.fredy.domain.model.Currency
+import com.fredy.domain.model.RatesCache
 import kotlinx.coroutines.flow.Flow
 
 interface CurrencyRepository {

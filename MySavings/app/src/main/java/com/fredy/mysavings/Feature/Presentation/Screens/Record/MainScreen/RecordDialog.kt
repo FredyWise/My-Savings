@@ -31,8 +31,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import com.fredy.mysavings.Feature.Domain.Model.Record
-import com.fredy.mysavings.Feature.Domain.Model.TrueRecord
+import com.fredy.domain.model.Record
+import com.fredy.domain.model.TrueRecord
 import com.fredy.mysavings.Feature.Presentation.Util.BalanceColor
 import com.fredy.mysavings.Feature.Presentation.Util.formatMonthDateYearDetailedTime
 import com.fredy.mysavings.Feature.Presentation.Util.isTransfer

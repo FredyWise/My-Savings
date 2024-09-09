@@ -5,13 +5,12 @@ package com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.fredy.mysavings.Feature.Data.Enum.RecordType
-import com.fredy.mysavings.Feature.Data.Enum.SortType
-import com.fredy.mysavings.Feature.Domain.Repository.SyncRepository
+import com.fredy.data.enums.RecordType
+import com.fredy.data.enums.SortType
+import com.fredy.domain.repository.SyncRepository
 import com.fredy.mysavings.Feature.Domain.UseCases.BookUseCases.BookUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.RecordUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.WalletUseCases.WalletUseCases
-import com.fredy.mysavings.Feature.Domain.Util.Resource
 import com.fredy.mysavings.Feature.Presentation.Util.BalanceBar
 import com.fredy.mysavings.Feature.Presentation.Util.BalanceItem
 import com.fredy.mysavings.Feature.Presentation.Util.update

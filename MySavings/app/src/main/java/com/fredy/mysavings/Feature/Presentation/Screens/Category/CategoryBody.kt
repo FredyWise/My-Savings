@@ -23,9 +23,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.fredy.mysavings.Feature.Domain.Model.Category
+import com.fredy.domain.model.Category
 import com.fredy.mysavings.Feature.Presentation.Util.ActionWithName
-import com.fredy.mysavings.Feature.Presentation.Util.isTransfer
 import com.fredy.mysavings.Feature.Presentation.ViewModels.CategoryViewModel.CategoryMap
 import com.fredy.mysavings.Feature.Presentation.ViewModels.CategoryViewModel.CategoryEvent
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.AdvancedEntityItem

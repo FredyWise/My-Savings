@@ -1,8 +1,7 @@
 package com.fredy.mysavings.Feature.Presentation.ViewModels.BookViewModel
 
-import com.fredy.mysavings.Feature.Data.Enum.SortType
-import com.fredy.mysavings.Feature.Domain.Model.Book
-import com.fredy.mysavings.Feature.Domain.Util.Resource
+import com.fredy.data.enums.SortType
+import com.fredy.domain.model.Book
 
 data class BookState(
     val bookResource: Resource<List<Book>> = Resource.Loading(),

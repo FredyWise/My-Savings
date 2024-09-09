@@ -4,9 +4,9 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
-import com.fredy.mysavings.Feature.Domain.Model.Record
-import com.fredy.mysavings.Feature.Domain.Model.TrueRecord
-import com.fredy.mysavings.Feature.Data.Enum.RecordType
+import com.fredy.domain.model.Record
+import com.fredy.domain.model.TrueRecord
+import com.fredy.data.enums.RecordType
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDateTime
 

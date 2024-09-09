@@ -46,14 +46,13 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.fredy.mysavings.Feature.Data.Enum.AuthMethod
+import com.fredy.data.enums.AuthMethod
 import com.fredy.mysavings.R
-import com.fredy.mysavings.Feature.Domain.Util.Resource
 
 import com.fredy.mysavings.Util.isValidLogin
 import com.fredy.mysavings.Util.isValidPhoneNumber
-import com.fredy.mysavings.Feature.Presentation.ViewModels.AuthViewModel.AuthState
-import com.fredy.mysavings.Feature.Presentation.ViewModels.AuthViewModel.AuthEvent
+import com.fredy.auth.viewModel.AuthState
+import com.fredy.auth.viewModel.AuthEvent
 import com.fredy.mysavings.Feature.Presentation.Navigation.NavigationRoute
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions

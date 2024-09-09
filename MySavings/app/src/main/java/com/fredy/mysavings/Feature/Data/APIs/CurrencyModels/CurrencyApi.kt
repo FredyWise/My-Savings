@@ -1,7 +1,7 @@
 package com.fredy.mysavings.Feature.Data.APIs.CurrencyModels
 
-import com.fredy.mysavings.Feature.Data.APIs.ApiCredentials
-import com.fredy.mysavings.Feature.Data.APIs.CurrencyModels.Response.CurrencyResponse
+import com.fredy.core.credentials.ApiCredentials
+import com.fredy.data.api.currencyModels.currencyDTO.CurrencyResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query

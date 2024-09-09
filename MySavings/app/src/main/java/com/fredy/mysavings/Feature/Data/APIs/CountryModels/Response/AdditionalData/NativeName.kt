@@ -1,6 +1,6 @@
 package com.fredy.mysavings.Feature.Data.APIs.CountryModels.Response.AdditionalData
 
-import com.fredy.mysavings.Feature.Data.APIs.CountryModels.Response.TranslationHelper
+import com.fredy.data.api.countryModels.countryDTO.TranslationHelper
 
 data class NativeName(
     val afr: TranslationHelper?,

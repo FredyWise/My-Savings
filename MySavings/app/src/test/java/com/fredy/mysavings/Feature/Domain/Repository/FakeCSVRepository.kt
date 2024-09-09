@@ -1,7 +1,7 @@
 package com.fredy.mysavings.Feature.Domain.Repository
 
-import com.fredy.mysavings.Feature.Domain.Model.Book
-import com.fredy.mysavings.Feature.Domain.Model.TrueRecord
+import com.fredy.domain.model.TrueRecord
+import com.fredy.domain.repository.CSVRepository
 
 class FakeCSVRepository : CSVRepository {
 

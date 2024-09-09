@@ -2,8 +2,8 @@ package com.fredy.mysavings.Feature.Domain.Model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.fredy.mysavings.Feature.Data.APIs.ApiCredentials
-import com.fredy.mysavings.Feature.Data.APIs.CountryModels.Response.CurrencyInfoItem
+import com.fredy.core.credentials.ApiCredentials
+import com.fredy.data.api.countryModels.countryDTO.CurrencyInfoItem
 
 @Entity
 data class CurrencyInfoCache(

@@ -2,6 +2,9 @@ package com.fredy.mysavings.Feature.Domain.Model
 
 import androidx.room.Embedded
 import androidx.room.Relation
+import com.fredy.domain.model.Category
+import com.fredy.domain.model.Record
+import com.fredy.domain.model.Wallet
 import com.fredy.mysavings.Feature.Presentation.Util.formatDateDay
 
 data class TrueRecord(

@@ -1,7 +1,8 @@
 package com.fredy.mysavings.Feature.Data.Database.FirestoreDataSource
 
+import com.fredy.data.database.firestoreDataSource.CategoryDataSource
 import com.fredy.mysavings.Util.Log
-import com.fredy.mysavings.Feature.Domain.Model.Category
+import com.fredy.domain.model.Category
 
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.snapshots

@@ -1,10 +1,10 @@
 package com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases
 
-import com.fredy.mysavings.Feature.Data.APIs.CurrencyModels.Response.Rates
-import com.fredy.mysavings.Feature.Domain.Repository.CurrencyRepository
+import com.fredy.data.api.currencyModels.currencyDTO.Rates
+import com.fredy.domain.repository.CurrencyRepository
 import com.fredy.mysavings.Feature.Presentation.Util.BalanceItem
 import com.fredy.mysavings.Util.Log
-import com.fredy.mysavings.Feature.Domain.Util.Mappers.getRateForCurrency
+import com.fredy.domain.util.mappers.getRateForCurrency
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -54,12 +54,12 @@ class ConvertCurrencyData(
         toCurrency: String,
         rates: Rates
     ): Double {
-        val toBaseRate = rates.getRateForCurrency(
+        val toBaseRate = com.fredy.domain.util.mappers.getRateForCurrency(
             toCurrency
         )?.toDouble() ?: throw IllegalArgumentException(
             "Currency '$toCurrency' not found in rates."
         )
-        val fromBaseRate = rates.getRateForCurrency(
+        val fromBaseRate = com.fredy.domain.util.mappers.getRateForCurrency(
             fromCurrency
         )?.toDouble() ?: throw IllegalArgumentException(
             "Currency '$fromCurrency' not found in rates."

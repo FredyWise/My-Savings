@@ -2,13 +2,12 @@ package com.fredy.mysavings.Feature.Presentation.ViewModels.IOViewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.fredy.mysavings.Feature.Data.Enum.RecordType
-import com.fredy.mysavings.Feature.Domain.Model.Record
-import com.fredy.mysavings.Feature.Domain.Model.TrueRecord
+import com.fredy.data.enums.RecordType
+import com.fredy.domain.model.Record
+import com.fredy.domain.model.TrueRecord
 import com.fredy.mysavings.Feature.Domain.UseCases.BookUseCases.BookUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.IOUseCases.IOUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.RecordUseCases
-import com.fredy.mysavings.Feature.Domain.Util.Resource
 import com.fredy.mysavings.Feature.Presentation.Util.formatMonthDateYear
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi

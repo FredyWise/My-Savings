@@ -2,6 +2,7 @@ package com.fredy.mysavings.Feature.Presentation.ViewModels.AuthViewModel
 
 import android.content.Context
 import android.net.Uri
+import com.fredy.auth.viewModel.AuthEvent
 import com.google.firebase.auth.AuthCredential
 
 

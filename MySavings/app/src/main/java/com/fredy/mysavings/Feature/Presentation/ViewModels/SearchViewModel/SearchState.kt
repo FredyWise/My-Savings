@@ -1,7 +1,6 @@
 package com.fredy.mysavings.Feature.Presentation.ViewModels.SearchViewModel
 
-import com.fredy.mysavings.Feature.Domain.Model.BookMap
-import com.fredy.mysavings.Feature.Domain.Util.Resource
+import com.fredy.domain.model.BookMap
 
 data class SearchState(
     val trueRecordsResource: Resource<List<BookMap>> = Resource.Loading(),

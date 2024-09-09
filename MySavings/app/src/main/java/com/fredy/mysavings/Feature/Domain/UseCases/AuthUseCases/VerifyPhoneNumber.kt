@@ -1,7 +1,6 @@
 package com.fredy.mysavings.Feature.Domain.UseCases.AuthUseCases
 
 import android.content.Context
-import com.fredy.mysavings.Feature.Domain.Util.Resource
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.PhoneAuthProvider

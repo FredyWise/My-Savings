@@ -3,12 +3,11 @@ package com.fredy.mysavings.Feature.Presentation.ViewModels.CurrencyViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.yml.charts.common.extensions.isNotNull
-import com.fredy.mysavings.Feature.Data.APIs.ApiCredentials
+import com.fredy.core.credentials.ApiCredentials
 import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.CurrencyUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.UserUseCases.UserUseCases
-import com.fredy.mysavings.Feature.Domain.Util.Resource
 import com.fredy.mysavings.Util.Log
-import com.fredy.mysavings.Feature.Domain.Util.Mappers.changeBase
+import com.fredy.domain.util.mappers.changeBase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted

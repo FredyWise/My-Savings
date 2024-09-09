@@ -1,9 +1,9 @@
 package com.fredy.mysavings.Feature.Data.RepositoryImpl
 
-import com.fredy.mysavings.Feature.Data.Database.Dao.WalletDao
-import com.fredy.mysavings.Feature.Data.Database.FirestoreDataSource.WalletDataSource
-import com.fredy.mysavings.Feature.Domain.Model.Wallet
-import com.fredy.mysavings.Feature.Domain.Repository.WalletRepository
+import com.fredy.data.database.dao.WalletDao
+import com.fredy.data.database.firestoreDataSource.WalletDataSource
+import com.fredy.domain.model.Wallet
+import com.fredy.domain.repository.WalletRepository
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow

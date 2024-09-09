@@ -46,17 +46,14 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import co.yml.charts.common.extensions.isNotNull
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
-import com.fredy.mysavings.Feature.Domain.Model.UserData
+import com.fredy.domain.model.UserData
 import com.fredy.mysavings.Util.Log
-import com.fredy.mysavings.Feature.Domain.Util.Resource
 import com.fredy.mysavings.Util.isValidPassword
-import com.fredy.mysavings.Feature.Presentation.ViewModels.AuthViewModel.AuthState
-import com.fredy.mysavings.Feature.Presentation.ViewModels.AuthViewModel.AuthEvent
+import com.fredy.auth.viewModel.AuthState
+import com.fredy.auth.viewModel.AuthEvent
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.DefaultAppBar
-import kotlinx.coroutines.flow.update
 
 @Composable
 fun ProfileScreen(

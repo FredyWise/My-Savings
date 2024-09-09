@@ -1,5 +1,7 @@
 package com.fredy.mysavings.Feature.Data.APIs.TextCorrectionModels.Response
 
+import com.fredy.data.api.textCorrectionModels.textCorrectionDTO.Suggestion
+
 data class Token(
     val chars_to_replace: Int,
     val correctionType: String,

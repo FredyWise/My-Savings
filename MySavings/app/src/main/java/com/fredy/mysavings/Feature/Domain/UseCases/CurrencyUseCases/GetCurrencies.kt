@@ -1,16 +1,15 @@
 package com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases
 
 import co.yml.charts.common.extensions.isNotNull
-import com.fredy.mysavings.Feature.Data.APIs.CountryModels.Response.CurrencyInfoItem
-import com.fredy.mysavings.Feature.Data.APIs.CurrencyModels.Response.Rates
-import com.fredy.mysavings.Feature.Domain.Model.Currency
-import com.fredy.mysavings.Feature.Domain.Repository.CurrencyRepository
-import com.fredy.mysavings.Feature.Domain.Repository.UserRepository
-import com.fredy.mysavings.Feature.Domain.Util.Mappers.getRateForCurrency
-import com.fredy.mysavings.Feature.Domain.Util.Mappers.toUsableCurrencyInfoItem
-import com.fredy.mysavings.Feature.Domain.Util.Resource
+import com.fredy.data.api.countryModels.countryDTO.CurrencyInfoItem
+import com.fredy.data.api.currencyModels.currencyDTO.Rates
+import com.fredy.domain.model.Currency
+import com.fredy.domain.repository.CurrencyRepository
+import com.fredy.domain.repository.UserRepository
+import com.fredy.domain.util.mappers.getRateForCurrency
+import com.fredy.domain.util.mappers.toUsableCurrencyInfoItem
 import com.fredy.mysavings.Util.Log
-import com.fredy.mysavings.Feature.Data.Util.isCacheValid
+import com.fredy.data.util.isCacheValid
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -62,7 +61,7 @@ class GetCurrencies(
         return this.toUsableCurrencyInfoItem().map {
             val currencyHelper = it.currencies
             Log.e("toCurrency1: $currencyHelper")
-            val ratesValue = rates.getRateForCurrency(it.code)!!.toDouble()
+            val ratesValue = com.fredy.domain.util.mappers.getRateForCurrency(it.code)!!.toDouble()
             Log.e("toCurrency2: $currencyHelper")
             Currency(
                 it.code + userId,

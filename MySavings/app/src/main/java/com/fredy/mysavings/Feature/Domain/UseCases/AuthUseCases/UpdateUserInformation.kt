@@ -1,7 +1,6 @@
 package com.fredy.mysavings.Feature.Domain.UseCases.AuthUseCases
 
 import android.net.Uri
-import com.fredy.mysavings.Feature.Domain.Util.Resource
 import com.fredy.mysavings.Util.Log
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth

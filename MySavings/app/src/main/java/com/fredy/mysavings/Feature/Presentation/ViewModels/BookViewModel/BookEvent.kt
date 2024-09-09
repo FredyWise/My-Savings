@@ -1,6 +1,6 @@
 package com.fredy.mysavings.Feature.Presentation.ViewModels.BookViewModel
 
-import com.fredy.mysavings.Feature.Domain.Model.Book
+import com.fredy.domain.model.Book
 
 sealed interface BookEvent {
     object SaveBook: BookEvent

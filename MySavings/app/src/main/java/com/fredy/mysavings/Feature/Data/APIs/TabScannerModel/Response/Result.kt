@@ -1,5 +1,10 @@
 package com.fredy.mysavings.Feature.Data.APIs.TabScannerModel.Response
 
+import com.fredy.data.api.tabScannerModel.tabScannerDTO.AddressNorm
+import com.fredy.data.api.tabScannerModel.tabScannerDTO.CustomFields
+import com.fredy.data.api.tabScannerModel.tabScannerDTO.LineItem
+import com.fredy.data.api.tabScannerModel.tabScannerDTO.SummaryItem
+
 data class Result(
     val address: String,
     val addressNorm: AddressNorm,

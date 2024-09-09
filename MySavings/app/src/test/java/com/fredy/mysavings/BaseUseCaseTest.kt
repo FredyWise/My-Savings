@@ -1,13 +1,13 @@
 package com.fredy.mysavings
 
-import com.fredy.mysavings.Feature.Domain.Model.Wallet
-import com.fredy.mysavings.Feature.Domain.Model.Book
-import com.fredy.mysavings.Feature.Domain.Model.Category
-import com.fredy.mysavings.Feature.Domain.Model.Currency
-import com.fredy.mysavings.Feature.Domain.Model.Record
-import com.fredy.mysavings.Feature.Domain.Model.TrueRecord
-import com.fredy.mysavings.Feature.Domain.Model.UserData
-import com.fredy.mysavings.Feature.Data.Enum.RecordType
+import com.fredy.domain.model.Wallet
+import com.fredy.domain.model.Book
+import com.fredy.domain.model.Category
+import com.fredy.domain.model.Currency
+import com.fredy.domain.model.Record
+import com.fredy.domain.model.TrueRecord
+import com.fredy.domain.model.UserData
+import com.fredy.data.enums.RecordType
 import com.fredy.mysavings.Feature.Domain.Repository.FakeWalletRepository
 import com.fredy.mysavings.Feature.Domain.Repository.FakeUserRepository
 import com.fredy.mysavings.Feature.Domain.Repository.FakeBookRepository

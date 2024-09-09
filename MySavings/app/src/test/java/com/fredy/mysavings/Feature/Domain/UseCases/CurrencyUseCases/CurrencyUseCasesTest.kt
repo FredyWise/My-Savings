@@ -1,9 +1,8 @@
 package com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases
 
 import com.fredy.mysavings.BaseUseCaseTest
-import com.fredy.mysavings.Feature.Domain.Model.Currency
-import com.fredy.mysavings.Feature.Domain.Util.Mappers.getRateForCurrency
-import com.fredy.mysavings.Feature.Domain.Util.Resource
+import com.fredy.domain.model.Currency
+import com.fredy.domain.util.mappers.getRateForCurrency
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.flow.last

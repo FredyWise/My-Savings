@@ -1,5 +1,7 @@
 package com.fredy.mysavings.Feature.Data.APIs.TabScannerModel.Response
 
+import com.fredy.data.api.tabScannerModel.tabScannerDTO.Result
+
 data class ResultResponse(
     val code: Int,
     val message: String,

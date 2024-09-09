@@ -4,10 +4,10 @@ import android.content.ContentResolver
 import android.content.Context
 import android.net.Uri
 import android.provider.OpenableColumns
-import com.fredy.mysavings.Feature.Data.APIs.TabScannerModel.Response.ResultResponse
-import com.fredy.mysavings.Feature.Domain.Model.Record
-import com.fredy.mysavings.Feature.Domain.Repository.TabScannerRepository
-import com.fredy.mysavings.Feature.Domain.Util.Mappers.convertToRecords
+import com.fredy.data.api.tabScannerModel.tabScannerDTO.ResultResponse
+import com.fredy.domain.model.Record
+import com.fredy.domain.repository.TabScannerRepository
+import com.fredy.domain.util.mappers.convertToRecords
 import com.fredy.mysavings.Util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay

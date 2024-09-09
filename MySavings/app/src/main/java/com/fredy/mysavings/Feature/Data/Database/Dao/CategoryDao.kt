@@ -4,8 +4,8 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
-import com.fredy.mysavings.Feature.Domain.Model.Category
-import com.fredy.mysavings.Feature.Data.Enum.RecordType
+import com.fredy.domain.model.Category
+import com.fredy.data.enums.RecordType
 import kotlinx.coroutines.flow.Flow
 
 @Dao

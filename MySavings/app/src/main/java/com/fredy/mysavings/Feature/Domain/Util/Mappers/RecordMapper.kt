@@ -1,15 +1,15 @@
 package com.fredy.mysavings.Feature.Domain.Util.Mappers
 
-import com.fredy.mysavings.Feature.Data.APIs.TabScannerModel.Response.ResultResponse
-import com.fredy.mysavings.Feature.Data.Database.Converter.TimestampConverter
-import com.fredy.mysavings.Feature.Data.Database.FirestoreDataSource.RecordDataSourceImpl.TrueRecordComponentResult
-import com.fredy.mysavings.Feature.Data.Enum.RecordType
-import com.fredy.mysavings.Feature.Data.Enum.SortType
-import com.fredy.mysavings.Feature.Domain.Model.Book
-import com.fredy.mysavings.Feature.Domain.Model.BookMap
-import com.fredy.mysavings.Feature.Domain.Model.Record
-import com.fredy.mysavings.Feature.Domain.Model.RecordMap
-import com.fredy.mysavings.Feature.Domain.Model.TrueRecord
+import com.fredy.data.api.tabScannerModel.tabScannerDTO.ResultResponse
+import com.fredy.data.database.converter.TimestampConverter
+import com.fredy.data.database.firestoreDataSource.RecordDataSourceImpl.TrueRecordComponentResult
+import com.fredy.data.enums.RecordType
+import com.fredy.data.enums.SortType
+import com.fredy.domain.model.Book
+import com.fredy.domain.model.BookMap
+import com.fredy.domain.model.Record
+import com.fredy.domain.model.RecordMap
+import com.fredy.domain.model.TrueRecord
 import com.fredy.mysavings.Util.Log
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter

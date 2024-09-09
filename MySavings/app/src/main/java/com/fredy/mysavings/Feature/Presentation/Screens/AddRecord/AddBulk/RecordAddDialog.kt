@@ -28,7 +28,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.fredy.mysavings.Feature.Domain.Model.Record
+import com.fredy.domain.model.Record
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SimpleDialog
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SimpleWarningDialog
 

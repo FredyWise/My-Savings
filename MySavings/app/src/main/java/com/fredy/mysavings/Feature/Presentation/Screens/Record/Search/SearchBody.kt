@@ -24,8 +24,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.fredy.mysavings.Feature.Domain.Model.Book
-import com.fredy.mysavings.Feature.Domain.Model.BookMap
+import com.fredy.domain.model.Book
+import com.fredy.domain.model.BookMap
 import com.fredy.mysavings.Feature.Presentation.Screens.Record.MainScreen.RecordEntityItem
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.CustomStickyHeader
 import com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel.RecordEvent

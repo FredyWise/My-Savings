@@ -1,6 +1,6 @@
 package com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel
 
-import com.fredy.mysavings.Feature.Domain.Model.TrueRecord
+import com.fredy.domain.model.TrueRecord
 import com.fredy.mysavings.Feature.Presentation.Util.BalanceBar
 
 data class RecordState(

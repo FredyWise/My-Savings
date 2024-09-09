@@ -1,7 +1,7 @@
 package com.fredy.mysavings.Feature.Domain.UseCases.IOUseCases
 
 import com.fredy.mysavings.BaseUseCaseTest
-import com.fredy.mysavings.Feature.Domain.Model.Book
+import com.fredy.domain.model.Book
 import com.fredy.mysavings.Feature.Presentation.Util.isExpense
 import com.fredy.mysavings.Feature.Presentation.Util.isIncome
 import com.fredy.mysavings.Feature.Presentation.Util.isTransfer

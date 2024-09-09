@@ -34,8 +34,8 @@ import com.fredy.mysavings.Feature.Presentation.Screens.IO.ExportScreen
 import com.fredy.mysavings.Feature.Presentation.Screens.Preference.PreferencesScreen
 import com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel.AddBulk.AddBulkRecordViewModel
 import com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel.AddSingle.AddSingleRecordViewModel
-import com.fredy.mysavings.Feature.Presentation.ViewModels.AuthViewModel.AuthEvent
-import com.fredy.mysavings.Feature.Presentation.ViewModels.AuthViewModel.AuthViewModel
+import com.fredy.auth.viewModel.AuthEvent
+import com.fredy.auth.viewModel.AuthViewModel
 import com.fredy.mysavings.Feature.Presentation.ViewModels.BookViewModel.BookViewModel
 import com.fredy.mysavings.Feature.Presentation.ViewModels.CategoryViewModel.CategoryViewModel
 import com.fredy.mysavings.Feature.Presentation.ViewModels.CurrencyViewModel.CurrencyViewModel
@@ -48,6 +48,7 @@ import com.fredy.mysavings.Feature.Presentation.ViewModels.WalletViewModel.Walle
 import com.fredy.mysavings.Feature.Presentation.ViewModels.WalletViewModel.WalletViewModel
 import com.fredy.mysavings.Util.Log
 import com.fredy.mysavings.ui.Search.SearchScreen
+import com.fredy.preferences.viewModel.PreferencesViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @OptIn(ExperimentalCoroutinesApi::class)

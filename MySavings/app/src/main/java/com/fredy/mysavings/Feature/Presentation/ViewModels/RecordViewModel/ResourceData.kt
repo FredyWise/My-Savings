@@ -1,10 +1,9 @@
 package com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel
 
-import com.fredy.mysavings.Feature.Domain.Model.AccountWithAmountType
-import com.fredy.mysavings.Feature.Domain.Model.BookMap
-import com.fredy.mysavings.Feature.Domain.Model.CategoryWithAmount
-import com.fredy.mysavings.Feature.Domain.Model.Record
-import com.fredy.mysavings.Feature.Domain.Util.Resource
+import com.fredy.domain.model.AccountWithAmountType
+import com.fredy.domain.model.BookMap
+import com.fredy.domain.model.CategoryWithAmount
+import com.fredy.domain.model.Record
 
 data class ResourceData(
     val categoriesWithAmountResource: Resource<List<CategoryWithAmount>> = Resource.Loading(),

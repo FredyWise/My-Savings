@@ -1,17 +1,18 @@
 package com.fredy.mysavings.Feature.Domain.Util.Mappers
 
 import com.fredy.mysavings.Util.Log
-import com.fredy.mysavings.Feature.Data.APIs.CountryModels.Response.Currencies
-import com.fredy.mysavings.Feature.Data.APIs.CountryModels.Response.CurrencyHelper
-import com.fredy.mysavings.Feature.Data.APIs.CountryModels.Response.CurrencyInfoItem
-import com.fredy.mysavings.Feature.Data.APIs.CountryModels.Response.CurrencyInfoResponse
-import com.fredy.mysavings.Feature.Data.APIs.CountryModels.Response.UsableCurrencyInfoItem
-import com.fredy.mysavings.Feature.Data.APIs.CurrencyModels.Response.CurrencyResponse
-import com.fredy.mysavings.Feature.Data.APIs.CurrencyModels.Response.Rates
-import com.fredy.mysavings.Feature.Data.Database.Converter.CurrencyRatesDoubleConverter
-import com.fredy.mysavings.Feature.Domain.Model.Currency
-import com.fredy.mysavings.Feature.Domain.Model.FirebaseRatesCache
-import com.fredy.mysavings.Feature.Domain.Model.RatesCache
+import com.fredy.data.api.countryModels.countryDTO.Currencies
+import com.fredy.data.api.countryModels.countryDTO.CurrencyHelper
+import com.fredy.data.api.countryModels.countryDTO.CurrencyInfoItem
+import com.fredy.data.api.countryModels.countryDTO.CurrencyInfoResponse
+import com.fredy.data.api.countryModels.countryDTO.UsableCurrencyInfoItem
+import com.fredy.data.api.currencyModels.currencyDTO.CurrencyResponse
+import com.fredy.data.api.currencyModels.currencyDTO.Rates
+import com.fredy.data.database.converter.CurrencyRatesDoubleConverter
+import com.fredy.domain.model.Currency
+import com.fredy.domain.model.FirebaseRatesCache
+import com.fredy.domain.model.RatesCache
+import com.fredy.domain.util.mappers.toList
 
 import com.google.firebase.Timestamp
 

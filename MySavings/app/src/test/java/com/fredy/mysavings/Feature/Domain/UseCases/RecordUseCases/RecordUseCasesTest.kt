@@ -1,13 +1,12 @@
 package com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases
 
 import com.fredy.mysavings.BaseUseCaseTest
-import com.fredy.mysavings.Feature.Domain.Model.Record
-import com.fredy.mysavings.Feature.Data.Enum.RecordType
-import com.fredy.mysavings.Feature.Data.Enum.SortType
-import com.fredy.mysavings.Feature.Domain.Model.Book
-import com.fredy.mysavings.Feature.Domain.Util.Mappers.filterRecordCurrency
-import com.fredy.mysavings.Feature.Domain.Util.Mappers.filterTrueRecordCurrency
-import com.fredy.mysavings.Feature.Domain.Util.Resource
+import com.fredy.domain.model.Record
+import com.fredy.data.enums.RecordType
+import com.fredy.data.enums.SortType
+import com.fredy.domain.model.Book
+import com.fredy.domain.util.mappers.filterRecordCurrency
+import com.fredy.domain.util.mappers.filterTrueRecordCurrency
 import com.google.firebase.Timestamp
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue

@@ -1,19 +1,11 @@
 package com.fredy.mysavings.Feature.Presentation.Util
 
 import android.graphics.Color
-import com.fredy.mysavings.Feature.Domain.Model.Wallet
-import com.fredy.mysavings.Feature.Domain.Model.Book
-import com.fredy.mysavings.Feature.Domain.Model.Category
-import com.fredy.mysavings.Feature.Data.Enum.RecordType
+import com.fredy.data.enums.RecordType
+import com.fredy.domain.model.Book
+import com.fredy.domain.model.Category
+import com.fredy.domain.model.Wallet
 import com.fredy.mysavings.R
-import com.fredy.mysavings.ui.theme.md_theme_dark_primary
-import com.fredy.mysavings.ui.theme.md_theme_dark_secondary
-import com.fredy.mysavings.ui.theme.md_theme_dark_surface
-import com.fredy.mysavings.ui.theme.md_theme_dark_tertiary
-import com.fredy.mysavings.ui.theme.md_theme_light_primary
-import com.fredy.mysavings.ui.theme.md_theme_light_secondary
-import com.fredy.mysavings.ui.theme.md_theme_light_surface
-import com.fredy.mysavings.ui.theme.md_theme_light_tertiary
 import java.time.LocalDateTime
 import androidx.compose.ui.graphics.Color as toColor
 
@@ -120,16 +112,6 @@ val minDate = LocalDateTime.of(2000, 1, 1, 1, 1)
 val maxDate = LocalDateTime.of(3000, 1, 1, 1, 1)
 
 //color
-val initialDarkThemeDefaultColor = md_theme_dark_surface
-val initialLightThemeDefaultColor = md_theme_light_surface
-
-val defaultDarkIncomeColor = md_theme_dark_tertiary
-val defaultDarkExpenseColor = md_theme_dark_primary
-val defaultDarkTransferColor = md_theme_dark_secondary
-
-val defaultLightIncomeColor = md_theme_light_tertiary
-val defaultLightExpenseColor = md_theme_light_primary
-val defaultLightTransferColor = md_theme_light_secondary
 
 
 val defaultColors = listOf(

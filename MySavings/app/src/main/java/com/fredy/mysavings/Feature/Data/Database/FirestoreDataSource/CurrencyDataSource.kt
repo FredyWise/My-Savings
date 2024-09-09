@@ -1,7 +1,8 @@
 package com.fredy.mysavings.Feature.Data.Database.FirestoreDataSource
 
+import com.fredy.data.database.firestoreDataSource.CurrencyDataSource
 import com.fredy.mysavings.Util.Log
-import com.fredy.mysavings.Feature.Domain.Model.Currency
+import com.fredy.domain.model.Currency
 
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.snapshots

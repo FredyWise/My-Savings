@@ -6,10 +6,10 @@ import androidx.lifecycle.viewModelScope
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
-import com.fredy.mysavings.Feature.Data.Enum.ChangeColorType
-import com.fredy.mysavings.Feature.Domain.Notification.NotificationCredentials
-import com.fredy.mysavings.Feature.Domain.Notification.NotificationWorker
-import com.fredy.mysavings.Feature.Domain.Repository.PreferencesRepository
+import com.fredy.data.enums.ChangeColorType
+import com.fredy.domain.useCases.notification.NotificationCredentials
+import com.fredy.domain.useCases.notification.NotificationWorker
+import com.fredy.domain.repository.PreferencesRepository
 import com.fredy.mysavings.Feature.Presentation.Util.BalanceColor
 import com.fredy.mysavings.Feature.Presentation.Util.defaultDarkExpenseColor
 import com.fredy.mysavings.Feature.Presentation.Util.defaultDarkIncomeColor
@@ -17,6 +17,7 @@ import com.fredy.mysavings.Feature.Presentation.Util.defaultDarkTransferColor
 import com.fredy.mysavings.Feature.Presentation.Util.defaultLightExpenseColor
 import com.fredy.mysavings.Feature.Presentation.Util.defaultLightIncomeColor
 import com.fredy.mysavings.Feature.Presentation.Util.defaultLightTransferColor
+import com.fredy.preferences.viewModel.PreferencesEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow

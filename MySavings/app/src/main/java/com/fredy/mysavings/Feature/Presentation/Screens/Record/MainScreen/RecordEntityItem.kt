@@ -20,8 +20,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.fredy.mysavings.Feature.Domain.Model.TrueRecord
-import com.fredy.mysavings.Feature.Data.Enum.RecordType
+import com.fredy.domain.model.TrueRecord
+import com.fredy.data.enums.RecordType
 import com.fredy.mysavings.Feature.Presentation.Util.BalanceColor
 import com.fredy.mysavings.Feature.Presentation.Util.formatBalanceAmount
 import com.fredy.mysavings.Feature.Presentation.Util.isTransfer

@@ -1,8 +1,7 @@
 package com.fredy.mysavings.Feature.Domain.Repository
 
 
-import com.fredy.mysavings.Feature.Domain.Model.Book
-import com.fredy.mysavings.Feature.Domain.Model.TrueRecord
+import com.fredy.domain.model.TrueRecord
 
 interface CSVRepository {
     suspend fun outputToCSV(

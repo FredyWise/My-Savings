@@ -1,6 +1,6 @@
 package com.fredy.mysavings.Feature.Data.Util
 
-import com.fredy.mysavings.Feature.Data.APIs.ApiCredentials
+import com.fredy.core.credentials.ApiCredentials
 import com.google.firebase.Timestamp
 
 fun isCacheValid(timestamp: Timestamp): Boolean {

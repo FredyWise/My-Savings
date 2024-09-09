@@ -1,8 +1,8 @@
 package com.fredy.mysavings.Feature.Data.APIs.CountryModels
 
-import com.fredy.mysavings.Feature.Data.APIs.ApiCredentials
-import com.fredy.mysavings.Feature.Data.APIs.CountryModels.Response.CountriesResponse
-import com.fredy.mysavings.Feature.Data.APIs.CountryModels.Response.CurrencyInfoResponse
+import com.fredy.core.credentials.ApiCredentials
+import com.fredy.data.api.countryModels.countryDTO.CountriesResponse
+import com.fredy.data.api.countryModels.countryDTO.CurrencyInfoResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query

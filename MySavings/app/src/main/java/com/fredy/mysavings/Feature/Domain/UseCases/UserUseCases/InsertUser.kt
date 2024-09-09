@@ -1,8 +1,8 @@
 package com.fredy.mysavings.Feature.Domain.UseCases.UserUseCases
 
 import co.yml.charts.common.extensions.isNotNull
-import com.fredy.mysavings.Feature.Domain.Model.UserData
-import com.fredy.mysavings.Feature.Domain.Repository.UserRepository
+import com.fredy.domain.model.UserData
+import com.fredy.domain.repository.UserRepository
 import com.fredy.mysavings.Util.Log
 import kotlinx.coroutines.flow.firstOrNull
 

@@ -10,10 +10,10 @@ import androidx.core.app.ActivityCompat
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
-import com.fredy.mysavings.Feature.Data.Database.Converter.LocalTimeConverter
-import com.fredy.mysavings.Feature.Data.Enum.DisplayMode
-import com.fredy.mysavings.Feature.Data.Util.Preferences
-import com.fredy.mysavings.Feature.Domain.Repository.PreferencesRepository
+import com.fredy.data.database.converter.LocalTimeConverter
+import com.fredy.data.enums.DisplayMode
+import com.fredy.preferences.util.Preferences
+import com.fredy.domain.repository.PreferencesRepository
 import com.fredy.mysavings.Feature.Presentation.Util.defaultDarkExpenseColor
 import com.fredy.mysavings.Feature.Presentation.Util.defaultDarkIncomeColor
 import com.fredy.mysavings.Feature.Presentation.Util.defaultDarkTransferColor
@@ -21,7 +21,6 @@ import com.fredy.mysavings.Feature.Presentation.Util.defaultLightExpenseColor
 import com.fredy.mysavings.Feature.Presentation.Util.defaultLightIncomeColor
 import com.fredy.mysavings.Feature.Presentation.Util.defaultLightTransferColor
 import com.fredy.mysavings.Feature.Presentation.ViewModels.PreferencesViewModel.PreferencesState
-import com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel.FilterState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow

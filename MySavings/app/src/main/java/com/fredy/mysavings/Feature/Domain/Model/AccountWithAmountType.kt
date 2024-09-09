@@ -1,6 +1,6 @@
 package com.fredy.mysavings.Feature.Domain.Model
 
-import com.fredy.mysavings.Feature.Domain.Model.Wallet
+import com.fredy.domain.model.Wallet
 
 data class AccountWithAmountType(
     val wallet: Wallet = Wallet(),

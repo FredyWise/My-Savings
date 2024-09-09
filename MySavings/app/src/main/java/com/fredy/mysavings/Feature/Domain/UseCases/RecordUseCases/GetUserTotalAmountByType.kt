@@ -1,9 +1,9 @@
 package com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases
 
 import co.yml.charts.common.extensions.isNotNull
-import com.fredy.mysavings.Feature.Data.Enum.RecordType
-import com.fredy.mysavings.Feature.Domain.Repository.UserRepository
-import com.fredy.mysavings.Feature.Domain.Repository.RecordRepository
+import com.fredy.data.enums.RecordType
+import com.fredy.domain.repository.UserRepository
+import com.fredy.domain.repository.RecordRepository
 import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.CurrencyUseCases
 import com.fredy.mysavings.Feature.Presentation.Util.BalanceItem
 import com.fredy.mysavings.Util.Log

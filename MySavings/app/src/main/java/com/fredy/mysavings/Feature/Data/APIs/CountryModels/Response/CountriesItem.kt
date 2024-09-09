@@ -1,12 +1,15 @@
 package com.fredy.mysavings.Feature.Data.APIs.CountryModels.Response
 
-import com.fredy.mysavings.Feature.Data.APIs.CountryModels.Response.AdditionalData.CapitalInfo
-import com.fredy.mysavings.Feature.Data.APIs.CountryModels.Response.AdditionalData.CoatOfArms
-import com.fredy.mysavings.Feature.Data.APIs.CountryModels.Response.AdditionalData.Demonyms
-import com.fredy.mysavings.Feature.Data.APIs.CountryModels.Response.AdditionalData.Languages
-import com.fredy.mysavings.Feature.Data.APIs.CountryModels.Response.AdditionalData.Name
-import com.fredy.mysavings.Feature.Data.APIs.CountryModels.Response.AdditionalData.PostalCode
-import com.fredy.mysavings.Feature.Data.APIs.CountryModels.Response.AdditionalData.Translations
+import com.fredy.data.api.countryModels.countryDTO.Currencies
+import com.fredy.data.api.countryModels.countryDTO.Flags
+import com.fredy.data.api.countryModels.countryDTO.TranslationHelper
+import com.fredy.data.api.countryModels.countryDTO.additionalDTO.CapitalInfo
+import com.fredy.data.api.countryModels.countryDTO.additionalDTO.CoatOfArms
+import com.fredy.data.api.countryModels.countryDTO.additionalDTO.Demonyms
+import com.fredy.data.api.countryModels.countryDTO.additionalDTO.Languages
+import com.fredy.data.api.countryModels.countryDTO.additionalDTO.Name
+import com.fredy.data.api.countryModels.countryDTO.additionalDTO.PostalCode
+import com.fredy.data.api.countryModels.countryDTO.additionalDTO.Translations
 
 data class CountriesItem(
     val altSpellings: List<String>,

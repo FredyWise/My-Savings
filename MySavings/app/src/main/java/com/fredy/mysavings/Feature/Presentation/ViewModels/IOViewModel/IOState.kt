@@ -1,7 +1,7 @@
 package com.fredy.mysavings.Feature.Presentation.ViewModels.IOViewModel
 
-import com.fredy.mysavings.Feature.Domain.Model.Book
-import com.fredy.mysavings.Feature.Domain.Model.TrueRecord
+import com.fredy.domain.model.Book
+import com.fredy.domain.model.TrueRecord
 import java.time.LocalDateTime
 
 data class IOState(

@@ -1,10 +1,9 @@
 package com.fredy.mysavings.Feature.Domain.UseCases.CategoryUseCases
 
 import co.yml.charts.common.extensions.isNotNull
-import com.fredy.mysavings.Feature.Domain.Repository.CategoryRepository
-import com.fredy.mysavings.Feature.Domain.Repository.UserRepository
-import com.fredy.mysavings.Feature.Domain.Util.Mappers.toCategoryMaps
-import com.fredy.mysavings.Feature.Domain.Util.Resource
+import com.fredy.domain.repository.CategoryRepository
+import com.fredy.domain.repository.UserRepository
+import com.fredy.domain.util.mappers.toCategoryMaps
 import com.fredy.mysavings.Feature.Presentation.Util.DefaultData
 import com.fredy.mysavings.Feature.Presentation.ViewModels.CategoryViewModel.CategoryMap
 import com.fredy.mysavings.Util.Log
