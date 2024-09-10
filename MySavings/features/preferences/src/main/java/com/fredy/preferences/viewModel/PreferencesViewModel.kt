@@ -4,10 +4,16 @@ package com.fredy.preferences.viewModel
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
+import com.fredy.preferences.domain.notification.NotificationCredentials
 import com.fredy.preferences.data.ChangeColorType
 import com.fredy.preferences.domain.PreferencesRepository
 import com.fredy.preferences.domain.isDarkMode
+import com.fredy.preferences.domain.notification.NotificationWorker
 import com.fredy.preferences.domain.toPreferenceState
+import com.fredy.theme.util.BalanceColor
 import com.fredy.theme.util.defaultDarkExpenseColor
 import com.fredy.theme.util.defaultDarkIncomeColor
 import com.fredy.theme.util.defaultDarkTransferColor
@@ -35,8 +41,8 @@ class PreferencesViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             preferencesRepository.getAllPreferenceSettings().collect { savedState ->
-                BalanceColor.Expense = savedState.selectedExpenseColor!!
-                BalanceColor.Income = savedState.selectedIncomeColor!!
+                BalanceColor.Expense = savedState.selectedExpenseColor
+                BalanceColor.Income = savedState.selectedIncomeColor
                 _state.update {
                     savedState.toPreferenceState()
                 }
@@ -116,30 +122,30 @@ class PreferencesViewModel @Inject constructor(
                     }
                 }
 
-//                PreferencesEvent.ToggleDailyNotification -> {
-//                    val notificationTime = if (!_state.value.dailyNotification) {
-//                        _state.value.dailyNotificationTime
-//                    } else {
-//                        cancelScheduledNotifications()
-//                        LocalTime.now()
-//                    }
-//                    preferencesRepository.saveDailyNotification(!_state.value.dailyNotification)
-//                    preferencesRepository.saveDailyNotificationTime(notificationTime)
-//                    _state.update {
-//                        it.copy(
-//                            dailyNotification = !it.dailyNotification,
-//                            dailyNotificationTime = notificationTime
-//                        )
-//                    }
-//                }
-//
-//                is PreferencesEvent.SetDailyNotificationTime -> {
+                PreferencesEvent.ToggleDailyNotification -> {
+                    val notificationTime = if (!_state.value.dailyNotification) {
+                        _state.value.dailyNotificationTime
+                    } else {
+                        cancelScheduledNotifications()
+                        LocalTime.now()
+                    }
+                    preferencesRepository.saveDailyNotification(!_state.value.dailyNotification)
+                    preferencesRepository.saveDailyNotificationTime(notificationTime)
+                    _state.update {
+                        it.copy(
+                            dailyNotification = !it.dailyNotification,
+                            dailyNotificationTime = notificationTime
+                        )
+                    }
+                }
+
+                is PreferencesEvent.SetDailyNotificationTime -> {
 //                    scheduleNotification(event.time)
-//                    preferencesRepository.saveDailyNotificationTime(event.time)
-//                    _state.update {
-//                        it.copy(dailyNotificationTime = event.time)
-//                    }
-//                }
+                    preferencesRepository.saveDailyNotificationTime(event.time)
+                    _state.update {
+                        it.copy(dailyNotificationTime = event.time)
+                    }
+                }
 
                 is PreferencesEvent.ChangeColor -> {
                     when (event.changeColorType) {
@@ -185,29 +191,26 @@ class PreferencesViewModel @Inject constructor(
             }
         }
     }
-//
-//    private fun scheduleNotification(time: LocalTime) {// use firebase instead
-//        val workRequest = PeriodicWorkRequestBuilder<NotificationWorker>(
-//            1,
-//            TimeUnit.DAYS
-//        ).setInitialDelay(
-//            calculateDelayUntilTime(time),
-//            TimeUnit.MILLISECONDS
-//        ).build()
-//        val workManager = WorkManager.getInstance(context)
-//        workManager.enqueueUniquePeriodicWork(
-//            NotificationCredentials.DailyNotification.NOTIFICATION_NAME,
-//            ExistingPeriodicWorkPolicy.REPLACE, workRequest
-//        )
-//    }
 
+    private fun scheduleNotification(time: LocalTime) {// use firebase instead
+        val workRequest = PeriodicWorkRequestBuilder<NotificationWorker>(
+            1,
+            TimeUnit.DAYS
+        ).setInitialDelay(
+            calculateDelayUntilTime(time),
+            TimeUnit.MILLISECONDS
+        ).build()
+        val workManager = WorkManager.getInstance(context)
+        workManager.enqueueUniquePeriodicWork(
+            NotificationCredentials.DailyNotification.NOTIFICATION_NAME,
+            ExistingPeriodicWorkPolicy.REPLACE, workRequest
+        )
+    }
 
-
-
-//    private fun cancelScheduledNotifications() {
-//        val workManager = WorkManager.getInstance(context)
-//        workManager.cancelUniqueWork(NotificationCredentials.DailyNotification.NOTIFICATION_NAME)
-//    }
+    private fun cancelScheduledNotifications() {
+        val workManager = WorkManager.getInstance(context)
+        workManager.cancelUniqueWork(NotificationCredentials.DailyNotification.NOTIFICATION_NAME)
+    }
 
     private fun calculateDelayUntilTime(time: LocalTime): Long {
         val calendar = Calendar.getInstance()

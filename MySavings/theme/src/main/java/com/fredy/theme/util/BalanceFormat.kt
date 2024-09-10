@@ -1,40 +1,7 @@
 package com.fredy.theme.util
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.ui.graphics.Color
-import com.fredy.data.enums.RecordType
 import java.text.DecimalFormat
 import kotlin.math.abs
-
-data class BalanceBar(
-    val expense: BalanceItem = BalanceItem(),
-    val income: BalanceItem = BalanceItem(),
-    val balance: BalanceItem = BalanceItem(),
-    val transfer: BalanceItem = BalanceItem(),
-)
-
-data class BalanceItem(
-    var name: String = "",
-    var amount: Double = 0.0,
-    var currency: String = ""
-)
-
-fun isTransfer(recordType: RecordType): Boolean {
-    return recordType == RecordType.Transfer
-}
-
-fun isExpense(recordType: RecordType): Boolean {
-    return recordType == RecordType.Expense
-}
-
-fun isIncome(recordType: RecordType): Boolean {
-    return recordType == RecordType.Income
-}
-
-
 
 fun formatBalanceAmount(
     amount: Double,
@@ -45,7 +12,7 @@ fun formatBalanceAmount(
     b: Boolean = true
 ): String {
     val amountCurrency = if (currency != null) " $currency" else ""
-    val shortenChar = formatCharAmount(amount,k, m, b)
+    val shortenChar = formatCharAmount(amount, k, m, b)
     return if (isShortenToChar) shortenChar + amountCurrency else formatAmount(amount) + amountCurrency
 }
 

@@ -21,10 +21,10 @@ interface PreferencesRepository {
     suspend fun saveTransferColor(color: Color?)
 
     // Notifications
-//    fun getDailyNotification(): Flow<Boolean>
-//    suspend fun saveDailyNotification(enableNotification: Boolean)
-//    fun getDailyNotificationTime(): Flow<LocalTime>
-//    suspend fun saveDailyNotificationTime(dailyNotificationTime: LocalTime)
+    fun getDailyNotification(): Flow<Boolean>
+    suspend fun saveDailyNotification(enableNotification: Boolean)
+    fun getDailyNotificationTime(): Flow<LocalTime>
+    suspend fun saveDailyNotificationTime(dailyNotificationTime: LocalTime)
 
     // Login
     fun getAutoLogin(): Flow<Boolean>

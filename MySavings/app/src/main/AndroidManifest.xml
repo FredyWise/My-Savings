@@ -54,7 +54,7 @@
                 android:resource="@xml/path_provider" />
         </provider>
         <service
-            android:name="com.fredy.domain.useCases.notification.PushNotificationService"
+            android:name="com.fredy.preferences.domain.notification.PushNotificationService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSANGING_EVENT" />

@@ -4,7 +4,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import androidx.core.app.NotificationManagerCompat
-import com.fredy.domain.useCases.notification.NotificationCredentials
+import com.fredy.preferences.domain.notification.NotificationCredentials
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

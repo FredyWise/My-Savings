@@ -38,7 +38,6 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.timber)
 
-
     // Room
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)

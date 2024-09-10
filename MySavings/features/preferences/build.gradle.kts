@@ -16,10 +16,16 @@ android {
 dependencies {
     implementation(projects.core)
     implementation(projects.theme)
+    implementation(projects.domain)
 
-    // Core
+    // Core Functions
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.androidx.datastore.preferences)
+    implementation(libs.timber)
 
     // Jetpack Compose UI libraries
     implementation(platform(libs.androidx.compose.bom))
@@ -53,12 +59,18 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    // Firebase and Google Play services
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.firestore.ktx)
+    implementation(libs.firebase.storage.ktx)
+    implementation(libs.firebase.messaging.ktx)
+
     // Hilt
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
     kapt(libs.androidx.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
-
-    // DataStore Preferences
-    implementation(libs.androidx.datastore.preferences)
+    
+// Permissions and Other Utilities
+    implementation(libs.accompanist.permissions)
 }

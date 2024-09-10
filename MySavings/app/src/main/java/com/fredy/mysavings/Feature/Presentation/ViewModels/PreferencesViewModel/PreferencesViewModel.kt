@@ -7,8 +7,8 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.fredy.data.enums.ChangeColorType
-import com.fredy.domain.useCases.notification.NotificationCredentials
-import com.fredy.domain.useCases.notification.NotificationWorker
+import com.fredy.preferences.domain.notification.NotificationCredentials
+import com.fredy.preferences.domain.notification.NotificationWorker
 import com.fredy.domain.repository.PreferencesRepository
 import com.fredy.mysavings.Feature.Presentation.Util.BalanceColor
 import com.fredy.mysavings.Feature.Presentation.Util.defaultDarkExpenseColor

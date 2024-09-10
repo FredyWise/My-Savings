@@ -37,12 +37,11 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.fredy.data.enums.ChangeColorType
-import com.fredy.data.enums.DisplayMode
 import com.fredy.preferences.data.ChangeColorType
 import com.fredy.preferences.viewModel.PreferencesEvent
 import com.fredy.preferences.viewModel.PreferencesState
 import com.fredy.theme.components.dialogs.SimpleDialog
+import com.fredy.theme.util.formatBalanceAmount
 import com.fredy.theme.util.initialDarkThemeDefaultColor
 import com.fredy.theme.util.initialLightThemeDefaultColor
 import com.google.accompanist.permissions.isGranted
@@ -120,8 +119,8 @@ fun PreferencesScreen(
             onDismissRequest = { onEvent(PreferencesEvent.HideColorPallet) },
             onSaveClicked = {
                 val isSystemDarkThemes =
-                    isSystemDarkTheme && state.displayMode == DisplayMode.System
-                val isDisplayDark = state.displayMode == DisplayMode.Dark
+                    isSystemDarkTheme && state.isDarkMode == null
+                val isDisplayDark = state.isDarkMode ?: isSystemDarkThemes
                 onEvent(
                     PreferencesEvent.ChangeColor(
                         selectedColorType,

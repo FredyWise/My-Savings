@@ -1,0 +1,380 @@
+package com.fredy.theme.components
+
+import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.MutableTransitionState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.LocalIndication
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.indication
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.material3.Divider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.DpOffset
+import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import com.fredy.domain.util.resource.Resource
+import com.fredy.domain.util.resource.ResourceError
+import com.fredy.theme.model.ActionWithName
+import com.fredy.theme.model.SavingsIcon
+
+
+@Composable
+fun SearchBar(
+    modifier: Modifier = Modifier,
+    backgroundColor: Color = MaterialTheme.colorScheme.surfaceVariant,
+    searchText: String,
+    onValueChange: (String) -> Unit,
+    placeholder: String = "Search",
+    isSearching: Boolean = false,
+    leadingIcon: @Composable (() -> Unit)? = null,
+    trailingIcon: @Composable (() -> Unit)? = null,
+    trailingContent: @Composable () -> Unit = {},
+    searchBody: @Composable () -> Unit = {},
+) {
+    Column(modifier) {
+        Spacer(modifier = Modifier.height(8.dp))
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            TextField(
+                value = searchText,
+                onValueChange = { onValueChange(it) },
+                modifier = Modifier
+                    .weight(1f)
+                    .clip(
+                        CircleShape
+                    )
+                    .border(3.dp/2, MaterialTheme.colorScheme.secondary, CircleShape),
+                placeholder = { Text(text = placeholder) },
+                colors = TextFieldDefaults.colors(
+                    focusedIndicatorColor = Color.Unspecified,
+                    unfocusedIndicatorColor = Color.Unspecified,
+                    focusedContainerColor = backgroundColor,
+                    unfocusedContainerColor = backgroundColor
+                ),
+                leadingIcon = leadingIcon,
+                trailingIcon = trailingIcon,
+                singleLine = true
+            )
+            trailingContent()
+        }
+        if (isSearching) {
+            Box(modifier = Modifier.fillMaxSize()) {
+                CircularProgressIndicator(
+                    modifier = Modifier.align(
+                        Alignment.Center
+                    )
+                )
+            }
+        } else {
+            searchBody()
+        }
+    }
+}
+
+
+@Composable
+fun AdvancedEntityItem(
+    modifier: Modifier = Modifier,
+    icon: Int,
+    iconModifier: Modifier = Modifier,
+    iconDescription: String,
+    menuItems: List<ActionWithName>,
+    content: @Composable () -> Unit,
+) {
+    var isShowMenu by rememberSaveable {
+        mutableStateOf(false)
+    }
+    var pressOffset by remember {
+        mutableStateOf(DpOffset.Zero)
+    }
+    val interactionSource = remember {
+        MutableInteractionSource()
+    }
+    SimpleEntityItem(
+        modifier = modifier
+            .indication(
+                interactionSource,
+                LocalIndication.current
+            )
+//            .pointerInput(true) {
+//                detectTapGestures(onLongPress = {
+//                    isShowMenu = true
+//                }, onPress = {
+//                    val press = PressInteraction.Press(
+//                        it
+//                    )
+//                    interactionSource.emit(
+//                        press
+//                    )
+//                    tryAwaitRelease()
+//                    interactionSource.emit(
+//                        PressInteraction.Release(
+//                            press
+//                        )
+//                    )
+//                })
+//            }
+            .padding(
+                8.dp
+            ),
+        icon = icon,
+        iconModifier = iconModifier,
+        iconDescription = iconDescription,
+        content = content,
+        endContent = {
+            Icon(
+                modifier = Modifier
+                    .clip(
+                        CircleShape
+                    )
+                    .clickable {
+                        isShowMenu = true
+                    }
+                    .padding(4.dp),
+                imageVector = Icons.Default.MoreVert,
+                contentDescription = "",
+                tint = MaterialTheme.colorScheme.onSurface,
+            )
+            SimpleDropDownMenu(pressOffset = pressOffset,
+                menuItems = menuItems,
+                isShowMenu = isShowMenu,
+                onClose = { isShowMenu = false })
+        },
+    )
+}
+
+
+@Composable
+fun CustomStickyHeader(
+    modifier: Modifier = Modifier,
+    textStyle: TextStyle,
+    textColor: Color = MaterialTheme.colorScheme.primary,
+    topPadding: Dp = 28.dp,
+    bottomPadding: Dp = 4.dp,
+    useDivider: Boolean = true,
+    title: String
+) {
+    Column(
+        modifier = modifier
+    ) {
+        Text(
+            text = title,
+            style = textStyle,
+            fontWeight = FontWeight.Bold,
+            color = textColor,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    top = topPadding,
+                    start = 8.dp,
+                    bottom = bottomPadding,
+                ),
+        )
+        if (useDivider) {
+            Divider(
+                modifier = Modifier
+                    .padding(start = 4.dp)
+                    .height(
+                        2.dp
+                    ),
+                color = textColor
+            )
+        }
+    }
+}
+
+
+@Composable
+fun TypeRadioButton(
+    modifier: Modifier = Modifier,
+    onSelectedColor: Color = MaterialTheme.colorScheme.onBackground,
+    selectedName: String,
+    radioButtons: List<ActionWithName>,
+    textStyle: TextStyle = MaterialTheme.typography.titleLarge,
+    barHeight: Dp = 35.dp,
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .selectableGroup()
+            .height(
+                barHeight
+            ),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        radioButtons.forEachIndexed { index, button ->
+            val durationMillis = if (selectedName == button.name) 100 else 50
+            val animSpec = remember {
+                tween<Color>(
+                    durationMillis = durationMillis,
+                    easing = LinearEasing,
+                    delayMillis = 100
+                )
+            }
+            val selectedColor by animateColorAsState(
+                targetValue = if (selectedName == button.name) onSelectedColor else onSelectedColor.copy(
+                    alpha = 0.5f
+                ),
+                animationSpec = animSpec, label = ""
+            )
+            if (index > 0 && index < radioButtons.size) {
+                Divider(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .width(
+                            2.dp
+                        ),
+                    color = MaterialTheme.colorScheme.onBackground.copy(
+                        alpha = 0.5f
+                    )
+                )
+            }
+            Row(
+                modifier = Modifier
+                    .animateContentSize()
+                    .selectable(
+                        selected = selectedName == button.name,
+                        onClick = button.action,
+                        role = Role.RadioButton,
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = rememberRipple(
+                            bounded = false,
+                            radius = Dp.Unspecified,
+                            color = Color.Unspecified
+                        )
+                    )
+                    .padding(vertical = 8.dp)
+                    .weight(
+                        1f
+                    ),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                if (selectedName == button.name) {
+                    Icon(
+                        imageVector = Icons.Default.CheckCircle,
+                        contentDescription = "",
+                        tint = selectedColor
+                    )
+                }
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(
+                    text = button.name,
+                    style = textStyle,
+                    color = selectedColor
+                )
+            }
+        }
+    }
+}
+
+
+@Composable
+fun ChooseIcon(
+    modifier: Modifier = Modifier,
+    iconModifier: Modifier = Modifier,
+    selectedColor: Color = MaterialTheme.colorScheme.secondary.copy(0.3f),
+    normalColor: Color = Color.Unspecified,
+    onClick: (SavingsIcon) -> Unit,
+    selectedIcon: Int,
+    icons: List<SavingsIcon>,
+) {
+    LazyHorizontalGrid(
+        modifier = modifier
+            .height(138.dp)
+            .clip(
+                shape = MaterialTheme.shapes.medium
+            )
+            .background(
+                MaterialTheme.colorScheme.background
+            ),
+        rows = GridCells.Fixed(2),
+    ) {
+        items(icons, key = { it.image }) { icon ->
+            Box(
+                modifier = Modifier
+                    .padding(3.dp)
+                    .clip(
+                        shape = MaterialTheme.shapes.medium
+                    )
+                    .clickable {
+                        onClick(icon)
+                    }
+                    .background(
+                        color = if (selectedIcon == icon.image) selectedColor else normalColor
+                    )
+                    .padding(8.dp),
+            ) {
+                Icon(
+                    modifier = iconModifier.size(
+                        50.dp
+                    ),
+                    painter = painterResource(
+                        icon.image
+                    ),
+                    contentDescription = icon.description,
+                    tint = Color.Unspecified
+                )
+            }
+        }
+    }
+}
+
+
+

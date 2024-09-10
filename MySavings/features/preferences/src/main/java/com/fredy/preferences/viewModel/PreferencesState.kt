@@ -24,3 +24,4 @@ data class PreferencesState(
     val dailyNotificationTime: LocalTime = LocalTime.now(),
     val updated: Boolean = false,
 )
+
