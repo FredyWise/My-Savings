@@ -2,8 +2,8 @@ package com.fredy.data.repositoryImplement
 
 import com.fredy.data.database.dao.RecordDao
 import com.fredy.data.database.firestoreDataSource.RecordDataSource
-import com.fredy.data.enums.RecordType
-import com.fredy.data.enums.SortType
+import com.fredy.domain.enums.RecordType
+import com.fredy.domain.enums.SortType
 import com.fredy.domain.model.RecordMap
 import com.fredy.domain.model.TrueRecord
 import com.fredy.domain.repository.RecordRepository
@@ -133,7 +133,7 @@ class RecordRepositoryImpl @Inject constructor(
     override fun getUserCategoryRecordsOrderedByDateTime(
         userId: String,
         categoryId: String,
-        sortType: SortType,
+        sortType: com.fredy.domain.enums.SortType,
     ): Flow<List<RecordMap>> {
         Timber.i("getUserCategoryRecordsOrderedByDateTimeRepo: $userId")
         return flow {
@@ -148,7 +148,7 @@ class RecordRepositoryImpl @Inject constructor(
     override fun getUserAccountRecordsOrderedByDateTime(
         userId: String,
         accountId: String,
-        sortType: SortType,
+        sortType: com.fredy.domain.enums.SortType,
     ): Flow<List<RecordMap>> {
         Timber.i("getUserAccountRecordsOrderedByDateTimeRepo: $accountId")
         return flow {
@@ -162,7 +162,7 @@ class RecordRepositoryImpl @Inject constructor(
 
     override fun getUserRecordsByTypeFromSpecificTime(
         userId: String,
-        recordType: List<RecordType>,
+        recordType: List<com.fredy.domain.enums.RecordType>,
         startDate: LocalDateTime,
         endDate: LocalDateTime,
     ): Flow<List<Record>> {
@@ -197,7 +197,7 @@ class RecordRepositoryImpl @Inject constructor(
 
     override fun getUserRecordsByType(
         userId: String,
-        recordType: RecordType,
+        recordType: com.fredy.domain.enums.RecordType,
     ): Flow<List<Record>> {
         Timber.i("getUserRecordsByTypeRepo: $userId")
         return flow {

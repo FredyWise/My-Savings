@@ -15,7 +15,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.fredy.data.enums.RecordType
+import com.fredy.domain.enums.RecordType
 import com.fredy.mysavings.Feature.Presentation.Util.ActionWithName
 import com.fredy.mysavings.Feature.Presentation.Util.DefaultData.categoryIcons
 import com.fredy.mysavings.Feature.Presentation.ViewModels.CategoryViewModel.CategoryState

@@ -1,7 +1,7 @@
 package com.fredy.mysavings.Feature.Presentation.ViewModels.CategoryViewModel
 
-import com.fredy.data.enums.RecordType
-import com.fredy.data.enums.SortType
+import com.fredy.domain.enums.RecordType
+import com.fredy.domain.enums.SortType
 import com.fredy.domain.model.Category
 import com.fredy.domain.model.RecordMap
 

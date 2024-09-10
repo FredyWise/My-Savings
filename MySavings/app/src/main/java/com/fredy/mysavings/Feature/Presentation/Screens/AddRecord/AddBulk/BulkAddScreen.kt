@@ -31,7 +31,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.fredy.data.enums.RecordType
+import com.fredy.domain.enums.RecordType
 import com.fredy.mysavings.Feature.Presentation.Screens.AddRecord.AddBottomSheet
 import com.fredy.mysavings.Feature.Presentation.Screens.AddRecord.AddBulk.ChooseAccountAndMultiCategory
 import com.fredy.mysavings.Feature.Presentation.Screens.AddRecord.AddBulk.RecordAddDialog

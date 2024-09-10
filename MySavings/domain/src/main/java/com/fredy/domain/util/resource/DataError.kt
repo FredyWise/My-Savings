@@ -32,6 +32,11 @@ sealed interface DataError: ResourceError {
         UNKNOWN
     }
     enum class Local: DataError {
-        DISK_FULL
+        DISK_FULL,
+        UNKNOWN,
+        FILE_NOT_FOUND,
+        INVALID_FILE,
+        INVALID_DATA,
+        INVALID_FORMAT,
     }
 }

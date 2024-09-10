@@ -1,3 +1,6 @@
+import org.jetbrains.kotlin.gradle.utils.loadPropertyFromResources
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
@@ -13,9 +16,9 @@ plugins {
 
 android {
     namespace = "com.fredy.core"
-
+    
     defaultConfig {
-        buildConfigField("String", "WEB_CLIENT_ID", "\"895326687881-e2kh5jh12kjvpf9se1cehbeias0iuvmq.apps.googleusercontent.com\"")
+        buildConfigField("String", "WEB_CLIENT_ID", "")
     }
 
     buildFeatures {

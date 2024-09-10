@@ -12,7 +12,7 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.fredy.core.util.ActivityProvider
-import com.fredy.theme.util.Icons.appIcon
+import com.fredy.theme.util.SavingsIcons.appIcon
 import dagger.hilt.android.qualifiers.ApplicationContext
 
 

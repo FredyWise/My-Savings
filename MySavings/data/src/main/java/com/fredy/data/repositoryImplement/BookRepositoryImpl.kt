@@ -2,6 +2,8 @@ package com.fredy.data.repositoryImplement
 
 import com.fredy.data.database.dao.BookDao
 import com.fredy.data.database.firestoreDataSource.BookDataSource
+import com.fredy.data.mappers.toDataBook
+import com.fredy.data.mappers.toDomainBook
 import com.fredy.domain.model.Book
 import com.fredy.domain.repository.BookRepository
 import com.google.firebase.firestore.FirebaseFirestore
@@ -23,39 +25,40 @@ class BookRepositoryImpl @Inject constructor(
 
     override suspend fun upsertBook(book: Book): String {
         return withContext(Dispatchers.IO) {
-            val tempBook = if (book.bookId.isEmpty()) {
+            val dataBook = if (book.bookId.isEmpty()) {
                 val newBookRef = bookCollection.document()
                 book.copy(
                     bookId = newBookRef.id,
                 )
             } else {
                 book
-            }
+            }.toDataBook()
 
             bookDao.upsertBookItem(
-                tempBook
+                dataBook
             )
             bookDataSource.upsertBookItem(
-                tempBook
+                dataBook
             )
-            tempBook.bookId
+            dataBook.bookId
         }
     }
 
     override suspend fun deleteBook(book: Book) {
         withContext(Dispatchers.IO) {
-            bookDataSource.deleteBookItem(book)
-            bookDao.deleteBookItem(book)
+            val dataBook = book.toDataBook()
+            bookDataSource.deleteBookItem(dataBook)
+            bookDao.deleteBookItem(dataBook)
         }
     }
 
 
     override fun getBook(bookId: String): Flow<Book> {
         return flow {
-            val book = withContext(Dispatchers.IO) {
+            val domainBook = withContext(Dispatchers.IO) {
                 bookDataSource.getBook(bookId)
-            }
-            emit(book)
+            }.toDomainBook()
+            emit(domainBook)
         }
     }
 
@@ -67,7 +70,10 @@ class BookRepositoryImpl @Inject constructor(
                 )
             }.collect { data ->
                 Timber.i("getUserBooksRepo.Data: $data")
-                emit(data)
+                val domainBooks = data.map {
+                    it.toDomainBook()
+                }
+                emit(domainBooks)
             }
         }
     }

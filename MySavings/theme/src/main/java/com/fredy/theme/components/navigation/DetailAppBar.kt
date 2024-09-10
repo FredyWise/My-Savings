@@ -29,7 +29,7 @@ import com.fredy.domain.model.RecordMap
 import com.fredy.domain.model.TrueRecord
 import com.fredy.domain.util.resource.DataError
 import com.fredy.domain.util.resource.Resource
-import com.fredy.theme.components.CustomStickyHeader
+import com.fredy.theme.components.list.CustomStickyHeader
 import com.fredy.theme.components.handler.ResourceHandler
 import com.fredy.theme.util.RecordTypeColor
 import com.fredy.theme.util.formatDateDay

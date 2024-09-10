@@ -1,7 +1,7 @@
 package com.fredy.mysavings.Feature.Domain.UseCases.CategoryUseCases
 
 import com.fredy.mysavings.BaseUseCaseTest
-import com.fredy.data.enums.RecordType
+import com.fredy.domain.enums.RecordType
 import com.fredy.domain.model.Category
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue

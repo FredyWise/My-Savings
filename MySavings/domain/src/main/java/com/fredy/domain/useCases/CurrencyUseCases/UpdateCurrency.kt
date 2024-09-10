@@ -1,8 +1,8 @@
-package com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases
+package com.fredy.domain.useCases.CurrencyUseCases
 
 import com.fredy.domain.model.Currency
+import com.fredy.domain.model.Rate
 import com.fredy.domain.repository.CurrencyRepository
-import com.fredy.domain.util.mappers.updateRatesUsingCode
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -27,5 +27,12 @@ class UpdateCurrency(
         currencyRepository.updateRates(
             tempRates
         )
+    }
+
+    private fun List<Rate>.updateRatesUsingCode(code: String, value: Double): List<Rate> {
+        val index = this.indexOfFirst { it.code == code }
+        val updatedList = this.toMutableList()
+        updatedList[index] = updatedList[index].copy(value = value)
+        return updatedList
     }
 }

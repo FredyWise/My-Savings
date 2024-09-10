@@ -37,8 +37,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.fredy.data.enums.ChangeColorType
-import com.fredy.data.enums.DisplayMode
+import com.fredy.domain.enums.ChangeColorType
+import com.fredy.domain.enums.DisplayMode
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.CustomStickyHeader
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.DefaultAppBar
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SimpleButton

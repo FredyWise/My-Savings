@@ -4,10 +4,9 @@ import com.fredy.domain.model.Wallet
 import com.fredy.domain.model.Book
 import com.fredy.domain.model.Category
 import com.fredy.domain.model.Currency
-import com.fredy.domain.model.Record
 import com.fredy.domain.model.TrueRecord
 import com.fredy.domain.model.UserData
-import com.fredy.data.enums.RecordType
+import com.fredy.domain.enums.RecordType
 import com.fredy.mysavings.Feature.Domain.Repository.FakeWalletRepository
 import com.fredy.mysavings.Feature.Domain.Repository.FakeUserRepository
 import com.fredy.mysavings.Feature.Domain.Repository.FakeBookRepository
@@ -15,7 +14,7 @@ import com.fredy.mysavings.Feature.Domain.Repository.FakeCSVRepository
 import com.fredy.mysavings.Feature.Domain.Repository.FakeCategoryRepository
 import com.fredy.mysavings.Feature.Domain.Repository.FakeCurrencyRepository
 import com.fredy.mysavings.Feature.Domain.Repository.FakeRecordRepository
-import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.CurrencyUseCases
+import com.fredy.domain.useCases.CurrencyUseCases.CurrencyUseCases
 import com.fredy.mysavings.Feature.Presentation.Util.BalanceItem
 import com.fredy.mysavings.Feature.Presentation.Util.DefaultData
 import com.fredy.mysavings.Feature.Presentation.Util.DefaultData.deletedWallet

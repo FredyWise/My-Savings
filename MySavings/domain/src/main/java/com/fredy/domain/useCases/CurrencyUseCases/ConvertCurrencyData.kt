@@ -1,12 +1,12 @@
-package com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases
+package com.fredy.domain.useCases.CurrencyUseCases
 
-import com.fredy.mysavings.Feature.Data.APIs.CurrencyModels.Response.Rates
+import com.fredy.domain.model.Rate
 import com.fredy.domain.repository.CurrencyRepository
-import com.fredy.mysavings.Feature.Presentation.Util.BalanceItem
-import com.fredy.mysavings.Util.Log
-import com.fredy.domain.util.mappers.getRateForCurrency
+
+import com.fredy.theme.model.BalanceItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 
 class ConvertCurrencyData(
     private val currencyRepository: CurrencyRepository
@@ -16,7 +16,7 @@ class ConvertCurrencyData(
         fromCurrency: String,
         toCurrency: String
     ): BalanceItem {
-        Log.i(
+        Timber.i(
             "convert: $amount$fromCurrency\nto: $toCurrency"
         )
         val tempFromCurrency = if (fromCurrency.contains(
@@ -40,7 +40,7 @@ class ConvertCurrencyData(
                 currency = toCurrency
             )
         } catch (e: Exception) {
-            Log.e(
+            Timber.e(
                 "Failed to convert currency: $e"
             )
             throw e
@@ -52,9 +52,9 @@ class ConvertCurrencyData(
         amount: Double,
         fromCurrency: String,
         toCurrency: String,
-        rates: Rates
+        rates: List<Rate>
     ): Double {
-        val toBaseRate = rates.getRateForCurrency(
+        val toBaseRate = rates.get(
             toCurrency
         )?.toDouble() ?: throw IllegalArgumentException(
             "Currency '$toCurrency' not found in rates."

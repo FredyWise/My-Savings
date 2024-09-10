@@ -9,7 +9,7 @@ import com.fredy.domain.repository.UserRepository
 import com.fredy.domain.util.mappers.getRateForCurrency
 import com.fredy.domain.util.mappers.toUsableCurrencyInfoItem
 import com.fredy.mysavings.Util.Log
-import com.fredy.data.util.isCacheValid
+import com.fredy.domain.util.isCacheValid
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch

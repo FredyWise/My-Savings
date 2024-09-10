@@ -2,7 +2,7 @@ package com.fredy.mysavings.Feature.Presentation.ViewModels.CategoryViewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.fredy.data.enums.SortType
+import com.fredy.domain.enums.SortType
 import com.fredy.domain.model.Category
 import com.fredy.mysavings.Feature.Domain.UseCases.CategoryUseCases.CategoryUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.RecordUseCases

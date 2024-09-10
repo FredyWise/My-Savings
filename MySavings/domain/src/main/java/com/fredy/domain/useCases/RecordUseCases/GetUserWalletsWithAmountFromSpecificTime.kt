@@ -4,13 +4,12 @@ import co.yml.charts.common.extensions.isNotNull
 import com.fredy.mysavings.Feature.Data.Enum.SortType
 import com.fredy.domain.model.AccountWithAmountType
 import com.fredy.domain.model.Book
-import com.fredy.domain.model.Record
 import com.fredy.domain.model.Wallet
 import com.fredy.domain.repository.UserRepository
 import com.fredy.domain.repository.RecordRepository
 import com.fredy.domain.repository.WalletRepository
-import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.CurrencyUseCases
-import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.currencyConverter
+import com.fredy.domain.useCases.CurrencyUseCases.CurrencyUseCases
+import com.fredy.domain.useCases.CurrencyUseCases.currencyConverter
 import com.fredy.mysavings.Feature.Presentation.Util.DefaultData
 import com.fredy.mysavings.Util.Log
 import com.fredy.mysavings.Feature.Presentation.Util.isExpense

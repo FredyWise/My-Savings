@@ -2,6 +2,8 @@ package com.fredy.data.repositoryImplement
 
 import com.fredy.data.database.dao.CategoryDao
 import com.fredy.data.database.firestoreDataSource.CategoryDataSource
+import com.fredy.data.mappers.toDataCategory
+import com.fredy.data.mappers.toDomainCategory
 import com.fredy.domain.model.Category
 import com.fredy.domain.repository.CategoryRepository
 import com.google.firebase.firestore.FirebaseFirestore
@@ -22,41 +24,42 @@ class CategoryRepositoryImpl @Inject constructor(
 
     override suspend fun upsertCategory(category: Category): String {
         return withContext(Dispatchers.IO) {
-            val tempCategory = if (category.categoryId.isEmpty()) {
+            val dataCategory = if (category.categoryId.isEmpty()) {
                 val newCategoryRef = categoryCollection.document()
                 category.copy(
                     categoryId = newCategoryRef.id,
                 )
             } else {
                 category
-            }
+            }.toDataCategory()
 
             categoryDao.upsertCategoryItem(
-                tempCategory
+                dataCategory
             )
             categoryDataSource.upsertCategoryItem(
-                tempCategory
+                dataCategory
             )
-            tempCategory.categoryId
+            dataCategory.categoryId
         }
     }
 
     override suspend fun deleteCategory(category: Category) {
         withContext(Dispatchers.IO) {
+            val dataCategory = category.toDataCategory()
             categoryDataSource.deleteCategoryItem(
-                category
+                dataCategory
             )
-            categoryDao.deleteCategoryItem(category)
+            categoryDao.deleteCategoryItem(dataCategory)
         }
     }
 
 
     override fun getCategory(categoryId: String): Flow<Category> {
         return flow {
-            val category = withContext(Dispatchers.IO) {
+            val domainCategory = withContext(Dispatchers.IO) {
                 categoryDataSource.getCategory(categoryId)
-            }
-            emit(category)
+            }.toDomainCategory()
+            emit(domainCategory)
         }
     }
 
@@ -67,7 +70,10 @@ class CategoryRepositoryImpl @Inject constructor(
                     userId
                 )
             }.collect { data ->
-                emit(data)
+                val domainCategories = data.map {
+                    it.toDomainCategory()
+                }
+                emit(domainCategories)
             }
         }
     }

@@ -2,9 +2,9 @@ package com.fredy.data.database.dto
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.fredy.data.enums.RecordType
-import com.fredy.data.util.DefaultData
-import com.fredy.mysavings.Feature.Presentation.Util.DefaultData.categoryInitIcon
+import com.fredy.domain.enums.RecordType
+import com.fredy.domain.util.DefaultData
+import com.fredy.theme.util.SavingsIcons.categoryInitIcon
 
 @Entity
 data class Category(
@@ -13,8 +13,8 @@ data class Category(
     val userIdFk: String = "",
     val categoryName: String = "Category",
     val categoryType: RecordType = RecordType.Expense,
-    val categoryIcon: Int = DefaultData.categoryInitIcon.image,
-    val categoryIconDescription: String = DefaultData.categoryInitIcon.description,
+    val categoryIcon: Int = categoryInitIcon.image,
+    val categoryIconDescription: String = categoryInitIcon.description,
 )
 
 

@@ -1,6 +1,6 @@
 package com.fredy.mysavings.Feature.Presentation.ViewModels.WalletViewModel
 
-import com.fredy.data.enums.SortType
+import com.fredy.domain.enums.SortType
 import com.fredy.domain.model.RecordMap
 import com.fredy.domain.model.UserData
 import com.fredy.domain.model.Wallet

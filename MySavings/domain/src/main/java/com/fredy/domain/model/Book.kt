@@ -1,21 +1,20 @@
 package com.fredy.domain.model
 
 import android.os.Parcelable
-import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.fredy.mysavings.Feature.Presentation.Util.DefaultData
+import com.fredy.domain.util.DefaultData
+import com.fredy.theme.util.SavingsIcons.bookInitIcon
 import kotlinx.parcelize.Parcelize
 
-@Entity
+
 @Parcelize
 data class Book(
-    @PrimaryKey
     var bookId: String = "",
     val userIdFk: String = "",
     val bookName: String = "DefaultBook",
-    val bookIcon: Int = DefaultData.bookInitIcon.image,
-    val bookIconDescription: String = DefaultData.bookInitIcon.description,
-): Parcelable{
+    val bookIcon: Int = bookInitIcon.image,
+    val bookIconDescription: String = bookInitIcon.description,
+) : Parcelable {
     fun doesMatchSearchQuery(query: String): Boolean {
         val matchingCombinations = listOf(
             "$bookName",
@@ -27,3 +26,5 @@ data class Book(
         }
     }
 }
+
+

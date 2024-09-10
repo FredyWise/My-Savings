@@ -46,7 +46,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
-import com.fredy.data.enums.AuthMethod
+import com.fredy.domain.enums.AuthMethod
 import com.fredy.mysavings.R
 import com.fredy.auth.viewModel.AuthState
 import com.fredy.auth.viewModel.AuthEvent

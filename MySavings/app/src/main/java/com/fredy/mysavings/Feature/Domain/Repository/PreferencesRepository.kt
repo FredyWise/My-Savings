@@ -1,7 +1,7 @@
 package com.fredy.mysavings.Feature.Domain.Repository
 
 import androidx.compose.ui.graphics.Color
-import com.fredy.data.enums.DisplayMode
+import com.fredy.domain.enums.DisplayMode
 import com.fredy.mysavings.Feature.Presentation.ViewModels.PreferencesViewModel.PreferencesState
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalTime

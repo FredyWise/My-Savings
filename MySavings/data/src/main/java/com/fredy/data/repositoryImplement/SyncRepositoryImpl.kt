@@ -9,7 +9,7 @@ import com.fredy.data.database.firestoreDataSource.BookDataSource
 import com.fredy.data.database.firestoreDataSource.CategoryDataSource
 import com.fredy.data.database.firestoreDataSource.RecordDataSource
 import com.fredy.data.database.firestoreDataSource.WalletDataSource
-import com.fredy.data.util.DefaultData
+import com.fredy.domain.util.DefaultData
 import com.fredy.data.util.isInternetConnected
 import com.fredy.domain.repository.SyncRepository
 import com.google.firebase.auth.FirebaseAuth
@@ -48,7 +48,7 @@ class SyncRepositoryImpl @Inject constructor(
                     }
                     bookDao.upsertAllBookItem(books)
                 } catch (e: Exception) {
-                    val tempBook = DefaultData.defaultBook.copy(
+                    val tempBook = com.fredy.domain.util.DefaultData.defaultBook.copy(
                         bookId = userId,
                         userIdFk = userId
                     )
@@ -68,8 +68,8 @@ class SyncRepositoryImpl @Inject constructor(
             currentUser?.let {
                 val userId = currentUser.uid
                 walletDataSource.upsertWalletItem(
-                    DefaultData.deletedWallet.copy(
-                        walletId = DefaultData.deletedWallet.walletId + userId,
+                    com.fredy.domain.util.DefaultData.deletedWallet.copy(
+                        walletId = com.fredy.domain.util.DefaultData.deletedWallet.walletId + userId,
                         userIdFk = userId
                     )
                 )
@@ -106,14 +106,14 @@ class SyncRepositoryImpl @Inject constructor(
             currentUser?.let {
                 val userId = currentUser.uid
                 categoryDataSource.upsertCategoryItem(
-                    DefaultData.deletedCategory.copy(
-                        categoryId = DefaultData.deletedCategory.categoryId + userId,
+                    com.fredy.domain.util.DefaultData.deletedCategory.copy(
+                        categoryId = com.fredy.domain.util.DefaultData.deletedCategory.categoryId + userId,
                         userIdFk = userId
                     )
                 )
                 categoryDataSource.upsertCategoryItem(
-                    DefaultData.transferCategory.copy(
-                        categoryId = DefaultData.transferCategory.categoryId + userId,
+                    com.fredy.domain.util.DefaultData.transferCategory.copy(
+                        categoryId = com.fredy.domain.util.DefaultData.transferCategory.categoryId + userId,
                         userIdFk = userId
                     )
                 )

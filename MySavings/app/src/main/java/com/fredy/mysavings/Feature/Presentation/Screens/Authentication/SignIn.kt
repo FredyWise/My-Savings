@@ -46,7 +46,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.fredy.data.enums.AuthMethod
+import com.fredy.domain.enums.AuthMethod
 import com.fredy.mysavings.R
 
 import com.fredy.mysavings.Util.isValidLogin

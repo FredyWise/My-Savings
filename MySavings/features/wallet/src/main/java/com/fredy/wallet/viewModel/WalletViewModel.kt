@@ -2,14 +2,18 @@ package com.fredy.wallet.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.fredy.data.enums.RecordType
-import com.fredy.data.enums.SortType
+import com.fredy.domain.enums.RecordType
+import com.fredy.domain.enums.SortType
+
 import com.fredy.domain.model.Wallet
+import com.fredy.domain.useCases.UserUseCases.UserUseCases
+import com.fredy.domain.util.resource.Resource
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.RecordUseCases
-import com.fredy.mysavings.Feature.Domain.UseCases.UserUseCases.UserUseCases
+
 import com.fredy.mysavings.Feature.Domain.UseCases.WalletUseCases.WalletUseCases
-import com.fredy.mysavings.Feature.Presentation.Util.BalanceBar
-import com.fredy.mysavings.Feature.Presentation.Util.BalanceItem
+import com.fredy.theme.model.BalanceBar
+import com.fredy.theme.model.BalanceItem
+
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -139,9 +143,13 @@ class WalletViewModel @Inject constructor(
         if (state.searchQuery.isBlank()) {
             accountResource
         } else {
-            Resource.Success(accountResource.data!!.filter {
-                it.doesMatchSearchQuery(state.searchQuery)
-            })
+            if (accountResource is Resource.Success) {
+                Resource.Success(accountResource.data.filter {
+                    it.doesMatchSearchQuery(state.searchQuery)
+                })
+            } else {
+                accountResource
+            }
         }
     }.onEach {
         _state.update {

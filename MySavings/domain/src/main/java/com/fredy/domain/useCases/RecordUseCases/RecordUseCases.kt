@@ -1,8 +1,9 @@
 package com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases
 
-import com.fredy.domain.model.Record
-import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.CurrencyUseCases
-import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.currencyConverter
+import com.fredy.domain.useCases.RecordUseCases.GetUserTotalAmountByType
+import com.fredy.domain.useCases.RecordUseCases.GetUserWalletRecordsOrderedByDateTime
+import com.fredy.domain.useCases.CurrencyUseCases.CurrencyUseCases
+import com.fredy.domain.useCases.CurrencyUseCases.currencyConverter
 
 data class RecordUseCases(
     val upsertRecordItem: UpsertRecordItem,

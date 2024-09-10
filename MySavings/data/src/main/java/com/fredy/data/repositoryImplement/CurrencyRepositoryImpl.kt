@@ -1,8 +1,6 @@
 package com.fredy.data.repositoryImplement
 
 import androidx.lifecycle.MutableLiveData
-
-import com.fredy.data.util.isCacheValid
 import com.fredy.data.api.countryModels.CountryApi
 import com.fredy.data.api.countryModels.countryDTO.CurrencyInfoItem
 import com.fredy.data.api.currencyModels.CurrencyApi
@@ -11,13 +9,16 @@ import com.fredy.data.database.dao.CurrencyCacheDao
 import com.fredy.data.database.dao.CurrencyDao
 import com.fredy.data.database.firestoreDataSource.CurrencyDataSource
 import com.fredy.data.database.firestoreDataSource.CurrencyRatesDataSource
+import com.fredy.data.mappers.toCurrencyInfoItems
+import com.fredy.data.mappers.toDataCurrency
+import com.fredy.data.mappers.toDataRatesCache
+import com.fredy.data.mappers.toRatesCache
 import com.fredy.domain.model.Currency
 import com.fredy.domain.model.RatesCache
+import com.fredy.domain.model.UserData
 import com.fredy.domain.repository.CurrencyRepository
 import com.fredy.domain.repository.UserRepository
-import com.fredy.domain.util.mappers.toCurrencyInfoItems
-import com.fredy.domain.util.mappers.toRatesCache
-import com.fredy.mysavings.Feature.Domain.Model.UserData
+import com.fredy.domain.util.isCacheValid
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -36,28 +37,30 @@ class CurrencyRepositoryImpl @Inject constructor(
 ) : CurrencyRepository {
     private val _cachedRates = MutableLiveData<RatesCache?>()
     private val _currentUser = MutableLiveData<UserData>()
-    private val _cachedCurrencyInfoResponse = MutableLiveData<List<CurrencyInfoItem>>()
+    private val _cachedCurrencyInfoResponse = MutableLiveData<List<CurrencyInfoItem>?>()
     override suspend fun updateRates(cache: RatesCache) {
         withContext(Dispatchers.IO) {
             Timber.i("updateRates: $cache")
             _cachedRates.postValue(cache)
-            currencyCacheDao.upsertCurrencyCache(cache)
-            currencyRatesDataSource.upsertCurrencyRates(cache)
+            val dataRatesCache = cache.toDataRatesCache()
+            currencyCacheDao.upsertCurrencyCache(dataRatesCache)
+            currencyRatesDataSource.upsertCurrencyRates(dataRatesCache)
         }
     }
 
     override suspend fun updateCurrency(currency: Currency) {
         withContext(Dispatchers.IO) {
             Timber.i("updateCurrency: $currency")
-            currencyDataSource.upsertCurrency(currency)
-            currencyDao.upsertCurrency(currency)
+            val dataCurrency = currency.toDataCurrency()
+            currencyDataSource.upsertCurrency(dataCurrency)
+            currencyDao.upsertCurrency(dataCurrency)
         }
     }
 
 
     // currency info private function
 
-    override suspend fun getInfo(): List<CurrencyInfoItem> {
+    override suspend fun getInfo(): List<CurrencyInfoItem>? {
         Timber.i("getInfo: start")
 
         val result = withContext(Dispatchers.IO) {
@@ -84,9 +87,9 @@ class CurrencyRepositoryImpl @Inject constructor(
         return result
     }
 
-    private suspend fun getApiCurrencyInfoResponse(): List<CurrencyInfoItem> {
+    private suspend fun getApiCurrencyInfoResponse(): List<CurrencyInfoItem>? {
         val response = countryApi.getCurrencyInfo()
-        return response.body()!!.toCurrencyInfoItems()
+        return response.body()?.toCurrencyInfoItems()
     }
 
     // rates private functions
@@ -141,7 +144,7 @@ class CurrencyRepositoryImpl @Inject constructor(
 
     private suspend fun getCachedRates(ratesId: String): RatesCache? {// this should be able from room and firebase
         return withContext(Dispatchers.IO) {// will not be used if used currency
-            currencyRatesDataSource.getCurrencyRates(ratesId)
+            currencyRatesDataSource.getCurrencyRates(ratesId)?.toDataRatesCache()
         }
     }
 
@@ -151,15 +154,15 @@ class CurrencyRepositoryImpl @Inject constructor(
         return flow {
             withContext(Dispatchers.IO) {
                 currencyDataSource.getCurrencies(userId)
-            }.collect { accounts ->
-                emit(accounts)
+            }.collect { currencies ->
+                emit(currencies.toDataCurrency())
             }
         }
     }
 
     override suspend fun updateCurrencies(currencies: List<Currency>) {
-        currencyDao.upsertAllCurrencies(currencies)
-        currencyDataSource.upsertAllCurrencyItem(currencies)
+        currencyDao.upsertAllCurrencies(currencies.toDataCurrency())
+        currencyDataSource.upsertAllCurrencyItem(currencies.toDataCurrency())
     }
 
 }

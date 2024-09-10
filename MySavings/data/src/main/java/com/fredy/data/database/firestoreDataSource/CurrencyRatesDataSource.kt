@@ -1,9 +1,10 @@
 package com.fredy.data.database.firestoreDataSource
 
-import com.fredy.domain.model.FirebaseRatesCache
-import com.fredy.domain.model.RatesCache
-import com.fredy.domain.util.mappers.toFireBaseRatesCache
-import com.fredy.domain.util.mappers.toRatesCache
+
+import com.fredy.data.database.dto.FirebaseRatesCache
+import com.fredy.data.database.dto.RatesCache
+import com.fredy.data.mappers.toFireBaseRatesCache
+
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.tasks.await
@@ -39,6 +40,5 @@ class CurrencyRatesDataSourceImpl @Inject constructor(
 
     override suspend fun getCurrencyRates(cacheId: String): RatesCache? {
         return currencyRatesCollection.document(cacheId).get().await().toObject<FirebaseRatesCache>()?.toRatesCache()
-
     }
 }

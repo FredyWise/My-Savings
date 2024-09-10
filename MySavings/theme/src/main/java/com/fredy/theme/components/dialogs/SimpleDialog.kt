@@ -1,6 +1,7 @@
 package com.fredy.theme.components.dialogs
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -18,7 +19,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-
 
 @Composable
 fun SimpleDialog(
@@ -43,7 +43,7 @@ fun SimpleDialog(
         titleContentColor = titleContentColor,
         textContentColor = textContentColor,
         title = {
-            Row{
+            Box {
                 Text(
                     modifier = Modifier.fillMaxWidth(),
                     text = title,
@@ -55,7 +55,7 @@ fun SimpleDialog(
         text = {
             Column(
                 verticalArrangement = Arrangement.spacedBy(
-                    4.dp
+                    8.dp
                 ),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -70,6 +70,11 @@ fun SimpleDialog(
                         .weight(0.4f)
                         .clip(
                             MaterialTheme.shapes.small
+//                        )
+//                        .border(
+//                            width = 2.dp,
+//                            color = MaterialTheme.colorScheme.secondary,
+//                            shape = MaterialTheme.shapes.small
                         ),
                     onClick = onDismissRequest,
                 ) {
@@ -89,6 +94,11 @@ fun SimpleDialog(
                         .weight(0.4f)
                         .clip(
                             MaterialTheme.shapes.small
+//                        )
+//                        .border(
+//                            width = 2.dp,
+//                            color = MaterialTheme.colorScheme.secondary,
+//                            shape = MaterialTheme.shapes.small
                         ),
                     onClick = {
                         onSaveClicked()

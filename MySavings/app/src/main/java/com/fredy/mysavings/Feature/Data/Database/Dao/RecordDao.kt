@@ -6,7 +6,7 @@ import androidx.room.Query
 import androidx.room.Upsert
 import com.fredy.domain.model.Record
 import com.fredy.domain.model.TrueRecord
-import com.fredy.data.enums.RecordType
+import com.fredy.domain.enums.RecordType
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDateTime
 

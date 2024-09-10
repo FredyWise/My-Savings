@@ -11,7 +11,7 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.fredy.data.database.converter.LocalTimeConverter
-import com.fredy.data.enums.DisplayMode
+import com.fredy.domain.enums.DisplayMode
 import com.fredy.preferences.util.Preferences
 import com.fredy.domain.repository.PreferencesRepository
 import com.fredy.mysavings.Feature.Presentation.Util.defaultDarkExpenseColor

@@ -2,9 +2,9 @@ package com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel
 
 import android.os.Parcelable
 import com.fredy.domain.model.Book
-import com.fredy.data.enums.FilterType
-import com.fredy.data.enums.RecordType
-import com.fredy.data.enums.SortType
+import com.fredy.domain.enums.FilterType
+import com.fredy.domain.enums.RecordType
+import com.fredy.domain.enums.SortType
 import kotlinx.parcelize.Parcelize
 import java.time.DayOfWeek
 import java.time.LocalDate

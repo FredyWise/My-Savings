@@ -1,6 +1,7 @@
 package com.fredy.data.database.firestoreDataSource
 
-import com.fredy.domain.model.Currency
+
+import com.fredy.data.database.dto.Currency
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.snapshots
 import com.google.firebase.firestore.toObjects

@@ -2,7 +2,7 @@ package com.fredy.mysavings.Feature.Data.Database.FirestoreDataSource
 
 import com.fredy.data.database.converter.TimestampConverter
 import com.fredy.data.database.firestoreDataSource.RecordDataSource
-import com.fredy.data.enums.RecordType
+import com.fredy.domain.enums.RecordType
 import com.fredy.domain.model.Category
 import com.fredy.domain.model.Record
 import com.fredy.domain.model.TrueRecord

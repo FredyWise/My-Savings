@@ -299,7 +299,7 @@ fun SignUp(
             val gso = GoogleSignInOptions.Builder(
                 GoogleSignInOptions.DEFAULT_SIGN_IN
             ).requestEmail().requestIdToken(
-                context.getString(Configuration.WebClient.ID)
+                Configuration.WebClient.ID
             ).build()
 
             val googleSignInClient = GoogleSignIn.getClient(

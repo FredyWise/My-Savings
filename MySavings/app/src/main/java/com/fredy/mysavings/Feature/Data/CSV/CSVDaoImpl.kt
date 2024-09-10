@@ -6,7 +6,7 @@ import android.os.storage.StorageManager
 import androidx.core.content.ContextCompat
 import com.fredy.data.CSV.CSVDao
 import com.fredy.data.database.converter.TimestampConverter
-import com.fredy.data.enums.RecordType
+import com.fredy.domain.enums.RecordType
 import com.fredy.domain.model.Category
 import com.fredy.domain.model.Record
 import com.fredy.domain.model.TrueRecord

@@ -1,5 +1,11 @@
 package com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases
 
+import com.fredy.domain.useCases.CurrencyUseCases.ConvertCurrencyData
+import com.fredy.domain.useCases.CurrencyUseCases.CurrencyUseCases
+import com.fredy.domain.useCases.CurrencyUseCases.GetCurrencies
+import com.fredy.domain.useCases.CurrencyUseCases.GetCurrencyRates
+import com.fredy.domain.useCases.CurrencyUseCases.UpdateCurrency
+
 data class CurrencyUseCases(
     val updateCurrency: UpdateCurrency,
     val getCurrencyRates: GetCurrencyRates,

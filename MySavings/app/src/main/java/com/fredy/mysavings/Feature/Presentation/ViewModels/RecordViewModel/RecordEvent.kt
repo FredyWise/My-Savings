@@ -3,7 +3,7 @@ package com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel
 import com.fredy.domain.model.Book
 import com.fredy.domain.model.Record
 import com.fredy.domain.model.TrueRecord
-import com.fredy.data.enums.FilterType
+import com.fredy.domain.enums.FilterType
 import java.time.LocalDate
 
 sealed interface RecordEvent {

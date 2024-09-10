@@ -2,8 +2,8 @@ package com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases
 
 import com.fredy.domain.model.TrueRecord
 import com.fredy.domain.repository.RecordRepository
-import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.CurrencyUseCases
-import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.currencyConverter
+import com.fredy.domain.useCases.CurrencyUseCases.CurrencyUseCases
+import com.fredy.domain.useCases.CurrencyUseCases.currencyConverter
 import com.fredy.mysavings.Util.Log
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch

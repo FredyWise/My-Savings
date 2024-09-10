@@ -7,7 +7,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fredy.domain.model.Category
-import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.CurrencyUseCases
+import com.fredy.domain.useCases.CurrencyUseCases.CurrencyUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.RecordUseCases
 import com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel.AddRecordEvent
 import com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel.AddRecordState

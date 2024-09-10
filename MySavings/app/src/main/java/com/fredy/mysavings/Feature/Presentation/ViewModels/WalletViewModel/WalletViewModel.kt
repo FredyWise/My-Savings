@@ -2,8 +2,8 @@ package com.fredy.mysavings.Feature.Presentation.ViewModels.WalletViewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.fredy.data.enums.RecordType
-import com.fredy.data.enums.SortType
+import com.fredy.domain.enums.RecordType
+import com.fredy.domain.enums.SortType
 import com.fredy.domain.model.Wallet
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.RecordUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.UserUseCases.UserUseCases

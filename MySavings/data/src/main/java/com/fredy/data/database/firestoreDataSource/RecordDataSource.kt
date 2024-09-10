@@ -1,7 +1,7 @@
 package com.fredy.data.database.firestoreDataSource
 
 import com.fredy.data.database.converter.TimestampConverter
-import com.fredy.data.enums.RecordType
+import com.fredy.domain.enums.RecordType
 import com.fredy.domain.model.Category
 import com.fredy.domain.model.TrueRecord
 import com.fredy.domain.model.Wallet
@@ -67,12 +67,12 @@ interface RecordDataSource {
     ): Flow<List<Record>>
 
     suspend fun getUserRecordsByType(
-        userId: String, recordType: RecordType
+        userId: String, recordType: com.fredy.domain.enums.RecordType
     ): Flow<List<Record>>
 
     suspend fun getUserRecordsByTypeFromSpecificTime(
         userId: String,
-        recordTypes: List<RecordType>,
+        recordTypes: List<com.fredy.domain.enums.RecordType>,
         startDate: LocalDateTime,
         endDate: LocalDateTime
     ): Flow<List<Record>>
@@ -334,7 +334,7 @@ class RecordDataSourceImpl @Inject constructor(
     }
 
     override suspend fun getUserRecordsByType(
-        userId: String, recordType: RecordType
+        userId: String, recordType: com.fredy.domain.enums.RecordType
     ): Flow<List<Record>> {
         return withContext(Dispatchers.IO) {
             try {
@@ -356,7 +356,7 @@ class RecordDataSourceImpl @Inject constructor(
 
     override suspend fun getUserRecordsByTypeFromSpecificTime(
         userId: String,
-        recordTypes: List<RecordType>,
+        recordTypes: List<com.fredy.domain.enums.RecordType>,
         startDate: LocalDateTime,
         endDate: LocalDateTime
     ): Flow<List<Record>> {

@@ -1,45 +1,48 @@
-package com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases
+package com.fredy.domain.useCases.RecordUseCases
 
-import co.yml.charts.common.extensions.isNotNull
-import com.fredy.mysavings.Feature.Data.Enum.SortType
+import com.fredy.domain.enums.SortType
 import com.fredy.domain.model.RecordMap
-import com.fredy.domain.repository.UserRepository
 import com.fredy.domain.repository.RecordRepository
-import com.fredy.mysavings.Util.Log
+import com.fredy.domain.repository.UserRepository
+import com.fredy.domain.util.resource.DataError
+import com.fredy.domain.util.resource.Resource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 
 class GetUserWalletRecordsOrderedByDateTime(
     private val recordRepository: RecordRepository,
     private val userRepository: UserRepository,
 ) {
-    operator fun invoke(accountId: String, sortType: SortType): Flow<Resource<List<RecordMap>>> {
-        return flow {
+    operator fun invoke(accountId: String, sortType: SortType): Flow<Resource<List<RecordMap>,DataError.Local>> {
+        return flow<Resource<List<RecordMap>,DataError.Local>> {
             emit(Resource.Loading())
-            val currentUser = userRepository.getCurrentUser()!!
-            val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
-            Log.i(
-                "getUserAccountRecordsOrderedByDateTime: $accountId",
+            val currentUser = userRepository.getCurrentUser()
+            currentUser?.let {
+                val userId = currentUser.firebaseUserId
+                Timber.i(
+                    "getUserAccountRecordsOrderedByDateTime: $accountId",
 
-                )
-            withContext(Dispatchers.IO) {
-                recordRepository.getUserAccountRecordsOrderedByDateTime(
-                    userId, accountId, sortType
-                )
-            }.collect { data ->
-                Log.i(
-                    "getUserAccountRecordsOrderedByDateTime.data: $data"
-                )
-                emit(Resource.Success(data))
+                    )
+                withContext(Dispatchers.IO) {
+                    recordRepository.getUserAccountRecordsOrderedByDateTime(
+                        userId, accountId, sortType
+                    )
+                }.collect { data ->
+                    Timber.i(
+                        "getUserAccountRecordsOrderedByDateTime.data: $data"
+                    )
+                    emit(Resource.Success(data))
+                }
             }
         }.catch { e ->
-            Log.e(
+            Timber.e(
                 "getUserAccountRecordsOrderedByDateTime.Error: $e"
             )
-            emit(Resource.Error(e.message.toString()))
+            emit(Resource.Error(DataError.Local.UNKNOWN))
         }
     }
 }

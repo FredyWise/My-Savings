@@ -33,7 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.fredy.domain.model.Wallet
 import com.fredy.domain.model.Category
-import com.fredy.data.enums.RecordType
+import com.fredy.domain.enums.RecordType
 import com.fredy.mysavings.R
 import com.fredy.mysavings.Feature.Presentation.Util.BalanceColor
 import com.fredy.mysavings.Feature.Presentation.Util.formatBalanceAmount

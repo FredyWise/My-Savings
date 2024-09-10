@@ -3,8 +3,8 @@ package com.fredy.mysavings.Feature.Domain.Util.Mappers
 import com.fredy.data.api.tabScannerModel.tabScannerDTO.ResultResponse
 import com.fredy.data.database.converter.TimestampConverter
 import com.fredy.data.database.firestoreDataSource.RecordDataSourceImpl.TrueRecordComponentResult
-import com.fredy.data.enums.RecordType
-import com.fredy.data.enums.SortType
+import com.fredy.domain.enums.RecordType
+import com.fredy.domain.enums.SortType
 import com.fredy.domain.model.Book
 import com.fredy.domain.model.BookMap
 import com.fredy.domain.model.Record

@@ -1,7 +1,7 @@
 package com.fredy.mysavings.Feature.Domain.UseCases.TabScannerUseCase
 
 import com.fredy.data.database.converter.TimestampConverter
-import com.fredy.data.enums.RecordType
+import com.fredy.domain.enums.RecordType
 import com.fredy.domain.repository.RecordRepository
 import com.fredy.domain.repository.UserRepository
 import com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel.AddRecordState

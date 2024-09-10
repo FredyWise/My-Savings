@@ -5,7 +5,7 @@ import android.os.Build
 import android.os.storage.StorageManager
 import androidx.core.content.ContextCompat
 import com.fredy.data.database.converter.TimestampConverter
-import com.fredy.data.enums.RecordType
+import com.fredy.domain.enums.RecordType
 import com.fredy.domain.model.Category
 import com.fredy.domain.model.TrueRecord
 import com.fredy.domain.model.Wallet
@@ -119,7 +119,7 @@ class CSVDaoImpl(private val context: Context) : CSVDao {
         val amount = recordValues["Record Amount"]!!.split(" ")
         val recordAmount = amount[0].toDouble()
         val recordCurrency = amount[1]
-        val recordType = RecordType.valueOf(recordValues["Record Type"]!!)
+        val recordType = com.fredy.domain.enums.RecordType.valueOf(recordValues["Record Type"]!!)
         val recordNotes = recordValues["Record Notes"] ?: ""
         val senderAccount = recordValues["From Account Name"]!!.split("-")
         val senderAccountName = senderAccount[0]

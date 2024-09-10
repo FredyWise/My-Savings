@@ -1,6 +1,6 @@
 package com.fredy.mysavings.Feature.Presentation.ViewModels.BookViewModel
 
-import com.fredy.data.enums.SortType
+import com.fredy.domain.enums.SortType
 import com.fredy.domain.model.Book
 
 data class BookState(

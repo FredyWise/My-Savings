@@ -1,12 +1,11 @@
-package com.fredy.mysavings.Feature.Domain.UseCases.WalletUseCases
+package com.fredy.domain.useCases.WalletUseCases
 
-import co.yml.charts.common.extensions.isNotNull
 import com.fredy.domain.model.Wallet
 import com.fredy.domain.repository.UserRepository
 import com.fredy.domain.repository.WalletRepository
-import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.CurrencyUseCases
-import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.currencyConverter
-import com.fredy.mysavings.Feature.Presentation.Util.BalanceItem
+import com.fredy.domain.useCases.CurrencyUseCases.CurrencyUseCases
+import com.fredy.domain.useCases.CurrencyUseCases.currencyConverter
+import com.fredy.theme.model.BalanceItem
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
@@ -17,18 +16,19 @@ class GetWalletsTotalBalance(
 ) {
     operator fun invoke(): Flow<BalanceItem> {
         return flow {
-            val currentUser = userRepository.getCurrentUser()!!
-            val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
-            val userCurrency = currentUser.userCurrency
-
-            repository.getUserWallets(userId).collect { accounts ->
-                val totalAccountBalance = accounts.getTotalAccountBalance(userCurrency)
-                val data = BalanceItem(
-                    "Total Balance",
-                    totalAccountBalance,
-                    userCurrency
-                )
-                emit(data)
+            val currentUser = userRepository.getCurrentUser()
+            currentUser?.let {
+                val userId = currentUser.firebaseUserId
+                val userCurrency = currentUser.userCurrency
+                repository.getUserWallets(userId).collect { accounts ->
+                    val totalAccountBalance = accounts.getTotalAccountBalance(userCurrency)
+                    val data = BalanceItem(
+                        "Total Balance",
+                        totalAccountBalance,
+                        userCurrency
+                    )
+                    emit(data)
+                }
             }
         }
     }

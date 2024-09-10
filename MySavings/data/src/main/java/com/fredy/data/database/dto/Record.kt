@@ -3,8 +3,6 @@ package com.fredy.data.database.dto
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.fredy.data.database.converter.TimestampConverter
-import com.fredy.data.enums.RecordType
-import com.fredy.theme.util.formatDateDay
 import com.google.firebase.Timestamp
 import java.time.LocalDateTime
 
@@ -20,7 +18,7 @@ data class Record(
     val recordTimestamp: Timestamp = Timestamp.now(),
     val recordAmount: Double = 0.0,
     val recordCurrency: String = "",
-    val recordType: RecordType = RecordType.Expense,
+    val recordType: com.fredy.domain.enums.RecordType = com.fredy.domain.enums.RecordType.Expense,
     val recordNotes: String = "",
 ) {
     val recordDateTime: LocalDateTime
@@ -36,7 +34,7 @@ data class Record(
         recordDateTime: LocalDateTime,
         recordAmount: Double,
         recordCurrency: String,
-        recordType: RecordType,
+        recordType: com.fredy.domain.enums.RecordType,
         recordNotes: String,
     ) : this(
         recordId,

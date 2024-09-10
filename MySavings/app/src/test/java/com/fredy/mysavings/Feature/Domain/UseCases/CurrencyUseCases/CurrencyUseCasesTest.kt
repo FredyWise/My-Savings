@@ -2,6 +2,10 @@ package com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases
 
 import com.fredy.mysavings.BaseUseCaseTest
 import com.fredy.domain.model.Currency
+import com.fredy.domain.useCases.CurrencyUseCases.ConvertCurrencyData
+import com.fredy.domain.useCases.CurrencyUseCases.GetCurrencies
+import com.fredy.domain.useCases.CurrencyUseCases.GetCurrencyRates
+import com.fredy.domain.useCases.CurrencyUseCases.UpdateCurrency
 import com.fredy.domain.util.mappers.getRateForCurrency
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue

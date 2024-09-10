@@ -16,13 +16,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.fredy.mysavings.Feature.Presentation.Util.formatBalanceAmount
-import com.fredy.mysavings.Feature.Presentation.Util.formatTime
-import com.fredy.mysavings.Feature.Presentation.Util.isTransfer
+import com.fredy.domain.enumsChecker.isTransfer
+import com.fredy.theme.components.list.SimpleEntityItem
+import com.fredy.theme.components.navigation.DetailAppBar
+import com.fredy.theme.util.formatBalanceAmount
+import com.fredy.theme.util.formatTime
 import com.fredy.wallet.viewModel.WalletState
-import com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel.RecordEvent
-import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.DetailAppBar
-import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SimpleEntityItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -31,7 +30,7 @@ fun WalletDetailBottomSheet(
     isSheetOpen: Boolean,
     onCloseBottomSheet: (Boolean) -> Unit,
     state: WalletState,
-    recordEvent: (RecordEvent) -> Unit,
+    onClickRecord: (id: String) -> Unit,
     additionalAppbar: @Composable () -> Unit = { WalletDefaultAdditionalAppBar(state) }
 ) {
     val sheetState = rememberModalBottomSheetState(
@@ -61,9 +60,7 @@ fun WalletDetailBottomSheet(
                             vertical = 4.dp
                         )
                         .clickable {
-                            recordEvent(
-                                RecordEvent.ShowDialog(item)
-                            )
+                            onClickRecord(item.record.recordId)
                         },
                     iconModifier = Modifier
                         .size(
@@ -85,7 +82,7 @@ fun WalletDetailBottomSheet(
                     },
                 ) {
                     Text(
-                        text = if (isTransfer(item.record.recordType)) {
+                        text = if (item.record.recordType.isTransfer()) {
                             item.fromWallet.walletName + " -> " + item.toWallet.walletName
                         } else item.toCategory.categoryName,
                         color = onBackgroundColor,

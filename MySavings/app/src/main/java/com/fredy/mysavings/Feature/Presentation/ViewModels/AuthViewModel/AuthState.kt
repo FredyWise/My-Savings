@@ -1,6 +1,6 @@
 package com.fredy.mysavings.Feature.Presentation.ViewModels.AuthViewModel
 
-import com.fredy.data.enums.AuthMethod
+import com.fredy.domain.enums.AuthMethod
 import com.fredy.domain.model.UserData
 import com.google.firebase.auth.AuthResult
 

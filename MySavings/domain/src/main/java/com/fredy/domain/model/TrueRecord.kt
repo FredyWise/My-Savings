@@ -2,7 +2,7 @@ package com.fredy.domain.model
 
 import androidx.room.Embedded
 import androidx.room.Relation
-import com.fredy.mysavings.Feature.Presentation.Util.formatDateDay
+import com.fredy.theme.util.formatDateDay
 
 data class TrueRecord(
     @Embedded val record: Record = Record(),

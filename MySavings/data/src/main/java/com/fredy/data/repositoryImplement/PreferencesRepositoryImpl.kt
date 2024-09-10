@@ -11,7 +11,7 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.fredy.data.database.converter.LocalTimeConverter
-import com.fredy.data.enums.DisplayMode
+import com.fredy.domain.enums.DisplayMode
 import com.fredy.domain.repository.PreferencesRepository
 import com.fredy.mysavings.Feature.Presentation.Util.defaultDarkExpenseColor
 import com.fredy.mysavings.Feature.Presentation.Util.defaultDarkIncomeColor
@@ -46,12 +46,12 @@ class PreferencesRepositoryImpl @Inject constructor(private val context: Context
         val SHOW_TOTAL = booleanPreferencesKey("show_total")
     }
 
-    override fun getDisplayMode(): Flow<DisplayMode> = preferences.getPreference(DISPLAY_MODE, "System")
+    override fun getDisplayMode(): Flow<com.fredy.domain.enums.DisplayMode> = preferences.getPreference(DISPLAY_MODE, "System")
         .map { displayMode ->
-            DisplayMode.valueOf(displayMode)
+            com.fredy.domain.enums.DisplayMode.valueOf(displayMode)
         }
 
-    override suspend fun saveDisplayMode(displayMode: DisplayMode) {
+    override suspend fun saveDisplayMode(displayMode: com.fredy.domain.enums.DisplayMode) {
         preferences.savePreference(DISPLAY_MODE, displayMode.name)
     }
 
@@ -64,14 +64,14 @@ class PreferencesRepositoryImpl @Inject constructor(private val context: Context
         preferences.savePreference(THEME_COLOR, color?.toArgb())
     }
 
-    override fun getIncomeColor(displayMode: DisplayMode): Flow<Color> = preferences.getPreference(
+    override fun getIncomeColor(displayMode: com.fredy.domain.enums.DisplayMode): Flow<Color> = preferences.getPreference(
         INCOME_COLOR
     )
         .map { colorCode ->
             Color(colorCode ?: when (displayMode) {
-                DisplayMode.Light -> defaultLightIncomeColor.toArgb()
-                DisplayMode.Dark -> defaultDarkIncomeColor.toArgb()
-                DisplayMode.System -> defaultLightIncomeColor.toArgb()
+                com.fredy.domain.enums.DisplayMode.Light -> defaultLightIncomeColor.toArgb()
+                com.fredy.domain.enums.DisplayMode.Dark -> defaultDarkIncomeColor.toArgb()
+                com.fredy.domain.enums.DisplayMode.System -> defaultLightIncomeColor.toArgb()
             })
         }
 
@@ -79,14 +79,14 @@ class PreferencesRepositoryImpl @Inject constructor(private val context: Context
         preferences.savePreference(INCOME_COLOR, color?.toArgb())
     }
 
-    override fun getExpenseColor(displayMode: DisplayMode): Flow<Color> = preferences.getPreference(
+    override fun getExpenseColor(displayMode: com.fredy.domain.enums.DisplayMode): Flow<Color> = preferences.getPreference(
         EXPENSE_COLOR
     )
         .map { colorCode ->
             Color(colorCode ?: when (displayMode) {
-                DisplayMode.Light -> defaultLightExpenseColor.toArgb()
-                DisplayMode.Dark -> defaultDarkExpenseColor.toArgb()
-                DisplayMode.System -> defaultLightExpenseColor.toArgb()
+                com.fredy.domain.enums.DisplayMode.Light -> defaultLightExpenseColor.toArgb()
+                com.fredy.domain.enums.DisplayMode.Dark -> defaultDarkExpenseColor.toArgb()
+                com.fredy.domain.enums.DisplayMode.System -> defaultLightExpenseColor.toArgb()
             })
         }
 
@@ -94,14 +94,14 @@ class PreferencesRepositoryImpl @Inject constructor(private val context: Context
         preferences.savePreference(EXPENSE_COLOR, color?.toArgb())
     }
 
-    override fun getTransferColor(displayMode: DisplayMode): Flow<Color> = preferences.getPreference(
+    override fun getTransferColor(displayMode: com.fredy.domain.enums.DisplayMode): Flow<Color> = preferences.getPreference(
         TRANSFER_COLOR
     )
         .map { colorCode ->
             Color(colorCode ?: when (displayMode) {
-                DisplayMode.Light -> defaultLightTransferColor.toArgb()
-                DisplayMode.Dark -> defaultDarkTransferColor.toArgb()
-                DisplayMode.System -> defaultLightTransferColor.toArgb()
+                com.fredy.domain.enums.DisplayMode.Light -> defaultLightTransferColor.toArgb()
+                com.fredy.domain.enums.DisplayMode.Dark -> defaultDarkTransferColor.toArgb()
+                com.fredy.domain.enums.DisplayMode.System -> defaultLightTransferColor.toArgb()
             })
         }
 

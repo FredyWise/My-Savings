@@ -1,4 +1,4 @@
-package com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases
+package com.fredy.domain.useCases.CurrencyUseCases
 
 data class CurrencyUseCases(
     val updateCurrency: UpdateCurrency,

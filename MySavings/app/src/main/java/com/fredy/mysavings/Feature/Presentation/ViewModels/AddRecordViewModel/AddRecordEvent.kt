@@ -3,7 +3,7 @@ package com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel
 import android.net.Uri
 import com.fredy.domain.model.Wallet
 import com.fredy.domain.model.Category
-import com.fredy.data.enums.RecordType
+import com.fredy.domain.enums.RecordType
 import com.fredy.domain.model.Record
 import java.time.LocalDate
 import java.time.LocalTime

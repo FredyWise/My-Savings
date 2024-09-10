@@ -2,7 +2,7 @@ package com.fredy.mysavings.Feature.Presentation.ViewModels.BookViewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.fredy.data.enums.SortType
+import com.fredy.domain.enums.SortType
 import com.fredy.domain.model.Book
 import com.fredy.mysavings.Feature.Domain.UseCases.BookUseCases.BookUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.RecordUseCases

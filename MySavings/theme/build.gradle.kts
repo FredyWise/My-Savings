@@ -12,9 +12,7 @@ android {
 }
 
 dependencies {
-    // Projects
-//    implementation(projects.data)
-    implementation(projects.domain)
+
 
     // Core
     implementation(libs.androidx.core.ktx)

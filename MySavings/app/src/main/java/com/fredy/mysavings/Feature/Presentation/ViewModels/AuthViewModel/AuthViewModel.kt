@@ -12,7 +12,7 @@ import androidx.lifecycle.viewModelScope
 import co.yml.charts.common.extensions.isNotNull
 import com.fredy.auth.viewModel.AuthEvent
 import com.fredy.auth.viewModel.AuthState
-import com.fredy.data.enums.AuthMethod
+import com.fredy.domain.enums.AuthMethod
 import com.fredy.domain.model.UserData
 import com.fredy.domain.repository.PreferencesRepository
 import com.fredy.auth.useCases.AuthUseCases

@@ -21,21 +21,20 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.fredy.domain.model.Wallet
-import com.fredy.wallet.viewModel.WalletState
+import com.fredy.theme.components.button.SimpleButton
+import com.fredy.theme.components.handler.ResourceHandler
+import com.fredy.theme.components.list.SearchBar
+import com.fredy.theme.util.SavingsIcons
 import com.fredy.wallet.viewModel.WalletEvent
-import com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel.RecordEvent
-import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.ResourceHandler
-import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SearchBar
-import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SimpleButton
-import com.fredy.wallet.R
+import com.fredy.wallet.viewModel.WalletState
 
 @Composable
 fun WalletsScreen(
     modifier: Modifier = Modifier,
-    rootNavController: NavHostController,
     state: WalletState,
     onEvent: (WalletEvent) -> Unit,
-    recordEvent: (RecordEvent) -> Unit,
+    onUpdateRecord: () -> Unit,
+    onClickRecordDetail: (id: String) -> Unit
 ) {
     var isSheetOpen by rememberSaveable {
         mutableStateOf(false)
@@ -44,12 +43,10 @@ fun WalletsScreen(
         isSheetOpen = isSheetOpen,
         onCloseBottomSheet = { isSheetOpen = it },
         state = state,
-        recordEvent = recordEvent
+        onClickRecord = onClickRecordDetail
     )
     WalletAddDialog(
-        state = state, onEvent = onEvent, onSaveEffect = {
-            recordEvent(RecordEvent.UpdateRecord)
-        }
+        state = state, onEvent = onEvent, onSaveEffect = onUpdateRecord
     )
 
     Column(modifier = modifier) {
@@ -88,7 +85,6 @@ fun WalletsScreen(
                 resource = resource,
                 nullOrEmptyMessage = "You Didn't Have Any Wallet Yet",
                 isNullOrEmpty = { it.isNullOrEmpty() },
-                errorMessage = resource.message ?: "",
                 onMessageClick = {
                     onEvent(
                         WalletEvent.ShowDialog(
@@ -111,11 +107,11 @@ fun WalletsScreen(
                                     MaterialTheme.shapes.medium
                                 )
                                 .border(
-                                    width = 3.dp/2,
+                                    width = 3.dp / 2,
                                     color = MaterialTheme.colorScheme.secondary,
                                     shape = MaterialTheme.shapes.medium
                                 ),
-                            image = R.drawable.ic_add_foreground,
+                            image = SavingsIcons.AddCircleOutlineIcon.image,
                             imageColor = MaterialTheme.colorScheme.onBackground,
                             onClick = {
                                 onEvent(
@@ -134,9 +130,7 @@ fun WalletsScreen(
                     onEntityClick = {
                         isSheetOpen = true
                     },
-                    onDeleteWallet = {
-                        recordEvent(RecordEvent.UpdateRecord)
-                    }
+                    onDeleteWallet = onUpdateRecord
                 )
             }
         }

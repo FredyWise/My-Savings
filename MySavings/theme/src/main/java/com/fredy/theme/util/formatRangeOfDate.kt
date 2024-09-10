@@ -1,6 +1,7 @@
 package com.fredy.theme.util
 
 
+import com.fredy.domain.enums.FilterType
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter

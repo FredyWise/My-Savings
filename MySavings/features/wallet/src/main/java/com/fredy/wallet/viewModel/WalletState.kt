@@ -1,15 +1,17 @@
 package com.fredy.wallet.viewModel
 
-import com.fredy.data.enums.SortType
+import com.fredy.domain.enums.SortType
 import com.fredy.domain.model.RecordMap
 import com.fredy.domain.model.UserData
 import com.fredy.domain.model.Wallet
-import com.fredy.mysavings.Feature.Presentation.Util.BalanceBar
+import com.fredy.domain.util.resource.DataError
+import com.fredy.domain.util.resource.Resource
+import com.fredy.theme.model.BalanceBar
 
 data class WalletState(
     val currentUser: UserData = UserData(),
-    val walletResource: Resource<List<Wallet>> = Resource.Loading(),
-    val recordMapsResource: Resource<List<RecordMap>> = Resource.Loading(),
+    val walletResource: Resource<List<Wallet>, DataError.Local> = Resource.Loading(),
+    val recordMapsResource: Resource<List<RecordMap>, DataError.Local> = Resource.Loading(),
     val wallet: Wallet = Wallet(),
     val balanceBar: BalanceBar = BalanceBar(),
     val walletId: String = "",

@@ -24,12 +24,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.fredy.domain.model.Wallet
-import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.AdvancedEntityItem
-import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.CustomStickyHeader
-import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SimpleWarningDialog
-import com.fredy.mysavings.Feature.Presentation.Util.ActionWithName
-import com.fredy.mysavings.Feature.Presentation.Util.BalanceColor
-import com.fredy.mysavings.Feature.Presentation.Util.formatBalanceAmount
+import com.fredy.theme.components.dialogs.SimpleWarningDialog
+import com.fredy.theme.components.list.AdvancedEntityItem
+import com.fredy.theme.components.list.CustomStickyHeader
+import com.fredy.theme.model.ActionWithName
+import com.fredy.theme.util.BalanceColor
+import com.fredy.theme.util.formatBalanceAmount
+
 import com.fredy.wallet.viewModel.WalletEvent
 
 @OptIn(ExperimentalFoundationApi::class)

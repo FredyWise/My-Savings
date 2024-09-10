@@ -1,17 +1,16 @@
 package com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases
 
 import co.yml.charts.common.extensions.isNotNull
-import com.fredy.data.enums.RecordType
-import com.fredy.data.enums.SortType
+import com.fredy.domain.enums.RecordType
+import com.fredy.domain.enums.SortType
 import com.fredy.domain.model.Book
 import com.fredy.domain.model.Category
 import com.fredy.domain.model.CategoryWithAmount
-import com.fredy.domain.model.Record
 import com.fredy.domain.repository.UserRepository
 import com.fredy.domain.repository.CategoryRepository
 import com.fredy.domain.repository.RecordRepository
-import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.CurrencyUseCases
-import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.currencyConverter
+import com.fredy.domain.useCases.CurrencyUseCases.CurrencyUseCases
+import com.fredy.domain.useCases.CurrencyUseCases.currencyConverter
 import com.fredy.mysavings.Util.Log
 import com.fredy.domain.util.mappers.filterRecordCurrency
 import kotlinx.coroutines.flow.Flow

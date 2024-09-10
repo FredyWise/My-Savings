@@ -2,6 +2,7 @@ package com.fredy.mysavings.Util
 
 import android.util.Log
 
+
 object Log {
     private const val TAG = "BABI"
     private var isDebuggable = true

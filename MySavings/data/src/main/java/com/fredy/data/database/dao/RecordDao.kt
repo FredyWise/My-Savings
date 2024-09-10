@@ -6,7 +6,7 @@ import androidx.room.Query
 import androidx.room.Upsert
 import com.fredy.data.database.dto.Record
 import com.fredy.data.database.dto.TrueRecord
-import com.fredy.data.enums.RecordType
+import com.fredy.domain.enums.RecordType
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDateTime
 
@@ -78,13 +78,13 @@ interface RecordDao {
     @Query("SELECT * FROM record WHERE userIdFk = :userId AND recordType = :recordType")
     fun getUserRecordsByType(
         userId: String,
-        recordType: RecordType
+        recordType: com.fredy.domain.enums.RecordType
     ): Flow<List<Record>>
 
     @Query("SELECT * FROM record WHERE userIdFk = :userId AND recordType = :recordType AND recordTimestamp BETWEEN :start AND :end")
     fun getUserRecordsByTypeFromSpecificTime(
         userId: String,
-        recordType: RecordType,
+        recordType: com.fredy.domain.enums.RecordType,
         start: LocalDateTime,
         end: LocalDateTime
     ): Flow<List<Record>>

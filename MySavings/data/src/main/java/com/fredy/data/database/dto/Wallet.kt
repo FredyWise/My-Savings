@@ -2,8 +2,7 @@ package com.fredy.data.database.dto
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.fredy.data.util.DefaultData
-import com.fredy.mysavings.Feature.Presentation.Util.DefaultData.walletInitIcon
+import com.fredy.theme.util.SavingsIcons.walletInitIcon
 
 @Entity
 data class Wallet(
@@ -13,7 +12,7 @@ data class Wallet(
     val walletName: String = "Wallet",
     var walletAmount: Double = 0.0,
     var walletCurrency: String = "",
-    val walletIcon: Int = DefaultData.walletInitIcon.image,
-    val walletIconDescription: String = DefaultData.walletInitIcon.description,
+    val walletIcon: Int = walletInitIcon.image,
+    val walletIconDescription: String = walletInitIcon.description,
 )
 

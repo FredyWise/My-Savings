@@ -23,8 +23,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.fredy.data.enums.FilterType
-import com.fredy.data.enums.SortType
+import com.fredy.domain.enums.FilterType
+import com.fredy.domain.enums.SortType
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.CheckBoxes
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.CustomStickyHeader
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SimpleAlertDialog

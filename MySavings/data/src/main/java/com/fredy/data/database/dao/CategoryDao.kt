@@ -5,7 +5,7 @@ import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
 import com.fredy.data.database.dto.Category
-import com.fredy.data.enums.RecordType
+import com.fredy.domain.enums.RecordType
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -42,6 +42,6 @@ interface CategoryDao {
     )
     fun getCategoriesUsingTypeOrderedByName(
         userId: String,
-        type: RecordType = RecordType.Expense
+        type: com.fredy.domain.enums.RecordType = com.fredy.domain.enums.RecordType.Expense
     ): Flow<List<Category>>
 }

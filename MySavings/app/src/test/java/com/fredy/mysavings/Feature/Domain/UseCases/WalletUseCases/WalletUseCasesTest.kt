@@ -2,7 +2,9 @@ package com.fredy.mysavings.Feature.Domain.UseCases.WalletUseCases
 
 import com.fredy.mysavings.BaseUseCaseTest
 import com.fredy.domain.model.Wallet
-import com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases.currencyConverter
+import com.fredy.domain.useCases.WalletUseCases.GetWallets
+import com.fredy.domain.useCases.WalletUseCases.GetWalletsTotalBalance
+import com.fredy.domain.useCases.CurrencyUseCases.currencyConverter
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.flow.first

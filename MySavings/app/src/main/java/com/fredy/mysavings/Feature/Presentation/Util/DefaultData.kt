@@ -1,7 +1,7 @@
 package com.fredy.mysavings.Feature.Presentation.Util
 
 import android.graphics.Color
-import com.fredy.data.enums.RecordType
+import com.fredy.domain.enums.RecordType
 import com.fredy.domain.model.Book
 import com.fredy.domain.model.Category
 import com.fredy.domain.model.Wallet
