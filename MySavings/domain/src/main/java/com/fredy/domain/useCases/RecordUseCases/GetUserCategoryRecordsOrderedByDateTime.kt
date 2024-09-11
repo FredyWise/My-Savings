@@ -1,7 +1,7 @@
-package com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases
+package com.fredy.domain.useCases.RecordUseCases
 
 import co.yml.charts.common.extensions.isNotNull
-import com.fredy.mysavings.Feature.Data.Enum.SortType
+import com.fredy.domain.enums.SortType
 import com.fredy.domain.model.RecordMap
 import com.fredy.domain.repository.UserRepository
 import com.fredy.domain.repository.RecordRepository

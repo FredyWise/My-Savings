@@ -1,7 +1,7 @@
 package com.fredy.domain.useCases.UserUseCases
 
+import com.fredy.domain.model.toUser
 import com.fredy.domain.repository.UserRepository
-import com.fredy.domain.util.mappers.toUser
 import com.google.firebase.auth.FirebaseUser
 import kotlinx.coroutines.flow.firstOrNull
 import timber.log.Timber

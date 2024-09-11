@@ -10,7 +10,7 @@ import com.fredy.domain.enums.RecordType
 import com.fredy.domain.enums.SortType
 import com.fredy.domain.repository.SyncRepository
 import com.fredy.domain.useCases.BookUseCases.BookUseCases
-import com.fredy.domain.useCases.RecordUseCases
+import com.fredy.domain.useCases.RecordUseCases.RecordUseCases
 
 import com.fredy.domain.useCases.WalletUseCases.WalletUseCases
 import com.fredy.theme.model.BalanceBar

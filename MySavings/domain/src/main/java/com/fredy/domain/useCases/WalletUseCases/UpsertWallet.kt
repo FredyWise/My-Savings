@@ -1,6 +1,5 @@
 package com.fredy.domain.useCases.WalletUseCases
 
-import co.yml.charts.common.extensions.isNotNull
 import com.fredy.domain.model.Wallet
 import com.fredy.domain.repository.UserRepository
 import com.fredy.domain.repository.WalletRepository
@@ -11,7 +10,7 @@ class UpsertWallet(
 ) {
     suspend operator fun invoke(wallet: Wallet): String {
         val currentUser = userRepository.getCurrentUser()!!
-        val currentUserId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
+        val currentUserId = if (currentUser != null) currentUser.firebaseUserId else ""
         return repository.upsertWallet(wallet.copy(userIdFk = currentUserId))
     }
 }

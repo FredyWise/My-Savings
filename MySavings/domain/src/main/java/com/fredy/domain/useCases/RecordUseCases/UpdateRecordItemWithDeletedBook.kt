@@ -1,12 +1,12 @@
-package com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases
+package com.fredy.domain.useCases.RecordUseCases
 
-import co.yml.charts.common.extensions.isNotNull
 import com.fredy.domain.model.Book
-import com.fredy.domain.repository.UserRepository
 import com.fredy.domain.repository.RecordRepository
+import com.fredy.domain.repository.UserRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 
 class UpdateRecordItemWithDeletedBook(
     private val recordRepository: RecordRepository,
@@ -14,15 +14,17 @@ class UpdateRecordItemWithDeletedBook(
 ) {
     suspend operator fun invoke(book: Book) {
         withContext(Dispatchers.IO) {
-            Log.d("startDelBook")
-            val currentUser = userRepository.getCurrentUser()!!
-            val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
-            val records = recordRepository.getUserRecords(userId).first()
-            Log.d("$records")
-            val tempRecords = records.filter {
-                it.bookIdFk == book.bookId
+            Timber.d("startDelBook")
+            val currentUser = userRepository.getCurrentUser()
+            currentUser?.let {
+                val userId = currentUser.firebaseUserId
+                val records = recordRepository.getUserRecords(userId).first()
+                Timber.d("$records")
+                val tempRecords = records.filter {
+                    it.bookIdFk == book.bookId
+                }
+                recordRepository.deleteAllRecordItems(tempRecords)
             }
-            recordRepository.deleteAllRecordItems(tempRecords)
         }
     }
 }

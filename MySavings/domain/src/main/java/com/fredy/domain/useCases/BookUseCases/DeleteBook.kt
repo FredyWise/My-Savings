@@ -1,4 +1,4 @@
-package com.fredy.mysavings.Feature.Domain.UseCases.BookUseCases
+package com.fredy.domain.useCases.BookUseCases
 
 import com.fredy.domain.model.Book
 import com.fredy.domain.repository.BookRepository

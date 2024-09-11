@@ -1,28 +1,34 @@
-package com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases
+package com.fredy.domain.useCases.RecordUseCases
 
 import co.yml.charts.common.extensions.isNotNull
+import com.fredy.addrecord.viewModel.AddRecordState
+import com.fredy.core.util.resource.DataError
+import com.fredy.core.util.resource.Resource
+import com.fredy.domain.enums.RecordType
+import com.fredy.domain.enumsChecker.isTransfer
 import com.fredy.domain.model.Record
 import com.fredy.domain.repository.RecordRepository
 import com.fredy.domain.repository.UserRepository
-import com.fredy.mysavings.Feature.Presentation.Util.isTransfer
-import com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel.AddRecordState
+import com.fredy.domain.util.DefaultData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
+import timber.log.Timber
+import kotlin.math.absoluteValue
 
 class UpsertRecordItem(
     private val recordRepository: RecordRepository,
     private val userRepository: UserRepository
 ) {
-    suspend operator fun invoke(state: AddRecordState): Flow<Resource<AddRecordState>> {
-        return flow {
+    suspend operator fun invoke(state: AddRecordState): Flow<Resource<AddRecordState, DataError.Local>> {
+        return flow<Resource<AddRecordState, DataError.Local>> {
             emit(Resource.Loading())
             val currentUser = userRepository.getCurrentUser()!!
             val currentUserId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
 
             val recordId = state.recordId
-            val accountIdFromFk = state.walletIdFromFk
-            var accountIdToFk = state.walletIdToFk
+            val walletIdFromFk = state.walletIdFromFk
+            var walletIdToFk = state.walletIdToFk
             var categoryIdToFk = state.categoryIdFk
             val bookIdFk = state.bookIdFk
             val recordDateTime = state.recordDate.atTime(
@@ -47,13 +53,13 @@ class UpsertRecordItem(
                 difference = -difference
             }
 
-            if (isTransfer(recordType)) {
+            if (recordType.isTransfer()) {
                 categoryIdToFk = DefaultData.transferCategory.categoryId
             } else {
-                accountIdToFk = accountIdFromFk
+                walletIdToFk = walletIdFromFk
             }
 
-            if (recordDateTime == null || calculationResult == 0.0 || recordCurrency.isBlank() || accountIdFromFk == null || accountIdToFk == null || categoryIdToFk == null) {
+            if (recordDateTime == null || calculationResult == 0.0 || recordCurrency.isBlank() || walletIdFromFk == null || walletIdToFk == null || categoryIdToFk == null) {
                 throw Exception("Please fill all required information")
             }
 
@@ -73,7 +79,7 @@ class UpsertRecordItem(
 
                 RecordType.Transfer -> {
                     if (state.fromWallet == state.toWallet) {
-                        throw Exception("You Can't transfer into the same account")
+                        throw Exception("You Can't transfer into the same wallet")
                     }
 
                     if (fromAccountCurrency == toAccountCurrency) {
@@ -87,7 +93,14 @@ class UpsertRecordItem(
                             if (state.fromWallet.walletAmount < difference) {
                                 throw Exception("Account balance is not enough")
                             }
-                            emit(Resource.Success(state.copy(isShowWarning = true, previousAmount = calculationResult)))
+                            emit(
+                                Resource.Success(
+                                    state.copy(
+                                        isShowWarning = true,
+                                        previousAmount = calculationResult
+                                    )
+                                )
+                            )
                             throw Exception("Account Currencies Are not The same!!!, " + "Are you sure want to Transfer from $fromAccountCurrency Currency to ${toAccountCurrency} Currency? \n(Result Will be Converted)")
 
                         }
@@ -100,10 +113,10 @@ class UpsertRecordItem(
 
             val record = Record(
                 recordId = recordId,
-                accountIdFromFk = accountIdFromFk,
-                accountIdToFk = accountIdToFk,
+                walletIdFromFk = walletIdFromFk,
+                walletIdToFk = walletIdToFk,
                 categoryIdFk = categoryIdToFk,
-                bookId = bookIdFk,
+                bookIdFk = bookIdFk,
                 recordDateTime = recordDateTime,
                 recordAmount = calculationResult,
                 recordCurrency = recordCurrency,
@@ -119,10 +132,10 @@ class UpsertRecordItem(
             )
             emit(Resource.Success(state))
         }.catch { e ->
-            Log.e(
+            Timber.e(
                 "UpsertRecordItem.Error: $e"
             )
-            emit(Resource.Error(e.message.toString()))
+            emit(Resource.Error(DataError.Local.UNKNOWN))
         }
     }
 }

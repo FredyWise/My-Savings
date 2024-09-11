@@ -1,12 +1,14 @@
-package com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases
+package com.fredy.domain.useCases.RecordUseCases
 
-import co.yml.charts.common.extensions.isNotNull
-import com.fredy.mysavings.Feature.Data.Enum.SortType
+import com.fredy.core.util.resource.DataError
+import com.fredy.core.util.resource.Resource
+import com.fredy.domain.enums.SortType
 import com.fredy.domain.model.AccountWithAmountType
 import com.fredy.domain.model.Book
+import com.fredy.domain.model.Record
 import com.fredy.domain.model.Wallet
-import com.fredy.domain.repository.UserRepository
 import com.fredy.domain.repository.RecordRepository
+import com.fredy.domain.repository.UserRepository
 import com.fredy.domain.repository.WalletRepository
 import com.fredy.domain.useCases.CurrencyUseCases.CurrencyUseCases
 import com.fredy.domain.useCases.CurrencyUseCases.currencyConverter
@@ -19,6 +21,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import timber.log.Timber
 import java.time.LocalDateTime
 
 class GetUserWalletsWithAmountFromSpecificTime(
@@ -33,42 +36,45 @@ class GetUserWalletsWithAmountFromSpecificTime(
         endDate: LocalDateTime,
         useUserCurrency: Boolean,
         book: Book
-    ): Flow<Resource<List<AccountWithAmountType>>> {
-        return flow {
+    ): Flow<Resource<List<AccountWithAmountType>, DataError.Local>> {
+        return flow<Resource<List<AccountWithAmountType>, DataError.Local>> {
             emit(Resource.Loading())
-            val currentUser = userRepository.getCurrentUser()!!
-            val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
-            val userCurrency = currentUser.userCurrency
-            Log.i(
-                "getUserAccountsWithAmountFromSpecificTime: \n$startDate\n:\n$endDate"
-            )
-            val userAccounts = walletRepository.getUserWallets(
-                userId
-            ).first()
+            val currentUser = userRepository.getCurrentUser()
+            currentUser?.let {
+                val userId = currentUser.firebaseUserId
+                val userCurrency = currentUser.userCurrency
+                Timber.i(
+                    "getUserAccountsWithAmountFromSpecificTime: \n$startDate\n:\n$endDate"
+                )
+                val userAccounts = walletRepository.getUserWallets(
+                    userId
+                ).first()
 
-            recordRepository.getUserRecordsFromSpecificTime(
-                userId, startDate, endDate
-            ).map { records ->
-                records.filter { it.bookIdFk == book.bookId }
-                    .toAccountWithAmount(
-                        sortType,
-                        userId,
-                        userAccounts,
-                        userCurrency,
-                        useUserCurrency
-                    )
-            }.collect { data ->
-                Log.i(
-                    "getUserAccountsWithAmountFromSpecificTime.Data: $data",
+                recordRepository.getUserRecordsFromSpecificTime(
+                    userId, startDate, endDate
+                ).map { records ->
+                    records.filter { it.bookIdFk == book.bookId }
+                        .toAccountWithAmount(
+                            sortType,
+                            userId,
+                            userAccounts,
+                            userCurrency,
+                            useUserCurrency
+                        )
+                }.collect { data ->
+                    Timber.i(
+                        "getUserAccountsWithAmountFromSpecificTime.Data: $data",
 
-                    )
-                emit(Resource.Success(data))
+                        )
+                    emit(Resource.Success(data))
+                }
+
             }
         }.catch { e ->
-            Log.e(
+            Timber.e(
                 "getUserAccountsWithAmountFromSpecificTime.Error: $e"
             )
-            emit(Resource.Error(e.message.toString()))
+            emit(Resource.Error(DataError.Local.UNKNOWN))
         }
     }
 

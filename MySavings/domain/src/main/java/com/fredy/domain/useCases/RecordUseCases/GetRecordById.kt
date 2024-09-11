@@ -1,4 +1,4 @@
-package com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases
+package com.fredy.domain.useCases.RecordUseCases
 
 import com.fredy.domain.model.TrueRecord
 import com.fredy.domain.repository.RecordRepository

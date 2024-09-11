@@ -215,7 +215,7 @@ class AuthViewModel @Inject constructor(
                                     profilePictureUrl = profilePictureUrl
                                 )
                                 userUseCases.updateUser(
-                                    user
+                                    this
                                 )
                             }
 

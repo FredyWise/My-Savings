@@ -1,14 +1,13 @@
 package com.fredy.data.repositoryImplement
 
+import com.fredy.core.util.resource.DataError
+import com.fredy.core.util.resource.Resource
 import com.fredy.data.database.dao.UserDao
 import com.fredy.data.database.firestoreDataSource.UserDataSource
 import com.fredy.data.mappers.toDataUser
 import com.fredy.data.mappers.toDomainUser
 import com.fredy.domain.model.UserData
 import com.fredy.domain.repository.UserRepository
-import com.fredy.core.util.resource.DataError
-import com.fredy.core.util.resource.Resource
-
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -26,8 +25,9 @@ class UserRepositoryImpl @Inject constructor(
 ) : UserRepository {
     override suspend fun upsertUser(user: UserData) {
         withContext(Dispatchers.IO) {
-            userDataSource.upsertUser(user.toDataUser())
-            userDao.upsertUser(user.toDataUser())
+            val dataUser = user.toDataUser()
+            userDataSource.upsertUser(dataUser)
+            userDao.upsertUser(dataUser)
         }
     }
 
@@ -48,7 +48,7 @@ class UserRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getCurrentUserFlow(): Flow<Resource<UserData?, DataError.Database>> =
-        flow<Resource<UserData?, DataError.Database>>   {
+        flow<Resource<UserData?, DataError.Database>> {
             emit(Resource.Loading())
             val currentUser = firebaseAuth.currentUser
             if (currentUser != null) {

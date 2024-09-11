@@ -1,17 +1,19 @@
-package com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases
+package com.fredy.domain.useCases.RecordUseCases
 
-import co.yml.charts.common.extensions.isNotNull
-import com.fredy.mysavings.Feature.Data.Enum.RecordType
-import com.fredy.mysavings.Feature.Data.Enum.SortType
+import com.fredy.core.util.resource.DataError
+import com.fredy.core.util.resource.Resource
+import com.fredy.domain.enums.RecordType
+import com.fredy.domain.enums.SortType
 import com.fredy.domain.model.Book
 import com.fredy.domain.model.Category
 import com.fredy.domain.model.CategoryWithAmount
-import com.fredy.domain.repository.UserRepository
+import com.fredy.domain.model.Record
 import com.fredy.domain.repository.CategoryRepository
 import com.fredy.domain.repository.RecordRepository
+import com.fredy.domain.repository.UserRepository
 import com.fredy.domain.useCases.CurrencyUseCases.CurrencyUseCases
 import com.fredy.domain.useCases.CurrencyUseCases.currencyConverter
-import com.fredy.domain.util.mappers.filterRecordCurrency
+import com.fredy.mysavings.Feature.Domain.Util.Mappers.filterRecordCurrency
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
@@ -33,45 +35,47 @@ class GetUserCategoriesWithAmountFromSpecificTime(
         currency: List<String>,
         useUserCurrency: Boolean,
         book: Book,
-    ): Flow<Resource<List<CategoryWithAmount>>> {
-        return flow {
+    ): Flow<Resource<List<CategoryWithAmount>, DataError.Local>> {
+        return flow<Resource<List<CategoryWithAmount>, DataError.Local>> {
             emit(Resource.Loading())
-            val currentUser = userRepository.getCurrentUser()!!
-            val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
-            val userCurrency = currentUser.userCurrency
-            Log.i(
-                "getUserCategoriesWithAmountFromSpecificTime: $currency\n$categoryType\n$startDate\n:\n$endDate"
-            )
-            val userCategories = categoryRepository.getUserCategories(
-                userId
-            ).first()
-
-            recordRepository.getUserRecordsByTypeFromSpecificTime(
-                userId,
-                listOf(categoryType),
-                startDate,
-                endDate,
-            ).map { records ->
-                records.filter { it.bookIdFk == book.bookId }
-                    .filterRecordCurrency(currency)
-                    .combineSameCurrencyCategory(
-                        sortType,
-                        userCategories,
-                        userCurrency,
-                        useUserCurrency
-                    )
-            }.collect { data ->
+            val currentUser = userRepository.getCurrentUser()
+            currentUser?.let {
+                val userId = currentUser.firebaseUserId
+                val userCurrency = currentUser.userCurrency
                 Log.i(
-                    "getUserCategoriesWithAmountFromSpecificTime.Data: $data",
+                    "getUserCategoriesWithAmountFromSpecificTime: $currency\n$categoryType\n$startDate\n:\n$endDate"
+                )
+                val userCategories = categoryRepository.getUserCategories(
+                    userId
+                ).first()
 
-                    )
-                emit(Resource.Success(data))
+                recordRepository.getUserRecordsByTypeFromSpecificTime(
+                    userId,
+                    listOf(categoryType),
+                    startDate,
+                    endDate,
+                ).map { records ->
+                    records.filter { it.bookIdFk == book.bookId }
+                        .filterRecordCurrency(currency)
+                        .combineSameCurrencyCategory(
+                            sortType,
+                            userCategories,
+                            userCurrency,
+                            useUserCurrency
+                        )
+                }.collect { data ->
+                    Log.i(
+                        "getUserCategoriesWithAmountFromSpecificTime.Data: $data",
+
+                        )
+                    emit(Resource.Success(data))
+                }
             }
         }.catch { e ->
             Log.e(
                 "getUserCategoriesWithAmountFromSpecificTime.Error: $e"
             )
-            emit(Resource.Error(e.message.toString()))
+            emit(Resource.Error(DataError.Local.UNKNOWN))
         }
     }
 

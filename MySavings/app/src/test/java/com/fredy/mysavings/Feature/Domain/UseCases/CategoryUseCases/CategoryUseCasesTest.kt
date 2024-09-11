@@ -3,6 +3,10 @@ package com.fredy.mysavings.Feature.Domain.UseCases.CategoryUseCases
 import com.fredy.mysavings.BaseUseCaseTest
 import com.fredy.domain.enums.RecordType
 import com.fredy.domain.model.Category
+import com.fredy.domain.useCases.CategoryUseCases.DeleteCategory
+import com.fredy.domain.useCases.CategoryUseCases.GetCategory
+import com.fredy.domain.useCases.CategoryUseCases.GetCategoryMapOrderedByName
+import com.fredy.domain.useCases.CategoryUseCases.UpsertCategory
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.flow.first

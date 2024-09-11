@@ -1,9 +1,8 @@
 package com.fredy.domain.useCases.WalletUseCases
 
-import co.yml.charts.common.extensions.isNotNull
 import com.fredy.domain.repository.UserRepository
 import com.fredy.domain.repository.WalletRepository
-import com.fredy.domain.util.mappers.getCurrencies
+import com.fredy.mysavings.Feature.Domain.Util.Mappers.getCurrencies
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -16,15 +15,17 @@ class GetWalletsCurrencies(
 ) {
     operator fun invoke(): Flow<List<String>> {
         return flow {
-            val currentUser = userRepository.getCurrentUser()!!
-            val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
+            val currentUser = userRepository.getCurrentUser()
+            currentUser?.let {
+                val userId = currentUser.firebaseUserId
 
-            withContext(Dispatchers.IO) {
-                repository.getUserWallets(
-                    userId
-                ).map { it.getCurrencies() }
-            }.collect { data ->
-                emit(data)
+                withContext(Dispatchers.IO) {
+                    repository.getUserWallets(
+                        userId
+                    ).map { it.getCurrencies() }
+                }.collect { data ->
+                    emit(data)
+                }
             }
         }
     }

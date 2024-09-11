@@ -4,10 +4,6 @@ import com.fredy.mysavings.BaseUseCaseTest
 import com.fredy.domain.enums.RecordType
 import com.fredy.domain.enums.SortType
 import com.fredy.domain.model.Book
-import com.fredy.domain.useCases.RecordUseCases.GetAllBooks
-import com.fredy.domain.useCases.RecordUseCases.GetAllTrueRecordsWithinSpecificTime
-import com.fredy.domain.useCases.RecordUseCases.GetUserTotalAmountByType
-import com.fredy.domain.useCases.RecordUseCases.GetUserWalletRecordsOrderedByDateTime
 import com.fredy.domain.util.mappers.filterRecordCurrency
 import com.fredy.domain.util.mappers.filterTrueRecordCurrency
 import com.google.firebase.Timestamp

@@ -8,6 +8,7 @@ import com.fredy.domain.repository.BookRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
+import timber.log.Timber
 
 class GetUserBooks(
     private val bookRepository: BookRepository,
@@ -21,12 +22,12 @@ class GetUserBooks(
                 val userId = currentUser.firebaseUserId
 
                 bookRepository.getUserBooks(userId).collect { books ->
-                    Log.i("getBooksOrderedByName.Data: $books")
+                    Timber.i("getBooksOrderedByName.Data: $books")
                     emit(Resource.Success(books))
                 }
             }
         }.catch { e ->
-            Log.e(
+            Timber.e(
                 "getBooksOrderedByName.Error: $e"
             )
             emit(Resource.Error(DataError.Local.UNKNOWN))

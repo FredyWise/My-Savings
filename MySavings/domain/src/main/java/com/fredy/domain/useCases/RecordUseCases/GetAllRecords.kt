@@ -1,39 +1,41 @@
-package com.fredy.domain.useCases
+package com.fredy.domain.useCases.RecordUseCases
 
 import co.yml.charts.common.extensions.isNotNull
-import com.fredy.domain.enums.SortType
-import com.fredy.domain.model.RecordMap
+import com.fredy.domain.model.BookMap
 import com.fredy.domain.repository.UserRepository
+import com.fredy.domain.repository.BookRepository
 import com.fredy.domain.repository.RecordRepository
+import com.fredy.domain.util.mappers.toBookSortedMaps
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 
-class GetUserCategoryRecordsOrderedByDateTime(
+class GetAllRecords(
     private val recordRepository: RecordRepository,
     private val userRepository: UserRepository,
+    private val bookRepository: BookRepository
 ) {
-    operator fun invoke(categoryId: String, sortType: SortType): Flow<Resource<List<RecordMap>>> {
+    operator fun invoke(): Flow<Resource<List<BookMap>>> {
         return flow {
             emit(Resource.Loading())
             val currentUser = userRepository.getCurrentUser()!!
             val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
-            Log.i(
-                "getUserCategoryRecordsOrderedByDateTime: $categoryId",
 
-                )
+            val books = bookRepository.getUserBooks(userId).first()
 
-            recordRepository.getUserCategoryRecordsOrderedByDateTime(
-                userId, categoryId, sortType
-            ).collect { data ->
+            recordRepository.getRecordMaps(userId).map {
+                it.toBookSortedMaps(books)
+            }.collect { data ->
                 Log.i(
-                    "getUserCategoryRecordsOrderedByDateTime.Data: $data"
+                    "getAllRecords.data: $data"
                 )
                 emit(Resource.Success(data))
             }
         }.catch { e ->
             Log.e(
-                "getUserCategoryRecordsOrderedByDateTime.Error: $e"
+                "getAllRecords.Error: $e"
             )
             emit(Resource.Error(e.message.toString()))
         }

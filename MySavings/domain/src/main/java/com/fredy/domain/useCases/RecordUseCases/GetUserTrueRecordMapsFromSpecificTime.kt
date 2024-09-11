@@ -1,17 +1,18 @@
-package com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases
+package com.fredy.domain.useCases.RecordUseCases
 
-import co.yml.charts.common.extensions.isNotNull
-import com.fredy.mysavings.Feature.Data.Enum.SortType
+import com.fredy.core.util.resource.DataError
+import com.fredy.core.util.resource.Resource
+import com.fredy.domain.enums.SortType
 import com.fredy.domain.model.Book
 import com.fredy.domain.model.BookMap
 import com.fredy.domain.model.TrueRecord
-import com.fredy.domain.repository.UserRepository
 import com.fredy.domain.repository.BookRepository
 import com.fredy.domain.repository.RecordRepository
+import com.fredy.domain.repository.UserRepository
 import com.fredy.domain.useCases.CurrencyUseCases.CurrencyUseCases
 import com.fredy.domain.useCases.CurrencyUseCases.currencyConverter
-import com.fredy.domain.util.mappers.filterTrueRecordCurrency
-import com.fredy.domain.util.mappers.toBookSortedMaps
+import com.fredy.mysavings.Feature.Domain.Util.Mappers.filterTrueRecordCurrency
+import com.fredy.mysavings.Feature.Domain.Util.Mappers.toBookSortedMaps
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
@@ -33,37 +34,38 @@ class GetUserTrueRecordMapsFromSpecificTime(
         currency: List<String>,
         useUserCurrency: Boolean,
         book: Book,
-    ): Flow<Resource<List<BookMap>>> {
-        return flow {
+    ): Flow<Resource<List<BookMap>, DataError.Local>> {
+        return flow<Resource<List<BookMap>, DataError.Local>> {
             emit(Resource.Loading())
-            val currentUser = userRepository.getCurrentUser()!!
-            val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
-            val userCurrency = if (currency.isEmpty()) "" else currentUser.userCurrency
-            Log.i(
-                "getUserTrueRecordMapsFromSpecificTime: $startDate\n:\n$endDate,\ncurrency: $currency"
-            )
+            val currentUser = userRepository.getCurrentUser()
+            currentUser?.let {
+                val userId = currentUser.firebaseUserId
+                val userCurrency = if (currency.isEmpty()) "" else currentUser.userCurrency
+                Log.i(
+                    "getUserTrueRecordMapsFromSpecificTime: $startDate\n:\n$endDate,\ncurrency: $currency"
+                )
 
-            val books = bookRepository.getUserBooks(userId).first()
+                val books = bookRepository.getUserBooks(userId).first()
 
-            recordRepository.getUserTrueRecordsFromSpecificTime(
-                userId,
-                startDate,
-                endDate,
-            ).map { records ->
-                records.filter { it.record.bookIdFk == book.bookId }
-                    .filterTrueRecordCurrency(currency + userCurrency)
-                    .convertRecordCurrency(userCurrency, useUserCurrency)
-                    .toBookSortedMaps(books)
-            }.collect { data ->
-                Log.i("getUserTrueRecordMapsFromSpecificTime.Data: $data")
-                emit(Resource.Success(data))
+                recordRepository.getUserTrueRecordsFromSpecificTime(
+                    userId,
+                    startDate,
+                    endDate,
+                ).map { records ->
+                    records.filter { it.record.bookIdFk == book.bookId }
+                        .filterTrueRecordCurrency(currency + userCurrency)
+                        .convertRecordCurrency(userCurrency, useUserCurrency)
+                        .toBookSortedMaps(books)
+                }.collect { data ->
+                    Log.i("getUserTrueRecordMapsFromSpecificTime.Data: $data")
+                    emit(Resource.Success(data))
+                }
             }
-
         }.catch { e ->
             Log.e(
                 "getUserTrueRecordMapsFromSpecificTime.Error: $e"
             )
-            emit(Resource.Error(e.message.toString()))
+            emit(Resource.Error(DataError.Local.UNKNOWN))
         }
     }
 

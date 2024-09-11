@@ -1,4 +1,4 @@
-package com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases
+package com.fredy.domain.useCases.RecordUseCases
 
 import co.yml.charts.common.extensions.isNotNull
 import com.fredy.domain.model.Category
