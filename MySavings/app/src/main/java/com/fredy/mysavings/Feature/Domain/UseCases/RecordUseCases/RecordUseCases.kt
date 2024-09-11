@@ -4,6 +4,8 @@ import com.fredy.domain.useCases.RecordUseCases.GetUserTotalAmountByType
 import com.fredy.domain.useCases.RecordUseCases.GetUserWalletRecordsOrderedByDateTime
 import com.fredy.domain.useCases.CurrencyUseCases.CurrencyUseCases
 import com.fredy.domain.useCases.CurrencyUseCases.currencyConverter
+import com.fredy.domain.useCases.RecordUseCases.GetAllBooks
+import com.fredy.domain.useCases.RecordUseCases.GetAllTrueRecordsWithinSpecificTime
 
 data class RecordUseCases(
     val upsertRecordItem: UpsertRecordItem,
@@ -13,7 +15,7 @@ data class RecordUseCases(
     val updateRecordItemWithDeletedBook: UpdateRecordItemWithDeletedBook,
     val getRecordById: GetRecordById,
     val getAllTrueRecordsWithinSpecificTime: GetAllTrueRecordsWithinSpecificTime, //io
-    val getAllRecords: GetAllRecords, //search
+    val getAllBooks: GetAllBooks, //search
     val getUserCategoryRecordsOrderedByDateTime: GetUserCategoryRecordsOrderedByDateTime, // category
     val getUserWalletRecordsOrderedByDateTime: GetUserWalletRecordsOrderedByDateTime, // account
     val getUserTrueRecordMapsFromSpecificTime: GetUserTrueRecordMapsFromSpecificTime, // record main screen

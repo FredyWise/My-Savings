@@ -12,7 +12,6 @@ import com.fredy.data.database.firestoreDataSource.RecordDataSource
 import com.fredy.data.database.firestoreDataSource.WalletDataSource
 import com.fredy.domain.repository.SyncRepository
 import com.fredy.mysavings.Feature.Presentation.Util.DefaultData
-import com.fredy.mysavings.Util.Log
 import com.fredy.data.util.isInternetConnected
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers

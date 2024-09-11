@@ -12,7 +12,6 @@ import com.fredy.domain.useCases.CurrencyUseCases.CurrencyUseCases
 import com.fredy.domain.useCases.CurrencyUseCases.currencyConverter
 import com.fredy.domain.util.mappers.filterTrueRecordCurrency
 import com.fredy.domain.util.mappers.toBookSortedMaps
-import com.fredy.mysavings.Util.Log
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first

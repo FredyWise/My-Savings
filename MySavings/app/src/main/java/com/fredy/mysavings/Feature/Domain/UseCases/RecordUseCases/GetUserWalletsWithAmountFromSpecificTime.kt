@@ -11,7 +11,6 @@ import com.fredy.domain.repository.WalletRepository
 import com.fredy.domain.useCases.CurrencyUseCases.CurrencyUseCases
 import com.fredy.domain.useCases.CurrencyUseCases.currencyConverter
 import com.fredy.mysavings.Feature.Presentation.Util.DefaultData
-import com.fredy.mysavings.Util.Log
 import com.fredy.mysavings.Feature.Presentation.Util.isExpense
 import com.fredy.mysavings.Feature.Presentation.Util.isIncome
 import com.fredy.mysavings.Feature.Presentation.Util.isTransfer

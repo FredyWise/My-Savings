@@ -4,7 +4,6 @@ import com.fredy.data.database.dao.UserDao
 import com.fredy.data.database.firestoreDataSource.UserDataSource
 import com.fredy.domain.model.UserData
 import com.fredy.domain.repository.UserRepository
-import com.fredy.mysavings.Util.Log
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow

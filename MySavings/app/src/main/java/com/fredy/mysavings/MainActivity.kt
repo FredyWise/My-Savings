@@ -15,8 +15,8 @@ import com.fredy.core.util.ActivityProvider
 
 import com.fredy.auth.viewModel.AuthViewModel
 import com.fredy.auth.viewModel.AuthEvent
-import com.fredy.mysavings.Feature.Presentation.Navigation.Graph
-import com.fredy.mysavings.Feature.Presentation.Navigation.NavGraphRoot
+import com.fredy.mysavings.navigation.Graph
+import com.fredy.mysavings.navigation.NavGraphRoot
 import com.fredy.preferences.viewModel.PreferencesViewModel
 import com.fredy.theme.DefaultTheme
 import dagger.hilt.android.AndroidEntryPoint

@@ -25,7 +25,7 @@ class ConvertCurrencyData(
         ) toCurrency else fromCurrency
 
         return try {
-            val rates = currencyRepository.getRateResponse().rates
+            val rates = currencyRepository.getRateResponse()?.rates
 
             val result = withContext(Dispatchers.IO) {
                 singleBaseCurrencyConverter(
@@ -52,18 +52,11 @@ class ConvertCurrencyData(
         amount: Double,
         fromCurrency: String,
         toCurrency: String,
-        rates: List<Rate>
+        rates: List<Rate>?
     ): Double {
-        val toBaseRate = rates.get(
-            toCurrency
-        )?.toDouble() ?: throw IllegalArgumentException(
-            "Currency '$toCurrency' not found in rates."
-        )
-        val fromBaseRate = rates.getRateForCurrency(
-            fromCurrency
-        )?.toDouble() ?: throw IllegalArgumentException(
-            "Currency '$fromCurrency' not found in rates."
-        )
+        val toBaseRate = rates.getValueFromCode(toCurrency)
+        val fromBaseRate = rates.getValueFromCode(fromCurrency)
         return amount * (toBaseRate / fromBaseRate)
     }
+
 }

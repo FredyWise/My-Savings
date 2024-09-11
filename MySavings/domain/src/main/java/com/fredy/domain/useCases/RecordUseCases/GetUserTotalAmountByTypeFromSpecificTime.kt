@@ -7,7 +7,6 @@ import com.fredy.domain.repository.UserRepository
 import com.fredy.domain.repository.RecordRepository
 import com.fredy.domain.useCases.CurrencyUseCases.CurrencyUseCases
 import com.fredy.mysavings.Feature.Presentation.Util.BalanceItem
-import com.fredy.mysavings.Util.Log
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow

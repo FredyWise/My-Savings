@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.fredy.auth.R
+import com.fredy.core.util.SavingsIcons.GoogleButtonIcon
 
 
 @Composable
@@ -32,7 +33,7 @@ fun GoogleButton(
     text: String = "Sign Up with Google",
     loadingText: String = "Creating Account...",
     isLoading: Boolean = false,
-    icon: Int = R.mipmap.ic_google,
+    icon: Int = GoogleButtonIcon.image,
     shape: Shape = MaterialTheme.shapes.medium,
     borderColor: Color = Color.LightGray,
     backgroundColor: Color = MaterialTheme.colorScheme.primary,

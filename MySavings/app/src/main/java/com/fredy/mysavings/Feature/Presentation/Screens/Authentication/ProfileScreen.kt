@@ -49,7 +49,6 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.fredy.domain.model.UserData
-import com.fredy.mysavings.Util.Log
 import com.fredy.mysavings.Util.isValidPassword
 import com.fredy.auth.viewModel.AuthState
 import com.fredy.auth.viewModel.AuthEvent

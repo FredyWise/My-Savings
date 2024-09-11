@@ -14,8 +14,8 @@ import com.fredy.auth.ui.SignIn
 import com.fredy.auth.viewModel.AuthEvent
 import com.fredy.auth.viewModel.AuthViewModel
 import com.fredy.core.navigation.Graph
-import com.fredy.core.navigation.utils.navigateZeroTopTo
-import com.fredy.domain.util.resource.Resource
+import com.fredy.theme.util.navigation.navigateZeroTopTo
+import com.fredy.core.util.resource.Resource
 
 fun NavGraphBuilder.authenticationNavGraph(
     isUsingBioAuth: Boolean,

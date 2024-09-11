@@ -7,7 +7,7 @@ import com.fredy.domain.enums.SortType
 import com.fredy.domain.model.Wallet
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.RecordUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.UserUseCases.UserUseCases
-import com.fredy.mysavings.Feature.Domain.UseCases.WalletUseCases.WalletUseCases
+import com.fredy.domain.useCases.WalletUseCases.WalletUseCases
 import com.fredy.mysavings.Feature.Presentation.Util.BalanceBar
 import com.fredy.mysavings.Feature.Presentation.Util.BalanceItem
 import dagger.hilt.android.lifecycle.HiltViewModel

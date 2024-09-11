@@ -1,7 +1,5 @@
 package com.fredy.mysavings.Feature.Data.Database.FirestoreDataSource
 
-import com.fredy.data.database.firestoreDataSource.BookDataSource
-import com.fredy.mysavings.Util.Log
 import com.fredy.domain.model.Book
 
 import com.google.firebase.firestore.FirebaseFirestore

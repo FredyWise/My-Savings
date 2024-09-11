@@ -5,6 +5,10 @@ import com.fredy.domain.model.Wallet
 import com.fredy.domain.useCases.WalletUseCases.GetWallets
 import com.fredy.domain.useCases.WalletUseCases.GetWalletsTotalBalance
 import com.fredy.domain.useCases.CurrencyUseCases.currencyConverter
+import com.fredy.domain.useCases.WalletUseCases.DeleteWallet
+import com.fredy.domain.useCases.WalletUseCases.GetWallet
+import com.fredy.domain.useCases.WalletUseCases.GetWalletsCurrencies
+import com.fredy.domain.useCases.WalletUseCases.UpsertWallet
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.flow.first

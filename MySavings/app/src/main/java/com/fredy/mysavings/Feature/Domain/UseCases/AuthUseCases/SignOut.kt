@@ -1,6 +1,5 @@
 package com.fredy.mysavings.Feature.Domain.UseCases.AuthUseCases
 
-import com.fredy.mysavings.Util.Log
 import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.tasks.await

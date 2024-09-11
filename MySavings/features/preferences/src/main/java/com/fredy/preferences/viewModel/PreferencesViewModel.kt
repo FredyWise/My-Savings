@@ -8,11 +8,11 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.fredy.preferences.domain.notification.NotificationCredentials
-import com.fredy.preferences.data.ChangeColorType
+import com.fredy.preferences.domain.ChangeColorType
 import com.fredy.preferences.domain.PreferencesRepository
 import com.fredy.preferences.domain.isDarkMode
 import com.fredy.preferences.domain.notification.NotificationWorker
-import com.fredy.preferences.domain.toPreferenceState
+import com.fredy.preferences.data.toPreferenceState
 import com.fredy.theme.util.BalanceColor
 import com.fredy.theme.util.defaultDarkExpenseColor
 import com.fredy.theme.util.defaultDarkIncomeColor
@@ -80,7 +80,7 @@ class PreferencesViewModel @Inject constructor(
                         event.displayMode
                     )
                     _state.update {
-                        it.copy(isDarkMode = event.displayMode.isDarkMode())
+                        it.copy(displayMode = event.displayMode)
                     }
                 }
 

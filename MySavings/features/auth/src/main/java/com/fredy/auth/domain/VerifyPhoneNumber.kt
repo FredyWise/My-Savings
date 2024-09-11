@@ -1,8 +1,8 @@
 package com.fredy.auth.domain
 
 
-import com.fredy.domain.util.resource.DataError
-import com.fredy.domain.util.resource.Resource
+import com.fredy.core.util.resource.DataError
+import com.fredy.core.util.resource.Resource
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.PhoneAuthProvider

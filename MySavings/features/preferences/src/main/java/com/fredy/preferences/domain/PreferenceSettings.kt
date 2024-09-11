@@ -1,7 +1,6 @@
 package com.fredy.preferences.domain
 
 import androidx.compose.ui.graphics.Color
-import com.fredy.preferences.data.DisplayMode
 import com.fredy.theme.util.defaultDarkExpenseColor
 import com.fredy.theme.util.defaultDarkIncomeColor
 import com.fredy.theme.util.defaultDarkTransferColor

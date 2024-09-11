@@ -1,0 +1,110 @@
+package com.fredy.category.ui
+
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import com.fredy.category.viewModel.CategoryState
+import com.fredy.domain.enumsChecker.isTransfer
+import com.fredy.domain.model.Category
+import com.fredy.domain.model.TrueRecord
+import com.fredy.theme.components.list.SimpleEntityItem
+import com.fredy.theme.components.navigation.DetailAppBar
+import com.fredy.theme.util.formatBalanceAmount
+import com.fredy.theme.util.formatTime
+
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+fun CategoryDetailBottomSheet(
+    modifier: Modifier = Modifier,
+    sheetBackgroundColor: Color = MaterialTheme.colorScheme.surfaceVariant,
+    sheetTextColor: Color = MaterialTheme.colorScheme.surfaceVariant,
+    isSheetOpen: Boolean,
+    onCloseBottomSheet: (Boolean) -> Unit,
+    onShowRecordDialog: (TrueRecord) -> Unit,
+    state: CategoryState,
+    additionalAppbar: @Composable () -> Unit = { CategoryDefaultAdditionalAppBar(state) }
+) {
+    val sheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true
+    )
+    if (isSheetOpen) {
+        ModalBottomSheet(
+            modifier = modifier.padding(top = 24.dp),
+            sheetState = sheetState,
+            containerColor = sheetBackgroundColor,
+            onDismissRequest = {
+                onCloseBottomSheet(false)
+            },
+            dragHandle = {},
+        ) {
+            DetailAppBar(
+                title = "Category details",
+                resource = state.recordMapsResource,
+                onNavigationIconClick = {
+                    onCloseBottomSheet(false)
+                },
+                additionalAppbar = additionalAppbar,
+            ) { item, onBackgroundColor, balanceColor ->
+                SimpleEntityItem(
+                    modifier = Modifier
+                        .padding(
+                            vertical = 4.dp
+                        )
+                        .clickable {
+                            onShowRecordDialog(item)
+                        },
+                    iconModifier = Modifier
+                        .size(
+                            40.dp
+                        )
+                        .clip(
+                            shape = CircleShape
+                        ),
+                    icon = item.fromWallet.walletIcon,
+                    iconDescription = item.fromWallet.walletIconDescription,
+                    endContent = {
+                        Text(
+                            text = formatTime(
+                                item.record.recordDateTime.toLocalTime()
+                            ),
+                            color = onBackgroundColor,
+                            style = MaterialTheme.typography.titleLarge
+                        )
+                    },
+                ) {
+                    Text(
+                        text = if (item.record.recordType.isTransfer()) {
+                            item.fromWallet.walletName + " -> " + item.toWallet.walletName
+                        } else item.fromWallet.walletName,
+                        color = onBackgroundColor,
+                        style = MaterialTheme.typography.titleLarge,
+                        maxLines = 1
+                    )
+                    Text(
+                        text = formatBalanceAmount(
+                            item.record.recordAmount,
+                            item.record.recordCurrency,
+                            true
+                        ),
+                        color = balanceColor,
+                        style = MaterialTheme.typography.titleLarge,
+                        maxLines = 1
+                    )
+                }
+            }
+        }
+    }
+}
+

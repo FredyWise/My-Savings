@@ -1,7 +1,8 @@
 package com.fredy.domain.repository
 
-import com.fredy.mysavings.Feature.Data.Enum.RecordType
-import com.fredy.mysavings.Feature.Data.Enum.SortType
+
+import com.fredy.domain.enums.RecordType
+import com.fredy.domain.enums.SortType
 import com.fredy.domain.model.Record
 import com.fredy.domain.model.RecordMap
 import com.fredy.domain.model.TrueRecord

@@ -17,7 +17,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.fredy.theme.model.SavingsIcon
+import com.fredy.core.model.SavingsIcon
 
 
 @Composable

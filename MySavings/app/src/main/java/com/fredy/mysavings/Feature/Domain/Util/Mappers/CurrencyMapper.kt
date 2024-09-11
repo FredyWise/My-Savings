@@ -1,18 +1,16 @@
 package com.fredy.mysavings.Feature.Domain.Util.Mappers
 
-import com.fredy.mysavings.Util.Log
 import com.fredy.data.api.countryModels.countryDTO.Currencies
 import com.fredy.data.api.countryModels.countryDTO.CurrencyHelper
 import com.fredy.data.api.countryModels.countryDTO.CurrencyInfoItem
 import com.fredy.data.api.countryModels.countryDTO.CurrencyInfoResponse
-import com.fredy.data.api.countryModels.countryDTO.UsableCurrencyInfoItem
+import com.fredy.data.database.dto.UsableCurrencyInfoItem
 import com.fredy.data.api.currencyModels.currencyDTO.CurrencyResponse
 import com.fredy.data.api.currencyModels.currencyDTO.Rates
 import com.fredy.data.database.converter.CurrencyRatesDoubleConverter
 import com.fredy.domain.model.Currency
 import com.fredy.domain.model.FirebaseRatesCache
 import com.fredy.domain.model.RatesCache
-import com.fredy.domain.util.mappers.toList
 
 import com.google.firebase.Timestamp
 

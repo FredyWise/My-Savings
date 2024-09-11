@@ -46,11 +46,18 @@ android {
 dependencies {
     // Projects
     implementation(projects.core)
-    implementation(projects.theme)
     implementation(projects.domain)
-    implementation(projects.data)
+    implementation(projects.theme)
     implementation(projects.features.auth)
     implementation(projects.features.preferences)
+    implementation(projects.features.book)
+    implementation(projects.features.io)
+    implementation(projects.features.addRecord)
+    implementation(projects.features.analysis)
+    implementation(projects.features.category)
+    implementation(projects.features.currency)
+    implementation(projects.features.search)
+    implementation(projects.features.wallet)
 
 // Core AndroidX libraries
     // Core Functions
@@ -61,6 +68,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.androidx.datastore.preferences)
+    implementation(libs.timber)
 
     // Room
     implementation(libs.androidx.room.runtime)

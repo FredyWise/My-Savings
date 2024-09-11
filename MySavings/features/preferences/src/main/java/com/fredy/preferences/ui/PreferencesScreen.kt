@@ -37,13 +37,23 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.fredy.preferences.data.ChangeColorType
+import com.fredy.preferences.domain.ChangeColorType
+import com.fredy.preferences.domain.DisplayMode
+import com.fredy.preferences.domain.isDarkMode
 import com.fredy.preferences.viewModel.PreferencesEvent
+import com.fredy.preferences.viewModel.PreferencesEvent.SelectDisplayMode
 import com.fredy.preferences.viewModel.PreferencesState
+import com.fredy.theme.components.button.SimpleButton
 import com.fredy.theme.components.dialogs.SimpleDialog
+import com.fredy.theme.components.list.CustomStickyHeader
+import com.fredy.theme.components.list.SimpleItem
+import com.fredy.theme.components.navigation.DefaultAppBar
+import com.fredy.theme.model.ActionWithName
 import com.fredy.theme.util.formatBalanceAmount
+import com.fredy.theme.util.formatTime
 import com.fredy.theme.util.initialDarkThemeDefaultColor
 import com.fredy.theme.util.initialLightThemeDefaultColor
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.vanpra.composematerialdialogs.MaterialDialog
@@ -52,6 +62,7 @@ import com.vanpra.composematerialdialogs.datetime.time.timepicker
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun PreferencesScreen(
     modifier: Modifier = Modifier,
@@ -68,7 +79,7 @@ fun PreferencesScreen(
     val timeDialogState = rememberMaterialDialogState()
     val permissionsState = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         rememberPermissionState(
-            android.Manifest.permission.POST_NOTIFICATIONS
+            Manifest.permission.POST_NOTIFICATIONS
         ).status.isGranted
     } else {
         true
@@ -119,8 +130,8 @@ fun PreferencesScreen(
             onDismissRequest = { onEvent(PreferencesEvent.HideColorPallet) },
             onSaveClicked = {
                 val isSystemDarkThemes =
-                    isSystemDarkTheme && state.isDarkMode == null
-                val isDisplayDark = state.isDarkMode ?: isSystemDarkThemes
+                    isSystemDarkTheme && state.displayMode.isDarkMode() == null
+                val isDisplayDark = state.displayMode.isDarkMode() ?: isSystemDarkThemes
                 onEvent(
                     PreferencesEvent.ChangeColor(
                         selectedColorType,
@@ -154,13 +165,13 @@ fun PreferencesScreen(
             menuItems = listOf(
                 ActionWithName(
                     DisplayMode.Light.name,
-                    action = { onEvent(PreferencesEvent.SelectDisplayMode(DisplayMode.Light)) }),
+                    action = { onEvent(SelectDisplayMode(DisplayMode.Light)) }),
                 ActionWithName(
                     DisplayMode.Dark.name,
-                    action = { onEvent(PreferencesEvent.SelectDisplayMode(DisplayMode.Dark)) }),
+                    action = { onEvent(SelectDisplayMode(DisplayMode.Dark)) }),
                 ActionWithName(
                     DisplayMode.System.name,
-                    action = { onEvent(PreferencesEvent.SelectDisplayMode(DisplayMode.System)) }),
+                    action = { onEvent(SelectDisplayMode(DisplayMode.System)) }),
             ),
             endContent = {
                 Text(

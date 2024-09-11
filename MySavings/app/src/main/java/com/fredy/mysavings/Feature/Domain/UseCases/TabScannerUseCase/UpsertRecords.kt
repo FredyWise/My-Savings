@@ -1,11 +1,9 @@
 package com.fredy.mysavings.Feature.Domain.UseCases.TabScannerUseCase
 
-import com.fredy.data.database.converter.TimestampConverter
 import com.fredy.domain.enums.RecordType
 import com.fredy.domain.repository.RecordRepository
 import com.fredy.domain.repository.UserRepository
 import com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel.AddRecordState
-import com.fredy.mysavings.Util.Log
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow

@@ -20,12 +20,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.AddAPhoto
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -48,12 +48,12 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
-import com.fredy.domain.model.UserData
-import com.fredy.mysavings.Util.Log
-import com.fredy.mysavings.Util.isValidPassword
-import com.fredy.auth.viewModel.AuthState
+import com.fredy.auth.util.isValidPassword
 import com.fredy.auth.viewModel.AuthEvent
-import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.DefaultAppBar
+import com.fredy.auth.viewModel.AuthState
+import com.fredy.core.util.resource.Resource
+import com.fredy.domain.model.UserData
+import com.fredy.theme.components.navigation.DefaultAppBar
 
 @Composable
 fun ProfileScreen(
@@ -97,7 +97,6 @@ fun ProfileScreen(
             },
         )
         LaunchedEffect(key1 = state.updateResource) {
-            Log.e("ProfileScreen: ${state.updateResource}")
             when (state.updateResource) {
                 is Resource.Success -> {
                     val message = state.updateResource.data.orEmpty()
@@ -111,7 +110,7 @@ fun ProfileScreen(
                 }
 
                 is Resource.Error -> {
-                    val message = state.updateResource.message.orEmpty()
+                    val message = state.updateResource.error.name
                     if (message.isNotEmpty()) {
                         Toast.makeText(
                             context,
@@ -261,18 +260,19 @@ fun ProfileScreen(
             Button(
                 onClick = {
                     if (isChangeCredentials) {
-                       if (isValidPassword(newPassword) && (newPassword == confirmPassword) && oldPassword.isNotEmpty()){
-                           onEvent(
-                               AuthEvent.UpdateUserData(
-                                   username = username,
-                                   oldPassword = oldPassword,
-                                   password = newPassword,
-                                   photoUrl = profilePictureUri
-                               )
-                           )
-                       }else{
-                           Toast.makeText(context,"The password are not valid",Toast.LENGTH_LONG).show()
-                       }
+                        if (isValidPassword(newPassword) && (newPassword == confirmPassword) && oldPassword.isNotEmpty()) {
+                            onEvent(
+                                AuthEvent.UpdateUserData(
+                                    username = username,
+                                    oldPassword = oldPassword,
+                                    password = newPassword,
+                                    photoUrl = profilePictureUri
+                                )
+                            )
+                        } else {
+                            Toast.makeText(context, "The password are not valid", Toast.LENGTH_LONG)
+                                .show()
+                        }
                     } else {
                         onEvent(
                             AuthEvent.UpdateUserData(

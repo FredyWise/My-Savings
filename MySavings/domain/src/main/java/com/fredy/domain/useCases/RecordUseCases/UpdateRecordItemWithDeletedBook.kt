@@ -4,7 +4,6 @@ import co.yml.charts.common.extensions.isNotNull
 import com.fredy.domain.model.Book
 import com.fredy.domain.repository.UserRepository
 import com.fredy.domain.repository.RecordRepository
-import com.fredy.mysavings.Util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext

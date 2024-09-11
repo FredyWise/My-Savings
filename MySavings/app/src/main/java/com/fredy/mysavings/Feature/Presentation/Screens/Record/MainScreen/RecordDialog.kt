@@ -31,12 +31,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import com.fredy.domain.model.Record
 import com.fredy.domain.model.TrueRecord
 import com.fredy.mysavings.Feature.Presentation.Util.BalanceColor
 import com.fredy.mysavings.Feature.Presentation.Util.formatMonthDateYearDetailedTime
 import com.fredy.mysavings.Feature.Presentation.Util.isTransfer
-import com.fredy.mysavings.Feature.Presentation.Screens.Record.BalanceItem
+import com.fredy.theme.components.BalanceItem
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SimpleEntityItem
 import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SimpleWarningDialog
 

@@ -1,6 +1,5 @@
 package com.fredy.mysavings.Feature.Presentation.Screens.Authentication
 
-import com.fredy.mysavings.Util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -53,7 +52,7 @@ import com.fredy.mysavings.Util.isValidLogin
 import com.fredy.mysavings.Util.isValidPhoneNumber
 import com.fredy.auth.viewModel.AuthState
 import com.fredy.auth.viewModel.AuthEvent
-import com.fredy.mysavings.Feature.Presentation.Navigation.NavigationRoute
+import com.fredy.mysavings.navigation.NavigationRoute
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException

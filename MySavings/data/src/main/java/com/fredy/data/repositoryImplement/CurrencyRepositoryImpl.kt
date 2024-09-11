@@ -9,11 +9,13 @@ import com.fredy.data.database.dao.CurrencyCacheDao
 import com.fredy.data.database.dao.CurrencyDao
 import com.fredy.data.database.firestoreDataSource.CurrencyDataSource
 import com.fredy.data.database.firestoreDataSource.CurrencyRatesDataSource
+import com.fredy.data.mappers.toCurrency
 import com.fredy.data.mappers.toCurrencyInfoItems
 import com.fredy.data.mappers.toDataCurrency
 import com.fredy.data.mappers.toDataRatesCache
 import com.fredy.data.mappers.toRatesCache
 import com.fredy.domain.model.Currency
+import com.fredy.domain.model.Rate
 import com.fredy.domain.model.RatesCache
 import com.fredy.domain.model.UserData
 import com.fredy.domain.repository.CurrencyRepository
@@ -37,7 +39,7 @@ class CurrencyRepositoryImpl @Inject constructor(
 ) : CurrencyRepository {
     private val _cachedRates = MutableLiveData<RatesCache?>()
     private val _currentUser = MutableLiveData<UserData>()
-    private val _cachedCurrencyInfoResponse = MutableLiveData<List<CurrencyInfoItem>?>()
+    private val _cachedCurrency = MutableLiveData<List<Currency>?>()
     override suspend fun updateRates(cache: RatesCache) {
         withContext(Dispatchers.IO) {
             Timber.i("updateRates: $cache")
@@ -60,14 +62,14 @@ class CurrencyRepositoryImpl @Inject constructor(
 
     // currency info private function
 
-    override suspend fun getInfo(): List<CurrencyInfoItem>? {
+    override suspend fun getNewCurrencies(rates: List<Rate>, userId: String): List<Currency>? {
         Timber.i("getInfo: start")
 
         val result = withContext(Dispatchers.IO) {
             try {
-                val info = _cachedCurrencyInfoResponse.value
+                val info = _cachedCurrency.value
                 if (info.isNullOrEmpty()) {
-                    val apiResult = getApiCurrencyInfoResponse()
+                    val apiResult = getApiCurrencyInfoResponse()?.toCurrency(rates, userId)
                     Timber.i(
                         "getApiCurrenciesInfo: $apiResult"
                     )
@@ -83,7 +85,7 @@ class CurrencyRepositoryImpl @Inject constructor(
                 throw e
             }
         }
-        _cachedCurrencyInfoResponse.postValue(result)
+        _cachedCurrency.postValue(result)
         return result
     }
 
@@ -95,17 +97,14 @@ class CurrencyRepositoryImpl @Inject constructor(
     // rates private functions
     override suspend fun getRateResponse(
         base: String
-    ): RatesCache {
+    ): RatesCache? {
         Timber.i("getRates: start")
         val result = withContext(Dispatchers.IO) {
             val currentUser = _currentUser.value ?: userRepository.getCurrentUser()
-            currentUser?.let { _currentUser.postValue(it) }
-            val currentUserId = currentUser?.firebaseUserId ?: ""
-            val rates = _cachedRates.value
-            if (rates != null) {
-                rates!!
-            } else {
-                try {
+            currentUser?.let {
+                _currentUser.postValue(it)
+                val currentUserId = currentUser.firebaseUserId
+                _cachedRates.value ?: try {
                     val cachedData = getCachedRates(base + currentUserId)
                     Timber.i("getRates: $cachedData")
 
@@ -150,7 +149,7 @@ class CurrencyRepositoryImpl @Inject constructor(
 
 
     // currencies
-    override suspend fun getCurrencies(userId: String): Flow<List<Currency>> {
+    override suspend fun getCachedCurrencies(userId: String): Flow<List<Currency>> {
         return flow {
             withContext(Dispatchers.IO) {
                 currencyDataSource.getCurrencies(userId)

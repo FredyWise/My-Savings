@@ -1,4 +1,4 @@
-package com.fredy.mysavings.Feature.Domain.UseCases.WalletUseCases
+package com.fredy.domain.useCases.WalletUseCases
 
 import com.fredy.domain.model.Wallet
 import com.fredy.domain.repository.WalletRepository

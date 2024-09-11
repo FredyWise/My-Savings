@@ -25,7 +25,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.exyte.animatednavbar.AnimatedNavigationBar
 import com.exyte.animatednavbar.utils.noRippleClickable
-import com.fredy.mysavings.Feature.Presentation.Navigation.NavigationRoute
+import com.fredy.mysavings.navigation.NavigationRoute
 
 
 @Composable

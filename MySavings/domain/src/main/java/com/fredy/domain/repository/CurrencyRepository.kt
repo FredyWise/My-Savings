@@ -11,12 +11,12 @@ interface CurrencyRepository {
     suspend fun updateRates(cache: RatesCache)
     suspend fun updateCurrency(currency: Currency)
     suspend fun updateCurrencies(currencies: List<Currency>)
-    suspend fun getCurrencies(userId: String): Flow<List<Currency>>
+    suspend fun getCachedCurrencies(userId: String): Flow<List<Currency>>
+    suspend fun getNewCurrencies(rates: List<Rate>, userId: String): List<Currency>?
+
     suspend fun getRateResponse(
         base: String = ApiCredentials.CurrencyModels.BASE_CURRENCY
-    ): RatesCache
-
-    suspend fun getInfo(): List<com.fredy.data.api.countryModels.countryDTO.CurrencyInfoItem>?
+    ): RatesCache?
 }
 
 

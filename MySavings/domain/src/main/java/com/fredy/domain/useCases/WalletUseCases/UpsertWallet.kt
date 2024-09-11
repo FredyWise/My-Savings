@@ -1,4 +1,4 @@
-package com.fredy.mysavings.Feature.Domain.UseCases.WalletUseCases
+package com.fredy.domain.useCases.WalletUseCases
 
 import co.yml.charts.common.extensions.isNotNull
 import com.fredy.domain.model.Wallet

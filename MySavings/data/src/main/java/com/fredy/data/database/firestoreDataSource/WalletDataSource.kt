@@ -1,7 +1,8 @@
 package com.fredy.data.database.firestoreDataSource
 
-import com.fredy.domain.model.Wallet
 
+
+import com.fredy.data.database.dto.Wallet
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.snapshots
 import com.google.firebase.firestore.toObject

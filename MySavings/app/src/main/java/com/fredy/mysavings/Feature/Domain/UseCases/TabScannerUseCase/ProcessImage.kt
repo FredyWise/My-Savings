@@ -8,7 +8,6 @@ import com.fredy.data.api.tabScannerModel.tabScannerDTO.ResultResponse
 import com.fredy.domain.model.Record
 import com.fredy.domain.repository.TabScannerRepository
 import com.fredy.domain.util.mappers.convertToRecords
-import com.fredy.mysavings.Util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext

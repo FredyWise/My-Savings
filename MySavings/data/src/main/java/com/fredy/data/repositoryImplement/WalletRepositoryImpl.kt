@@ -2,6 +2,8 @@ package com.fredy.data.repositoryImplement
 
 import com.fredy.data.database.dao.WalletDao
 import com.fredy.data.database.firestoreDataSource.WalletDataSource
+import com.fredy.data.mappers.toDataWallet
+import com.fredy.data.mappers.toDomainWallet
 import com.fredy.domain.model.Wallet
 import com.fredy.domain.repository.WalletRepository
 import com.google.firebase.firestore.FirebaseFirestore
@@ -16,47 +18,48 @@ class WalletRepositoryImpl @Inject constructor(
     private val walletDao: WalletDao,
     private val firestore: FirebaseFirestore,
 ) : WalletRepository {
-    private val accountCollection = firestore.collection(
+    private val walletCollection = firestore.collection(
         "account"
     )
 
     override suspend fun upsertWallet(wallet: Wallet):String {
         return withContext(Dispatchers.IO) {
-            val tempAccount = if (wallet.walletId.isEmpty()) {
-                val newAccountRef = accountCollection.document()
+            val dataWallet = if (wallet.walletId.isEmpty()) {
+                val newAccountRef = walletCollection.document()
                 wallet.copy(
                     walletId = newAccountRef.id,
                 )
             } else {
                 wallet
-            }
+            }.toDataWallet()
 
-            walletDao.upsertWalletItem(tempAccount)
+            walletDao.upsertWalletItem(dataWallet)
             walletDataSource.upsertWalletItem(
-                tempAccount
+                dataWallet
             )
-            tempAccount.walletId
+            dataWallet.walletId
         }
     }
 
     override suspend fun deleteWallet(wallet: Wallet) {
         withContext(Dispatchers.IO) {
+            val dataWallet = wallet.toDataWallet()
             walletDataSource.deleteWalletItem(
-                wallet
+                dataWallet
             )
-            walletDao.deleteWalletItem(wallet)
+            walletDao.deleteWalletItem(dataWallet)
         }
     }
 
 
-    override fun getWallet(accountId: String): Flow<Wallet> {
+    override fun getWallet(walletId: String): Flow<Wallet> {
         return flow {
-            val account = withContext(Dispatchers.IO) {
+            val wallet = withContext(Dispatchers.IO) {
                 walletDataSource.getWallet(
-                    accountId
+                    walletId
                 )
-            }
-            emit(account)
+            }.toDomainWallet()
+            emit(wallet)
         }
     }
 
@@ -64,8 +67,8 @@ class WalletRepositoryImpl @Inject constructor(
         return flow {
             withContext(Dispatchers.IO) {
                 walletDataSource.getUserWallets(userId)
-            }.collect { accounts ->
-                emit(accounts)
+            }.collect { wallets ->
+                emit(wallets.toDomainWallet())
             }
         }
     }

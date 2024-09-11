@@ -45,20 +45,21 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.fredy.analysis.viewModel.RecordEvent
+import com.fredy.book.viewModel.RecordViewModel
+import com.fredy.book.viewModel.BookViewModel
+import com.fredy.category.viewModel.CategoryViewModel
 import com.fredy.domain.model.UserData
-import com.fredy.mysavings.Feature.Presentation.Navigation.MainNavGraph
-import com.fredy.mysavings.Feature.Presentation.Navigation.NavigationRoute
-import com.fredy.mysavings.Feature.Presentation.Navigation.bottomBarScreens
-import com.fredy.mysavings.Feature.Presentation.Navigation.drawerScreens
-import com.fredy.mysavings.Feature.Presentation.Navigation.navigateSingleTopTo
-import com.fredy.mysavings.Feature.Presentation.Screens.Record.MainScreen.RecordDialog
-import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SimpleWarningDialog
-import com.fredy.mysavings.Feature.Presentation.Util.formatRangeOfDate
-import com.fredy.mysavings.Feature.Presentation.ViewModels.BookViewModel.BookViewModel
-import com.fredy.mysavings.Feature.Presentation.ViewModels.CategoryViewModel.CategoryViewModel
-import com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel.RecordEvent
-import com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel.RecordViewModel
-import com.fredy.mysavings.Feature.Presentation.ViewModels.WalletViewModel.WalletViewModel
+import com.fredy.book.ui.RecordDialog
+import com.fredy.mysavings.navigation.MainNavGraph
+import com.fredy.mysavings.navigation.NavigationRoute
+import com.fredy.mysavings.navigation.bottomBarScreens
+import com.fredy.mysavings.navigation.drawerScreens
+import com.fredy.mysavings.navigation.navigateSingleTopTo
+import com.fredy.theme.components.dialogs.SimpleWarningDialog
+import com.fredy.theme.util.formatRangeOfDate
+import com.fredy.wallet.viewModel.WalletViewModel
+
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 

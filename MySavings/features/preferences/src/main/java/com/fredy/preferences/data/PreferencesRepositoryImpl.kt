@@ -10,6 +10,7 @@ import androidx.core.app.ActivityCompat
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.fredy.preferences.domain.DisplayMode
 import com.fredy.preferences.domain.PreferenceSettings
 import com.fredy.preferences.domain.PreferencesRepository
 import com.fredy.preferences.util.Preferences

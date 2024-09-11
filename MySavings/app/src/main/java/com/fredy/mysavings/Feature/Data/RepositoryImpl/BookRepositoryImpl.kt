@@ -4,7 +4,6 @@ import com.fredy.data.database.dao.BookDao
 import com.fredy.data.database.firestoreDataSource.BookDataSource
 import com.fredy.domain.model.Book
 import com.fredy.domain.repository.BookRepository
-import com.fredy.mysavings.Util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow

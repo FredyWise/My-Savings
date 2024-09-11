@@ -18,15 +18,17 @@ class UpdateCurrency(
 
     private suspend fun syncRates(currency: Currency) {
         val response = currencyRepository.getRateResponse()
-        val tempRates = response.copy(
-            rates = response.rates.updateRatesUsingCode(
-                currency.code,
-                currency.value
+        response?.let {
+            val tempRates = response.copy(
+                rates = response.rates.updateRatesUsingCode(
+                    currency.code,
+                    currency.value
+                )
             )
-        )
-        currencyRepository.updateRates(
-            tempRates
-        )
+            currencyRepository.updateRates(
+                tempRates
+            )
+        }
     }
 
     private fun List<Rate>.updateRatesUsingCode(code: String, value: Double): List<Rate> {

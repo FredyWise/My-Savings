@@ -7,10 +7,10 @@ import com.fredy.domain.enums.SortType
 
 import com.fredy.domain.model.Wallet
 import com.fredy.domain.useCases.UserUseCases.UserUseCases
-import com.fredy.domain.util.resource.Resource
+import com.fredy.core.util.resource.Resource
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.RecordUseCases
 
-import com.fredy.mysavings.Feature.Domain.UseCases.WalletUseCases.WalletUseCases
+import com.fredy.domain.useCases.WalletUseCases.WalletUseCases
 import com.fredy.theme.model.BalanceBar
 import com.fredy.theme.model.BalanceItem
 

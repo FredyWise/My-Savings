@@ -27,8 +27,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.fredy.domain.util.resource.Resource
-import com.fredy.domain.util.resource.ResourceError
+import com.fredy.core.util.resource.Resource
+import com.fredy.core.util.resource.ResourceError
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -61,7 +61,7 @@ fun <T> ResourceHandler(
     }
     var job: Job? = null
 
-    fun debounce(resource: Resource<T,ResourceError>) {
+    fun debounce(resource: Resource<T, ResourceError>) {
         job?.cancel()
         job = scope.launch {
             showCircularProgressIndicator = false

@@ -8,6 +8,10 @@ plugins {
 android {
     namespace = "com.fredy.wallet"
 
+    buildFeatures {
+        compose = true
+    }
+
 }
 
 dependencies {

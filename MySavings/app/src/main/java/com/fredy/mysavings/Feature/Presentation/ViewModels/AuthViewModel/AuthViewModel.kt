@@ -17,7 +17,6 @@ import com.fredy.domain.model.UserData
 import com.fredy.domain.repository.PreferencesRepository
 import com.fredy.auth.useCases.AuthUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.UserUseCases.UserUseCases
-import com.fredy.mysavings.Util.Log
 import com.google.firebase.Firebase
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.storage.storage

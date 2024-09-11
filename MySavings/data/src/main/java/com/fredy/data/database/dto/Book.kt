@@ -1,11 +1,8 @@
 package com.fredy.data.database.dto
 
-import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.fredy.domain.util.DefaultData
-import com.fredy.theme.util.SavingsIcons.bookInitIcon
-import kotlinx.parcelize.Parcelize
+import com.fredy.mysavings.Util.SavingsIcons.bookInitIcon
 
 @Entity
 data class Book(

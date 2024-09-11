@@ -11,7 +11,6 @@ import com.fredy.domain.repository.CategoryRepository
 import com.fredy.domain.repository.RecordRepository
 import com.fredy.domain.repository.WalletRepository
 import com.fredy.mysavings.Feature.Presentation.Util.DefaultData
-import com.fredy.mysavings.Util.Log
 import kotlinx.coroutines.flow.first
 
 class InputFromCSV(

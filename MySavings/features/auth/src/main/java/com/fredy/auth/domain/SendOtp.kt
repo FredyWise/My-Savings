@@ -2,8 +2,8 @@ package com.fredy.auth.domain
 
 import android.content.Context
 import com.fredy.core.util.ActivityProvider
-import com.fredy.domain.util.resource.DataError
-import com.fredy.domain.util.resource.Resource
+import com.fredy.core.util.resource.DataError
+import com.fredy.core.util.resource.Resource
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.PhoneAuthCredential

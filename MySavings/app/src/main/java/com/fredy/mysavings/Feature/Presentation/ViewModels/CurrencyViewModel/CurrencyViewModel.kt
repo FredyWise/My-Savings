@@ -6,7 +6,6 @@ import co.yml.charts.common.extensions.isNotNull
 import com.fredy.core.credentials.ApiCredentials
 import com.fredy.domain.useCases.CurrencyUseCases.CurrencyUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.UserUseCases.UserUseCases
-import com.fredy.mysavings.Util.Log
 import com.fredy.domain.util.mappers.changeBase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

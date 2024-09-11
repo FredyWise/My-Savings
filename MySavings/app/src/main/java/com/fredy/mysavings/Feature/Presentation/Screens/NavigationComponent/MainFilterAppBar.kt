@@ -14,9 +14,9 @@ import androidx.compose.ui.unit.dp
 import com.fredy.domain.enums.FilterType
 import com.fredy.domain.enums.SortType
 import com.fredy.mysavings.Feature.Presentation.Util.BalanceBar
-import com.fredy.mysavings.Feature.Presentation.Screens.Record.BalanceBar
-import com.fredy.mysavings.Feature.Presentation.Screens.Record.DisplayBar
-import com.fredy.mysavings.Feature.Presentation.Screens.Record.FilterDialog
+import com.fredy.theme.components.BalanceBar
+import com.fredy.theme.components.DisplayBar
+import com.fredy.theme.components.FilterDialog
 import java.time.LocalDate
 
 @Composable

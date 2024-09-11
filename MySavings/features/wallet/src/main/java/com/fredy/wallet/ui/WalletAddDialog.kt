@@ -15,12 +15,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.fredy.core.util.SavingsIcons.walletIcons
 import com.fredy.domain.util.currencyCodes
 import com.fredy.theme.components.dialogs.SimpleDialog
 import com.fredy.theme.components.list.ChooseIcon
 import com.fredy.theme.components.list.SimpleDropdown
-import com.fredy.theme.util.SavingsIcons.walletIcons
-
 import com.fredy.wallet.viewModel.WalletEvent
 import com.fredy.wallet.viewModel.WalletState
 

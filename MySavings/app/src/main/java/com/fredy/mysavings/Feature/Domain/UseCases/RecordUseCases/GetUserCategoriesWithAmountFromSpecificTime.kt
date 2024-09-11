@@ -11,7 +11,6 @@ import com.fredy.domain.repository.CategoryRepository
 import com.fredy.domain.repository.RecordRepository
 import com.fredy.domain.useCases.CurrencyUseCases.CurrencyUseCases
 import com.fredy.domain.useCases.CurrencyUseCases.currencyConverter
-import com.fredy.mysavings.Util.Log
 import com.fredy.domain.util.mappers.filterRecordCurrency
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch

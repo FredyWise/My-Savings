@@ -10,11 +10,10 @@ import com.fredy.domain.enums.SortType
 import com.fredy.domain.repository.SyncRepository
 import com.fredy.mysavings.Feature.Domain.UseCases.BookUseCases.BookUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.RecordUseCases
-import com.fredy.mysavings.Feature.Domain.UseCases.WalletUseCases.WalletUseCases
+import com.fredy.domain.useCases.WalletUseCases.WalletUseCases
 import com.fredy.mysavings.Feature.Presentation.Util.BalanceBar
 import com.fredy.mysavings.Feature.Presentation.Util.BalanceItem
 import com.fredy.mysavings.Feature.Presentation.Util.update
-import com.fredy.mysavings.Util.Log
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async

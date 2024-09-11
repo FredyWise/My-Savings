@@ -8,7 +8,6 @@ import com.fredy.domain.model.Record
 import com.fredy.domain.model.RecordMap
 import com.fredy.domain.model.TrueRecord
 import com.fredy.domain.repository.RecordRepository
-import com.fredy.mysavings.Util.Log
 import com.fredy.domain.util.mappers.toRecordSortedMaps
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers

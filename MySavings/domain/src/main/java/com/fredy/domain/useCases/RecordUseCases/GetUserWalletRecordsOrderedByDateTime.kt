@@ -4,8 +4,8 @@ import com.fredy.domain.enums.SortType
 import com.fredy.domain.model.RecordMap
 import com.fredy.domain.repository.RecordRepository
 import com.fredy.domain.repository.UserRepository
-import com.fredy.domain.util.resource.DataError
-import com.fredy.domain.util.resource.Resource
+import com.fredy.core.util.resource.DataError
+import com.fredy.core.util.resource.Resource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -17,8 +17,8 @@ class GetUserWalletRecordsOrderedByDateTime(
     private val recordRepository: RecordRepository,
     private val userRepository: UserRepository,
 ) {
-    operator fun invoke(accountId: String, sortType: SortType): Flow<Resource<List<RecordMap>,DataError.Local>> {
-        return flow<Resource<List<RecordMap>,DataError.Local>> {
+    operator fun invoke(accountId: String, sortType: SortType): Flow<Resource<List<RecordMap>, DataError.Local>> {
+        return flow<Resource<List<RecordMap>, DataError.Local>> {
             emit(Resource.Loading())
             val currentUser = userRepository.getCurrentUser()
             currentUser?.let {

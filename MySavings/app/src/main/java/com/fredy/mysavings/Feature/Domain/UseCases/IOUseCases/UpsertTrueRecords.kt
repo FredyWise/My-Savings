@@ -7,7 +7,6 @@ import com.fredy.domain.repository.UserRepository
 import com.fredy.domain.repository.CategoryRepository
 import com.fredy.domain.repository.RecordRepository
 import com.fredy.domain.repository.WalletRepository
-import com.fredy.mysavings.Util.Log
 
 class UpsertTrueRecords(
     private val userRepository: UserRepository,

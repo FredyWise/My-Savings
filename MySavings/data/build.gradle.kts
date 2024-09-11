@@ -16,7 +16,7 @@ android {
 dependencies {
     // Projects
     implementation(projects.core)
-    implementation(projects.theme)
+    implementation(projects.app)
     implementation(projects.domain)
 
     implementation(libs.androidx.core.ktx)

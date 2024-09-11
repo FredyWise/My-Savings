@@ -4,8 +4,8 @@ import android.content.Context
 import android.hardware.biometrics.BiometricPrompt
 import android.os.CancellationSignal
 import androidx.core.content.ContextCompat
-import com.fredy.domain.util.resource.DataError
-import com.fredy.domain.util.resource.Resource
+import com.fredy.core.util.resource.DataError
+import com.fredy.core.util.resource.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow

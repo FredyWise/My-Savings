@@ -2,8 +2,8 @@ package com.fredy.domain.useCases.UserUseCases
 
 import com.fredy.domain.model.UserData
 import com.fredy.domain.repository.UserRepository
-import com.fredy.domain.util.resource.DataError
-import com.fredy.domain.util.resource.Resource
+import com.fredy.core.util.resource.DataError
+import com.fredy.core.util.resource.Resource
 import kotlinx.coroutines.flow.Flow
 
 

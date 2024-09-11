@@ -1,11 +1,11 @@
-package com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases
+package com.fredy.domain.useCases.RecordUseCases
 
-import co.yml.charts.common.extensions.isNotNull
+import com.fredy.core.util.resource.DataError
+import com.fredy.core.util.resource.Resource
 import com.fredy.domain.model.Book
 import com.fredy.domain.model.TrueRecord
-import com.fredy.domain.repository.UserRepository
 import com.fredy.domain.repository.RecordRepository
-import com.fredy.mysavings.Util.Log
+import com.fredy.domain.repository.UserRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
@@ -20,26 +20,28 @@ class GetAllTrueRecordsWithinSpecificTime(
         startDate: LocalDateTime,
         endDate: LocalDateTime,
         book: Book,
-    ): Flow<Resource<List<TrueRecord>>> {
-        return flow {
+    ): Flow<Resource<List<TrueRecord>, DataError.Local>> {
+        return flow<Resource<List<TrueRecord>, DataError.Local>> {
             emit(Resource.Loading())
-            val currentUser = userRepository.getCurrentUser()!!
-            val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
+            val currentUser = userRepository.getCurrentUser()
+            currentUser?.let {
+                val userId = currentUser.firebaseUserId
 
-            recordRepository.getUserTrueRecordsFromSpecificTime(userId, startDate, endDate)
-                .map { trueRecords -> trueRecords.filter { it.record.bookIdFk == book.bookId } }
-                .collect { data ->
-                    Log.i(
-                        "getAllTrueRecordsWithinSpecificTime.Data: $data"
-                    )
-                    emit(Resource.Success(data))
-                }
+                recordRepository.getUserTrueRecordsFromSpecificTime(userId, startDate, endDate)
+                    .map { trueRecords -> trueRecords.filter { it.record.bookIdFk == book.bookId } }
+                    .collect { data ->
+                        Log.i(
+                            "getAllTrueRecordsWithinSpecificTime.Data: $data"
+                        )
+                        emit(Resource.Success(data))
+                    }
+            }
 
         }.catch { e ->
             Log.e(
                 "getAllTrueRecordsWithinSpecificTime.Error: $e"
             )
-            emit(Resource.Error(e.message.toString()))
+            emit(Resource.Error(DataError.Local.UNKNOWN))
         }
     }
 }

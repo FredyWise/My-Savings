@@ -5,16 +5,17 @@ import com.fredy.data.api.countryModels.countryDTO.Currencies
 import com.fredy.data.api.countryModels.countryDTO.CurrencyHelper
 import com.fredy.data.api.countryModels.countryDTO.CurrencyInfoItem
 import com.fredy.data.api.countryModels.countryDTO.CurrencyInfoResponse
-import com.fredy.data.api.countryModels.countryDTO.UsableCurrencyInfoItem
+import com.fredy.data.database.dto.UsableCurrencyInfoItem
 import com.fredy.data.api.currencyModels.currencyDTO.CurrencyResponse
 import com.fredy.data.database.converter.CurrencyRatesDoubleConverter
 import com.fredy.data.database.dto.FirebaseRatesCache
+import com.fredy.domain.model.Rate
 import com.fredy.domain.model.RatesCache
+import com.fredy.domain.useCases.CurrencyUseCases.getValueFromCode
 import com.google.firebase.Timestamp
 import timber.log.Timber
 import com.fredy.data.database.dto.Currency as DataCurrency
 import com.fredy.domain.model.Currency as DomainCurrency
-
 fun DomainCurrency.toDataCurrency(): DataCurrency {
     return DataCurrency(
         currencyId,
@@ -65,12 +66,12 @@ fun CurrencyInfoResponse.toCurrencyInfoItems(): List<CurrencyInfoItem> {
 
 fun List<CurrencyInfoItem>.toUsableCurrencyInfoItem(): List<UsableCurrencyInfoItem> {
     return this.mapNotNull {
-        if (it.currencies.toList().isNotEmpty()) {
-            val currency = it.currencies.toList().first()
+        val currencies = it.currencies.toList()
+        if (currencies.isNotEmpty()) {
+            val currency = currencies.first()
             Timber.e("toCurrency: $currency")
-            Timber.e("toCurrency: ${it.currencies.getCurrencyCode(currency).toString()}")
             UsableCurrencyInfoItem(
-                it.currencies.getCurrencyCode(currency).toString(),
+                currency.name,
                 currency,
                 it.flags
             )
@@ -79,13 +80,23 @@ fun List<CurrencyInfoItem>.toUsableCurrencyInfoItem(): List<UsableCurrencyInfoIt
         }
     }
 }
-
-fun List<DomainCurrency>.changeBase(newBaseCode: String): List<DomainCurrency> {
-    val newBase = this.first { it.code == newBaseCode }
-    return this.map { currency ->
-        currency.copy(value = currency.value / newBase.value)
-    }
+fun List<CurrencyInfoItem>.toCurrency(rates: List<Rate>, userId: String): List<DomainCurrency> {
+    return this.toUsableCurrencyInfoItem().map {
+        val currencyHelper = it.currencies
+        val ratesValue = rates.getValueFromCode(it.code)
+        DomainCurrency(
+            it.code + userId,
+            it.code,
+            userId,
+            currencyHelper.name,
+            currencyHelper.symbol,
+            ratesValue,
+            it.flags.png,
+            it.flags.alt
+        )
+    }.distinctBy { it.code }
 }
+
 
 fun CurrencyResponse.toRatesCache(userId: String): RatesCache = RatesCache(
     this.base + userId,
@@ -295,167 +306,167 @@ fun Currencies.toList(): List<CurrencyHelper> {
         this.ZWL,
     )
 }
-
-fun Currencies.getCurrencyCode(
-    currency: CurrencyHelper
-) = when (currency) {
-    this.AED -> "AED"
-    this.AFN -> "AFN"
-    this.ALL -> "ALL"
-    this.AMD -> "AMD"
-    this.ANG -> "ANG"
-    this.AOA -> "AOA"
-    this.ARS -> "ARS"
-    this.AUD -> "AUD"
-    this.AWG -> "AWG"
-    this.AZN -> "AZN"
-    this.BAM -> "BAM"
-    this.BBD -> "BBD"
-    this.BDT -> "BDT"
-    this.BGN -> "BGN"
-    this.BHD -> "BHD"
-    this.BIF -> "BIF"
-    this.BMD -> "BMD"
-    this.BND -> "BND"
-    this.BOB -> "BOB"
-    this.BRL -> "BRL"
-    this.BSD -> "BSD"
-    this.BTN -> "BTN"
-    this.BWP -> "BWP"
-    this.BYN -> "BYN"
-    this.BZD -> "BZD"
-    this.CAD -> "CAD"
-    this.CDF -> "CDF"
-    this.CHF -> "CHF"
-    this.CLP -> "CLP"
-    this.CNY -> "CNY"
-    this.COP -> "COP"
-    this.CRC -> "CRC"
-    this.CUC -> "CUC"
-    this.CUP -> "CUP"
-    this.CVE -> "CVE"
-    this.CZK -> "CZK"
-    this.DJF -> "DJF"
-    this.DKK -> "DKK"
-    this.DOP -> "DOP"
-    this.DZD -> "DZD"
-    this.EGP -> "EGP"
-    this.ERN -> "ERN"
-    this.ETB -> "ETB"
-    this.EUR -> "EUR"
-    this.FJD -> "FJD"
-    this.FKP -> "FKP"
-    this.GBP -> "GBP"
-    this.GEL -> "GEL"
-    this.GGP -> "GGP"
-    this.GHS -> "GHS"
-    this.GIP -> "GIP"
-    this.GMD -> "GMD"
-    this.GNF -> "GNF"
-    this.GTQ -> "GTQ"
-    this.GYD -> "GYD"
-    this.HKD -> "HKD"
-    this.HNL -> "HNL"
-    this.HTG -> "HTG"
-    this.HUF -> "HUF"
-    this.IDR -> "IDR"
-    this.ILS -> "ILS"
-    this.IMP -> "IMP"
-    this.INR -> "INR"
-    this.IQD -> "IQD"
-    this.IRR -> "IRR"
-    this.ISK -> "ISK"
-    this.JEP -> "JEP"
-    this.JMD -> "JMD"
-    this.JOD -> "JOD"
-    this.JPY -> "JPY"
-    this.KES -> "KES"
-    this.KGS -> "KGS"
-    this.KHR -> "KHR"
-    this.KMF -> "KMF"
-    this.KPW -> "KPW"
-    this.KRW -> "KRW"
-    this.KWD -> "KWD"
-    this.KYD -> "KYD"
-    this.KZT -> "KZT"
-    this.LAK -> "LAK"
-    this.LBP -> "LBP"
-    this.LKR -> "LKR"
-    this.LRD -> "LRD"
-    this.LSL -> "LSL"
-    this.LYD -> "LYD"
-    this.MAD -> "MAD"
-    this.MDL -> "MDL"
-    this.MGA -> "MGA"
-    this.MKD -> "MKD"
-    this.MMK -> "MMK"
-    this.MNT -> "MNT"
-    this.MOP -> "MOP"
-    this.MUR -> "MUR"
-    this.MVR -> "MVR"
-    this.MWK -> "MWK"
-    this.MXN -> "MXN"
-    this.MYR -> "MYR"
-    this.MZN -> "MZN"
-    this.NAD -> "NAD"
-    this.NGN -> "NGN"
-    this.NIO -> "NIO"
-    this.NOK -> "NOK"
-    this.NPR -> "NPR"
-    this.NZD -> "NZD"
-    this.OMR -> "OMR"
-    this.PAB -> "PAB"
-    this.PEN -> "PEN"
-    this.PGK -> "PGK"
-    this.PHP -> "PHP"
-    this.PKR -> "PKR"
-    this.PLN -> "PLN"
-    this.PYG -> "PYG"
-    this.QAR -> "QAR"
-    this.RON -> "RON"
-    this.RSD -> "RSD"
-    this.RUB -> "RUB"
-    this.RWF -> "RWF"
-    this.SAR -> "SAR"
-    this.SBD -> "SBD"
-    this.SCR -> "SCR"
-    this.SDG -> "SDG"
-    this.SEK -> "SEK"
-    this.SGD -> "SGD"
-    this.SHP -> "SHP"
-    this.SLL -> "SLL"
-    this.SOS -> "SOS"
-    this.SRD -> "SRD"
-    this.SYP -> "SYP"
-    this.SZL -> "SZL"
-    this.THB -> "THB"
-    this.TJS -> "TJS"
-    this.TMT -> "TMT"
-    this.TND -> "TND"
-    this.TOP -> "TOP"
-    this.TRY -> "TRY"
-    this.TTD -> "TTD"
-    this.TWD -> "TWD"
-    this.TZS -> "TZS"
-    this.UAH -> "UAH"
-    this.UGX -> "UGX"
-    this.USD -> "USD"
-    this.UYU -> "UYU"
-    this.UZS -> "UZS"
-    this.VES -> "VES"
-    this.VND -> "VND"
-    this.VUV -> "VUV"
-    this.WST -> "WST"
-    this.XAF -> "XAF"
-    this.XCD -> "XCD"
-    this.XOF -> "XOF"
-    this.XPF -> "XPF"
-    this.YER -> "YER"
-    this.ZAR -> "ZAR"
-    this.ZMW -> "ZMW"
-    this.ZWL -> "ZWL"
-    else -> null
-}
+//
+//fun Currencies.getCurrencyCode(
+//    currency: CurrencyHelper
+//) = when (currency) {
+//    this.AED -> "AED"
+//    this.AFN -> "AFN"
+//    this.ALL -> "ALL"
+//    this.AMD -> "AMD"
+//    this.ANG -> "ANG"
+//    this.AOA -> "AOA"
+//    this.ARS -> "ARS"
+//    this.AUD -> "AUD"
+//    this.AWG -> "AWG"
+//    this.AZN -> "AZN"
+//    this.BAM -> "BAM"
+//    this.BBD -> "BBD"
+//    this.BDT -> "BDT"
+//    this.BGN -> "BGN"
+//    this.BHD -> "BHD"
+//    this.BIF -> "BIF"
+//    this.BMD -> "BMD"
+//    this.BND -> "BND"
+//    this.BOB -> "BOB"
+//    this.BRL -> "BRL"
+//    this.BSD -> "BSD"
+//    this.BTN -> "BTN"
+//    this.BWP -> "BWP"
+//    this.BYN -> "BYN"
+//    this.BZD -> "BZD"
+//    this.CAD -> "CAD"
+//    this.CDF -> "CDF"
+//    this.CHF -> "CHF"
+//    this.CLP -> "CLP"
+//    this.CNY -> "CNY"
+//    this.COP -> "COP"
+//    this.CRC -> "CRC"
+//    this.CUC -> "CUC"
+//    this.CUP -> "CUP"
+//    this.CVE -> "CVE"
+//    this.CZK -> "CZK"
+//    this.DJF -> "DJF"
+//    this.DKK -> "DKK"
+//    this.DOP -> "DOP"
+//    this.DZD -> "DZD"
+//    this.EGP -> "EGP"
+//    this.ERN -> "ERN"
+//    this.ETB -> "ETB"
+//    this.EUR -> "EUR"
+//    this.FJD -> "FJD"
+//    this.FKP -> "FKP"
+//    this.GBP -> "GBP"
+//    this.GEL -> "GEL"
+//    this.GGP -> "GGP"
+//    this.GHS -> "GHS"
+//    this.GIP -> "GIP"
+//    this.GMD -> "GMD"
+//    this.GNF -> "GNF"
+//    this.GTQ -> "GTQ"
+//    this.GYD -> "GYD"
+//    this.HKD -> "HKD"
+//    this.HNL -> "HNL"
+//    this.HTG -> "HTG"
+//    this.HUF -> "HUF"
+//    this.IDR -> "IDR"
+//    this.ILS -> "ILS"
+//    this.IMP -> "IMP"
+//    this.INR -> "INR"
+//    this.IQD -> "IQD"
+//    this.IRR -> "IRR"
+//    this.ISK -> "ISK"
+//    this.JEP -> "JEP"
+//    this.JMD -> "JMD"
+//    this.JOD -> "JOD"
+//    this.JPY -> "JPY"
+//    this.KES -> "KES"
+//    this.KGS -> "KGS"
+//    this.KHR -> "KHR"
+//    this.KMF -> "KMF"
+//    this.KPW -> "KPW"
+//    this.KRW -> "KRW"
+//    this.KWD -> "KWD"
+//    this.KYD -> "KYD"
+//    this.KZT -> "KZT"
+//    this.LAK -> "LAK"
+//    this.LBP -> "LBP"
+//    this.LKR -> "LKR"
+//    this.LRD -> "LRD"
+//    this.LSL -> "LSL"
+//    this.LYD -> "LYD"
+//    this.MAD -> "MAD"
+//    this.MDL -> "MDL"
+//    this.MGA -> "MGA"
+//    this.MKD -> "MKD"
+//    this.MMK -> "MMK"
+//    this.MNT -> "MNT"
+//    this.MOP -> "MOP"
+//    this.MUR -> "MUR"
+//    this.MVR -> "MVR"
+//    this.MWK -> "MWK"
+//    this.MXN -> "MXN"
+//    this.MYR -> "MYR"
+//    this.MZN -> "MZN"
+//    this.NAD -> "NAD"
+//    this.NGN -> "NGN"
+//    this.NIO -> "NIO"
+//    this.NOK -> "NOK"
+//    this.NPR -> "NPR"
+//    this.NZD -> "NZD"
+//    this.OMR -> "OMR"
+//    this.PAB -> "PAB"
+//    this.PEN -> "PEN"
+//    this.PGK -> "PGK"
+//    this.PHP -> "PHP"
+//    this.PKR -> "PKR"
+//    this.PLN -> "PLN"
+//    this.PYG -> "PYG"
+//    this.QAR -> "QAR"
+//    this.RON -> "RON"
+//    this.RSD -> "RSD"
+//    this.RUB -> "RUB"
+//    this.RWF -> "RWF"
+//    this.SAR -> "SAR"
+//    this.SBD -> "SBD"
+//    this.SCR -> "SCR"
+//    this.SDG -> "SDG"
+//    this.SEK -> "SEK"
+//    this.SGD -> "SGD"
+//    this.SHP -> "SHP"
+//    this.SLL -> "SLL"
+//    this.SOS -> "SOS"
+//    this.SRD -> "SRD"
+//    this.SYP -> "SYP"
+//    this.SZL -> "SZL"
+//    this.THB -> "THB"
+//    this.TJS -> "TJS"
+//    this.TMT -> "TMT"
+//    this.TND -> "TND"
+//    this.TOP -> "TOP"
+//    this.TRY -> "TRY"
+//    this.TTD -> "TTD"
+//    this.TWD -> "TWD"
+//    this.TZS -> "TZS"
+//    this.UAH -> "UAH"
+//    this.UGX -> "UGX"
+//    this.USD -> "USD"
+//    this.UYU -> "UYU"
+//    this.UZS -> "UZS"
+//    this.VES -> "VES"
+//    this.VND -> "VND"
+//    this.VUV -> "VUV"
+//    this.WST -> "WST"
+//    this.XAF -> "XAF"
+//    this.XCD -> "XCD"
+//    this.XOF -> "XOF"
+//    this.XPF -> "XPF"
+//    this.YER -> "YER"
+//    this.ZAR -> "ZAR"
+//    this.ZMW -> "ZMW"
+//    this.ZWL -> "ZWL"
+//    else -> null
+//}
 
 
 

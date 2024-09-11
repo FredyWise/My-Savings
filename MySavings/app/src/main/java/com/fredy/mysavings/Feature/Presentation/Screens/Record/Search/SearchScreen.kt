@@ -12,20 +12,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
-import com.fredy.mysavings.Feature.Presentation.Navigation.NavigationRoute
-import com.fredy.mysavings.Feature.Presentation.Screens.Record.MainScreen.BookAddDialog
-import com.fredy.mysavings.Feature.Presentation.Screens.Record.MainScreen.RecordDialog
-import com.fredy.mysavings.Feature.Presentation.Screens.Record.Search.SearchBody
-import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.DefaultAppBar
-import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.ResourceHandler
-import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SearchBar
-import com.fredy.mysavings.Feature.Presentation.ViewModels.BookViewModel.BookState
-import com.fredy.mysavings.Feature.Presentation.ViewModels.BookViewModel.BookEvent
-import com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel.RecordEvent
-import com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel.RecordState
-import com.fredy.mysavings.Feature.Presentation.ViewModels.SearchViewModel.SearchState
+import com.fredy.mysavings.navigation.NavigationRoute
 
-@OptIn(ExperimentalFoundationApi::class)
+import com.fredy.search.viewModel.SearchState
+
 @Composable
 fun SearchScreen(
     modifier: Modifier = Modifier,

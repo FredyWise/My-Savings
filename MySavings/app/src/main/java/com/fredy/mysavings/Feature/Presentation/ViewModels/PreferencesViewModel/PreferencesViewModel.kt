@@ -17,6 +17,7 @@ import com.fredy.mysavings.Feature.Presentation.Util.defaultDarkTransferColor
 import com.fredy.mysavings.Feature.Presentation.Util.defaultLightExpenseColor
 import com.fredy.mysavings.Feature.Presentation.Util.defaultLightIncomeColor
 import com.fredy.mysavings.Feature.Presentation.Util.defaultLightTransferColor
+import com.fredy.preferences.domain.PreferencesRepository
 import com.fredy.preferences.viewModel.PreferencesEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext

@@ -2,8 +2,8 @@ package com.fredy.auth.viewModel
 
 import com.fredy.auth.data.AuthMethod
 import com.fredy.domain.model.UserData
-import com.fredy.domain.util.resource.DataError
-import com.fredy.domain.util.resource.Resource
+import com.fredy.core.util.resource.DataError
+import com.fredy.core.util.resource.Resource
 
 
 data class AuthState(

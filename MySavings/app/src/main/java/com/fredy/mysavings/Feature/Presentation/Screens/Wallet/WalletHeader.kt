@@ -18,7 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.fredy.mysavings.Feature.Presentation.ViewModels.WalletViewModel.WalletState
-import com.fredy.mysavings.Feature.Presentation.Screens.Record.BalanceItem
+import com.fredy.theme.components.BalanceItem
 
 @Composable
 fun WalletHeader(

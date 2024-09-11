@@ -1,10 +1,11 @@
 package com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases
 
 import com.fredy.mysavings.BaseUseCaseTest
-import com.fredy.domain.model.Record
 import com.fredy.domain.enums.RecordType
 import com.fredy.domain.enums.SortType
 import com.fredy.domain.model.Book
+import com.fredy.domain.useCases.RecordUseCases.GetAllBooks
+import com.fredy.domain.useCases.RecordUseCases.GetAllTrueRecordsWithinSpecificTime
 import com.fredy.domain.useCases.RecordUseCases.GetUserTotalAmountByType
 import com.fredy.domain.useCases.RecordUseCases.GetUserWalletRecordsOrderedByDateTime
 import com.fredy.domain.util.mappers.filterRecordCurrency
@@ -30,7 +31,7 @@ class RecordUseCasesTest : BaseUseCaseTest() {
     private lateinit var updateRecordItemWithDeletedCategory: UpdateRecordItemWithDeletedCategory
     private lateinit var getRecordById: GetRecordById
     private lateinit var getAllTrueRecordsWithinSpecificTime: GetAllTrueRecordsWithinSpecificTime
-    private lateinit var getAllRecords: GetAllRecords
+    private lateinit var getAllBooks: GetAllBooks
     private lateinit var getUserCategoryRecordsOrderedByDateTime: GetUserCategoryRecordsOrderedByDateTime
     private lateinit var getUserWalletRecordsOrderedByDateTime: GetUserWalletRecordsOrderedByDateTime
     private lateinit var getUserTrueRecordMapsFromSpecificTime: GetUserTrueRecordMapsFromSpecificTime
@@ -52,7 +53,7 @@ class RecordUseCasesTest : BaseUseCaseTest() {
         getRecordById = GetRecordById(fakeRecordRepository, mockCurrencyUseCases)
         getAllTrueRecordsWithinSpecificTime =
             GetAllTrueRecordsWithinSpecificTime(fakeRecordRepository, fakeUserRepository)
-        getAllRecords = GetAllRecords(fakeRecordRepository, fakeUserRepository,fakeBookRepository)
+        getAllBooks = GetAllBooks(fakeRecordRepository, fakeUserRepository,fakeBookRepository)
         getUserCategoryRecordsOrderedByDateTime =
             GetUserCategoryRecordsOrderedByDateTime(fakeRecordRepository, fakeUserRepository)
         getUserWalletRecordsOrderedByDateTime =
@@ -258,7 +259,7 @@ class RecordUseCasesTest : BaseUseCaseTest() {
 
     @Test
     fun `Retrieve All Records`() = runBlocking {
-        val recordsFlow = getAllRecords()
+        val recordsFlow = getAllBooks()
         val recordsResource = recordsFlow.last()
 
         assertTrue(recordsResource is Resource.Success)

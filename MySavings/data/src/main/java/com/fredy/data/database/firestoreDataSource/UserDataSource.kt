@@ -1,6 +1,6 @@
 package com.fredy.data.database.firestoreDataSource
 
-import com.fredy.mysavings.Feature.Domain.Model.UserData
+import com.fredy.data.database.dto.UserData
 import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query

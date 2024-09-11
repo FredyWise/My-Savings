@@ -2,6 +2,7 @@ package com.fredy.preferences.viewModel
 
 
 import androidx.compose.ui.graphics.Color
+import com.fredy.preferences.domain.DisplayMode
 import com.fredy.theme.util.defaultDarkExpenseColor
 import com.fredy.theme.util.defaultDarkIncomeColor
 import com.fredy.theme.util.defaultDarkTransferColor
@@ -11,7 +12,7 @@ import java.time.LocalTime
 data class PreferencesState(
     val startDate: LocalDateTime = LocalDateTime.now(),
     val endDate: LocalDateTime = LocalDateTime.now(),
-    val isDarkMode: Boolean? = false,
+    val displayMode: DisplayMode = DisplayMode.System,
     val autoLogin: Boolean = false,
     val bioAuth: Boolean = false,
     val isBioAuthPossible: Boolean = false,

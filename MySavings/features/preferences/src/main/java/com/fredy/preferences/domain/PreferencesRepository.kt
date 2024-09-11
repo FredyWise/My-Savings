@@ -1,7 +1,6 @@
 package com.fredy.preferences.domain
 
 import androidx.compose.ui.graphics.Color
-import com.fredy.preferences.data.DisplayMode
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalTime
 

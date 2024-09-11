@@ -10,8 +10,8 @@ import com.fredy.auth.data.AuthMethod
 import com.fredy.auth.domain.AuthUseCases
 import com.fredy.domain.model.UserData
 import com.fredy.domain.useCases.UserUseCases.UserUseCases
-import com.fredy.domain.util.resource.DataError
-import com.fredy.domain.util.resource.Resource
+import com.fredy.core.util.resource.DataError
+import com.fredy.core.util.resource.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow

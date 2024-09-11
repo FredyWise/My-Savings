@@ -10,7 +10,6 @@ import com.fredy.domain.model.BookMap
 import com.fredy.domain.model.Record
 import com.fredy.domain.model.RecordMap
 import com.fredy.domain.model.TrueRecord
-import com.fredy.mysavings.Util.Log
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 

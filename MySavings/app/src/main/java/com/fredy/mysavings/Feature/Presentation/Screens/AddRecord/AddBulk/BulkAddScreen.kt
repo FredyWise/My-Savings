@@ -1,3 +1,5 @@
+package com.fredy.mysavings.Feature.Presentation.Screens.AddRecord
+
 import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.clickable
@@ -62,15 +64,11 @@ fun BulkAddScreen(
     viewModel: AddBulkRecordViewModel,
     categoryViewModel: CategoryViewModel,
     walletViewModel: WalletViewModel,
+    onConvertImageToRecord: (Uri) -> Unit,
+    onRecordNotesChange: (String) -> Unit,
+
 
     ) {
-    val state = viewModel.state
-    val resource by viewModel.resource.collectAsStateWithLifecycle()
-    val onEvent = viewModel::onEvent
-    val categoryState by categoryViewModel.state.collectAsStateWithLifecycle()
-    val categoryEvent = categoryViewModel::onEvent
-    val walletState by walletViewModel.state.collectAsStateWithLifecycle()
-    val walletEvent = walletViewModel::onEvent
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     var isShowImage by rememberSaveable {
@@ -97,26 +95,10 @@ fun BulkAddScreen(
         onDismissRequest = { isChoosingLauncher = false },
         onCapturingImageUri = {
             capturedImageUri = it
-            onEvent(AddRecordEvent.ImageToRecords(it))
+            onConvertImageToRecord(it)
         },
         detectedText = {
-            onEvent(
-                AddRecordEvent.RecordNotes(
-                    it
-                )
-            )
-        }
-    )
-    RecordAddDialog(
-        record = state.record,
-        isAdding = state.isAdding,
-        isShowDialog = state.isShowWarning,
-        onDismissRequest = { onEvent(AddRecordEvent.CloseAddRecordItemDialog) },
-        onSave = {
-            onEvent(AddRecordEvent.UpdateRecord(it))
-        },
-        onDelete = {
-            onEvent(AddRecordEvent.DeleteRecord(it))
+            onRecordNotesChange(it)
         }
     )
     LaunchedEffect(

@@ -1,10 +1,10 @@
-package com.fredy.mysavings.Feature.Domain.UseCases.BookUseCases
+package com.fredy.domain.useCases.BookUseCases
 
-import co.yml.charts.common.extensions.isNotNull
+import com.fredy.core.util.resource.DataError
+import com.fredy.core.util.resource.Resource
 import com.fredy.domain.model.Book
 import com.fredy.domain.repository.UserRepository
 import com.fredy.domain.repository.BookRepository
-import com.fredy.mysavings.Util.Log
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
@@ -13,21 +13,23 @@ class GetUserBooks(
     private val bookRepository: BookRepository,
     private val userRepository: UserRepository
 ) {
-    operator fun invoke(): Flow<Resource<List<Book>>> {
-        return flow {
+    operator fun invoke(): Flow<Resource<List<Book>,DataError.Local>> {
+        return flow<Resource<List<Book>,DataError.Local>> {
             emit(Resource.Loading())
-            val currentUser = userRepository.getCurrentUser()!!
-            val userId = if (currentUser.isNotNull()) currentUser.firebaseUserId else ""
+            val currentUser = userRepository.getCurrentUser()
+            currentUser?.let {
+                val userId = currentUser.firebaseUserId
 
-            bookRepository.getUserBooks(userId).collect { books ->
-                Log.i("getBooksOrderedByName.Data: $books")
-                emit(Resource.Success(books))
+                bookRepository.getUserBooks(userId).collect { books ->
+                    Log.i("getBooksOrderedByName.Data: $books")
+                    emit(Resource.Success(books))
+                }
             }
         }.catch { e ->
             Log.e(
                 "getBooksOrderedByName.Error: $e"
             )
-            emit(Resource.Error(e.message.toString()))
+            emit(Resource.Error(DataError.Local.UNKNOWN))
         }
     }
 }

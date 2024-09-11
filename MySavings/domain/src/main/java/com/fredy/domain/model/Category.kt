@@ -1,9 +1,7 @@
 package com.fredy.domain.model
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
 import com.fredy.domain.enums.RecordType
-import com.fredy.theme.util.SavingsIcons.categoryInitIcon
+import com.fredy.mysavings.Util.SavingsIcons.categoryInitIcon
 
 
 data class Category(

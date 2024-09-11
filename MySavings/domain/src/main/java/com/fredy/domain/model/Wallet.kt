@@ -1,6 +1,6 @@
 package com.fredy.domain.model
 
-import com.fredy.theme.util.SavingsIcons.walletInitIcon
+import com.fredy.mysavings.Util.SavingsIcons.walletInitIcon
 
 
 data class Wallet(

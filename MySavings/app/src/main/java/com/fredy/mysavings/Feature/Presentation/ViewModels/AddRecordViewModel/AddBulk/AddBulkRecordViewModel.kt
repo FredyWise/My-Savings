@@ -11,7 +11,6 @@ import com.fredy.mysavings.Feature.Domain.UseCases.TabScannerUseCase.TabScannerU
 import com.fredy.mysavings.Feature.Presentation.Util.isExpense
 import com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel.AddRecordEvent
 import com.fredy.mysavings.Feature.Presentation.ViewModels.AddRecordViewModel.AddRecordState
-import com.fredy.mysavings.Util.Log
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update

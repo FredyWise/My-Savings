@@ -20,7 +20,6 @@ import com.fredy.mysavings.Feature.Presentation.Util.DefaultData
 import com.fredy.mysavings.Feature.Presentation.Util.DefaultData.deletedWallet
 import com.fredy.mysavings.Feature.Presentation.Util.DefaultData.deletedCategory
 import com.fredy.mysavings.Feature.Presentation.Util.DefaultData.transferCategory
-import com.fredy.mysavings.Util.Log
 import com.google.firebase.Timestamp
 import io.mockk.MockKAnnotations
 import io.mockk.clearAllMocks

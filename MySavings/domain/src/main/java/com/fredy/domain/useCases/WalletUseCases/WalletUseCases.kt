@@ -1,7 +1,4 @@
-package com.fredy.mysavings.Feature.Domain.UseCases.WalletUseCases
-
-import com.fredy.domain.useCases.WalletUseCases.GetWallets
-import com.fredy.domain.useCases.WalletUseCases.GetWalletsTotalBalance
+package com.fredy.domain.useCases.WalletUseCases
 
 data class WalletUseCases(
     val upsertWallet: UpsertWallet,

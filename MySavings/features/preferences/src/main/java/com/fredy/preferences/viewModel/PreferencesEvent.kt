@@ -2,8 +2,8 @@ package com.fredy.preferences.viewModel
 
 
 import androidx.compose.ui.graphics.Color
-import com.fredy.preferences.data.ChangeColorType
-import com.fredy.preferences.data.DisplayMode
+import com.fredy.preferences.domain.ChangeColorType
+import com.fredy.preferences.domain.DisplayMode
 import java.time.LocalTime
 
 

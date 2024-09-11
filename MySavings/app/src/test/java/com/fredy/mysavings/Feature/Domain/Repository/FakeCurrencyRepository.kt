@@ -34,7 +34,7 @@ class FakeCurrencyRepository : CurrencyRepository {
         this.currencies.addAll(currencies)
     }
 
-    override suspend fun getCurrencies(userId: String): Flow<List<Currency>> {
+    override suspend fun getCachedCurrencies(userId: String): Flow<List<Currency>> {
         return flow { emit(currencies.filter { it.userIdFk == userId }) }
     }
 

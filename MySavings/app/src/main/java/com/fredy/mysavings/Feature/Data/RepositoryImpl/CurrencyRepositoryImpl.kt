@@ -15,7 +15,6 @@ import com.fredy.domain.model.RatesCache
 import com.fredy.domain.model.UserData
 import com.fredy.domain.repository.UserRepository
 import com.fredy.domain.repository.CurrencyRepository
-import com.fredy.mysavings.Util.Log
 import com.fredy.domain.util.mappers.toCurrencyInfoItems
 import com.fredy.domain.util.mappers.toRatesCache
 import com.fredy.domain.util.isCacheValid
@@ -149,7 +148,7 @@ class CurrencyRepositoryImpl @Inject constructor(
 
 
     // currencies
-    override suspend fun getCurrencies(userId: String): Flow<List<Currency>> {
+    override suspend fun getCachedCurrencies(userId: String): Flow<List<Currency>> {
         return flow {
             withContext(Dispatchers.IO) {
                 currencyDataSource.getCurrencies(userId)

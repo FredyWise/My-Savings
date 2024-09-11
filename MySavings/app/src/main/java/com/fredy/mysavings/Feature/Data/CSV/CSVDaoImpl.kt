@@ -12,7 +12,6 @@ import com.fredy.domain.model.Record
 import com.fredy.domain.model.TrueRecord
 import com.fredy.domain.model.Wallet
 import com.fredy.mysavings.Feature.Presentation.Util.formatMonthDateYearDetailedTime
-import com.fredy.mysavings.Util.Log
 import java.io.File
 import java.io.FileReader
 import java.io.FileWriter

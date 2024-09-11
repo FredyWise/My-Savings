@@ -23,7 +23,6 @@ import com.fredy.data.repositoryImplement.BookRepositoryImpl
 import com.fredy.data.repositoryImplement.CSVRepositoryImpl
 import com.fredy.data.repositoryImplement.CategoryRepositoryImpl
 import com.fredy.data.repositoryImplement.CurrencyRepositoryImpl
-import com.fredy.data.repositoryImplement.PreferencesRepositoryImpl
 import com.fredy.data.repositoryImplement.RecordRepositoryImpl
 import com.fredy.data.repositoryImplement.SyncRepositoryImpl
 import com.fredy.data.repositoryImplement.TabScannerRepositoryImpl
@@ -33,7 +32,6 @@ import com.fredy.domain.repository.BookRepository
 import com.fredy.domain.repository.CSVRepository
 import com.fredy.domain.repository.CategoryRepository
 import com.fredy.domain.repository.CurrencyRepository
-import com.fredy.domain.repository.PreferencesRepository
 import com.fredy.domain.repository.RecordRepository
 import com.fredy.domain.repository.SyncRepository
 import com.fredy.domain.repository.TabScannerRepository
@@ -133,13 +131,13 @@ object RepositoryModule {
         firebaseAuth, userDataSource, userDao
     )
 
-    @Provides
-    @Singleton
-    fun provideSettingsRepository(
-        @ApplicationContext appContext: Context
-    ): PreferencesRepository = PreferencesRepositoryImpl(
-        appContext
-    )
+//    @Provides
+//    @Singleton
+//    fun provideSettingsRepository(
+//        @ApplicationContext appContext: Context
+//    ): PreferencesRepository = PreferencesRepositoryImpl(
+//        appContext
+//    )
 
     @Provides
     @Singleton

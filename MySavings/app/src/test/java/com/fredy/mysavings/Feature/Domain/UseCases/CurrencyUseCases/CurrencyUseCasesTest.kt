@@ -42,7 +42,7 @@ class CurrencyUseCasesTest : BaseUseCaseTest() {
         )
         updateCurrency(currency)
 
-        val updatedCurrency = fakeCurrencyRepository.getCurrencies(currentUserId).last()
+        val updatedCurrency = fakeCurrencyRepository.getCachedCurrencies(currentUserId).last()
         assertTrue(updatedCurrency.contains(currency))
     }
 
@@ -74,7 +74,7 @@ class CurrencyUseCasesTest : BaseUseCaseTest() {
 
         assertTrue(currenciesResource is Resource.Success)
         val currencies = (currenciesResource as Resource.Success).data!!
-        assertTrue(fakeCurrencyRepository.getCurrencies(currentUserId).last().containsAll(currencies))
+        assertTrue(fakeCurrencyRepository.getCachedCurrencies(currentUserId).last().containsAll(currencies))
     }
 }
 

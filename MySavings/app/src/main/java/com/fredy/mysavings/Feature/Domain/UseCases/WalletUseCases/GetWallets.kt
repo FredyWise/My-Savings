@@ -5,7 +5,6 @@ import com.fredy.domain.model.Wallet
 import com.fredy.domain.repository.UserRepository
 import com.fredy.domain.repository.WalletRepository
 import com.fredy.mysavings.Feature.Presentation.Util.DefaultData
-import com.fredy.mysavings.Util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch

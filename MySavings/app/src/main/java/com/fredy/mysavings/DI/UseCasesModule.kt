@@ -38,8 +38,8 @@ import com.fredy.mysavings.Feature.Domain.UseCases.IOUseCases.InputFromCSV
 import com.fredy.mysavings.Feature.Domain.UseCases.IOUseCases.OutputToCSV
 import com.fredy.mysavings.Feature.Domain.UseCases.IOUseCases.UpsertTrueRecords
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.DeleteRecordItem
-import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.GetAllRecords
-import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.GetAllTrueRecordsWithinSpecificTime
+import com.fredy.domain.useCases.RecordUseCases.GetAllBooks
+import com.fredy.domain.useCases.RecordUseCases.GetAllTrueRecordsWithinSpecificTime
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.GetRecordById
 import com.fredy.domain.useCases.RecordUseCases.GetUserWalletRecordsOrderedByDateTime
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.GetUserWalletsWithAmountFromSpecificTime
@@ -66,13 +66,13 @@ import com.fredy.mysavings.Feature.Domain.UseCases.UserUseCases.InsertUser
 import com.fredy.mysavings.Feature.Domain.UseCases.UserUseCases.SearchUsers
 import com.fredy.mysavings.Feature.Domain.UseCases.UserUseCases.UpdateUser
 import com.fredy.mysavings.Feature.Domain.UseCases.UserUseCases.UserUseCases
-import com.fredy.mysavings.Feature.Domain.UseCases.WalletUseCases.DeleteWallet
-import com.fredy.mysavings.Feature.Domain.UseCases.WalletUseCases.GetWallet
+import com.fredy.domain.useCases.WalletUseCases.DeleteWallet
+import com.fredy.domain.useCases.WalletUseCases.GetWallet
 import com.fredy.domain.useCases.WalletUseCases.GetWallets
-import com.fredy.mysavings.Feature.Domain.UseCases.WalletUseCases.GetWalletsCurrencies
+import com.fredy.domain.useCases.WalletUseCases.GetWalletsCurrencies
 import com.fredy.domain.useCases.WalletUseCases.GetWalletsTotalBalance
-import com.fredy.mysavings.Feature.Domain.UseCases.WalletUseCases.UpsertWallet
-import com.fredy.mysavings.Feature.Domain.UseCases.WalletUseCases.WalletUseCases
+import com.fredy.domain.useCases.WalletUseCases.UpsertWallet
+import com.fredy.domain.useCases.WalletUseCases.WalletUseCases
 import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.firebase.auth.FirebaseAuth
 import dagger.Module
@@ -134,7 +134,7 @@ object UseCasesModule {
             recordRepository,
             userRepository
         ),
-        getAllRecords = GetAllRecords(recordRepository, userRepository, bookRepository),
+        getAllBooks = GetAllBooks(recordRepository, userRepository, bookRepository),
         getUserCategoryRecordsOrderedByDateTime = GetUserCategoryRecordsOrderedByDateTime(
             recordRepository, userRepository
         ),

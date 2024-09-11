@@ -16,7 +16,7 @@ android {
 dependencies {
     implementation(projects.core)
     implementation(projects.theme)
-//    implementation(projects.domain)
+
 
     // Core Functions
     implementation(libs.androidx.core.ktx)
@@ -34,6 +34,7 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.foundation)
+    implementation(project(":domain"))
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     androidTestImplementation(platform(libs.androidx.compose.bom))

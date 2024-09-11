@@ -16,6 +16,7 @@ android {
 dependencies {
     // Projects
     implementation(projects.core)
+    implementation(projects.app)
     implementation(projects.theme)
 
 
@@ -50,6 +51,7 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
 
+    implementation(libs.okhttp)
 
 // Firebase and Google Play services
     implementation(platform(libs.firebase.bom))

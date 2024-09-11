@@ -2,8 +2,8 @@ package com.fredy.domain.useCases.CurrencyUseCases
 
 import com.fredy.domain.model.Rate
 import com.fredy.domain.repository.CurrencyRepository
-import com.fredy.domain.util.resource.DataError
-import com.fredy.domain.util.resource.Resource
+import com.fredy.core.util.resource.DataError
+import com.fredy.core.util.resource.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
@@ -15,7 +15,7 @@ class GetCurrencyRates(
     operator fun invoke(): Flow<Resource<List<Rate>, DataError.Local>> {
         return flow<Resource<List<Rate>, DataError.Local>> {
             emit(Resource.Loading())
-            val currencyRates = currencyRepository.getRateResponse().rates
+            val currencyRates = currencyRepository.getRateResponse()!!.rates
             emit(
                 Resource.Success(
                     currencyRates

@@ -9,9 +9,15 @@ import com.fredy.data.database.firestoreDataSource.BookDataSource
 import com.fredy.data.database.firestoreDataSource.CategoryDataSource
 import com.fredy.data.database.firestoreDataSource.RecordDataSource
 import com.fredy.data.database.firestoreDataSource.WalletDataSource
-import com.fredy.domain.util.DefaultData
+import com.fredy.data.mappers.toDataBook
+import com.fredy.data.mappers.toDataCategory
+import com.fredy.data.mappers.toDataWallet
+import com.fredy.data.mappers.toDomainWallet
 import com.fredy.data.util.isInternetConnected
 import com.fredy.domain.repository.SyncRepository
+import com.fredy.domain.util.DefaultData.deletedCategory
+import com.fredy.domain.util.DefaultData.deletedWallet
+import com.fredy.domain.util.DefaultData.transferCategory
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -48,12 +54,12 @@ class SyncRepositoryImpl @Inject constructor(
                     }
                     bookDao.upsertAllBookItem(books)
                 } catch (e: Exception) {
-                    val tempBook = com.fredy.domain.util.DefaultData.defaultBook.copy(
+                    val dataBook = com.fredy.domain.util.DefaultData.defaultBook.copy(
                         bookId = userId,
                         userIdFk = userId
-                    )
+                    ).toDataBook()
                     bookDataSource.upsertBookItem(
-                        tempBook
+                        dataBook
                     )
                 }
             }
@@ -68,16 +74,16 @@ class SyncRepositoryImpl @Inject constructor(
             currentUser?.let {
                 val userId = currentUser.uid
                 walletDataSource.upsertWalletItem(
-                    com.fredy.domain.util.DefaultData.deletedWallet.copy(
-                        walletId = com.fredy.domain.util.DefaultData.deletedWallet.walletId + userId,
+                    deletedWallet.copy(
+                        walletId = deletedWallet.walletId + userId,
                         userIdFk = userId
-                    )
+                    ).toDataWallet()
                 )
-                val accounts = walletDataSource.getUserWallets(userId).first()
+                val dataWallets = walletDataSource.getUserWallets(userId).first()
                 if (withDelete) {
                     walletDao.deleteAllWallets()
                 }
-                walletDao.upsertAllWalletItem(accounts)
+                walletDao.upsertAllWalletItem(dataWallets)
             }
             Timber.i("syncAccounts: Finish")
         }
@@ -106,16 +112,16 @@ class SyncRepositoryImpl @Inject constructor(
             currentUser?.let {
                 val userId = currentUser.uid
                 categoryDataSource.upsertCategoryItem(
-                    com.fredy.domain.util.DefaultData.deletedCategory.copy(
-                        categoryId = com.fredy.domain.util.DefaultData.deletedCategory.categoryId + userId,
+                    deletedCategory.copy(
+                        categoryId = deletedCategory.categoryId + userId,
                         userIdFk = userId
-                    )
+                    ).toDataCategory()
                 )
                 categoryDataSource.upsertCategoryItem(
-                    com.fredy.domain.util.DefaultData.transferCategory.copy(
-                        categoryId = com.fredy.domain.util.DefaultData.transferCategory.categoryId + userId,
+                    transferCategory.copy(
+                        categoryId = transferCategory.categoryId + userId,
                         userIdFk = userId
-                    )
+                    ).toDataCategory()
                 )
                 val categories = categoryDataSource.getUserCategoriesOrderedByName(userId).first()
                 if (withDelete) {

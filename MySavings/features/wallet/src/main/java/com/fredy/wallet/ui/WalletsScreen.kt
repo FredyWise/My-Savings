@@ -19,12 +19,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
+import com.fredy.core.util.SavingsIcons.AddCircleOutlineIcon
 import com.fredy.domain.model.Wallet
 import com.fredy.theme.components.button.SimpleButton
 import com.fredy.theme.components.handler.ResourceHandler
 import com.fredy.theme.components.list.SearchBar
-import com.fredy.theme.util.SavingsIcons
 import com.fredy.wallet.viewModel.WalletEvent
 import com.fredy.wallet.viewModel.WalletState
 
@@ -111,7 +110,7 @@ fun WalletsScreen(
                                     color = MaterialTheme.colorScheme.secondary,
                                     shape = MaterialTheme.shapes.medium
                                 ),
-                            image = SavingsIcons.AddCircleOutlineIcon.image,
+                            image = AddCircleOutlineIcon.image,
                             imageColor = MaterialTheme.colorScheme.onBackground,
                             onClick = {
                                 onEvent(

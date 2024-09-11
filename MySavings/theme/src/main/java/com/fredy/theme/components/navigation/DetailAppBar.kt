@@ -25,13 +25,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.fredy.core.util.resource.DataError
+import com.fredy.core.util.resource.Resource
+import com.fredy.domain.enumsChecker.recordTypeColor
 import com.fredy.domain.model.RecordMap
 import com.fredy.domain.model.TrueRecord
-import com.fredy.domain.util.resource.DataError
-import com.fredy.domain.util.resource.Resource
-import com.fredy.theme.components.list.CustomStickyHeader
 import com.fredy.theme.components.handler.ResourceHandler
-import com.fredy.theme.util.RecordTypeColor
+import com.fredy.theme.components.list.CustomStickyHeader
 import com.fredy.theme.util.formatDateDay
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -133,7 +133,7 @@ fun DetailAppBar(
                         content(
                             item,
                             onBackgroundColor,
-                            RecordTypeColor(recordType = item.record.recordType)
+                            item.record.recordType.recordTypeColor()
                         )
                     }
                 }

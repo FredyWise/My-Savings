@@ -23,7 +23,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.fredy.mysavings.R
-import com.fredy.mysavings.Feature.Presentation.Navigation.NavigationRoute
+import com.fredy.mysavings.navigation.NavigationRoute
 
 
 @Composable
