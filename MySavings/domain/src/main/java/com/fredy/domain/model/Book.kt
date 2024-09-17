@@ -1,7 +1,7 @@
 package com.fredy.domain.model
 
 import android.os.Parcelable
-import com.fredy.mysavings.Util.SavingsIcons.bookInitIcon
+import com.fredy.domain.util.SavingsIcons.bookInitIcon
 import kotlinx.parcelize.Parcelize
 
 

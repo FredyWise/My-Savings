@@ -33,8 +33,8 @@ import com.fredy.domain.enumsChecker.recordTypeColor
 import com.fredy.domain.model.Wallet
 import com.fredy.ui.components.handler.ResourceHandler
 import com.fredy.ui.components.list.SimpleEntityItem
-import com.fredy.ui.util.BalanceColor
-import com.fredy.ui.util.formatBalanceAmount
+import com.fredy.theme.util.BalanceColor
+import com.fredy.theme.util.formatBalanceAmount
 import kotlin.math.absoluteValue
 
 @Composable

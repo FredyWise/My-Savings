@@ -37,8 +37,8 @@ import com.fredy.domain.model.TrueRecord
 import com.fredy.ui.components.dialogs.SimpleWarningDialog
 import com.fredy.ui.components.list.BalanceItem
 import com.fredy.ui.components.list.SimpleEntityItem
-import com.fredy.ui.util.BalanceColor
-import com.fredy.ui.util.formatMonthDateYearDetailedTime
+import com.fredy.theme.util.BalanceColor
+import com.fredy.theme.util.formatMonthDateYearDetailedTime
 
 @Composable
 fun RecordDialog(

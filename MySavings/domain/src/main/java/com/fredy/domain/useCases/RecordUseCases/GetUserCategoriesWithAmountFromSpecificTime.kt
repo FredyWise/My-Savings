@@ -4,6 +4,7 @@ import com.fredy.domain.util.resource.DataError
 import com.fredy.domain.util.resource.Resource
 import com.fredy.domain.enums.RecordType
 import com.fredy.domain.enums.SortType
+import com.fredy.domain.mappers.recordUIMapper.filterRecordCurrency
 import com.fredy.domain.model.Book
 import com.fredy.domain.model.Category
 import com.fredy.domain.model.CategoryWithAmount
@@ -13,12 +14,12 @@ import com.fredy.domain.repository.RecordRepository
 import com.fredy.domain.repository.UserRepository
 import com.fredy.domain.useCases.CurrencyUseCases.CurrencyUseCases
 import com.fredy.domain.useCases.CurrencyUseCases.currencyConverter
-import com.fredy.mysavings.Feature.Domain.Util.Mappers.filterRecordCurrency
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import timber.log.Timber
 import java.time.LocalDateTime
 
 class GetUserCategoriesWithAmountFromSpecificTime(
@@ -42,7 +43,7 @@ class GetUserCategoriesWithAmountFromSpecificTime(
             currentUser?.let {
                 val userId = currentUser.firebaseUserId
                 val userCurrency = currentUser.userCurrency
-                Log.i(
+                Timber.i(
                     "getUserCategoriesWithAmountFromSpecificTime: $currency\n$categoryType\n$startDate\n:\n$endDate"
                 )
                 val userCategories = categoryRepository.getUserCategories(
@@ -64,7 +65,7 @@ class GetUserCategoriesWithAmountFromSpecificTime(
                             useUserCurrency
                         )
                 }.collect { data ->
-                    Log.i(
+                    Timber.i(
                         "getUserCategoriesWithAmountFromSpecificTime.Data: $data",
 
                         )
@@ -72,7 +73,7 @@ class GetUserCategoriesWithAmountFromSpecificTime(
                 }
             }
         }.catch { e ->
-            Log.e(
+            Timber.e(
                 "getUserCategoriesWithAmountFromSpecificTime.Error: $e"
             )
             emit(Resource.Error(DataError.Local.UNKNOWN))

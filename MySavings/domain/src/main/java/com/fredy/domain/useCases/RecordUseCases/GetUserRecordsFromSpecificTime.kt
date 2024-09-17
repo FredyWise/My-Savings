@@ -1,16 +1,16 @@
 package com.fredy.domain.useCases.RecordUseCases
 
-import com.fredy.domain.util.resource.DataError
-import com.fredy.domain.util.resource.Resource
 import com.fredy.domain.enums.RecordType
 import com.fredy.domain.enums.SortType
+import com.fredy.domain.mappers.recordUIMapper.filterRecordCurrency
 import com.fredy.domain.model.Book
 import com.fredy.domain.model.Record
 import com.fredy.domain.repository.RecordRepository
 import com.fredy.domain.repository.UserRepository
 import com.fredy.domain.useCases.CurrencyUseCases.CurrencyUseCases
 import com.fredy.domain.useCases.CurrencyUseCases.currencyConverter
-import com.fredy.mysavings.Feature.Domain.Util.Mappers.filterRecordCurrency
+import com.fredy.domain.util.resource.DataError
+import com.fredy.domain.util.resource.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow

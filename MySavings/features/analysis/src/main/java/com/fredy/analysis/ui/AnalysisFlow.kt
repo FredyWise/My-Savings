@@ -33,8 +33,8 @@ import com.fredy.ui.components.Calendar
 import com.fredy.ui.components.handler.ResourceHandler
 import com.fredy.ui.components.list.CustomStickyHeader
 import com.fredy.ui.components.list.SimpleEntityItem
-import com.fredy.ui.util.formatBalanceAmount
-import com.fredy.ui.util.formatDateDay
+import com.fredy.theme.util.formatBalanceAmount
+import com.fredy.theme.util.formatDateDay
 import kotlin.math.absoluteValue
 
 @Composable

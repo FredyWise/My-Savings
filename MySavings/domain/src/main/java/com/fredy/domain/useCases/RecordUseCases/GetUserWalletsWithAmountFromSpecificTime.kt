@@ -3,6 +3,9 @@ package com.fredy.domain.useCases.RecordUseCases
 import com.fredy.domain.util.resource.DataError
 import com.fredy.domain.util.resource.Resource
 import com.fredy.domain.enums.SortType
+import com.fredy.domain.enumsChecker.isExpense
+import com.fredy.domain.enumsChecker.isIncome
+import com.fredy.domain.enumsChecker.isTransfer
 import com.fredy.domain.model.AccountWithAmountType
 import com.fredy.domain.model.Book
 import com.fredy.domain.model.Record
@@ -12,10 +15,8 @@ import com.fredy.domain.repository.UserRepository
 import com.fredy.domain.repository.WalletRepository
 import com.fredy.domain.useCases.CurrencyUseCases.CurrencyUseCases
 import com.fredy.domain.useCases.CurrencyUseCases.currencyConverter
-import com.fredy.mysavings.Feature.Presentation.Util.DefaultData
-import com.fredy.mysavings.Feature.Presentation.Util.isExpense
-import com.fredy.mysavings.Feature.Presentation.Util.isIncome
-import com.fredy.mysavings.Feature.Presentation.Util.isTransfer
+import com.fredy.domain.util.DefaultData
+
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
@@ -105,7 +106,7 @@ class GetUserWalletsWithAmountFromSpecificTime(
             val key = record.walletIdFromFk
 
             val existingAccount = accountWithAmountMap[key]
-            if (!isTransfer(record.recordType)) {
+            if (!record.recordType.isTransfer()) {
                 val amount = if (useUserCurrency) {
                     currencyUseCases.currencyConverter(
                         record.recordAmount,
@@ -115,8 +116,8 @@ class GetUserWalletsWithAmountFromSpecificTime(
                 } else {
                     record.recordAmount
                 }
-                val incomeAmount = if (isIncome(record.recordType)) amount else 0.0
-                val expenseAmount = if (isExpense(record.recordType)) amount else 0.0
+                val incomeAmount = if (record.recordType.isIncome()) amount else 0.0
+                val expenseAmount = if (record.recordType.isExpense()) amount else 0.0
                 if (existingAccount != null) {
                     val currency =
                         if (useUserCurrency) userCurrency else existingAccount.wallet.walletCurrency

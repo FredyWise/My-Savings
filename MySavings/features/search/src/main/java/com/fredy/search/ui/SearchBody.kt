@@ -30,7 +30,7 @@ import com.fredy.domain.model.BookMap
 import com.fredy.domain.model.TrueRecord
 import com.fredy.ui.components.RecordEntityItem
 import com.fredy.ui.components.list.CustomStickyHeader
-import com.fredy.ui.util.formatDateDay
+import com.fredy.theme.util.formatDateDay
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

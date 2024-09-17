@@ -20,8 +20,8 @@ import com.fredy.domain.enumsChecker.isTransfer
 import com.fredy.domain.model.TrueRecord
 import com.fredy.ui.components.list.SimpleEntityItem
 import com.fredy.ui.components.navigation.DetailAppBar
-import com.fredy.ui.util.formatBalanceAmount
-import com.fredy.ui.util.formatTime
+import com.fredy.theme.util.formatBalanceAmount
+import com.fredy.theme.util.formatTime
 import com.fredy.wallet.viewModel.WalletState
 
 @OptIn(ExperimentalMaterial3Api::class)

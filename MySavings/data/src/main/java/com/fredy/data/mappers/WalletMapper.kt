@@ -3,9 +3,6 @@ package com.fredy.data.mappers
 import com.fredy.data.database.dto.Wallet as DataWallet
 import com.fredy.domain.model.Wallet as DomainWallet
 
-fun List<DomainWallet>.getCurrencies(): List<String> {
-    return this.map { it.walletCurrency }.distinct()
-}
 
 fun List<DataWallet>.toDomainWallet(): List<DomainWallet> {
     return this.map { it.toDomainWallet() }

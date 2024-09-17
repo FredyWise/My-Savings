@@ -19,8 +19,8 @@ import androidx.compose.ui.unit.dp
 import com.fredy.addrecord.viewModel.AddRecordEvent
 import com.fredy.addrecord.viewModel.AddRecordState
 import com.fredy.ui.components.button.SimpleButton
-import com.fredy.ui.util.formatMonthDateYear
-import com.fredy.ui.util.formatTime
+import com.fredy.theme.util.formatMonthDateYear
+import com.fredy.theme.util.formatTime
 import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.datetime.date.DatePickerDefaults
 import com.vanpra.composematerialdialogs.datetime.date.datepicker

@@ -7,13 +7,14 @@ import com.fredy.domain.useCases.CurrencyUseCases.currencyConverter
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
+import timber.log.Timber
 
 class GetRecordById(
     private val recordRepository: RecordRepository,
     private val currencyUseCases: CurrencyUseCases
 ) {
     operator fun invoke(recordId: String): Flow<TrueRecord> {
-        Log.i("getRecordById: $recordId")
+        Timber.i("getRecordById: $recordId")
         return flow {
             val trueRecord = recordRepository.getRecordById(
                 recordId
@@ -31,7 +32,7 @@ class GetRecordById(
                 )
             )
         }.catch { e ->
-            Log.e(
+            Timber.e(
                 "getRecordById.Error: $e"
             )
         }

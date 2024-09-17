@@ -1,4 +1,4 @@
-package com.fredy.ui.util
+package com.fredy.theme.util
 
 import java.time.LocalDate
 import java.time.LocalDateTime

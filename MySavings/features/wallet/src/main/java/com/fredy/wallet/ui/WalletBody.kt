@@ -28,8 +28,8 @@ import com.fredy.ui.components.dialogs.SimpleWarningDialog
 import com.fredy.ui.components.list.AdvancedEntityItem
 import com.fredy.ui.components.list.CustomStickyHeader
 import com.fredy.domain.modelUI.ActionWithName
-import com.fredy.ui.util.BalanceColor
-import com.fredy.ui.util.formatBalanceAmount
+import com.fredy.theme.util.BalanceColor
+import com.fredy.theme.util.formatBalanceAmount
 
 import com.fredy.wallet.viewModel.WalletEvent
 

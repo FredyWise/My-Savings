@@ -1,4 +1,4 @@
-package com.fredy.ui.util
+package com.fredy.theme.util
 
 import java.text.DecimalFormat
 import kotlin.math.abs

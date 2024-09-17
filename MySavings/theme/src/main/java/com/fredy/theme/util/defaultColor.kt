@@ -1,4 +1,4 @@
-package com.fredy.ui.util
+package com.fredy.theme.util
 
 
 import androidx.compose.ui.graphics.Color

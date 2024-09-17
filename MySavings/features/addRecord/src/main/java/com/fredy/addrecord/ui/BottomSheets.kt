@@ -43,8 +43,8 @@ import com.fredy.mysavings.R
 import com.fredy.ui.components.button.SimpleButton
 import com.fredy.ui.components.handler.ResourceHandler
 import com.fredy.ui.components.list.SimpleEntityItem
-import com.fredy.ui.util.BalanceColor
-import com.fredy.ui.util.formatBalanceAmount
+import com.fredy.theme.util.BalanceColor
+import com.fredy.theme.util.formatBalanceAmount
 
 
 @OptIn(ExperimentalMaterial3Api::class)

@@ -29,7 +29,7 @@ import com.fredy.ui.components.dialogs.SimpleDialog
 import com.fredy.ui.components.handler.ResourceHandler
 import com.fredy.ui.components.list.SimpleDropdown
 import com.fredy.ui.components.navigation.DefaultAppBar
-import com.fredy.ui.util.formatBalanceAmount
+import com.fredy.theme.util.formatBalanceAmount
 
 @Composable
 fun CurrencyScreen(

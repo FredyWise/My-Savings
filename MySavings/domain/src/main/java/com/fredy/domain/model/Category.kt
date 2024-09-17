@@ -1,7 +1,7 @@
 package com.fredy.domain.model
 
 import com.fredy.domain.enums.RecordType
-import com.fredy.mysavings.Util.SavingsIcons.categoryInitIcon
+import com.fredy.domain.util.SavingsIcons.categoryInitIcon
 
 
 data class Category(

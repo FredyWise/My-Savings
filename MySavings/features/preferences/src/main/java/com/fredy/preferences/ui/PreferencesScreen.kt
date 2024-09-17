@@ -49,10 +49,10 @@ import com.fredy.ui.components.list.CustomStickyHeader
 import com.fredy.ui.components.list.SimpleItem
 import com.fredy.ui.components.navigation.DefaultAppBar
 import com.fredy.domain.modelUI.ActionWithName
-import com.fredy.ui.util.formatBalanceAmount
-import com.fredy.ui.util.formatTime
-import com.fredy.ui.util.initialDarkThemeDefaultColor
-import com.fredy.ui.util.initialLightThemeDefaultColor
+import com.fredy.theme.util.formatBalanceAmount
+import com.fredy.theme.util.formatTime
+import com.fredy.theme.util.initialDarkThemeDefaultColor
+import com.fredy.theme.util.initialLightThemeDefaultColor
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState

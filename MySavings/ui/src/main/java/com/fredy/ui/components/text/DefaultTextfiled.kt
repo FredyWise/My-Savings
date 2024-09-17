@@ -27,7 +27,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import com.fredy.theme.DefaultTheme
-import com.fredy.ui.util.DefaultPreview
+import com.fredy.theme.util.DefaultPreview
 
 @Composable
 fun DefaultTextFiled(

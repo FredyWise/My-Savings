@@ -8,8 +8,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
-import com.fredy.ui.util.BalanceColor
-import com.fredy.ui.util.formatBalanceAmount
+import com.fredy.theme.util.BalanceColor
+import com.fredy.theme.util.formatBalanceAmount
 
 @Composable
 fun BalanceItem(

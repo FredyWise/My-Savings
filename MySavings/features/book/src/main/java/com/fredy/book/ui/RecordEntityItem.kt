@@ -24,8 +24,8 @@ import com.fredy.domain.enums.RecordType
 import com.fredy.domain.enumsChecker.isTransfer
 import com.fredy.domain.model.TrueRecord
 import com.fredy.ui.components.list.SimpleEntityItem
-import com.fredy.ui.util.BalanceColor
-import com.fredy.ui.util.formatBalanceAmount
+import com.fredy.theme.util.BalanceColor
+import com.fredy.theme.util.formatBalanceAmount
 
 @Composable
 fun RecordEntityItem(

@@ -2,10 +2,10 @@ package com.fredy.domain.useCases.RecordUseCases
 
 import com.fredy.domain.enums.RecordType
 import com.fredy.domain.model.Book
+import com.fredy.domain.modelUI.BalanceItem
 import com.fredy.domain.repository.RecordRepository
 import com.fredy.domain.repository.UserRepository
 import com.fredy.domain.useCases.CurrencyUseCases.CurrencyUseCases
-import com.fredy.ui.model.BalanceItem
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow

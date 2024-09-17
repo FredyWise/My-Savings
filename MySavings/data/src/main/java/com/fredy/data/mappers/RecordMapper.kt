@@ -82,27 +82,21 @@ fun List<DataRecord>.toTrueRecords(trueRecordComponentResult: RecordDataSourceIm
     }
 }
 
-fun List<DomainRecord>.filterRecordCurrency(currency: List<String>): List<DomainRecord> {
-    return this.filter {
-        currency.contains(
-            it.recordCurrency
-        ) || currency.isEmpty()
-    }
-}
 
-fun List<DomainTrueRecord>.toRecordSortedMaps(sortType: SortType = SortType.DESCENDING): List<RecordMap> {
-    return this.groupBy {
-        it.record.recordDateTime.toLocalDate()
-    }.toSortedMap(when (sortType) {
-        SortType.ASCENDING -> compareBy { it }
-        SortType.DESCENDING -> compareByDescending { it }
-    }).map {
-        RecordMap(
-            recordDate = it.key,
-            records = it.value
-        )
-    }
-}
+
+//fun List<DomainTrueRecord>.toRecordSortedMaps(sortType: SortType = SortType.DESCENDING): List<RecordMap> {
+//    return this.groupBy {
+//        it.record.recordDateTime.toLocalDate()
+//    }.toSortedMap(when (sortType) {
+//        SortType.ASCENDING -> compareBy { it }
+//        SortType.DESCENDING -> compareByDescending { it }
+//    }).map {
+//        RecordMap(
+//            recordDate = it.key,
+//            records = it.value
+//        )
+//    }
+//}
 
 //
 //fun List<DomainTrueRecord>.toBookSortedMaps(
@@ -119,13 +113,6 @@ fun List<DomainTrueRecord>.toRecordSortedMaps(sortType: SortType = SortType.DESC
 //}
 //
 
-fun List<DomainTrueRecord>.filterTrueRecordCurrency(currency: List<String>): List<DomainTrueRecord> {
-    return this.filter {
-        currency.contains(
-            it.record.recordCurrency
-        ) || currency.isEmpty()
-    }
-}
 
 fun ResultResponse.convertToDataRecords(): List<DataRecord> {
     val records = mutableListOf<DataRecord>()

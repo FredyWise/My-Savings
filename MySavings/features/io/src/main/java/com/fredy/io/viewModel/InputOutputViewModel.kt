@@ -11,7 +11,7 @@ import com.fredy.io.domain.model.DBInfo
 import com.fredy.domain.useCases.BookUseCases.BookUseCases
 import com.fredy.io.domain.useCases.IOUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.RecordUseCases
-import com.fredy.ui.util.formatMonthDateYear
+import com.fredy.theme.util.formatMonthDateYear
 
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi

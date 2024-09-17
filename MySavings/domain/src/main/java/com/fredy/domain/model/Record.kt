@@ -1,8 +1,7 @@
 package com.fredy.domain.model
 
 import com.fredy.domain.enums.RecordType
-import com.fredy.ui.util.formatDateDay
-import com.google.firebase.Timestamp
+import com.fredy.theme.util.formatDateDay
 import java.time.LocalDateTime
 
 
@@ -22,7 +21,7 @@ data class Record(
 
     fun doesMatchSearchQuery(query: String): Boolean {
         val matchingCombinations = listOf(
-            "${com.fredy.ui.util.formatDateDay(recordDateTime)}",
+            "${formatDateDay(recordDateTime)}",
             "$recordAmount",
             "${recordType.name}",
             "$recordCurrency",

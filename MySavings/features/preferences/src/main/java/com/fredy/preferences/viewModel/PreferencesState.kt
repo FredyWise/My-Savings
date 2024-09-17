@@ -3,9 +3,9 @@ package com.fredy.preferences.viewModel
 
 import androidx.compose.ui.graphics.Color
 import com.fredy.preferences.domain.DisplayMode
-import com.fredy.ui.util.defaultDarkExpenseColor
-import com.fredy.ui.util.defaultDarkIncomeColor
-import com.fredy.ui.util.defaultDarkTransferColor
+import com.fredy.theme.util.defaultDarkExpenseColor
+import com.fredy.theme.util.defaultDarkIncomeColor
+import com.fredy.theme.util.defaultDarkTransferColor
 import java.time.LocalDateTime
 import java.time.LocalTime
 

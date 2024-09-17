@@ -5,7 +5,7 @@ import com.fredy.domain.useCases.CurrencyUseCases.CurrencyUseCases
 import com.fredy.domain.useCases.CurrencyUseCases.currencyConverter
 
 data class RecordUseCases(
-    val upsertRecordItem: UpsertRecordItem,
+//    val upsertRecordItem: UpsertRecordItem,
     val deleteRecordItem: DeleteRecordItem,
     val updateRecordItemWithDeletedWallet: UpdateRecordItemWithDeletedWallet,
     val updateRecordItemWithDeletedCategory: UpdateRecordItemWithDeletedCategory,

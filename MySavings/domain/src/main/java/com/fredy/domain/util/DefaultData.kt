@@ -4,7 +4,7 @@ import com.fredy.domain.enums.RecordType
 import com.fredy.domain.model.Book
 import com.fredy.domain.model.Category
 import com.fredy.domain.model.Wallet
-import com.fredy.mysavings.Util.SavingsIcons.transferIcon
+import com.fredy.domain.util.SavingsIcons.transferIcon
 
 object DefaultData {
 

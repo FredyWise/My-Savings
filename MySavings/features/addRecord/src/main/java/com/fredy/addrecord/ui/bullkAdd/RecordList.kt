@@ -32,8 +32,8 @@ import com.fredy.domain.enumsChecker.isExpense
 import com.fredy.domain.enumsChecker.isTransfer
 import com.fredy.domain.model.Record
 import com.fredy.ui.components.list.SimpleEntityItem
-import com.fredy.ui.util.BalanceColor
-import com.fredy.ui.util.formatBalanceAmount
+import com.fredy.theme.util.BalanceColor
+import com.fredy.theme.util.formatBalanceAmount
 
 @Composable
 fun RecordList(

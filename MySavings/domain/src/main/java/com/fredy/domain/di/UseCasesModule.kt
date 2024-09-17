@@ -98,7 +98,7 @@ object UseCasesModule {
         bookRepository: BookRepository,
     ): RecordUseCases {
         val recordUseCases = RecordUseCases(
-            upsertRecordItem = UpsertRecordItem(recordRepository, userRepository),
+//            upsertRecordItem = UpsertRecordItem(recordRepository, userRepository),
             deleteRecordItem = DeleteRecordItem(recordRepository),
             updateRecordItemWithDeletedWallet = UpdateRecordItemWithDeletedWallet(
                 recordRepository,

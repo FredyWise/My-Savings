@@ -1,8 +1,8 @@
 package com.fredy.domain.useCases.WalletUseCases
 
+import com.fredy.domain.mappers.walletUIMapper.getCurrencies
 import com.fredy.domain.repository.UserRepository
 import com.fredy.domain.repository.WalletRepository
-import com.fredy.mysavings.Feature.Domain.Util.Mappers.getCurrencies
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

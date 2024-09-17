@@ -1,4 +1,4 @@
-package com.fredy.ui.util
+package com.fredy.theme.util
 
 import android.content.res.Configuration
 import androidx.compose.ui.tooling.preview.Preview

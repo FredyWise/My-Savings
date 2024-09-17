@@ -38,9 +38,9 @@ import com.fredy.domain.model.Category
 import com.fredy.mysavings.R
 import com.fredy.ui.components.handler.ResourceHandler
 import com.fredy.ui.components.list.SimpleEntityItem
-import com.fredy.ui.util.BalanceColor
-import com.fredy.ui.util.defaultColors
-import com.fredy.ui.util.formatBalanceAmount
+import com.fredy.theme.util.BalanceColor
+import com.fredy.theme.util.defaultColors
+import com.fredy.theme.util.formatBalanceAmount
 
 
 @Composable
