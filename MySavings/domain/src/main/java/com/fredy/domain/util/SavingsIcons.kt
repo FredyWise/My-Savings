@@ -1,6 +1,6 @@
 package com.fredy.domain.util
 
-import com.fredy.core.R
+import com.fredy.domain.R
 import com.fredy.domain.modelUI.SavingsIcon
 
 
