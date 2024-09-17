@@ -2,7 +2,7 @@ package com.fredy.io.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.fredy.core.util.resource.Resource
+import com.fredy.domain.util.resource.Resource
 import com.fredy.domain.enums.RecordType
 import com.fredy.domain.model.Record
 import com.fredy.domain.model.TrueRecord
@@ -11,7 +11,7 @@ import com.fredy.io.domain.model.DBInfo
 import com.fredy.domain.useCases.BookUseCases.BookUseCases
 import com.fredy.io.domain.useCases.IOUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.RecordUseCases
-import com.fredy.theme.util.formatMonthDateYear
+import com.fredy.ui.util.formatMonthDateYear
 
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi

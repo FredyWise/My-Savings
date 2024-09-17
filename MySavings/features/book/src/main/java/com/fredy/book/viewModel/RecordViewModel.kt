@@ -5,16 +5,22 @@ package com.fredy.book.viewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.fredy.core.util.resource.Resource
+import com.fredy.domain.util.resource.Resource
 import com.fredy.domain.enums.RecordType
 import com.fredy.domain.enums.SortType
 import com.fredy.domain.repository.SyncRepository
 import com.fredy.domain.useCases.BookUseCases.BookUseCases
 import com.fredy.domain.useCases.RecordUseCases.RecordUseCases
 import com.fredy.domain.useCases.WalletUseCases.WalletUseCases
-import com.fredy.theme.model.BalanceBar
-import com.fredy.theme.model.BalanceItem
-import com.fredy.theme.util.update
+import com.fredy.ui.FilterState
+import com.fredy.ui.map
+import com.fredy.ui.minusDate
+import com.fredy.domain.modelUI.BalanceBar
+import com.fredy.domain.modelUI.BalanceItem
+import com.fredy.ui.plusDate
+import com.fredy.ui.updateDate
+import com.fredy.ui.updateType
+import com.fredy.ui.util.update
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
@@ -234,7 +240,7 @@ class RecordViewModel @Inject constructor(
     ) { resourceData, categoriesWithAmount, recordsWithinSpecificTime, accountsWithAmount, recordResource ->
         resourceData.copy(
             categoriesWithAmountResource = categoriesWithAmount,
-            accountsWithAmountResource = accountsWithAmount,
+            walletsWithAmountResource = accountsWithAmount,
             recordsWithinTimeResource = recordsWithinSpecificTime,
             recordMapsResource = recordResource
         )

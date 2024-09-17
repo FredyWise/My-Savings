@@ -26,6 +26,7 @@ import com.fredy.data.database.firestoreDataSource.RecordDataSourceImpl
 import com.fredy.data.database.firestoreDataSource.UserDataSource
 import com.fredy.data.database.firestoreDataSource.UserDataSourceImpl
 import com.fredy.data.database.SavingsDatabase
+
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
 import dagger.Provides

@@ -1,7 +1,7 @@
 package com.fredy.domain.useCases.RecordUseCases
 
-import com.fredy.core.util.resource.DataError
-import com.fredy.core.util.resource.Resource
+import com.fredy.domain.util.resource.DataError
+import com.fredy.domain.util.resource.Resource
 import com.fredy.domain.enums.SortType
 import com.fredy.domain.model.Book
 import com.fredy.domain.model.BookMap
@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import timber.log.Timber
 import java.time.LocalDateTime
 
 class GetUserTrueRecordMapsFromSpecificTime(
@@ -41,7 +42,7 @@ class GetUserTrueRecordMapsFromSpecificTime(
             currentUser?.let {
                 val userId = currentUser.firebaseUserId
                 val userCurrency = if (currency.isEmpty()) "" else currentUser.userCurrency
-                Log.i(
+                Timber.i(
                     "getUserTrueRecordMapsFromSpecificTime: $startDate\n:\n$endDate,\ncurrency: $currency"
                 )
 
@@ -57,12 +58,12 @@ class GetUserTrueRecordMapsFromSpecificTime(
                         .convertRecordCurrency(userCurrency, useUserCurrency)
                         .toBookSortedMaps(books)
                 }.collect { data ->
-                    Log.i("getUserTrueRecordMapsFromSpecificTime.Data: $data")
+                    Timber.i("getUserTrueRecordMapsFromSpecificTime.Data: $data")
                     emit(Resource.Success(data))
                 }
             }
         }.catch { e ->
-            Log.e(
+            Timber.e(
                 "getUserTrueRecordMapsFromSpecificTime.Error: $e"
             )
             emit(Resource.Error(DataError.Local.UNKNOWN))

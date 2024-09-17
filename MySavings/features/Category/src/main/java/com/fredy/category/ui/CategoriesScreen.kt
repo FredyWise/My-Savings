@@ -18,12 +18,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.fredy.category.viewModel.CategoryEvent
 import com.fredy.category.viewModel.CategoryState
-import com.fredy.core.util.SavingsIcons.AddCircleOutlineIcon
+import com.fredy.domain.util.SavingsIcons.AddCircleOutlineIcon
 import com.fredy.domain.model.Category
 import com.fredy.domain.model.TrueRecord
-import com.fredy.theme.components.button.SimpleButton
-import com.fredy.theme.components.handler.ResourceHandler
-import com.fredy.theme.components.list.SearchBar
+import com.fredy.ui.components.button.SimpleButton
+import com.fredy.ui.components.handler.ResourceHandler
+import com.fredy.ui.components.list.SearchBar
 
 @Composable
 fun CategoriesScreen(

@@ -3,7 +3,7 @@ package com.fredy.domain.useCases.CurrencyUseCases
 import com.fredy.domain.model.Rate
 import com.fredy.domain.repository.CurrencyRepository
 
-import com.fredy.theme.model.BalanceItem
+import com.fredy.ui.model.BalanceItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -15,7 +15,7 @@ class ConvertCurrencyData(
         amount: Double,
         fromCurrency: String,
         toCurrency: String
-    ): BalanceItem {
+    ): com.fredy.ui.model.BalanceItem {
         Timber.i(
             "convert: $amount$fromCurrency\nto: $toCurrency"
         )
@@ -35,7 +35,7 @@ class ConvertCurrencyData(
                     rates
                 )
             }
-            BalanceItem(
+            com.fredy.ui.model.BalanceItem(
                 amount = result,
                 currency = toCurrency
             )

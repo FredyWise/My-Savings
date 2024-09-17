@@ -1,6 +1,6 @@
 package com.fredy.data.di
 
-import com.fredy.core.credentials.ApiCredentials
+import com.fredy.domain.credentials.ApiCredentials
 import com.fredy.data.api.countryModels.CountryApi
 import com.fredy.data.api.currencyModels.CurrencyApi
 import com.fredy.data.api.tabScannerModel.TabScannerAPI

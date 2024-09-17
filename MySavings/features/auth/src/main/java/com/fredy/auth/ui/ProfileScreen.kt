@@ -51,9 +51,9 @@ import coil.compose.rememberAsyncImagePainter
 import com.fredy.auth.util.isValidPassword
 import com.fredy.auth.viewModel.AuthEvent
 import com.fredy.auth.viewModel.AuthState
-import com.fredy.core.util.resource.Resource
+import com.fredy.domain.util.resource.Resource
 import com.fredy.domain.model.UserData
-import com.fredy.theme.components.navigation.DefaultAppBar
+import com.fredy.ui.components.navigation.DefaultAppBar
 
 @Composable
 fun ProfileScreen(

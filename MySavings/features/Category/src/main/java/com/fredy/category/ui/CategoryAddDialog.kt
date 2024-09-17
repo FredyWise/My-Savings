@@ -17,12 +17,12 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.fredy.category.viewModel.CategoryEvent
 import com.fredy.category.viewModel.CategoryState
-import com.fredy.core.util.SavingsIcons.categoryIcons
+import com.fredy.domain.util.SavingsIcons.categoryIcons
 import com.fredy.domain.enums.RecordType
-import com.fredy.theme.components.button.TypeRadioButton
-import com.fredy.theme.components.dialogs.SimpleDialog
-import com.fredy.theme.components.list.ChooseIcon
-import com.fredy.theme.model.ActionWithName
+import com.fredy.ui.components.button.TypeRadioButton
+import com.fredy.ui.components.dialogs.SimpleDialog
+import com.fredy.ui.components.list.ChooseIcon
+import com.fredy.domain.modelUI.ActionWithName
 
 @Composable
 fun CategoryAddDialog(

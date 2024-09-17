@@ -11,7 +11,7 @@ data class RecordUseCases(
     val updateRecordItemWithDeletedBook: UpdateRecordItemWithDeletedBook,
     val getRecordById: GetRecordById,
     val getAllTrueRecordsWithinSpecificTime: GetAllTrueRecordsWithinSpecificTime, //io
-    val getAllBooks: GetAllBooks, //search
+    val getAllBooks: GetAllRecords, //search
     val getUserCategoryRecordsOrderedByDateTime: GetUserCategoryRecordsOrderedByDateTime, // category
     val getUserWalletRecordsOrderedByDateTime: GetUserWalletRecordsOrderedByDateTime, // account
     val getUserTrueRecordMapsFromSpecificTime: GetUserTrueRecordMapsFromSpecificTime, // record main screen

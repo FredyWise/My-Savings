@@ -1,7 +1,7 @@
 package com.fredy.mysavings.Util
 
 import com.fredy.mysavings.R
-import com.fredy.core.model.SavingsIcon
+import com.fredy.domain.modelUI.SavingsIcon
 
 object SavingsIcons {
     val appIcon = SavingsIcon(R.drawable.app_icon, "Application Icon")

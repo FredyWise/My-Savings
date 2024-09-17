@@ -1,7 +1,7 @@
 package com.fredy.domain.repository
 
 
-import com.fredy.core.credentials.ApiCredentials
+import com.fredy.domain.credentials.ApiCredentials
 import com.fredy.domain.model.Currency
 import com.fredy.domain.model.Rate
 import com.fredy.domain.model.RatesCache

@@ -12,7 +12,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.fredy.category.viewModel.CategoryState
-import com.fredy.theme.components.list.SimpleEntityItem
+import com.fredy.ui.components.list.SimpleEntityItem
 
 @Composable
 fun CategoryDefaultAdditionalAppBar(

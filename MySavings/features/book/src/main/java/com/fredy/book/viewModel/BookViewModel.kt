@@ -2,10 +2,12 @@ package com.fredy.book.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.fredy.domain.util.resource.Resource
 import com.fredy.domain.enums.SortType
 import com.fredy.domain.model.Book
-import com.fredy.mysavings.Feature.Domain.UseCases.BookUseCases.BookUseCases
-import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.RecordUseCases
+import com.fredy.domain.useCases.BookUseCases.BookUseCases
+import com.fredy.domain.useCases.RecordUseCases.RecordUseCases
+
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -19,7 +21,7 @@ import javax.inject.Inject
 class BookViewModel @Inject constructor(
     private val bookUseCases: BookUseCases,
     private val recordUseCases: RecordUseCases
-): ViewModel() {
+) : ViewModel() {
     private val _sortType = MutableStateFlow(
         SortType.ASCENDING
     )
@@ -37,7 +39,7 @@ class BookViewModel @Inject constructor(
 
     val state = combine(
         _state, _sortType, _bookResource,
-    ) { state, sortType, bookResource,  ->
+    ) { state, sortType, bookResource ->
         state.copy(
             bookResource = bookResource,
             sortType = sortType,
@@ -64,7 +66,7 @@ class BookViewModel @Inject constructor(
                 }
             }
 
-            is BookEvent.HideDialog -> {
+            BookEvent.HideDialog -> {
                 _state.update {
                     it.copy(
                         isAddingBook = false
@@ -82,7 +84,7 @@ class BookViewModel @Inject constructor(
                 }
             }
 
-            is BookEvent.SaveBook -> {
+            BookEvent.SaveBook -> {
                 val bookId = state.value.bookId
                 val bookName = state.value.bookName
                 val bookIcon = state.value.bookIcon
@@ -134,7 +136,6 @@ class BookViewModel @Inject constructor(
 //            is BookEvent.SortBook -> {
 //                _sortType.value = event.sortType
 //            }
-
         }
     }
 }

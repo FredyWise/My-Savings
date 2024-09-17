@@ -1,6 +1,6 @@
 package com.fredy.data.api.countryModels
 
-import com.fredy.core.credentials.ApiCredentials
+import com.fredy.domain.credentials.ApiCredentials
 import com.fredy.data.api.countryModels.countryDTO.CountriesResponse
 import com.fredy.data.api.countryModels.countryDTO.CurrencyInfoResponse
 import retrofit2.Response

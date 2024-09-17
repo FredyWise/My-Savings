@@ -1,6 +1,6 @@
 package com.fredy.mysavings.Feature.Domain.Repository
 
-import com.fredy.core.credentials.ApiCredentials
+import com.fredy.domain.credentials.ApiCredentials
 import com.fredy.data.api.countryModels.countryDTO.CurrencyInfoItem
 import com.fredy.domain.model.Currency
 import com.fredy.domain.model.RatesCache

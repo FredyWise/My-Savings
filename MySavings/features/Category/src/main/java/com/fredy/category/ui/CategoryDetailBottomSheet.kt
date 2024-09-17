@@ -16,12 +16,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.fredy.category.viewModel.CategoryState
 import com.fredy.domain.enumsChecker.isTransfer
-import com.fredy.domain.model.Category
 import com.fredy.domain.model.TrueRecord
-import com.fredy.theme.components.list.SimpleEntityItem
-import com.fredy.theme.components.navigation.DetailAppBar
-import com.fredy.theme.util.formatBalanceAmount
-import com.fredy.theme.util.formatTime
+import com.fredy.ui.components.list.SimpleEntityItem
+import com.fredy.ui.components.navigation.DetailAppBar
+import com.fredy.ui.util.formatBalanceAmount
+import com.fredy.ui.util.formatTime
 
 
 @Composable

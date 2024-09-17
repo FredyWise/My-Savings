@@ -1,7 +1,7 @@
 package com.fredy.domain.repository
 
-import com.fredy.core.util.resource.DataError
-import com.fredy.core.util.resource.Resource
+import com.fredy.domain.util.resource.DataError
+import com.fredy.domain.util.resource.Resource
 import com.fredy.domain.model.UserData
 import com.google.firebase.auth.FirebaseUser
 

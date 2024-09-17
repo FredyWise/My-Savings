@@ -4,7 +4,7 @@ package com.fredy.data.repositoryImplement
 import com.fredy.data.api.tabScannerModel.tabScannerDTO.ResultResponse
 import com.fredy.data.api.tabScannerModel.TabScannerAPI
 import com.fredy.data.api.tabScannerModel.tabScannerDTO.ProcessResponse
-import com.fredy.data.mappers.convertToRecords
+import com.fredy.data.mappers.convertToDataRecords
 import com.fredy.domain.model.Record
 import com.fredy.domain.repository.TabScannerRepository
 import kotlinx.coroutines.Dispatchers
@@ -28,7 +28,7 @@ class TabScannerRepositoryImpl @Inject constructor(
                     "ProcessImage: finish",
                 )
                 token?.let {
-                    getProcessResult(it)?.convertToRecords()
+                    getProcessResult(it)?.convertToDataRecords()
                 }
             }
         }

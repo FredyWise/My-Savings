@@ -14,9 +14,6 @@ android {
 }
 
 dependencies {
-    // Projects
-    implementation(projects.core)
-    implementation(projects.domain)
 
     // Core
     // Core Functions

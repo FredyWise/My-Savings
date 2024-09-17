@@ -9,7 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.fredy.mysavings.R
-import com.fredy.theme.components.button.SimpleButton
+import com.fredy.ui.components.button.SimpleButton
 
 @Composable
 fun AddConfirmationRow(

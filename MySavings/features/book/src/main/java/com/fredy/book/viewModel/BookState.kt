@@ -1,10 +1,12 @@
 package com.fredy.book.viewModel
 
+import com.fredy.domain.util.resource.DataError
+import com.fredy.domain.util.resource.Resource
 import com.fredy.domain.enums.SortType
 import com.fredy.domain.model.Book
 
 data class BookState(
-    val bookResource: Resource<List<Book>> = Resource.Loading(),
+    val bookResource: Resource<List<Book>, DataError.Local> = Resource.Loading(),
     val book: Book = Book(),
     val bookId: String = "",
     val bookName: String = "",

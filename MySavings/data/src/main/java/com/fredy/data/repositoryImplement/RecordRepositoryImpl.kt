@@ -2,12 +2,15 @@ package com.fredy.data.repositoryImplement
 
 import com.fredy.data.database.dao.RecordDao
 import com.fredy.data.database.firestoreDataSource.RecordDataSource
+import com.fredy.data.mappers.toDataRecord
+import com.fredy.data.mappers.toDataRecords
+import com.fredy.data.mappers.toDomainRecords
+import com.fredy.data.mappers.toDomainTrueRecord
+import com.fredy.data.mappers.toDomainTrueRecords
 import com.fredy.domain.enums.RecordType
-import com.fredy.domain.enums.SortType
-import com.fredy.domain.model.RecordMap
+import com.fredy.domain.model.Record
 import com.fredy.domain.model.TrueRecord
 import com.fredy.domain.repository.RecordRepository
-import com.fredy.domain.util.mappers.toRecordSortedMaps
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -16,7 +19,6 @@ import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.time.LocalDateTime
 import javax.inject.Inject
-import com.fredy.domain.model.Record
 
 class RecordRepositoryImpl @Inject constructor(
     private val recordDataSource: RecordDataSource,
@@ -39,7 +41,7 @@ class RecordRepositoryImpl @Inject constructor(
                 )
             } else {
                 record
-            }
+            }.toDataRecord()
 
             recordDao.upsertRecordItem(tempRecord)
             recordDataSource.upsertRecordItem(
@@ -52,7 +54,7 @@ class RecordRepositoryImpl @Inject constructor(
     override suspend fun upsertAllRecordItems(records: List<Record>) {
         return withContext(Dispatchers.IO) {
             Timber.i("upsertAllRecordItemsRepo: $records")
-            val temRecords = records.map {record ->
+            val dataRecords = records.map { record ->
                 if (record.recordId.isEmpty()) {
                     val newRecordRef = recordCollection.document()
                     record.copy(
@@ -61,9 +63,9 @@ class RecordRepositoryImpl @Inject constructor(
                 } else {
                     record
                 }
-            }
-            recordDataSource.upsertAllRecordItem(temRecords)
-            recordDao.upsertAllRecordItem(temRecords)
+            }.toDataRecords()
+            recordDataSource.upsertAllRecordItem(dataRecords)
+            recordDao.upsertAllRecordItem(dataRecords)
         }
     }
 
@@ -72,16 +74,18 @@ class RecordRepositoryImpl @Inject constructor(
     ) {
         withContext(Dispatchers.IO) {
             Timber.i("deleteRecordItem: $record")
-            recordDataSource.deleteRecordItem(record)
-            recordDao.deleteRecordItem(record)
+            val dataRecord = record.toDataRecord()
+            recordDataSource.deleteRecordItem(dataRecord)
+            recordDao.deleteRecordItem(dataRecord)
         }
     }
 
     override suspend fun deleteAllRecordItems(records: List<Record>) {
         return withContext(Dispatchers.IO) {
             Timber.i("upsertAllRecordItemsRepo: $records")
-            recordDataSource.deleteAllRecordItemInList(records)
-            recordDao.deleteAllRecordItemInList(records)
+            val dataRecords = records.toDataRecords()
+            recordDataSource.deleteAllRecordItemInList(dataRecords)
+            recordDao.deleteAllRecordItemInList(dataRecords)
         }
     }
 
@@ -89,7 +93,7 @@ class RecordRepositoryImpl @Inject constructor(
         Timber.i("getRecordByIdRepo: $recordId")
         return recordDataSource.getRecordById(
             recordId
-        )
+        ).toDomainTrueRecord()
     }
 
 
@@ -101,9 +105,9 @@ class RecordRepositoryImpl @Inject constructor(
         Timber.i("getUserTrueRecordsFromSpecificTimeRepo: $userId, $startDate, $endDate")
         return flow {
             recordDataSource.getUserTrueRecordsFromSpecificTime(userId, startDate, endDate)
-                .collect {
-                    Timber.i("getUserTrueRecordsFromSpecificTimeRepo.Data: $it")
-                    emit(it)
+                .collect { data ->
+                    Timber.i("getUserTrueRecordsFromSpecificTimeRepo.Data: $data")
+                    emit(data.toDomainTrueRecords())
                 }
         }
     }
@@ -113,7 +117,7 @@ class RecordRepositoryImpl @Inject constructor(
         return flow {
             recordDataSource.getUserRecords(userId).collect {
                 Timber.i("getUserRecordsRepo.Data: $it")
-                emit(it)
+                emit(it.toDomainRecords())
             }
         }
 
@@ -125,7 +129,7 @@ class RecordRepositoryImpl @Inject constructor(
         return flow {
             recordDataSource.getUserTrueRecords(userId).collect { records ->
                 Timber.i("getRecordMapsRepo.Data: $records")
-                emit(records)
+                emit(records.toDomainTrueRecords())
             }
         }
     }
@@ -134,13 +138,13 @@ class RecordRepositoryImpl @Inject constructor(
         userId: String,
         categoryId: String,
         sortType: com.fredy.domain.enums.SortType,
-    ): Flow<List<RecordMap>> {
+    ): Flow<List<TrueRecord>> {
         Timber.i("getUserCategoryRecordsOrderedByDateTimeRepo: $userId")
         return flow {
             recordDataSource.getUserCategoryRecordsOrderedByDateTime(userId, categoryId)
                 .collect { records ->
                     Timber.i("getUserCategoryRecordsOrderedByDateTimeRepo.Data: $records")
-                    emit(records.toRecordSortedMaps())
+                    emit(records.toDomainTrueRecords())
                 }
         }
     }
@@ -149,20 +153,20 @@ class RecordRepositoryImpl @Inject constructor(
         userId: String,
         accountId: String,
         sortType: com.fredy.domain.enums.SortType,
-    ): Flow<List<RecordMap>> {
+    ): Flow<List<TrueRecord>> {
         Timber.i("getUserAccountRecordsOrderedByDateTimeRepo: $accountId")
         return flow {
             recordDataSource.getUserWalletRecordsOrderedByDateTime(userId, accountId)
                 .collect { records ->
                     Timber.i("getUserAccountRecordsOrderedByDateTimeRepo.Data: $records")
-                    emit(records.toRecordSortedMaps())
+                    emit(records.toDomainTrueRecords())
                 }
         }
     }
 
     override fun getUserRecordsByTypeFromSpecificTime(
         userId: String,
-        recordType: List<com.fredy.domain.enums.RecordType>,
+        recordType: List<RecordType>,
         startDate: LocalDateTime,
         endDate: LocalDateTime,
     ): Flow<List<Record>> {
@@ -175,7 +179,7 @@ class RecordRepositoryImpl @Inject constructor(
                 endDate
             ).collect { records ->
                 Timber.i("getUserRecordsByTypeFromSpecificTimeRepo.Data: $records")
-                emit(records)
+                emit(records.toDomainRecords())
             }
         }
     }
@@ -190,20 +194,20 @@ class RecordRepositoryImpl @Inject constructor(
             recordDataSource.getUserRecordsFromSpecificTime(userId, startDate, endDate)
                 .collect { records ->
                     Timber.i("getUserRecordsFromSpecificTimeRepo.Data: $records")
-                    emit(records)
+                    emit(records.toDomainRecords())
                 }
         }
     }
 
     override fun getUserRecordsByType(
         userId: String,
-        recordType: com.fredy.domain.enums.RecordType,
+        recordType: RecordType,
     ): Flow<List<Record>> {
         Timber.i("getUserRecordsByTypeRepo: $userId")
         return flow {
             recordDataSource.getUserRecordsByType(userId, recordType).collect { records ->
                 Timber.i("getUserRecordsByTypeRepo.Data: $records")
-                emit(records)
+                emit(records.toDomainRecords())
             }
         }
     }

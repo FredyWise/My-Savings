@@ -31,19 +31,20 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.fredy.core.util.SavingsIcons.savingsIcons
-import com.fredy.core.util.resource.Resource
-import com.fredy.domain.model.Wallet
-import com.fredy.domain.model.Category
+import com.fredy.domain.util.SavingsIcons.savingsIcons
+import com.fredy.domain.util.resource.DataError
+import com.fredy.domain.util.resource.Resource
 import com.fredy.domain.enums.RecordType
 import com.fredy.domain.enumsChecker.isTransfer
+import com.fredy.domain.model.Category
 import com.fredy.domain.model.CategoryMap
+import com.fredy.domain.model.Wallet
 import com.fredy.mysavings.R
-import com.fredy.theme.components.button.SimpleButton
-import com.fredy.theme.components.handler.ResourceHandler
-import com.fredy.theme.components.list.SimpleEntityItem
-import com.fredy.theme.util.BalanceColor
-import com.fredy.theme.util.formatBalanceAmount
+import com.fredy.ui.components.button.SimpleButton
+import com.fredy.ui.components.handler.ResourceHandler
+import com.fredy.ui.components.list.SimpleEntityItem
+import com.fredy.ui.util.BalanceColor
+import com.fredy.ui.util.formatBalanceAmount
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -54,10 +55,10 @@ fun AddBottomSheet(
     onDismissModal: (Boolean) -> Unit,
     isLeading: Boolean,
     recordType: RecordType,
-    walletState: WalletState,
-    categoryState: CategoryState,
-    onEventAccount: (WalletEvent) -> Unit,
-    onEventCategory: (CategoryEvent) -> Unit,
+    walletResource: Resource<List<Wallet>, DataError.Local>,
+    categoryResource: Resource<List<CategoryMap>, DataError.Local>,
+    showWalletDialog: (wallet: Wallet) -> Unit,
+    showCategoryDialog: (category: Category) -> Unit,
     onSelectFromAccount: (Wallet) -> Unit,
     onSelectToAccount: (Wallet) -> Unit,
     onSelectCategory: (Category) -> Unit,
@@ -71,23 +72,16 @@ fun AddBottomSheet(
         },
     ) {
         if (isLeading || recordType.isTransfer()) {
-            walletState.walletResource.let { resource ->
+            walletResource.let { resource ->
                 ResourceHandler(
-                    modifier = if (resource is Resource.Loading || resource.data.isNullOrEmpty()) Modifier.fillMaxHeight(
+                    modifier = if (resource is Resource.Loading || (resource as Resource.Success).data.isEmpty()) Modifier.fillMaxHeight(
                         0.5f
                     ) else Modifier,
                     resource = resource,
                     nullOrEmptyMessage = "You Didn't Have Any Account Yet",
                     isNullOrEmpty = { it.isNullOrEmpty() },
-                    errorMessage = resource.message ?: "",
                     onMessageClick = {
-                        onEventAccount(
-                            WalletEvent.ShowDialog(
-                                Wallet(
-                                    walletName = ""
-                                )
-                            )
-                        )
+                        showWalletDialog(Wallet(walletName = ""))
                     },
                 ) { data ->
                     if (isLeading) {
@@ -98,13 +92,7 @@ fun AddBottomSheet(
                                 onDismissModal(false)
                             },
                             onAddAccount = {
-                                onEventAccount(
-                                    WalletEvent.ShowDialog(
-                                        Wallet(
-                                            walletName = ""
-                                        )
-                                    )
-                                )
+                                showWalletDialog(Wallet(walletName = ""))
                             },
                         )
                     } else if (recordType.isTransfer()) {
@@ -115,36 +103,23 @@ fun AddBottomSheet(
                                 onDismissModal(false)
                             },
                             onAddAccount = {
-                                onEventAccount(
-                                    WalletEvent.ShowDialog(
-                                        Wallet(
-                                            walletName = ""
-                                        )
-                                    )
-                                )
+                                showWalletDialog(Wallet(walletName = ""))
                             },
                         )
                     }
                 }
             }
-        }else {
-            categoryState.categoryResource.let { resource ->
+        } else {
+            categoryResource.let { resource ->
                 ResourceHandler(
-                    modifier = if (resource is Resource.Loading || resource.data.isNullOrEmpty()) Modifier.fillMaxHeight(
+                    modifier = if (resource is Resource.Loading || (resource as Resource.Success).data.isEmpty()) Modifier.fillMaxHeight(
                         0.5f
                     ) else Modifier,
                     resource = resource,
                     nullOrEmptyMessage = "You Didn't Have Any Categories Yet",
                     isNullOrEmpty = { it.isNullOrEmpty() },
-                    errorMessage = resource.message ?: "",
                     onMessageClick = {
-                        onEventCategory(
-                            CategoryEvent.ShowDialog(
-                                Category(
-                                    categoryName = ""
-                                )
-                            )
-                        )
+                        showCategoryDialog(Category(categoryName = ""))
                     },
                 ) { data ->
                     if (!recordType.isTransfer()) {
@@ -156,13 +131,7 @@ fun AddBottomSheet(
                                 onDismissModal(false)
                             },
                             onAddCategory = {
-                                onEventCategory(
-                                    CategoryEvent.ShowDialog(
-                                        Category(
-                                            categoryName = ""
-                                        )
-                                    )
-                                )
+                                showCategoryDialog(Category(categoryName = ""))
                             },
                         )
                     }

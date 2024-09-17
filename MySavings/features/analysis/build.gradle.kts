@@ -3,7 +3,6 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     kotlin("kapt")
     id("dagger.hilt.android.plugin")
-    id("kotlin-parcelize")
 }
 
 android {
@@ -15,8 +14,9 @@ android {
 }
 
 dependencies {
-    implementation(projects.core)
+
     implementation(projects.domain)
+    implementation(projects.ui)
     implementation(projects.theme)
 
 

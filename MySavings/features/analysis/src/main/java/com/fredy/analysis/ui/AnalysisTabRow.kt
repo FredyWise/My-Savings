@@ -33,16 +33,16 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.fredy.mysavings.Feature.Presentation.Navigation.NavigationRoute
+import com.fredy.analysis.AnalysisNavigationRoute
 import java.util.Locale
 
 @Composable
 fun AnalysisTabRow(
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colorScheme.secondary,
-    allScreens: List<NavigationRoute>,
-    onTabSelected: (screen: NavigationRoute) -> Unit,
-    currentScreen: NavigationRoute
+    allScreens: List<AnalysisNavigationRoute>,
+    onTabSelected: (screen: AnalysisNavigationRoute) -> Unit,
+    currentScreen: AnalysisNavigationRoute
 ) {
     Row(
         modifier

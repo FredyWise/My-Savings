@@ -3,7 +3,7 @@ package com.fredy.mysavings.Feature.Presentation.ViewModels.CurrencyViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.yml.charts.common.extensions.isNotNull
-import com.fredy.core.credentials.ApiCredentials
+import com.fredy.domain.credentials.ApiCredentials
 import com.fredy.domain.useCases.CurrencyUseCases.CurrencyUseCases
 import com.fredy.mysavings.Feature.Domain.UseCases.UserUseCases.UserUseCases
 import com.fredy.domain.util.mappers.changeBase

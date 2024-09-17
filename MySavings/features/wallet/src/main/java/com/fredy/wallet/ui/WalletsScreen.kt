@@ -19,11 +19,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
-import com.fredy.core.util.SavingsIcons.AddCircleOutlineIcon
+import com.fredy.domain.util.SavingsIcons.AddCircleOutlineIcon
+import com.fredy.domain.model.TrueRecord
 import com.fredy.domain.model.Wallet
-import com.fredy.theme.components.button.SimpleButton
-import com.fredy.theme.components.handler.ResourceHandler
-import com.fredy.theme.components.list.SearchBar
+import com.fredy.ui.components.button.SimpleButton
+import com.fredy.ui.components.handler.ResourceHandler
+import com.fredy.ui.components.list.SearchBar
 import com.fredy.wallet.viewModel.WalletEvent
 import com.fredy.wallet.viewModel.WalletState
 
@@ -33,7 +34,7 @@ fun WalletsScreen(
     state: WalletState,
     onEvent: (WalletEvent) -> Unit,
     onUpdateRecord: () -> Unit,
-    onClickRecordDetail: (id: String) -> Unit
+    onShowRecordDialog: (trueRecord: TrueRecord) -> Unit
 ) {
     var isSheetOpen by rememberSaveable {
         mutableStateOf(false)
@@ -42,7 +43,7 @@ fun WalletsScreen(
         isSheetOpen = isSheetOpen,
         onCloseBottomSheet = { isSheetOpen = it },
         state = state,
-        onClickRecord = onClickRecordDetail
+        onShowRecordDialog = onShowRecordDialog
     )
     WalletAddDialog(
         state = state, onEvent = onEvent, onSaveEffect = onUpdateRecord

@@ -6,16 +6,16 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.fredy.mysavings.Feature.Presentation.Util.formatDateDay
-import com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel.RecordEvent
+import com.fredy.book.viewModel.RecordEvent
 import com.fredy.domain.model.RecordMap
-import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.CustomStickyHeader
+import com.fredy.ui.components.list.CustomStickyHeader
+import com.fredy.ui.util.formatDateDay
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -44,7 +44,7 @@ fun RecordBody(
                 )
             }
             items(trueRecordMap.records, key = { it.record.recordId }) { item ->
-                Divider(
+                HorizontalDivider(
                     modifier = Modifier.height(0.3.dp),
                     color = onBackgroundColor.copy(
                         alpha = 0.4f

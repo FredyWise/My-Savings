@@ -36,8 +36,8 @@ import com.fredy.addrecord.ui.ImageDialog
 import com.fredy.addrecord.ui.LauncherChooserDialog
 import com.fredy.addrecord.viewModel.AddRecordEvent
 import com.fredy.addrecord.viewModel.AddRecordState
-import com.fredy.core.util.resource.DataError
-import com.fredy.core.util.resource.Resource
+import com.fredy.domain.util.resource.DataError
+import com.fredy.domain.util.resource.Resource
 import com.fredy.domain.model.Record
 
 

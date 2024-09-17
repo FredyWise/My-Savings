@@ -17,7 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.fredy.addrecord.viewModel.AddRecordState
 import com.fredy.domain.enumsChecker.isTransfer
-import com.fredy.theme.components.button.SimpleButton
+import com.fredy.ui.components.button.SimpleButton
 
 @Composable
 fun ChooseAccountAndCategory(

@@ -14,9 +14,8 @@ import androidx.compose.ui.unit.dp
 import com.fredy.domain.enums.FilterType
 import com.fredy.domain.enums.SortType
 import com.fredy.mysavings.Feature.Presentation.Util.BalanceBar
-import com.fredy.theme.components.BalanceBar
-import com.fredy.theme.components.DisplayBar
-import com.fredy.theme.components.FilterDialog
+import com.fredy.ui.DisplayBar
+import com.fredy.ui.FilterDialog
 import java.time.LocalDate
 
 @Composable
@@ -58,7 +57,7 @@ fun MainFilterAppBar(
     }
 
     if (isChoosingFilter) {
-        FilterDialog(
+        com.fredy.ui.FilterDialog(
             title = "Display Option",
             selectedName = selectedFilter,
             checkboxList = checkboxesFilter,
@@ -93,7 +92,7 @@ fun MainFilterAppBar(
             )
             .heightIn(max = if (onShowAppBar) 100.dp else 0.dp)
     ) {
-        DisplayBar(
+        com.fredy.ui.DisplayBar(
             selectedDate = selectedDate,
             onDateChange = {
                 onDateChange(it)

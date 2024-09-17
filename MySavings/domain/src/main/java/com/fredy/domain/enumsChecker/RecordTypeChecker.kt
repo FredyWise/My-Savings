@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import com.fredy.domain.enums.RecordType
-import com.fredy.theme.util.BalanceColor
+import com.fredy.ui.util.BalanceColor
 
 fun RecordType.isTransfer(): Boolean {
     return this == RecordType.Transfer
@@ -22,9 +22,9 @@ fun RecordType.isIncome(): Boolean {
 
 @Composable
 fun RecordType.recordTypeColor(): Color {
-    val expenseColor by remember { mutableStateOf(BalanceColor.Expense) }
-    val transferColor by remember { mutableStateOf(BalanceColor.Transfer) }
-    val incomeColor by remember { mutableStateOf(BalanceColor.Income) }
+    val expenseColor by remember { mutableStateOf(com.fredy.ui.util.BalanceColor.Expense) }
+    val transferColor by remember { mutableStateOf(com.fredy.ui.util.BalanceColor.Transfer) }
+    val incomeColor by remember { mutableStateOf(com.fredy.ui.util.BalanceColor.Income) }
 
     return when (this) {
         RecordType.Expense -> expenseColor

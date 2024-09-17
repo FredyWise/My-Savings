@@ -4,9 +4,9 @@ import com.fredy.domain.enums.SortType
 import com.fredy.domain.model.RecordMap
 import com.fredy.domain.model.UserData
 import com.fredy.domain.model.Wallet
-import com.fredy.core.util.resource.DataError
-import com.fredy.core.util.resource.Resource
-import com.fredy.theme.model.BalanceBar
+import com.fredy.domain.util.resource.DataError
+import com.fredy.domain.util.resource.Resource
+import com.fredy.domain.modelUI.BalanceBar
 
 data class WalletState(
     val currentUser: UserData = UserData(),

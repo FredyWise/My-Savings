@@ -2,6 +2,7 @@ package com.fredy.domain.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.google.firebase.auth.FirebaseUser
 
 @Entity
 data class UserData(
@@ -13,3 +14,13 @@ data class UserData(
     val profilePictureUrl: String? = null,
     val userCurrency: String = "USD",
 )
+
+fun FirebaseUser.toUser(): UserData {
+    return UserData(
+        firebaseUserId = uid,
+        username = displayName,
+        email = email,
+        phone = phoneNumber,
+        profilePictureUrl = photoUrl.toString(),
+    )
+}

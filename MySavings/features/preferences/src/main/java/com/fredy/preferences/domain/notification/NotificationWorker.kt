@@ -11,7 +11,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.fredy.core.util.ActivityProvider
+import com.fredy.domain.util.ActivityProvider
 import com.fredy.mysavings.Util.SavingsIcons.appIcon
 import dagger.hilt.android.qualifiers.ApplicationContext
 

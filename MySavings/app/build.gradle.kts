@@ -45,9 +45,9 @@ android {
 
 dependencies {
     // Projects
-    implementation(projects.core)
     implementation(projects.domain)
     implementation(projects.theme)
+    implementation(projects.ui)
     implementation(projects.features.auth)
     implementation(projects.features.preferences)
     implementation(projects.features.book)

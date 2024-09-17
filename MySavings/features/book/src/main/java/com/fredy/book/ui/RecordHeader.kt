@@ -26,8 +26,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.fredy.domain.util.SavingsIcons
 import com.fredy.domain.model.Book
-import com.fredy.mysavings.Feature.Presentation.Util.DefaultData
 import com.fredy.mysavings.R
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -74,7 +74,7 @@ fun RecordHeader(
                             55.dp
                         ),
                     painter = painterResource(
-                        id = DefaultData.savingsIcons[item.bookIconDescription]?.image
+                        id = SavingsIcons.savingsIcons[item.bookIconDescription]?.image
                             ?: item.bookIcon
                     ),
                     contentDescription = item.bookIconDescription,

@@ -29,8 +29,8 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.fredy.domain.model.Record
-import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SimpleDialog
-import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SimpleWarningDialog
+import com.fredy.ui.components.dialogs.SimpleDialog
+import com.fredy.ui.components.dialogs.SimpleWarningDialog
 
 @Composable
 fun RecordAddDialog(

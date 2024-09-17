@@ -11,7 +11,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
-import com.fredy.core.util.ActivityProvider
+import com.fredy.domain.util.ActivityProvider
 
 import com.fredy.auth.viewModel.AuthViewModel
 import com.fredy.auth.viewModel.AuthEvent

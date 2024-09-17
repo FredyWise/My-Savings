@@ -1,7 +1,7 @@
 package com.fredy.domain.useCases.RecordUseCases
 
-import com.fredy.core.util.resource.DataError
-import com.fredy.core.util.resource.Resource
+import com.fredy.domain.util.resource.DataError
+import com.fredy.domain.util.resource.Resource
 import com.fredy.domain.enums.RecordType
 import com.fredy.domain.enums.SortType
 import com.fredy.domain.model.Book

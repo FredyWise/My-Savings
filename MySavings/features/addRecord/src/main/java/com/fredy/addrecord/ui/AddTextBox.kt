@@ -18,7 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import com.fredy.theme.components.TextBox
+import com.fredy.ui.components.TextBox
 
 @Composable
 fun AddTextBox(

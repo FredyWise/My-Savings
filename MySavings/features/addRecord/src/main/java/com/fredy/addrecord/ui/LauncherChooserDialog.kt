@@ -25,7 +25,7 @@ import com.canhub.cropper.CropImageOptions
 import com.fredy.addrecord.viewModel.createImageUri
 import com.fredy.addrecord.viewModel.detectTextFromImage
 
-import com.fredy.theme.components.dialogs.SimpleAlertDialog
+import com.fredy.ui.components.dialogs.SimpleAlertDialog
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState

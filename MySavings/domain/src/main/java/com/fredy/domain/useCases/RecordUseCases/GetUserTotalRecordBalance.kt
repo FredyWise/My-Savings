@@ -6,7 +6,7 @@ import com.fredy.domain.repository.RecordRepository
 import com.fredy.domain.repository.UserRepository
 import com.fredy.domain.useCases.CurrencyUseCases.CurrencyUseCases
 import com.fredy.mysavings.Feature.Presentation.Util.minDate
-import com.fredy.theme.model.BalanceItem
+import com.fredy.ui.model.BalanceItem
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
@@ -24,7 +24,7 @@ class GetUserTotalRecordBalance(
         startDate: LocalDateTime,
         endDate: LocalDateTime,
         book: Book,
-    ): Flow<BalanceItem> {
+    ): Flow<com.fredy.ui.model.BalanceItem> {
         return flow {
             val currentUser = userRepository.getCurrentUser()
             currentUser?.let {
@@ -40,7 +40,7 @@ class GetUserTotalRecordBalance(
                     records.filter { it.bookIdFk == book.bookId }
                         .getTotalRecordBalance(currencyUseCases, userCurrency)
                 }.collect { recordTotalAmount ->
-                    val data = BalanceItem(
+                    val data = com.fredy.ui.model.BalanceItem(
                         name = "Balance: ",
                         amount = recordTotalAmount,
                         currency = userCurrency

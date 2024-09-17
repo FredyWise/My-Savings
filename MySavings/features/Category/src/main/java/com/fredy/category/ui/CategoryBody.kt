@@ -26,10 +26,10 @@ import androidx.compose.ui.unit.dp
 import com.fredy.category.viewModel.CategoryEvent
 import com.fredy.domain.model.Category
 import com.fredy.domain.model.CategoryMap
-import com.fredy.theme.components.dialogs.SimpleWarningDialog
-import com.fredy.theme.components.list.AdvancedEntityItem
-import com.fredy.theme.components.list.CustomStickyHeader
-import com.fredy.theme.model.ActionWithName
+import com.fredy.ui.components.dialogs.SimpleWarningDialog
+import com.fredy.ui.components.list.AdvancedEntityItem
+import com.fredy.ui.components.list.CustomStickyHeader
+import com.fredy.domain.modelUI.ActionWithName
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

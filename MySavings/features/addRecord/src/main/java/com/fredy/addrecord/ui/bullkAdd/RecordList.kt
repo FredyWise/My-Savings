@@ -28,12 +28,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.fredy.domain.enumsChecker.isExpense
+import com.fredy.domain.enumsChecker.isTransfer
 import com.fredy.domain.model.Record
-import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SimpleEntityItem
-import com.fredy.mysavings.Feature.Presentation.Util.BalanceColor
-import com.fredy.mysavings.Feature.Presentation.Util.formatBalanceAmount
-import com.fredy.mysavings.Feature.Presentation.Util.isExpense
-import com.fredy.mysavings.Feature.Presentation.Util.isTransfer
+import com.fredy.ui.components.list.SimpleEntityItem
+import com.fredy.ui.util.BalanceColor
+import com.fredy.ui.util.formatBalanceAmount
 
 @Composable
 fun RecordList(
@@ -114,7 +114,7 @@ fun RecordList(
                 item {
                     val firstRecord = records.first()
                     val totalAmount =
-                        records.sumOf { if (isExpense(it.recordType)) it.recordAmount else 0.0 }
+                        records.sumOf { if (it.recordType.isExpense()) it.recordAmount else 0.0 }
                     SimpleEntityItem(
                         modifier = modifier
                             .background(
@@ -161,9 +161,7 @@ fun RecordList(
                                 fontWeight = FontWeight.Bold,
                                 color = BalanceColor(
                                     amount = totalAmount,
-                                    isTransfer = isTransfer(
-                                        firstRecord.recordType
-                                    )
+                                    isTransfer = firstRecord.recordType.isTransfer()
                                 ),
                                 modifier = Modifier.padding(
                                     end = 10.dp

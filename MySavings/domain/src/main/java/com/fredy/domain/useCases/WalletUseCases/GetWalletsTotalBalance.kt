@@ -5,7 +5,7 @@ import com.fredy.domain.repository.UserRepository
 import com.fredy.domain.repository.WalletRepository
 import com.fredy.domain.useCases.CurrencyUseCases.CurrencyUseCases
 import com.fredy.domain.useCases.CurrencyUseCases.currencyConverter
-import com.fredy.theme.model.BalanceItem
+import com.fredy.ui.model.BalanceItem
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
@@ -14,7 +14,7 @@ class GetWalletsTotalBalance(
     private val currencyUseCases: CurrencyUseCases,
     private val userRepository: UserRepository
 ) {
-    operator fun invoke(): Flow<BalanceItem> {
+    operator fun invoke(): Flow<com.fredy.ui.model.BalanceItem> {
         return flow {
             val currentUser = userRepository.getCurrentUser()
             currentUser?.let {
@@ -22,7 +22,7 @@ class GetWalletsTotalBalance(
                 val userCurrency = currentUser.userCurrency
                 repository.getUserWallets(userId).collect { accounts ->
                     val totalAccountBalance = accounts.getTotalAccountBalance(userCurrency)
-                    val data = BalanceItem(
+                    val data = com.fredy.ui.model.BalanceItem(
                         "Total Balance",
                         totalAccountBalance,
                         userCurrency

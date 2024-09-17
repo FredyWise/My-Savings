@@ -23,8 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.fredy.auth.R
-import com.fredy.core.util.SavingsIcons.GoogleButtonIcon
+import com.fredy.domain.util.SavingsIcons.GoogleButtonIcon
 
 
 @Composable

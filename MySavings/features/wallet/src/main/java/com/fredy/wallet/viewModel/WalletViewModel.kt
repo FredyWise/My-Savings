@@ -2,18 +2,15 @@ package com.fredy.wallet.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.fredy.domain.util.resource.Resource
 import com.fredy.domain.enums.RecordType
 import com.fredy.domain.enums.SortType
-
 import com.fredy.domain.model.Wallet
+import com.fredy.domain.useCases.RecordUseCases.RecordUseCases
 import com.fredy.domain.useCases.UserUseCases.UserUseCases
-import com.fredy.core.util.resource.Resource
-import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.RecordUseCases
-
 import com.fredy.domain.useCases.WalletUseCases.WalletUseCases
-import com.fredy.theme.model.BalanceBar
-import com.fredy.theme.model.BalanceItem
-
+import com.fredy.domain.modelUI.BalanceBar
+import com.fredy.domain.modelUI.BalanceItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted

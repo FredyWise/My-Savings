@@ -20,7 +20,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
-import com.fredy.theme.components.dialogs.SimpleAlertDialog
+import com.fredy.ui.components.dialogs.SimpleAlertDialog
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

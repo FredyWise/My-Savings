@@ -51,8 +51,8 @@ import com.fredy.auth.util.isValidLogin
 import com.fredy.auth.util.isValidPhoneNumber
 import com.fredy.auth.viewModel.AuthEvent
 import com.fredy.auth.viewModel.AuthState
-import com.fredy.core.credentials.Configuration
-import com.fredy.core.util.resource.Resource
+import com.fredy.domain.credentials.Configuration
+import com.fredy.domain.util.resource.Resource
 import com.google.android.gms.auth.api.signin.GoogleSignIn.*
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException

@@ -6,10 +6,10 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.fredy.addrecord.domain.TabScannerUseCases
+import com.fredy.addrecord.domain.usecases.bulkAdd.TabScannerUseCases
 import com.fredy.addrecord.viewModel.AddRecordEvent
-import com.fredy.core.util.resource.DataError
-import com.fredy.core.util.resource.Resource
+import com.fredy.domain.util.resource.DataError
+import com.fredy.domain.util.resource.Resource
 import com.fredy.domain.model.Record
 import com.fredy.addrecord.viewModel.AddRecordState
 import com.fredy.addrecord.viewModel.BulkAddRecordEvent
@@ -25,14 +25,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddBulkRecordViewModel @Inject constructor(
-//    private val recordUseCases: RecordUseCases,
-//    private val currencyUseCase: CurrencyUseCases,
     private val tabScannerUseCases: TabScannerUseCases,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     var state by mutableStateOf(AddRecordState())
 
-    val resource = MutableStateFlow<Resource<AddRecordState,DataError.Local>>(
+    val resource = MutableStateFlow<Resource<AddRecordState, DataError.Local>>(
         Resource.Loading()
     )
 

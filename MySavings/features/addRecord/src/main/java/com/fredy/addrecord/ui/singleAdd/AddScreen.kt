@@ -6,16 +6,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -25,8 +22,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.fredy.addrecord.ui.AddBottomSheet
 import com.fredy.addrecord.ui.AddConfirmationRow
 import com.fredy.addrecord.ui.AddTextBox
 import com.fredy.addrecord.ui.DateAndTimePicker
@@ -34,44 +29,32 @@ import com.fredy.addrecord.ui.ImageDialog
 import com.fredy.addrecord.ui.LauncherChooserDialog
 import com.fredy.addrecord.viewModel.AddRecordEvent
 import com.fredy.addrecord.viewModel.AddRecordState
-import com.fredy.addrecord.viewModel.singleAdd.AddSingleRecordViewModel
-import com.fredy.core.util.resource.DataError
-import com.fredy.core.util.resource.Resource
+import com.fredy.addrecord.viewModel.singleAdd.CalcEvent
+import com.fredy.addrecord.viewModel.singleAdd.CalcState
+import com.fredy.domain.util.resource.DataError
+import com.fredy.domain.util.resource.Resource
 import com.fredy.domain.enums.RecordType
-import com.fredy.domain.enumsChecker.isTransfer
-import com.fredy.theme.components.button.TypeRadioButton
-import com.fredy.theme.components.dialogs.SimpleWarningDialog
-import com.fredy.theme.model.ActionWithName
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import kotlinx.coroutines.launch
+import com.fredy.ui.components.button.TypeRadioButton
+import com.fredy.ui.components.dialogs.SimpleWarningDialog
+import com.fredy.domain.modelUI.ActionWithName
 
-@OptIn(
-    ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class,
-)
+
 @Composable
 fun AddScreen(
     modifier: Modifier = Modifier,
     onBackground: Color = MaterialTheme.colorScheme.onBackground,
+    state: AddRecordState,
+    onEvent: (AddRecordEvent) -> Unit,
+    calculatorState: CalcState,
+    onAction: (CalcEvent) -> Unit,
+    resource: Resource<AddRecordState, DataError.Local>,
     navigateUp: () -> Unit,
-    viewModel: AddSingleRecordViewModel,
-    categoryViewModel: CategoryViewModel,
-    walletViewModel: WalletViewModel
-) {
+    onSaveClick: () -> Unit,
+    onLeftButtonClick: () -> Unit,
+    onRightButtonClick: () -> Unit,
+
+    ) {
     val context = LocalContext.current
-    val state = viewModel.state
-    val resource by viewModel.resource.collectAsStateWithLifecycle()
-    val onEvent = viewModel::onEvent
-    val categoryState by categoryViewModel.state.collectAsStateWithLifecycle()
-    val categoryEvent = categoryViewModel::onEvent
-    val walletState by walletViewModel.state.collectAsStateWithLifecycle()
-    val walletEvent = walletViewModel::onEvent
-    val calculatorState = viewModel.calcState
-    val scope = rememberCoroutineScope()
-    var isLeading by remember {
-        mutableStateOf(
-            true
-        )
-    }
     var isShowImage by rememberSaveable {
         mutableStateOf(false)
     }
@@ -138,89 +121,12 @@ fun AddScreen(
     )
 
 
-    val sheetState = rememberModalBottomSheetState()
-    var isSheetOpen by rememberSaveable {
-        mutableStateOf(false)
-    }
-    if (isSheetOpen) {
-        AddBottomSheet(
-            sheetState = sheetState,
-            onDismissModal = {
-                scope.launch {
-                    isSheetOpen = it
-                }
-            },
-            isLeading = isLeading,
-            recordType = state.recordType,
-            walletState = walletState,
-            categoryState = categoryState,
-            onEventAccount = walletEvent,
-            onEventCategory = categoryEvent,
-            onSelectFromAccount = {
-                onEvent(
-                    AddRecordEvent.AccountIdFromFk(
-                        it
-                    )
-                )
-            },
-            onSelectToAccount = {
-                onEvent(
-                    AddRecordEvent.AccountIdToFk(
-                        it
-                    )
-                )
-            },
-            onSelectCategory = {
-                onEvent(
-                    AddRecordEvent.CategoryIdFk(
-                        it
-                    )
-                )
-            }
-        )
-    }
-    WalletAddDialog(
-        state = walletState,
-        onEvent = walletEvent
-    )
-
-    if (categoryState.isAddingCategory) {
-        if (state.recordType != categoryState.categoryType) {
-            categoryViewModel.onEvent(
-                CategoryEvent.CategoryTypes(
-                    state.recordType
-                )
-            )
-        }
-        CategoryAddDialog(
-            state = categoryState,
-            onEvent = categoryEvent
-        )
-    }
     Column(
         modifier = modifier
     ) {
         AddConfirmationRow(
             onCancelClick = { navigateUp() },
-            onSaveClick = {
-                onEvent(
-                    AddRecordEvent.SaveRecord {
-                        walletViewModel.onEvent(
-                            WalletEvent.UpdateWalletBalance(
-                                state.fromWallet
-                            )
-                        )
-                        if (state.recordType.isTransfer()) {
-                            walletViewModel.onEvent(
-                                WalletEvent.UpdateWalletBalance(
-                                    state.toWallet
-                                )
-                            )
-                        }
-                        navigateUp()
-                    },
-                )
-            },
+            onSaveClick = onSaveClick
         )
         AddTextBox(
             value = state.recordNotes,
@@ -280,18 +186,8 @@ fun AddScreen(
         )
         ChooseAccountAndCategory(
             state = state,
-            onLeftButtonClick = {
-                isLeading = true
-                scope.launch {
-                    isSheetOpen = true
-                }
-            },
-            onRightButtonClick = {
-                isLeading = false
-                scope.launch {
-                    isSheetOpen = true
-                }
-            },
+            onLeftButtonClick = onLeftButtonClick,
+            onRightButtonClick = onRightButtonClick,
         )
         Calculator(
             modifier = Modifier
@@ -301,7 +197,7 @@ fun AddScreen(
                 .background(MaterialTheme.colorScheme.surface)
                 .padding(8.dp),
             state = calculatorState,
-            onAction = viewModel::onAction,
+            onAction = onAction,
             textStyle = MaterialTheme.typography.displayMedium,
             buttonAspectRatio = 1.8f,
             leadingObject = {
@@ -323,7 +219,7 @@ fun AddScreen(
         DateAndTimePicker(
             applicationContext = context,
             state = state,
-            onEvent = viewModel::onEvent,
+            onEvent = onEvent,
         )
     }
 }

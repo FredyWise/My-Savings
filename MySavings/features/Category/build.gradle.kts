@@ -15,8 +15,8 @@ android {
 }
 dependencies {
     // Projects
-    implementation(projects.core)
     implementation(projects.theme)
+    implementation(projects.ui)
     implementation(projects.domain)
 
     // Core

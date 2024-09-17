@@ -3,11 +3,11 @@ package com.fredy.currency.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.yml.charts.common.extensions.isNotNull
-import com.fredy.core.credentials.ApiCredentials
+import com.fredy.domain.credentials.ApiCredentials
 import com.fredy.domain.useCases.CurrencyUseCases.CurrencyUseCases
 import com.fredy.domain.useCases.CurrencyUseCases.changeBase
 import com.fredy.domain.useCases.UserUseCases.UserUseCases
-import com.fredy.core.util.resource.Resource
+import com.fredy.domain.util.resource.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted

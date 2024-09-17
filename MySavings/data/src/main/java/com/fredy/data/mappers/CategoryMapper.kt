@@ -26,14 +26,3 @@ fun DataCategory.toDomainCategory(): DomainCategory {
         categoryIconDescription,
     )
 }
-
-fun List<DomainCategory>.toCategoryMaps(): List<CategoryMap> {
-    return this.groupBy {
-        it.categoryType
-    }.toSortedMap().map {
-        CategoryMap(
-            categoryType = it.key,
-            categories = it.value
-        )
-    }
-}

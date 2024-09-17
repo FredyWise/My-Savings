@@ -17,8 +17,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.fredy.addrecord.viewModel.AddRecordState
-import com.fredy.theme.components.button.SimpleButton
-import com.fredy.theme.util.formatBalanceAmount
+import com.fredy.ui.components.button.SimpleButton
+import com.fredy.ui.util.formatBalanceAmount
 
 
 @Composable

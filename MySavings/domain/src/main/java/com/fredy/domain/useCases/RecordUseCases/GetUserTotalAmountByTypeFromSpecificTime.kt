@@ -5,11 +5,12 @@ import com.fredy.domain.model.Book
 import com.fredy.domain.repository.RecordRepository
 import com.fredy.domain.repository.UserRepository
 import com.fredy.domain.useCases.CurrencyUseCases.CurrencyUseCases
-import com.fredy.theme.model.BalanceItem
+import com.fredy.ui.model.BalanceItem
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import timber.log.Timber
 import java.time.LocalDateTime
 
 class GetUserTotalAmountByTypeFromSpecificTime(
@@ -28,7 +29,7 @@ class GetUserTotalAmountByTypeFromSpecificTime(
             currentUser?.let {
                 val userId = currentUser.firebaseUserId
                 val userCurrency = currentUser.userCurrency
-                Log.i("getUserTotalAmountByTypeFromSpecificTime: $recordType")
+                Timber.i("getUserTotalAmountByTypeFromSpecificTime: $recordType")
 
                 recordRepository.getUserRecordsByTypeFromSpecificTime(
                     userId,
@@ -44,14 +45,14 @@ class GetUserTotalAmountByTypeFromSpecificTime(
                         amount = recordTotalAmount,
                         currency = userCurrency
                     )
-                    Log.i(
+                    Timber.i(
                         "getUserTotalAmountByTypeFromSpecificTime.Data: $data"
                     )
                     emit(data)
                 }
             }
         }.catch { e ->
-            Log.e(
+            Timber.e(
                 "getUserTotalAmountByTypeFromSpecificTime.Error: $e"
             )
         }

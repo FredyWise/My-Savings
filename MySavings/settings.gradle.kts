@@ -19,7 +19,6 @@ rootProject.name = "MySavings"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 include(":app")
 include(":features:auth")
-include(":core")
 include(":theme")
 include(":domain")
 include(":data")

@@ -1,6 +1,5 @@
 package com.fredy.mysavings.navigation
 
-import BulkAddScreen
 import android.widget.Toast
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -32,9 +31,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
 import com.fredy.addrecord.ui.AddBottomSheet
+import com.fredy.addrecord.ui.bullkAdd.BulkAddScreen
 import com.fredy.addrecord.ui.singleAdd.AddScreen
+import com.fredy.addrecord.viewModel.AddRecordEvent
+import com.fredy.addrecord.viewModel.BulkAddRecordEvent
 import com.fredy.addrecord.viewModel.bulkAdd.AddBulkRecordViewModel
 import com.fredy.addrecord.viewModel.singleAdd.AddSingleRecordViewModel
+import com.fredy.analysis.viewModel.AnalysisViewModel
 import com.fredy.auth.authenticationNavGraph
 import com.fredy.auth.ui.ProfileScreen
 import com.fredy.auth.viewModel.AuthEvent
@@ -45,18 +48,17 @@ import com.fredy.book.viewModel.BookEvent
 import com.fredy.book.viewModel.BookViewModel
 import com.fredy.book.viewModel.RecordEvent
 import com.fredy.book.viewModel.RecordViewModel
+import com.fredy.category.ui.CategoryAddDialog
+import com.fredy.category.viewModel.CategoryEvent
 import com.fredy.category.viewModel.CategoryViewModel
 import com.fredy.currency.ui.CurrencyScreen
 import com.fredy.currency.viewModel.CurrencyViewModel
+import com.fredy.domain.enums.RecordType
+import com.fredy.domain.enumsChecker.isTransfer
 import com.fredy.io.ui.ExportScreen
 import com.fredy.io.viewModel.InputOutputViewModel
 import com.fredy.mysavings.Feature.Presentation.Screens.AddRecord.AddBulk.RecordAddDialog
 import com.fredy.mysavings.Feature.Presentation.Screens.NavigationComponent.MainScreen
-import com.fredy.addrecord.viewModel.AddRecordEvent
-import com.fredy.addrecord.viewModel.BulkAddRecordEvent
-import com.fredy.addrecord.ui.bullkAdd.BulkAddScreen
-import com.fredy.category.ui.CategoryAddDialog
-import com.fredy.domain.enums.RecordType
 import com.fredy.preferences.ui.PreferencesScreen
 import com.fredy.preferences.viewModel.PreferencesViewModel
 import com.fredy.search.ui.SearchScreen
@@ -103,6 +105,7 @@ fun NavGraphRoot(
                 },
             ) { entry ->
                 val recordViewModel = entry.sharedViewModel<RecordViewModel>(navController)
+                val analysisViewModel = entry.sharedViewModel<AnalysisViewModel>(navController)
                 val walletViewModel = entry.sharedViewModel<WalletViewModel>(navController)
                 val categoryViewModel = entry.sharedViewModel<CategoryViewModel>(navController)
                 val bookViewModel = entry.sharedViewModel<BookViewModel>(navController)
@@ -112,6 +115,7 @@ fun NavGraphRoot(
                 MainScreen(
                     rootNavController = navController,
                     recordViewModel = recordViewModel,
+                    analysisViewModel = analysisViewModel,
                     walletViewModel = walletViewModel,
                     categoryViewModel = categoryViewModel,
                     bookViewModel = bookViewModel,
@@ -152,9 +156,11 @@ fun NavGraphRoot(
                 val walletViewModel: WalletViewModel = hiltViewModel()
                 val walletState by walletViewModel.state.collectAsStateWithLifecycle()
                 val walletEvent = walletViewModel::onEvent
+                val walletResource = walletState.walletResource
                 val categoryViewModel: CategoryViewModel = hiltViewModel()
                 val categoryState by categoryViewModel.state.collectAsStateWithLifecycle()
                 val categoryEvent = categoryViewModel::onEvent
+                val categoryResource = categoryState.categoryResource
                 val viewModel: AddBulkRecordViewModel = hiltViewModel()
                 val state = viewModel.state
                 val resource by viewModel.resource.collectAsStateWithLifecycle()
@@ -194,10 +200,23 @@ fun NavGraphRoot(
                         },
                         isLeading = isLeading,
                         recordType = recordType,
-                        walletState = walletState,
-                        categoryState = categoryState,
-                        onEventAccount = walletEvent,
-                        onEventCategory = categoryEvent,
+
+                        walletResource = walletResource,
+                        categoryResource = categoryResource,
+                        showWalletDialog = {
+                            walletEvent(
+                                WalletEvent.ShowDialog(
+                                    it
+                                )
+                            )
+                        },
+                        showCategoryDialog = {
+                            categoryEvent(
+                                CategoryEvent.ShowDialog(
+                                    it
+                                )
+                            )
+                        },
                         onSelectFromAccount = {
                             onEvent(
                                 AddRecordEvent.AccountIdFromFk(
@@ -307,18 +326,140 @@ fun NavGraphRoot(
                 )
             ) { entry ->
                 val walletViewModel: WalletViewModel = hiltViewModel()
+                val walletState by walletViewModel.state.collectAsStateWithLifecycle()
+                val walletEvent = walletViewModel::onEvent
+                val walletResource = walletState.walletResource
                 val categoryViewModel: CategoryViewModel = hiltViewModel()
+                val categoryState by categoryViewModel.state.collectAsStateWithLifecycle()
+                val categoryEvent = categoryViewModel::onEvent
+                val categoryResource = categoryState.categoryResource
                 val viewModel: AddSingleRecordViewModel = hiltViewModel()
+                val state = viewModel.state
+                val resource by viewModel.resource.collectAsStateWithLifecycle()
+                val onEvent = viewModel::onEvent
+                val onAction = viewModel::onAction
+                val calculatorState = viewModel.calcState
                 Timber.d("NavGraphRoot: Add")
+
+                val scope = rememberCoroutineScope()
+                var isLeading by remember {
+                    mutableStateOf(
+                        true
+                    )
+                }
+                val sheetState = rememberModalBottomSheetState()
+                var isSheetOpen by rememberSaveable {
+                    mutableStateOf(false)
+                }
+                if (isSheetOpen) {
+                    AddBottomSheet(
+                        sheetState = sheetState,
+                        onDismissModal = {
+                            scope.launch {
+                                isSheetOpen = it
+                            }
+                        },
+                        isLeading = isLeading,
+                        recordType = state.recordType,
+                        walletResource = walletResource,
+                        categoryResource = categoryResource,
+                        showWalletDialog = {
+                            walletEvent(
+                                WalletEvent.ShowDialog(
+                                    it
+                                )
+                            )
+                        },
+                        showCategoryDialog = {
+                            categoryEvent(
+                                CategoryEvent.ShowDialog(
+                                    it
+                                )
+                            )
+                        },
+                        onSelectFromAccount = {
+                            onEvent(
+                                AddRecordEvent.AccountIdFromFk(
+                                    it
+                                )
+                            )
+                        },
+                        onSelectToAccount = {
+                            onEvent(
+                                AddRecordEvent.AccountIdToFk(
+                                    it
+                                )
+                            )
+                        },
+                        onSelectCategory = {
+                            onEvent(
+                                AddRecordEvent.CategoryIdFk(
+                                    it
+                                )
+                            )
+                        }
+                    )
+                }
+                WalletAddDialog(
+                    state = walletState,
+                    onEvent = walletEvent
+                )
+                if (categoryState.isAddingCategory) {
+                    if (state.recordType != categoryState.categoryType) {
+                        categoryViewModel.onEvent(
+                            CategoryEvent.CategoryTypes(
+                                state.recordType
+                            )
+                        )
+                    }
+                    CategoryAddDialog(
+                        state = categoryState,
+                        onEvent = categoryEvent
+                    )
+                }
                 AddScreen(
                     modifier = Modifier.padding(
                         horizontal = 8.dp,
                         vertical = 4.dp
                     ),
+                    state = state,
+                    onEvent = onEvent,
+                    calculatorState = calculatorState,
+                    onAction = onAction,
+                    resource = resource,
                     navigateUp = { navController.navigateUp() },
-                    viewModel = viewModel,
-                    walletViewModel = walletViewModel,
-                    categoryViewModel = categoryViewModel
+                    onSaveClick = {
+                        onEvent(
+                            AddRecordEvent.SaveRecord {
+                                walletViewModel.onEvent(
+                                    WalletEvent.UpdateWalletBalance(
+                                        state.fromWallet
+                                    )
+                                )
+                                if (state.recordType.isTransfer()) {
+                                    walletViewModel.onEvent(
+                                        WalletEvent.UpdateWalletBalance(
+                                            state.toWallet
+                                        )
+                                    )
+                                }
+                                navController.navigateUp()
+                            },
+                        )
+                    },
+
+                    onLeftButtonClick = {
+                        isLeading = true
+                        scope.launch {
+                            isSheetOpen = true
+                        }
+                    },
+                    onRightButtonClick = {
+                        isLeading = false
+                        scope.launch {
+                            isSheetOpen = true
+                        }
+                    },
                 )
             }
             composable(

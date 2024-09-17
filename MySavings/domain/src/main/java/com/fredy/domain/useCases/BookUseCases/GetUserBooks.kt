@@ -1,7 +1,7 @@
 package com.fredy.domain.useCases.BookUseCases
 
-import com.fredy.core.util.resource.DataError
-import com.fredy.core.util.resource.Resource
+import com.fredy.domain.util.resource.DataError
+import com.fredy.domain.util.resource.Resource
 import com.fredy.domain.model.Book
 import com.fredy.domain.repository.UserRepository
 import com.fredy.domain.repository.BookRepository
@@ -14,8 +14,8 @@ class GetUserBooks(
     private val bookRepository: BookRepository,
     private val userRepository: UserRepository
 ) {
-    operator fun invoke(): Flow<Resource<List<Book>,DataError.Local>> {
-        return flow<Resource<List<Book>,DataError.Local>> {
+    operator fun invoke(): Flow<Resource<List<Book>, DataError.Local>> {
+        return flow<Resource<List<Book>, DataError.Local>> {
             emit(Resource.Loading())
             val currentUser = userRepository.getCurrentUser()
             currentUser?.let {

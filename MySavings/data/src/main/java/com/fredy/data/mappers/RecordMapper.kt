@@ -7,16 +7,73 @@ import com.fredy.domain.enums.RecordType
 import com.fredy.domain.enums.SortType
 import com.fredy.domain.model.Book
 import com.fredy.domain.model.BookMap
-import com.fredy.domain.model.Record
 import com.fredy.domain.model.RecordMap
-import com.fredy.domain.model.TrueRecord
 import timber.log.Timber
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import com.fredy.data.database.dto.Record as DataRecord
+import com.fredy.data.database.dto.TrueRecord as DataTrueRecord
 
-fun List<Record>.toTrueRecords(trueRecordComponentResult: RecordDataSourceImpl.TrueRecordComponentResult): List<TrueRecord> {
+import com.fredy.domain.model.Record as DomainRecord
+import com.fredy.domain.model.TrueRecord as DomainTrueRecord
+
+fun DataRecord.toDomainRecord(): DomainRecord {
+    return DomainRecord(
+        recordId,
+        walletIdFromFk,
+        walletIdToFk,
+        categoryIdFk,
+        userIdFk,
+        bookIdFk,
+        recordDateTime,
+        recordAmount,
+        recordCurrency,
+        recordType,
+        recordNotes,
+    )
+}
+
+fun DomainRecord.toDataRecord(): DataRecord {
+    return DataRecord(
+        recordId,
+        walletIdFromFk,
+        walletIdToFk,
+        categoryIdFk,
+        userIdFk,
+        bookIdFk,
+        TimestampConverter.fromDateTime(recordDateTime),
+        recordAmount,
+        recordCurrency,
+        recordType,
+        recordNotes,
+    )
+}
+
+fun List<DataRecord>.toDomainRecords(): List<DomainRecord> {
+    return this.map { it.toDomainRecord() }
+}
+
+fun List<DomainRecord>.toDataRecords(): List<DataRecord> {
+    return this.map { it.toDataRecord() }
+}
+
+fun DataTrueRecord.toDomainTrueRecord(): DomainTrueRecord {
+    return DomainTrueRecord(
+        record = record.toDomainRecord(),
+        fromWallet = fromWallet.toDomainWallet(),
+        toWallet = toWallet.toDomainWallet(),
+        toCategory = toCategory.toDomainCategory(),
+    )
+}
+
+fun List<DataTrueRecord>.toDomainTrueRecords(): List<DomainTrueRecord> {
+    return this.map { it.toDomainTrueRecord() }
+}
+
+
+fun List<DataRecord>.toTrueRecords(trueRecordComponentResult: RecordDataSourceImpl.TrueRecordComponentResult): List<DataTrueRecord> {
     return this.map { record ->
-        TrueRecord(
+        DataTrueRecord(
             record = record,
             fromWallet = trueRecordComponentResult.fromWallet.single { it.walletId == record.walletIdFromFk },
             toWallet = trueRecordComponentResult.toWallet.single { it.walletId == record.walletIdToFk },
@@ -25,7 +82,7 @@ fun List<Record>.toTrueRecords(trueRecordComponentResult: RecordDataSourceImpl.T
     }
 }
 
-fun List<Record>.filterRecordCurrency(currency: List<String>): List<Record> {
+fun List<DomainRecord>.filterRecordCurrency(currency: List<String>): List<DomainRecord> {
     return this.filter {
         currency.contains(
             it.recordCurrency
@@ -33,7 +90,7 @@ fun List<Record>.filterRecordCurrency(currency: List<String>): List<Record> {
     }
 }
 
-fun List<TrueRecord>.toRecordSortedMaps(sortType: SortType = SortType.DESCENDING): List<RecordMap> {
+fun List<DomainTrueRecord>.toRecordSortedMaps(sortType: SortType = SortType.DESCENDING): List<RecordMap> {
     return this.groupBy {
         it.record.recordDateTime.toLocalDate()
     }.toSortedMap(when (sortType) {
@@ -47,22 +104,22 @@ fun List<TrueRecord>.toRecordSortedMaps(sortType: SortType = SortType.DESCENDING
     }
 }
 
+//
+//fun List<DomainTrueRecord>.toBookSortedMaps(
+//    books: List<Book>,
+//    sortType: SortType = SortType.DESCENDING
+//): List<BookMap> {
+//    return books.map { book ->
+//        val records = this.filter { it.record.bookIdFk == book.bookId }
+//        BookMap(
+//            book = book,
+//            recordMaps = records.toRecordSortedMaps(sortType)
+//        )
+//    }
+//}
+//
 
-fun List<TrueRecord>.toBookSortedMaps(
-    books: List<Book>,
-    sortType: SortType = SortType.DESCENDING
-): List<BookMap> {
-    return books.map { book ->
-        val records = this.filter { it.record.bookIdFk == book.bookId }
-        BookMap(
-            book = book,
-            recordMaps = records.toRecordSortedMaps(sortType)
-        )
-    }
-}
-
-
-fun List<TrueRecord>.filterTrueRecordCurrency(currency: List<String>): List<TrueRecord> {
+fun List<DomainTrueRecord>.filterTrueRecordCurrency(currency: List<String>): List<DomainTrueRecord> {
     return this.filter {
         currency.contains(
             it.record.recordCurrency
@@ -70,8 +127,8 @@ fun List<TrueRecord>.filterTrueRecordCurrency(currency: List<String>): List<True
     }
 }
 
-fun ResultResponse.convertToRecords(): List<Record> {
-    val records = mutableListOf<Record>()
+fun ResultResponse.convertToDataRecords(): List<DataRecord> {
+    val records = mutableListOf<DataRecord>()
     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
     val recordTimestamp =
         TimestampConverter.fromDateTime(LocalDateTime.parse(this.result.date, formatter))
@@ -89,7 +146,7 @@ fun ResultResponse.convertToRecords(): List<Record> {
             Item Quantity: ${item.qty}
             """.trimIndent()
 
-        val record = Record(
+        val record = DataRecord(
             recordId = "$index",
             walletIdFromFk = "",
             walletIdToFk = "",
@@ -109,7 +166,7 @@ fun ResultResponse.convertToRecords(): List<Record> {
     this.result.summaryItems.firstOrNull { it.lineType == "Discount" }?.let { item ->
         val recordAmount =
             item.lineTotal.replace(".000", "").replace(",", "").toDoubleOrNull() ?: 0.0
-        val record = Record(
+        val record = DataRecord(
             recordId = "Discount",
             walletIdFromFk = "",
             walletIdToFk = "",

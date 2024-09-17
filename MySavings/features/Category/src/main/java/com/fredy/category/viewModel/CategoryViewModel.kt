@@ -2,10 +2,13 @@ package com.fredy.category.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.fredy.domain.util.resource.DataError
+import com.fredy.domain.util.resource.Resource
 import com.fredy.domain.enums.SortType
 import com.fredy.domain.model.Category
+import com.fredy.domain.model.CategoryMap
 import com.fredy.domain.useCases.CategoryUseCases.CategoryUseCases
-import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.RecordUseCases
+import com.fredy.domain.useCases.RecordUseCases.RecordUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -58,11 +61,17 @@ class CategoryViewModel @Inject constructor(
         if (state.searchQuery.isBlank()) {
             categoryResource
         } else {
-            Resource.Success(categoryResource.data!!.map { categoryMap ->
-                categoryMap.copy(categories = categoryMap.categories.filter {
-                    it.doesMatchSearchQuery(state.searchQuery)
-                })
-            })
+            if (categoryResource is Resource.Success) {
+                categoryResource.copy(
+                    data = categoryResource.data.map { categoryMap ->
+                        categoryMap.copy(categories = categoryMap.categories.filter {
+                            it.doesMatchSearchQuery(state.searchQuery)
+                        })
+                    }
+                )
+            } else {
+                categoryResource
+            }
         }
     }.onEach {
         _state.update {

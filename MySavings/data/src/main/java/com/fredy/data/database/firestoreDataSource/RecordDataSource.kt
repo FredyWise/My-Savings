@@ -1,11 +1,10 @@
 package com.fredy.data.database.firestoreDataSource
 
 import com.fredy.data.database.converter.TimestampConverter
+import com.fredy.data.database.dto.Category
 import com.fredy.domain.enums.RecordType
-import com.fredy.domain.model.Category
-import com.fredy.domain.model.TrueRecord
-import com.fredy.domain.model.Wallet
-import com.fredy.domain.util.mappers.toTrueRecords
+
+
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
@@ -25,7 +24,10 @@ import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.time.LocalDateTime
 import javax.inject.Inject
-import com.fredy.domain.model.Record
+import com.fredy.data.database.dto.Record
+import com.fredy.data.database.dto.TrueRecord
+import com.fredy.data.database.dto.Wallet
+import com.fredy.data.mappers.toTrueRecords
 
 interface RecordDataSource {
     suspend fun upsertRecordItem(record: Record)

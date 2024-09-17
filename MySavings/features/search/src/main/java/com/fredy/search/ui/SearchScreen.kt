@@ -14,9 +14,9 @@ import androidx.navigation.NavController
 import com.fredy.domain.model.Book
 import com.fredy.domain.model.TrueRecord
 import com.fredy.search.viewModel.SearchState
-import com.fredy.theme.components.handler.ResourceHandler
-import com.fredy.theme.components.list.SearchBar
-import com.fredy.theme.components.navigation.DefaultAppBar
+import com.fredy.ui.components.handler.ResourceHandler
+import com.fredy.ui.components.list.SearchBar
+import com.fredy.ui.components.navigation.DefaultAppBar
 
 
 @Composable

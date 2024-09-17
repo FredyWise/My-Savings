@@ -15,16 +15,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Divider
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,60 +29,52 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.fredy.analysis.ui.Charts.ChartSlimDonutWithTitle
-import com.fredy.analysis.viewModel.RecordEvent
-import com.fredy.analysis.viewModel.RecordState
+import com.fredy.analysis.viewModel.AnalysisEvent
+import com.fredy.analysis.viewModel.AnalysisState
+import com.fredy.domain.enums.RecordType
+import com.fredy.domain.enumsChecker.isExpense
+import com.fredy.domain.enumsChecker.recordTypeColor
+import com.fredy.domain.model.Category
 import com.fredy.mysavings.R
-import com.fredy.theme.components.handler.ResourceHandler
-import com.fredy.theme.components.list.SimpleEntityItem
-import com.fredy.theme.util.BalanceColor
-import com.fredy.theme.util.defaultColors
-import com.fredy.theme.util.formatBalanceAmount
+import com.fredy.ui.components.handler.ResourceHandler
+import com.fredy.ui.components.list.SimpleEntityItem
+import com.fredy.ui.util.BalanceColor
+import com.fredy.ui.util.defaultColors
+import com.fredy.ui.util.formatBalanceAmount
 
 
 @Composable
 fun AnalysisOverview(
     modifier: Modifier = Modifier,
-    state: RecordState,
-    onEvent: (RecordEvent) -> Unit,
-    categoryState: CategoryState,
-    categoryEvent: (CategoryEvent) -> Unit,
+    state: AnalysisState,
+    onEvent: (AnalysisEvent) -> Unit,
+    onGetCategoryDetails: (Category) -> Unit,
 ) {
-    var isSheetOpen by rememberSaveable {
-        mutableStateOf(false)
-    }
-    CategoryDetailBottomSheet(
-        isSheetOpen = isSheetOpen,
-        onCloseBottomSheet = { isSheetOpen = it },
-        recordEvent = onEvent,
-        state = categoryState
-    )
 
     state.resourceData.categoriesWithAmountResource.let { resource ->
         ResourceHandler(
             resource = resource,
             nullOrEmptyMessage = "There is no ${state.filterState.recordType.name} on this date yet",
             isNullOrEmpty = { it.isNullOrEmpty() },
-            errorMessage = resource.message ?: "",
             onMessageClick = {
                 onEvent(
-                    RecordEvent.ToggleRecordType
+                    AnalysisEvent.ToggleAnalysisType
                 )
             },
         ) { data ->
             val recordType = state.filterState.recordType
-            val items = if (isExpense(recordType)) data.reversed() else data
-            val totalAmount = if (isExpense(recordType)) {
-                state.balanceBar.expense.amount
-            } else if (isIncome(recordType)) {
-                state.balanceBar.income.amount
-            } else state.balanceBar.transfer.amount
-            val contentColor = RecordTypeColor(recordType = recordType)
-            val colors = (if (isExpense(recordType)) defaultColors
-            else defaultColors.reversed()).subList(
-                0,
-                items.size,
-            )
-
+            val items = if (recordType.isExpense()) data.reversed() else data
+            val totalAmount = when (recordType) {
+                RecordType.Expense -> state.balanceBar.expense.amount
+                RecordType.Income -> state.balanceBar.income.amount
+                RecordType.Transfer -> state.balanceBar.transfer.amount
+            }
+            val contentColor = recordType.recordTypeColor()
+            val colors =
+                (if (recordType.isExpense()) defaultColors else defaultColors.reversed()).subList(
+                    0,
+                    items.size
+                )
             val itemsProportion = items.extractProportions { proportion ->
                 proportion.amount.toFloat()
             }
@@ -111,7 +98,7 @@ fun AnalysisOverview(
                                 amountsTotal = totalAmount,
                                 onClickLabel = {
                                     onEvent(
-                                        RecordEvent.ToggleRecordType
+                                        AnalysisEvent.ToggleAnalysisType
                                     )
                                 },
                             )
@@ -160,7 +147,7 @@ fun AnalysisOverview(
                     }
                 }
                 itemsIndexed(items) { index, item ->
-                    Divider(
+                    HorizontalDivider(
                         modifier = Modifier.height(
                             0.3.dp
                         ),
@@ -170,12 +157,7 @@ fun AnalysisOverview(
                     )
                     SimpleEntityItem(
                         modifier = Modifier.clickable {
-                            categoryEvent(
-                                CategoryEvent.GetCategoryDetail(
-                                    item.category
-                                )
-                            )
-                            isSheetOpen = true
+                            onGetCategoryDetails(item.category)
                         },
                         icon = item.category.categoryIcon,
                         iconDescription = item.category.categoryIconDescription,
@@ -244,8 +226,7 @@ fun AnalysisOverview(
                             )
                         )
                         LinearProgressIndicator(
-                            progress = itemsProportion[index],
-                            color = colors[index],
+                            progress = { itemsProportion[index] },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clip(
@@ -254,6 +235,7 @@ fun AnalysisOverview(
                                 .height(
                                     8.dp
                                 ),
+                            color = colors[index],
                         )
                     }
                 }

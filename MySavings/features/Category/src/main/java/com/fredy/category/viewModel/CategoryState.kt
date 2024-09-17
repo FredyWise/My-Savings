@@ -1,7 +1,7 @@
 package com.fredy.category.viewModel
 
-import com.fredy.core.util.resource.DataError
-import com.fredy.core.util.resource.Resource
+import com.fredy.domain.util.resource.DataError
+import com.fredy.domain.util.resource.Resource
 import com.fredy.domain.enums.RecordType
 import com.fredy.domain.enums.SortType
 import com.fredy.domain.model.Category
@@ -9,8 +9,8 @@ import com.fredy.domain.model.CategoryMap
 import com.fredy.domain.model.RecordMap
 
 data class CategoryState(
-    val categoryResource: Resource<List<CategoryMap>,DataError.Local> = Resource.Loading(),
-    val recordMapsResource: Resource<List<RecordMap>,DataError.Local> = Resource.Loading(),
+    val categoryResource: Resource<List<CategoryMap>, DataError.Local> = Resource.Loading(),
+    val recordMapsResource: Resource<List<RecordMap>, DataError.Local> = Resource.Loading(),
     val category: Category = Category(),
     val categoryId: String = "",
     val categoryName: String = "",

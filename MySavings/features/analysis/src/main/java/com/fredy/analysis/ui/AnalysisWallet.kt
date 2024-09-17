@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Text
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
@@ -16,8 +17,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
@@ -27,50 +26,36 @@ import androidx.compose.ui.unit.dp
 import co.yml.charts.common.model.Point
 import co.yml.charts.ui.barchart.models.BarData
 import co.yml.charts.ui.barchart.models.GroupBar
-import com.fredy.mysavings.Feature.Presentation.Util.BalanceColor
-import com.fredy.mysavings.Feature.Presentation.Util.RecordTypeColor
-import com.fredy.mysavings.Feature.Presentation.Util.formatBalanceAmount
-import com.fredy.mysavings.Feature.Presentation.ViewModels.WalletViewModel.WalletState
-import com.fredy.mysavings.Feature.Presentation.ViewModels.WalletViewModel.WalletEvent
-import com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel.RecordEvent
-import com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel.RecordState
-import com.fredy.mysavings.Feature.Presentation.Screens.Wallet.WalletDetailBottomSheet
-import com.fredy.mysavings.Feature.Presentation.Screens.Record.Analysis.Charts.ChartGroupedBar
-import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.ResourceHandler
-import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SimpleEntityItem
+import com.fredy.analysis.ui.Charts.ChartGroupedBar
+import com.fredy.analysis.viewModel.AnalysisEvent
+import com.fredy.analysis.viewModel.AnalysisState
+import com.fredy.domain.enumsChecker.recordTypeColor
+import com.fredy.domain.model.Wallet
+import com.fredy.ui.components.handler.ResourceHandler
+import com.fredy.ui.components.list.SimpleEntityItem
+import com.fredy.ui.util.BalanceColor
+import com.fredy.ui.util.formatBalanceAmount
 import kotlin.math.absoluteValue
 
 @Composable
 fun AnalysisAccount(
     modifier: Modifier = Modifier,
-    state: RecordState,
-    onEvent: (RecordEvent) -> Unit,
-    walletState: WalletState,
-    accountEvent: (WalletEvent) -> Unit,
+    state: AnalysisState,
+    onEvent: (AnalysisEvent) -> Unit,
+    onGetWalletDetails: (Wallet) -> Unit,
 ) {
     val expenseColor by remember { mutableStateOf(BalanceColor.Expense) }
     val incomeColor by remember { mutableStateOf(BalanceColor.Income) }
 
 
-    var isSheetOpen by rememberSaveable {
-        mutableStateOf(false)
-    }
-    WalletDetailBottomSheet(
-        isSheetOpen = isSheetOpen,
-        onCloseBottomSheet = { isSheetOpen = it },
-        state = walletState,
-        recordEvent = onEvent
-    )
-
-    state.resourceData.accountsWithAmountResource.let { resource ->
+    state.resourceData.walletsWithAmountResource.let { resource ->
         ResourceHandler(
             resource = resource,
             nullOrEmptyMessage = "There is no ${state.filterState.recordType.name} on this date yet",
-            errorMessage = resource.message ?: "",
             isNullOrEmpty = { it.isNullOrEmpty() },
             onMessageClick = {
                 onEvent(
-                    RecordEvent.ToggleRecordType
+                    AnalysisEvent.ToggleAnalysisType
                 )
             },
         ) { data ->
@@ -79,7 +64,7 @@ fun AnalysisAccount(
                     ChartGroupedBar(
                         incomeColor = incomeColor,
                         expenseColor = expenseColor,
-                        infoColor = RecordTypeColor(recordType = state.filterState.recordType),
+                        infoColor = state.filterState.recordType.recordTypeColor(),
                         groupBarData = data.mapIndexed { index, item ->
                             GroupBar(
                                 label = item.wallet.walletName,
@@ -96,8 +81,7 @@ fun AnalysisAccount(
                                                 item.expenseAmount
                                             )
                                         }",
-
-                                        ),
+                                    ),
                                     BarData(
                                         Point(
                                             (index + 1).toFloat(),
@@ -127,8 +111,7 @@ fun AnalysisAccount(
                     )
                     SimpleEntityItem(
                         modifier = Modifier.clickable {
-                            accountEvent(WalletEvent.GetWalletDetail(item.wallet))
-                            isSheetOpen = true
+                            onGetWalletDetails(item.wallet)
                         },
                         icon = item.wallet.walletIcon,
                         iconDescription = item.wallet.walletIconDescription,

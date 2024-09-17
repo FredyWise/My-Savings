@@ -21,7 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.fredy.io.domain.model.DBInfo
-import com.fredy.theme.components.list.CustomStickyHeader
+import com.fredy.ui.components.list.CustomStickyHeader
 
 @Composable
 fun InformationBoard(

@@ -27,13 +27,13 @@ interface RecordRepository {
         userId: String,
         categoryId: String,
         sortType: SortType,
-    ): Flow<List<RecordMap>>
+    ): Flow<List<TrueRecord>>
 
     fun getUserAccountRecordsOrderedByDateTime(
         userId: String,
         accountId: String,
         sortType: SortType,
-    ): Flow<List<RecordMap>>
+    ): Flow<List<TrueRecord>>
 
     fun getUserRecordsByTypeFromSpecificTime(
         userId: String,

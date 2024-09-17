@@ -27,12 +27,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.fredy.mysavings.Feature.Presentation.Util.DefaultData
-import com.fredy.mysavings.Feature.Presentation.ViewModels.BookViewModel.BookState
-import com.fredy.mysavings.Feature.Presentation.ViewModels.BookViewModel.BookEvent
-import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.ChooseIcon
-import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SimpleDialog
-import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SimpleWarningDialog
+import com.fredy.book.viewModel.BookEvent
+import com.fredy.book.viewModel.BookState
+import com.fredy.domain.util.SavingsIcons
+import com.fredy.ui.components.dialogs.SimpleDialog
+import com.fredy.ui.components.dialogs.SimpleWarningDialog
+import com.fredy.ui.components.list.ChooseIcon
 
 @Composable
 fun BookAddDialog(
@@ -126,7 +126,7 @@ fun BookAddDialog(
                 },
             )
             ChooseIcon(
-                icons = DefaultData.allSavingsIcons, onClick = {
+                icons = SavingsIcons.allSavingsIcons, onClick = {
                     onEvent(
                         BookEvent.BookIcon(
                             icon = it.image,

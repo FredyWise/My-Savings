@@ -1,7 +1,7 @@
 package com.fredy.book.viewModel
 
 import com.fredy.domain.model.TrueRecord
-import com.fredy.mysavings.Feature.Presentation.Util.BalanceBar
+import com.fredy.domain.modelUI.BalanceBar
 
 data class RecordState(
     val resourceData: ResourceData = ResourceData(),

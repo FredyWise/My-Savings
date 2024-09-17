@@ -24,13 +24,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.fredy.core.util.SavingsIcons.savingsIcons
+import com.fredy.domain.util.SavingsIcons.savingsIcons
 import com.fredy.domain.model.Book
 import com.fredy.domain.model.BookMap
 import com.fredy.domain.model.TrueRecord
-import com.fredy.theme.components.RecordEntityItem
-import com.fredy.theme.components.list.CustomStickyHeader
-import com.fredy.theme.util.formatDateDay
+import com.fredy.ui.components.RecordEntityItem
+import com.fredy.ui.components.list.CustomStickyHeader
+import com.fredy.ui.util.formatDateDay
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

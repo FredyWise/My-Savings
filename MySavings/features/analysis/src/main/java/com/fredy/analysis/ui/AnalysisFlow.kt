@@ -22,27 +22,27 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import co.yml.charts.common.model.Point
 import com.fredy.analysis.ui.Charts.ChartLine
-import com.fredy.analysis.viewModel.RecordEvent
-import com.fredy.analysis.viewModel.RecordState
-import com.fredy.analysis.viewModel.isFilterTypeMonthBelow
+import com.fredy.analysis.viewModel.AnalysisEvent
+import com.fredy.analysis.viewModel.AnalysisState
+import com.fredy.ui.isFilterTypeMonthBelow
 import com.fredy.domain.enumsChecker.isExpense
 import com.fredy.domain.enumsChecker.isIncome
 import com.fredy.domain.enumsChecker.recordTypeColor
 import com.fredy.mysavings.R
-import com.fredy.theme.components.Calendar
-import com.fredy.theme.components.handler.ResourceHandler
-import com.fredy.theme.components.list.CustomStickyHeader
-import com.fredy.theme.components.list.SimpleEntityItem
-import com.fredy.theme.util.formatBalanceAmount
-import com.fredy.theme.util.formatDateDay
+import com.fredy.ui.components.Calendar
+import com.fredy.ui.components.handler.ResourceHandler
+import com.fredy.ui.components.list.CustomStickyHeader
+import com.fredy.ui.components.list.SimpleEntityItem
+import com.fredy.ui.util.formatBalanceAmount
+import com.fredy.ui.util.formatDateDay
 import kotlin.math.absoluteValue
 
 @Composable
 fun AnalysisFlow(
     modifier: Modifier = Modifier,
     onBackgroundColor: Color = MaterialTheme.colorScheme.secondary,
-    state: RecordState,
-    onEvent: (RecordEvent) -> Unit,
+    state: AnalysisState,
+    onEvent: (AnalysisEvent) -> Unit,
 ) {
     state.resourceData.recordsWithinTimeResource.let { resource ->
         ResourceHandler(
@@ -51,7 +51,7 @@ fun AnalysisFlow(
             isNullOrEmpty = { it.isNullOrEmpty() },
             onMessageClick = {
                 onEvent(
-                    RecordEvent.ToggleRecordType
+                    AnalysisEvent.ToggleAnalysisType
                 )
             },
         ) { data ->
@@ -94,7 +94,7 @@ fun AnalysisFlow(
                             .padding(top = 8.dp)
                             .clickable {
                                 onEvent(
-                                    RecordEvent.ToggleRecordType
+                                    AnalysisEvent.ToggleAnalysisType
                                 )
                             },
                     ) {

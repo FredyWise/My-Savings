@@ -5,6 +5,9 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -12,14 +15,19 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.fredy.analysis.ui.AnalysisScreen
-import com.fredy.analysis.viewModel.RecordViewModel
-import com.fredy.book.viewModel.BookViewModel
-import com.fredy.category.ui.CategoriesScreen
-import com.fredy.category.viewModel.CategoryViewModel
+import com.fredy.analysis.viewModel.AnalysisViewModel
 import com.fredy.book.ui.RecordsScreen
+import com.fredy.book.viewModel.BookViewModel
+import com.fredy.book.viewModel.RecordEvent
+import com.fredy.book.viewModel.RecordViewModel
+import com.fredy.category.ui.CategoriesScreen
+import com.fredy.category.ui.CategoryDetailBottomSheet
+import com.fredy.category.viewModel.CategoryEvent
+import com.fredy.category.viewModel.CategoryViewModel
+import com.fredy.wallet.ui.WalletDetailBottomSheet
 import com.fredy.wallet.ui.WalletsScreen
+import com.fredy.wallet.viewModel.WalletEvent
 import com.fredy.wallet.viewModel.WalletViewModel
-
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 
@@ -30,6 +38,7 @@ fun MainNavGraph(
     navController: NavHostController,
     modifier: Modifier = Modifier,
     recordViewModel: RecordViewModel,
+    analysisViewModel: AnalysisViewModel,
     walletViewModel: WalletViewModel,
     categoryViewModel: CategoryViewModel,
     bookViewModel: BookViewModel,
@@ -52,11 +61,15 @@ fun MainNavGraph(
             val bookState by bookViewModel.state.collectAsStateWithLifecycle()
 
             RecordsScreen(
-                rootNavController = rootNavController,
                 state = state,
                 onEvent = recordViewModel::onEvent,
                 bookState = bookState,
-                bookEvent = bookViewModel::onEvent
+                bookEvent = bookViewModel::onEvent,
+                onAddRecord = {
+                    rootNavController.navigate(
+                        "${NavigationRoute.Add.route}?bookId=${state.filterState.currentBook?.bookId}"
+                    )
+                }
             )
         }
         composable(
@@ -68,18 +81,52 @@ fun MainNavGraph(
                 fadeOut()
             },
         ) {
-            val state by recordViewModel.state.collectAsStateWithLifecycle()
+            val state by analysisViewModel.state.collectAsStateWithLifecycle()
+            val recordEvent = recordViewModel::onEvent
             val categoryState by categoryViewModel.state.collectAsStateWithLifecycle()
-            val accountState by walletViewModel.state.collectAsStateWithLifecycle()
-
+            val walletEvent = walletViewModel::onEvent
+            val walletState by walletViewModel.state.collectAsStateWithLifecycle()
+            val categoryEvent = categoryViewModel::onEvent
+            var isCategorySheetOpen by rememberSaveable {
+                mutableStateOf(false)
+            }
+            CategoryDetailBottomSheet(
+                isSheetOpen = isCategorySheetOpen,
+                onCloseBottomSheet = { isCategorySheetOpen = it },
+                state = categoryState,
+                onShowRecordDialog = { item ->
+                    recordEvent(
+                        RecordEvent.ShowDialog(item)
+                    )
+                },
+            )
+            var isWalletSheetOpen by rememberSaveable {
+                mutableStateOf(false)
+            }
+            WalletDetailBottomSheet(
+                isSheetOpen = isWalletSheetOpen,
+                onCloseBottomSheet = { isWalletSheetOpen = it },
+                state = walletState,
+                onShowRecordDialog = { item ->
+                    recordEvent(
+                        RecordEvent.ShowDialog(item)
+                    )
+                },
+            )
             AnalysisScreen(
                 rootNavController = rootNavController,
                 state = state,
-                onEvent = recordViewModel::onEvent,
-                categoryState = categoryState,
-                categoryEvent = categoryViewModel::onEvent,
-                walletState = accountState,
-                accountEvent = walletViewModel::onEvent
+                onEvent = analysisViewModel::onEvent,
+                onGetCategoryDetails = { category ->
+                    categoryEvent(CategoryEvent.GetCategoryDetail(category))
+                    isCategorySheetOpen = true
+
+                },
+                onGetWalletDetails = { wallet ->
+                    walletEvent(WalletEvent.GetWalletDetail(wallet))
+                    isWalletSheetOpen = true
+                }
+
             )
         }
         composable(
@@ -92,12 +139,19 @@ fun MainNavGraph(
             },
         ) {
             val state by walletViewModel.state.collectAsStateWithLifecycle()
+            val recordEvent = recordViewModel::onEvent
             WalletsScreen(
                 modifier = Modifier.padding(8.dp),
-                rootNavController = rootNavController,
                 state = state,
                 onEvent = walletViewModel::onEvent,
-                recordEvent = recordViewModel::onEvent,
+                onUpdateRecord = {
+                    recordEvent(RecordEvent.UpdateRecord)
+                },
+                onShowRecordDialog = { item ->
+                    recordEvent(
+                        RecordEvent.ShowDialog(item)
+                    )
+                },
             )
         }
         composable(
@@ -110,12 +164,19 @@ fun MainNavGraph(
             },
         ) {
             val state by categoryViewModel.state.collectAsStateWithLifecycle()
+            val recordEvent = recordViewModel::onEvent
             CategoriesScreen(
                 modifier = Modifier.padding(8.dp),
-                rootNavController = rootNavController,
                 state = state,
                 onEvent = categoryViewModel::onEvent,
-                recordEvent = recordViewModel::onEvent,
+                onUpdateRecord = {
+                    recordEvent(RecordEvent.UpdateRecord)
+                },
+                onShowRecordDialog = { item ->
+                    recordEvent(
+                        RecordEvent.ShowDialog(item)
+                    )
+                },
             )
         }
     }

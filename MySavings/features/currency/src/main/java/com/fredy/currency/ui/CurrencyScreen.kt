@@ -25,11 +25,11 @@ import androidx.navigation.NavController
 import com.fredy.currency.viewModel.CurrencyEvent
 import com.fredy.currency.viewModel.CurrencyState
 import com.fredy.domain.util.currencyCodes
-import com.fredy.theme.components.dialogs.SimpleDialog
-import com.fredy.theme.components.handler.ResourceHandler
-import com.fredy.theme.components.list.SimpleDropdown
-import com.fredy.theme.components.navigation.DefaultAppBar
-import com.fredy.theme.util.formatBalanceAmount
+import com.fredy.ui.components.dialogs.SimpleDialog
+import com.fredy.ui.components.handler.ResourceHandler
+import com.fredy.ui.components.list.SimpleDropdown
+import com.fredy.ui.components.navigation.DefaultAppBar
+import com.fredy.ui.util.formatBalanceAmount
 
 @Composable
 fun CurrencyScreen(

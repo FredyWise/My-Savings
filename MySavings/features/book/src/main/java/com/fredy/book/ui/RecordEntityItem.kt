@@ -20,12 +20,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.fredy.domain.model.TrueRecord
 import com.fredy.domain.enums.RecordType
-import com.fredy.mysavings.Feature.Presentation.Util.BalanceColor
-import com.fredy.mysavings.Feature.Presentation.Util.formatBalanceAmount
-import com.fredy.mysavings.Feature.Presentation.Util.isTransfer
-import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.SimpleEntityItem
+import com.fredy.domain.enumsChecker.isTransfer
+import com.fredy.domain.model.TrueRecord
+import com.fredy.ui.components.list.SimpleEntityItem
+import com.fredy.ui.util.BalanceColor
+import com.fredy.ui.util.formatBalanceAmount
 
 @Composable
 fun RecordEntityItem(
@@ -63,9 +63,7 @@ fun RecordEntityItem(
                 fontWeight = FontWeight.Bold,
                 color = BalanceColor(
                     amount = item.record.recordAmount,
-                    isTransfer = isTransfer(
-                        item.record.recordType
-                    )
+                    isTransfer = item.record.recordType.isTransfer()
                 ),
                 modifier = Modifier.padding(
                     end = 10.dp
@@ -75,7 +73,7 @@ fun RecordEntityItem(
         },
     ) {
         Text(
-            text = if (isTransfer(item.record.recordType)) {
+            text = if (item.record.recordType.isTransfer()) {
                 RecordType.Transfer.name
             } else {
                 item.toCategory.categoryName
@@ -117,7 +115,7 @@ fun RecordEntityItem(
                     overflow = TextOverflow.Ellipsis,
                 )
             }
-            if (isTransfer(item.record.recordType)) {
+            if (item.record.recordType.isTransfer()) {
                 Icon(
                     imageVector = Icons.Default.ArrowForward,
                     tint = onBackgroundColor,

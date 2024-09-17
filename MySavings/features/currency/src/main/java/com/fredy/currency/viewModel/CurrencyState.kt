@@ -3,8 +3,8 @@ package com.fredy.currency.viewModel
 import com.fredy.domain.model.Currency
 import com.fredy.domain.model.Rate
 import com.fredy.domain.model.UserData
-import com.fredy.core.util.resource.DataError
-import com.fredy.core.util.resource.Resource
+import com.fredy.domain.util.resource.DataError
+import com.fredy.domain.util.resource.Resource
 
 data class CurrencyState(
     val ratesResource: Resource<List<Rate>, DataError.Local> = Resource.Loading(),

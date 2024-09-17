@@ -45,7 +45,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.fredy.analysis.viewModel.RecordEvent
+import com.fredy.analysis.viewModel.AnalysisViewModel
+import com.fredy.book.viewModel.RecordEvent
 import com.fredy.book.viewModel.RecordViewModel
 import com.fredy.book.viewModel.BookViewModel
 import com.fredy.category.viewModel.CategoryViewModel
@@ -56,8 +57,8 @@ import com.fredy.mysavings.navigation.NavigationRoute
 import com.fredy.mysavings.navigation.bottomBarScreens
 import com.fredy.mysavings.navigation.drawerScreens
 import com.fredy.mysavings.navigation.navigateSingleTopTo
-import com.fredy.theme.components.dialogs.SimpleWarningDialog
-import com.fredy.theme.util.formatRangeOfDate
+import com.fredy.ui.dialogs.SimpleWarningDialog
+import com.fredy.ui.util.formatRangeOfDate
 import com.fredy.wallet.viewModel.WalletViewModel
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -72,6 +73,7 @@ fun MainScreen(
     onContentColor: Color = MaterialTheme.colorScheme.onSurface,
     rootNavController: NavHostController,
     recordViewModel: RecordViewModel,
+    analysisViewModel: AnalysisViewModel,
     walletViewModel: WalletViewModel,
     categoryViewModel: CategoryViewModel,
     bookViewModel: BookViewModel,
@@ -102,7 +104,7 @@ fun MainScreen(
         bottomBarScreens.find { it.route == currentDestination?.route } ?: NavigationRoute.Records
 
     var isShowWarning by remember { mutableStateOf(false) }
-    SimpleWarningDialog(
+    com.fredy.ui.dialogs.SimpleWarningDialog(
         isShowWarning = isShowWarning,
         onDismissRequest = { isShowWarning = false },
         onSaveClicked = {
@@ -336,7 +338,7 @@ fun MainScreen(
                             RecordEvent.ChangeDate(it)
                         )
                     },
-                    selectedDateFormat = formatRangeOfDate(
+                    selectedDateFormat = com.fredy.ui.util.formatRangeOfDate(
                         state.filterState.selectedDate,
                         state.filterState.filterType
                     ),
@@ -399,6 +401,7 @@ fun MainScreen(
                     innerPadding
                 ),
                 recordViewModel = recordViewModel,
+                analysisViewModel = analysisViewModel,
                 walletViewModel = walletViewModel,
                 categoryViewModel = categoryViewModel,
                 bookViewModel = bookViewModel,

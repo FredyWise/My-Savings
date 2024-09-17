@@ -35,11 +35,11 @@ import com.darkrockstudios.libraries.mpfilepicker.DirectoryPicker
 import com.darkrockstudios.libraries.mpfilepicker.FilePicker
 import com.fredy.io.viewModel.IOEvent
 import com.fredy.io.viewModel.IOState
-import com.fredy.theme.components.button.SettingButton
-import com.fredy.theme.components.dialogs.SimpleDialog
-import com.fredy.theme.components.list.SimpleDropdown
-import com.fredy.theme.components.navigation.DefaultAppBar
-import com.fredy.theme.util.formatMonthDateYear
+import com.fredy.ui.components.button.SettingButton
+import com.fredy.ui.components.dialogs.SimpleDialog
+import com.fredy.ui.components.list.SimpleDropdown
+import com.fredy.ui.components.navigation.DefaultAppBar
+import com.fredy.ui.util.formatMonthDateYear
 
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted

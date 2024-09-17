@@ -2,8 +2,8 @@ package com.fredy.addrecord.domain.usecases.singleAdd
 
 import co.yml.charts.common.extensions.isNotNull
 import com.fredy.addrecord.viewModel.AddRecordState
-import com.fredy.core.util.resource.DataError
-import com.fredy.core.util.resource.Resource
+import com.fredy.domain.util.resource.DataError
+import com.fredy.domain.util.resource.Resource
 import com.fredy.domain.enums.RecordType
 import com.fredy.domain.enumsChecker.isTransfer
 import com.fredy.domain.model.Record

@@ -4,8 +4,8 @@ import com.fredy.domain.model.Currency
 import com.fredy.domain.repository.CurrencyRepository
 import com.fredy.domain.repository.UserRepository
 import com.fredy.domain.util.isCacheValid
-import com.fredy.core.util.resource.DataError
-import com.fredy.core.util.resource.Resource
+import com.fredy.domain.util.resource.DataError
+import com.fredy.domain.util.resource.Resource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch

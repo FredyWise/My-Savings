@@ -2,7 +2,7 @@ package com.fredy.domain.model
 
 import androidx.room.Embedded
 import androidx.room.Relation
-import com.fredy.theme.util.formatDateDay
+import com.fredy.ui.util.formatDateDay
 
 data class TrueRecord(
     @Embedded val record: Record = Record(),
@@ -21,7 +21,7 @@ data class TrueRecord(
 ) {
     fun doesMatchSearchQuery(query: String): Boolean {
         val matchingCombinations = listOf(
-            "${formatDateDay(record.recordDateTime)}",
+            "${com.fredy.ui.util.formatDateDay(record.recordDateTime)}",
             "${record.recordAmount}",
             "${record.recordType.name}",
             "${record.recordNotes}",

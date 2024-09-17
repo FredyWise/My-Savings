@@ -1,6 +1,6 @@
 package com.fredy.mysavings.Data.APIs.TextCorrectionModels
 
-import com.fredy.core.credentials.ApiCredentials
+import com.fredy.domain.credentials.ApiCredentials
 import com.fredy.data.api.textCorrectionModels.textCorrectionDTO.TextCorrectionRequest
 import com.fredy.data.api.textCorrectionModels.textCorrectionDTO.TextCorrectionResponse
 import retrofit2.Call

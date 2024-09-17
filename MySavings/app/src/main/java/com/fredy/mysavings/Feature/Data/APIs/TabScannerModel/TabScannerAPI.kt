@@ -1,6 +1,6 @@
 package com.fredy.mysavings.Feature.Data.APIs.TabScannerModel
 
-import com.fredy.core.credentials.ApiCredentials
+import com.fredy.domain.credentials.ApiCredentials
 import com.fredy.data.api.tabScannerModel.tabScannerDTO.ProcessResponse
 import com.fredy.data.api.tabScannerModel.tabScannerDTO.ResultResponse
 import okhttp3.MultipartBody

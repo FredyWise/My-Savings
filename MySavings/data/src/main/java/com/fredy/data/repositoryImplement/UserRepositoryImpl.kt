@@ -1,7 +1,7 @@
 package com.fredy.data.repositoryImplement
 
-import com.fredy.core.util.resource.DataError
-import com.fredy.core.util.resource.Resource
+import com.fredy.domain.util.resource.DataError
+import com.fredy.domain.util.resource.Resource
 import com.fredy.data.database.dao.UserDao
 import com.fredy.data.database.firestoreDataSource.UserDataSource
 import com.fredy.data.mappers.toDataUser

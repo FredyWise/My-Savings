@@ -4,25 +4,23 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavHostController
-import com.fredy.mysavings.Feature.Presentation.ViewModels.BookViewModel.BookState
-import com.fredy.mysavings.Feature.Presentation.ViewModels.BookViewModel.BookEvent
-import com.fredy.mysavings.Feature.Presentation.ViewModels.BookViewModel.BookEvent.ShowDialog
-import com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel.RecordEvent
-import com.fredy.mysavings.Feature.Presentation.ViewModels.RecordViewModel.RecordState
-import com.fredy.mysavings.Feature.Presentation.Navigation.NavigationRoute
-import com.fredy.mysavings.Feature.Presentation.Screens.ZCommonComponent.ResourceHandler
+import com.fredy.book.viewModel.RecordState
+import com.fredy.book.viewModel.RecordEvent
+import com.fredy.book.viewModel.BookState
+import com.fredy.book.viewModel.BookEvent
+import com.fredy.domain.model.Book
+import com.fredy.ui.components.handler.ResourceHandler
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun RecordsScreen(
     modifier: Modifier = Modifier,
-    rootNavController: NavHostController,
     state: RecordState,
     onEvent: (RecordEvent) -> Unit,
     bookState: BookState,
     bookEvent: (BookEvent) -> Unit,
+    onAddRecord: () -> Unit,
 ) {
     BookAddDialog(state = bookState, onEvent = bookEvent)
     Column (modifier = modifier){
@@ -31,12 +29,7 @@ fun RecordsScreen(
                 resource = bookResource,
                 nullOrEmptyMessage = "There is no book on this date yet",
                 isNullOrEmpty = { it.isNullOrEmpty() },
-                errorMessage = bookResource.message ?: "",
-                onMessageClick = {
-                    rootNavController.navigate(
-                        "${NavigationRoute.Add.route}?bookId=${state.filterState.currentBook?.bookId}"
-                    )
-                },
+                onMessageClick = { bookEvent(BookEvent.ShowDialog(Book(bookName = ""))) },
             ) { bookData ->
                 RecordHeader(
                     items = bookData,
@@ -45,10 +38,10 @@ fun RecordsScreen(
                         onEvent(RecordEvent.ClickBook(it))
                     },
                     onBookLongPress = {
-                        bookEvent(ShowDialog(it))
+                        bookEvent(BookEvent.ShowDialog(it))
                     },
                     onAddBook = {
-                        bookEvent(ShowDialog(it))
+                        bookEvent(BookEvent.ShowDialog(it))
                     },
                 )
             }
@@ -58,12 +51,7 @@ fun RecordsScreen(
                 resource = resource,
                 nullOrEmptyMessage = "There is no record on this date yet",
                 isNullOrEmpty = { bookMaps -> bookMaps?.find { it.book == state.filterState.currentBook }?.recordMaps.isNullOrEmpty() },
-                errorMessage = resource.message ?: "",
-                onMessageClick = {
-                    rootNavController.navigate(
-                        "${NavigationRoute.Add.route}?bookId=${state.filterState.currentBook?.bookId}"
-                    )
-                },
+                onMessageClick = onAddRecord,
             ) { data ->
                 RecordBody(
                     recordMaps = data.find { it.book == state.filterState.currentBook }?.recordMaps,
