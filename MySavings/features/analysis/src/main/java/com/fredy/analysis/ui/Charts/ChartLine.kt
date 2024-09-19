@@ -22,8 +22,8 @@ import co.yml.charts.ui.linechart.model.LineType
 import co.yml.charts.ui.linechart.model.SelectionHighlightPoint
 import co.yml.charts.ui.linechart.model.SelectionHighlightPopUp
 import co.yml.charts.ui.linechart.model.ShadowUnderLine
-import com.fredy.mysavings.Feature.Presentation.Util.formatBalanceAmount
-import com.fredy.mysavings.Feature.Presentation.Util.formatMonthDate
+import com.fredy.theme.util.formatBalanceAmount
+import com.fredy.theme.util.formatMonthDate
 import java.time.LocalDate
 import kotlin.math.nextUp
 
@@ -54,9 +54,9 @@ fun ChartLine(
     ).axisLineColor(gridColor).topPadding(
         105.dp
     ).steps(xMax.toInt()).labelData { i ->
-        if (i==0){
+        if (i == 0) {
             i.toString()
-        }else {
+        } else {
             val localDate =
                 if (xMax > 40) LocalDate.ofYearDay(year, i) else LocalDate.of(year, month, i)
             formatMonthDate(localDate)

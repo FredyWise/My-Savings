@@ -13,28 +13,7 @@ plugins {
 }
 
 android {
-    signingConfigs {
-        create("release") {
-            storeFile = file("C:\\Users\\ASUS\\Downloads\\My-Savings\\mysavingskey.jks")
-            storePassword = "TEDDY&#9051"
-            keyPassword = "TEDDY&#9051"
-            keyAlias = "mysavingskey"
-        }
-    }
-
     namespace = "com.fredy.mysavings"
-
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-            signingConfig = signingConfigs.getByName("release")
-            signingConfigs.getByName("release")
-        }
-    }
 
     buildFeatures {
         compose = true
@@ -69,17 +48,17 @@ dependencies {
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.timber)
-
-    // Room
-    implementation(libs.androidx.room.runtime)
-    implementation(libs.androidx.room.ktx)
-    kapt(libs.androidx.room.compiler)
-
-    // Paging
-    implementation(libs.androidx.room.paging)
-    implementation(libs.androidx.paging.runtime.ktx)
-    implementation(libs.androidx.paging.compose)
-    implementation(libs.androidx.paging.common.ktx)
+//
+//    // Room
+//    implementation(libs.androidx.room.runtime)
+//    implementation(libs.androidx.room.ktx)
+//    kapt(libs.androidx.room.compiler)
+//
+//    // Paging
+//    implementation(libs.androidx.room.paging)
+//    implementation(libs.androidx.paging.runtime.ktx)
+//    implementation(libs.androidx.paging.compose)
+//    implementation(libs.androidx.paging.common.ktx)
 
     // Navigation
     implementation(libs.androidx.navigation.compose)
@@ -112,25 +91,25 @@ dependencies {
     implementation(libs.mpfilepicker)
     implementation(libs.ycharts)
     implementation(libs.datetime)
+//
+//// Firebase and Google Play services
+//    implementation(platform(libs.firebase.bom))
+//    implementation(libs.firebase.auth.ktx)
+//    implementation(libs.firebase.auth)
+//    implementation(libs.firebase.firestore.ktx)
+//    implementation(libs.firebase.storage.ktx)
+//    implementation(libs.firebase.messaging.ktx)
+//    implementation(libs.play.services.auth)
+//    implementation(libs.play.services.vision) // Used to remove duplicate class error
+//    implementation(libs.firebase.ml.vision)
+//    implementation(libs.play.services.mlkit.document.scanner)
 
-// Firebase and Google Play services
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.auth.ktx)
-    implementation(libs.firebase.auth)
-    implementation(libs.firebase.firestore.ktx)
-    implementation(libs.firebase.storage.ktx)
-    implementation(libs.firebase.messaging.ktx)
-    implementation(libs.play.services.auth)
-    implementation(libs.play.services.vision) // Used to remove duplicate class error
-    implementation(libs.firebase.ml.vision)
-    implementation(libs.play.services.mlkit.document.scanner)
-
-// Networking and API Integration
-    implementation(libs.retrofit)
-    implementation(libs.converter.moshi)
-    implementation(libs.converter.gson)
-    implementation(libs.okhttp)
-    implementation(libs.logging.interceptor)
+//// Networking and API Integration
+//    implementation(libs.retrofit)
+//    implementation(libs.converter.moshi)
+//    implementation(libs.converter.gson)
+//    implementation(libs.okhttp)
+//    implementation(libs.logging.interceptor)
 
 // Testing Libraries
     // Unit and local tests
@@ -157,8 +136,8 @@ dependencies {
     androidTestImplementation(libs.runner)
     androidTestImplementation(libs.androidx.espresso.core)
 
-// Permissions and Other Utilities
-    implementation(libs.accompanist.permissions)
+//// Permissions and Other Utilities
+//    implementation(libs.accompanist.permissions)
 }
 
 

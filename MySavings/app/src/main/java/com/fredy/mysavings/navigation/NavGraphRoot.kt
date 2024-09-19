@@ -32,6 +32,7 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
 import com.fredy.addrecord.ui.AddBottomSheet
 import com.fredy.addrecord.ui.bullkAdd.BulkAddScreen
+import com.fredy.addrecord.ui.bullkAdd.RecordAddDialog
 import com.fredy.addrecord.ui.singleAdd.AddScreen
 import com.fredy.addrecord.viewModel.AddRecordEvent
 import com.fredy.addrecord.viewModel.BulkAddRecordEvent
@@ -57,8 +58,7 @@ import com.fredy.domain.enums.RecordType
 import com.fredy.domain.enumsChecker.isTransfer
 import com.fredy.io.ui.ExportScreen
 import com.fredy.io.viewModel.InputOutputViewModel
-import com.fredy.mysavings.Feature.Presentation.Screens.AddRecord.AddBulk.RecordAddDialog
-import com.fredy.mysavings.Feature.Presentation.Screens.NavigationComponent.MainScreen
+import com.fredy.mysavings.screen.MainScreen
 import com.fredy.preferences.ui.PreferencesScreen
 import com.fredy.preferences.viewModel.PreferencesViewModel
 import com.fredy.search.ui.SearchScreen

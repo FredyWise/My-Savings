@@ -19,6 +19,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -69,7 +70,7 @@ fun TypeRadioButton(
                 animationSpec = animSpec, label = ""
             )
             if (index > 0 && index < radioButtons.size) {
-                Divider(
+                HorizontalDivider(
                     modifier = Modifier
                         .fillMaxHeight()
                         .width(

@@ -10,7 +10,19 @@ android {
 
     defaultConfig {
         buildConfigField("String", "WEB_CLIENT_ID", "\"895326687881-e2kh5jh12kjvpf9se1cehbeias0iuvmq.apps.googleusercontent.com\"")
-        buildConfigField("String", "VERSION_NAME", "\"1\"")
+        buildConfigField("String", "VERSION_NAME", "\"0.0.1\"")
+    }
+
+    buildTypes {
+        release {
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+            signingConfig = signingConfigs.getByName("release")
+            signingConfigs.getByName("release")
+        }
     }
 
     buildFeatures {
@@ -22,8 +34,6 @@ android {
 dependencies {
     // Projects
     implementation(projects.theme)
-
-
 
     // Core
     implementation(libs.androidx.core.ktx)

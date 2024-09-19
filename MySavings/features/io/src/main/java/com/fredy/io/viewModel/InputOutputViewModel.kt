@@ -2,17 +2,15 @@ package com.fredy.io.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.fredy.domain.util.resource.Resource
 import com.fredy.domain.enums.RecordType
 import com.fredy.domain.model.Record
 import com.fredy.domain.model.TrueRecord
-
-import com.fredy.io.domain.model.DBInfo
 import com.fredy.domain.useCases.BookUseCases.BookUseCases
+import com.fredy.domain.useCases.RecordUseCases.RecordUseCases
+import com.fredy.domain.util.resource.Resource
+import com.fredy.io.domain.model.DBInfo
 import com.fredy.io.domain.useCases.IOUseCases
-import com.fredy.mysavings.Feature.Domain.UseCases.RecordUseCases.RecordUseCases
 import com.fredy.theme.util.formatMonthDateYear
-
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -50,7 +48,7 @@ class InputOutputViewModel @Inject constructor(
                             is Resource.Success -> {
                                 _state.update {
                                     it.copy(
-                                        currentBook = bookResource.data!!.first(),
+                                        currentBook = bookResource.data.first(),
                                         books = bookResource.data
                                     )
                                 }
@@ -85,7 +83,7 @@ class InputOutputViewModel @Inject constructor(
     ) { state, recordsResource ->
         if (recordsResource is Resource.Success) {
             state.copy(
-                exportRecords = recordsResource.data!!,
+                exportRecords = recordsResource.data,
                 exportDBInfo = calculateDBInfo(recordsResource.data)
             )
         } else {

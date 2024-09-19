@@ -40,7 +40,6 @@ import com.fredy.domain.useCases.RecordUseCases.RecordUseCases
 import com.fredy.domain.useCases.RecordUseCases.UpdateRecordItemWithDeletedBook
 import com.fredy.domain.useCases.RecordUseCases.UpdateRecordItemWithDeletedCategory
 import com.fredy.domain.useCases.RecordUseCases.UpdateRecordItemWithDeletedWallet
-import com.fredy.domain.useCases.RecordUseCases.UpsertRecordItem
 import com.fredy.domain.useCases.UserUseCases.DeleteUser
 import com.fredy.domain.useCases.UserUseCases.GetAllUsersOrderedByName
 import com.fredy.domain.useCases.UserUseCases.GetCurrentUser

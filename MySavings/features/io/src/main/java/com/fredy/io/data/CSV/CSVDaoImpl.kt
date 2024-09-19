@@ -4,13 +4,11 @@ import android.content.Context
 import android.os.Build
 import android.os.storage.StorageManager
 import androidx.core.content.ContextCompat
-import com.fredy.data.database.converter.TimestampConverter
-import com.fredy.domain.enums.RecordType
 import com.fredy.domain.model.Category
+import com.fredy.domain.model.Record
 import com.fredy.domain.model.TrueRecord
 import com.fredy.domain.model.Wallet
-import com.fredy.mysavings.Feature.Presentation.Util.formatMonthDateYearDetailedTime
-import com.fredy.domain.model.Record
+import com.fredy.theme.util.formatMonthDateYearDetailedTime
 import timber.log.Timber
 import java.io.File
 import java.io.FileReader
@@ -134,7 +132,7 @@ class CSVDaoImpl(private val context: Context) : CSVDao {
 
 
         val record = Record(
-            recordTimestamp = TimestampConverter.fromDateTime(recordDateTime),
+            recordDateTime = recordDateTime,
             recordAmount = recordAmount,
             recordCurrency = recordCurrency,
             recordType = recordType,

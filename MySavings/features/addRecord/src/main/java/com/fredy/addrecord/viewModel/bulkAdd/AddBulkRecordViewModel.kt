@@ -51,7 +51,7 @@ class AddBulkRecordViewModel @Inject constructor(
 
                             resource.update { result }
                             if (result is Resource.Success) {
-                                state = result.data!!
+                                state = result.data
                                 event.sideEffect()
                                 state = AddRecordState()
                             }
@@ -171,6 +171,7 @@ class AddBulkRecordViewModel @Inject constructor(
                         isShowWarning = true
                     )
                 }
+                else -> {}
 
             }
         }

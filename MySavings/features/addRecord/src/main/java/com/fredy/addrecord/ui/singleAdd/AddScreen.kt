@@ -91,7 +91,7 @@ fun AddScreen(
                 if (!state.isShowWarning) {
                     Toast.makeText(
                         context,
-                        (resource as Resource.Error<AddRecordState, DataError.Local>).error.name,
+                        (resource).error.name,
                         Toast.LENGTH_LONG
                     ).show()
                 }

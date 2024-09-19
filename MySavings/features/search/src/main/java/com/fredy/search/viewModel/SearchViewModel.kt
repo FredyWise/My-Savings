@@ -38,9 +38,9 @@ class SearchViewModel @Inject constructor(
         if (trueRecordsResource is Resource.Success) {
             val searchQuery = state.searchQuery
             if (searchQuery.isBlank()) {
-                Resource.Success(trueRecordsResource.data!!.filter { it.recordMaps.isNotEmpty() })
+                Resource.Success(trueRecordsResource.data.filter { it.recordMaps.isNotEmpty() })
             } else {
-                Resource.Success(trueRecordsResource.data!!.filter {
+                Resource.Success(trueRecordsResource.data.filter {
                     it.doesMatchSearchQuery(searchQuery)
                 }.map { bookMap ->
                     bookMap.copy(

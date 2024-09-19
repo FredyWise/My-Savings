@@ -3,7 +3,7 @@ package com.fredy.data.database.dto
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.fredy.domain.enums.RecordType
-import com.fredy.mysavings.Util.SavingsIcons.categoryInitIcon
+import com.fredy.domain.util.SavingsIcons.categoryInitIcon
 
 @Entity
 data class Category(

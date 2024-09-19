@@ -9,8 +9,8 @@ import com.fredy.data.database.dto.UsableCurrencyInfoItem
 import com.fredy.data.api.currencyModels.currencyDTO.CurrencyResponse
 import com.fredy.data.database.converter.CurrencyRatesDoubleConverter
 import com.fredy.data.database.dto.FirebaseRatesCache
+import com.fredy.data.database.dto.RatesCache
 import com.fredy.domain.model.Rate
-import com.fredy.domain.model.RatesCache
 import com.fredy.domain.useCases.CurrencyUseCases.getValueFromCode
 import com.google.firebase.Timestamp
 import timber.log.Timber
@@ -28,34 +28,28 @@ fun DomainCurrency.toDataCurrency(): DataCurrency {
         alt,
     )
 }
+fun DataCurrency.toDomainCurrency(): DomainCurrency {
+    return DomainCurrency(
+        currencyId,
+        code,
+        userIdFk,
+        name,
+        symbol,
+        value,
+        url,
+        alt,
+    )
+}
 
-fun List<DataCurrency>.toDataCurrency(): List<DomainCurrency> {
+fun List<DataCurrency>.toDomainCurrencies(): List<DomainCurrency> {
     return this.map {
-        DomainCurrency(
-            it.currencyId,
-            it.code,
-            it.userIdFk,
-            it.name,
-            it.symbol,
-            it.value,
-            it.url,
-            it.alt,
-        )
+        it.toDomainCurrency()
     }
 }
 
-fun List<DomainCurrency>.toDataCurrency(): List<DataCurrency> {
+fun List<DomainCurrency>.toDataCurrencies(): List<DataCurrency> {
     return this.map {
-        DataCurrency(
-            it.currencyId,
-            it.code,
-            it.userIdFk,
-            it.name,
-            it.symbol,
-            it.value,
-            it.url,
-            it.alt,
-        )
+        it.toDataCurrency()
     }
 }
 
@@ -102,7 +96,7 @@ fun CurrencyResponse.toRatesCache(userId: String): RatesCache = RatesCache(
     this.base + userId,
     this.base,
     this.date,
-    this.rates.toList(),
+    this.rates,
     this.success,
     this.timestamp,
     Timestamp.now(),
@@ -113,7 +107,7 @@ fun RatesCache.toFireBaseRatesCache(): FirebaseRatesCache {
         cacheId = cacheId,
         base = base,
         date = date,
-        rates = CurrencyRatesDoubleConverter.fromRates(rates.toRates()),
+        rates = CurrencyRatesDoubleConverter.fromRates(rates),
         success = success,
         timestamp = timestamp,
         cachedTime = cachedTime
@@ -125,7 +119,7 @@ fun FirebaseRatesCache.toRatesCache(): RatesCache {
         cacheId = cacheId,
         base = base,
         date = date,
-        rates = CurrencyRatesDoubleConverter.toRates(rates).toList(),
+        rates = CurrencyRatesDoubleConverter.toRates(rates),
         success = success,
         timestamp = timestamp,
         cachedTime = cachedTime

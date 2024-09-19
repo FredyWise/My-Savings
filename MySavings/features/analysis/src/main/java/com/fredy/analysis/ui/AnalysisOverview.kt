@@ -35,7 +35,8 @@ import com.fredy.domain.enums.RecordType
 import com.fredy.domain.enumsChecker.isExpense
 import com.fredy.domain.enumsChecker.recordTypeColor
 import com.fredy.domain.model.Category
-import com.fredy.mysavings.R
+import com.fredy.domain.util.SavingsStrings
+
 import com.fredy.ui.components.handler.ResourceHandler
 import com.fredy.ui.components.list.SimpleEntityItem
 import com.fredy.theme.util.BalanceColor
@@ -92,7 +93,7 @@ fun AnalysisOverview(
                                 itemsProportion = itemsProportion,
                                 circleColors = colors,
                                 graphLabel = stringResource(
-                                    R.string.total
+                                    SavingsStrings.total
                                 ) + " " + items.first().category.categoryType.name,
                                 labelColor = contentColor,
                                 amountsTotal = totalAmount,

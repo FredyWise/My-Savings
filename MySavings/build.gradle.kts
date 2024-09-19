@@ -21,6 +21,15 @@ fun BaseExtension.defaultConfig() {
 
     compileSdkVersion(34)
 
+    signingConfigs {
+        create("release") {
+            storeFile = file("E:\\Github\\My-Savings\\mysavingskey.jks")
+            storePassword = "TEDDY&#9051"
+            keyPassword = "TEDDY&#9051"
+            keyAlias = "mysavingskey"
+        }
+    }
+
     defaultConfig {
         minSdk = 29
         targetSdk = 34

@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -88,7 +89,7 @@ fun SearchBody(
                     }
                 }
             }
-            bookMap.recordMaps?.forEach { trueRecordMap ->
+            bookMap.recordMaps.forEach { trueRecordMap ->
                 stickyHeader {
                     CustomStickyHeader(
                         modifier = Modifier.background(
@@ -101,7 +102,7 @@ fun SearchBody(
                     )
                 }
                 items(trueRecordMap.records, key = { it.record.recordId }) { item ->
-                    Divider(
+                    HorizontalDivider(
                         modifier = Modifier.height(0.3.dp),
                         color = onBackgroundColor.copy(
                             alpha = 0.4f

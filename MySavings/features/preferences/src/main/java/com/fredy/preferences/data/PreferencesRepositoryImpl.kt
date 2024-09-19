@@ -24,6 +24,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import java.time.LocalTime
 import javax.inject.Inject
 
 class PreferencesRepositoryImpl @Inject constructor(
@@ -119,6 +120,22 @@ class PreferencesRepositoryImpl @Inject constructor(
 
     override suspend fun saveTransferColor(color: Color?) {
         preferences.savePreference(TRANSFER_COLOR, color?.toArgb())
+    }
+
+    override fun getDailyNotification(): Flow<Boolean> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun saveDailyNotification(enableNotification: Boolean) {
+        TODO("Not yet implemented")
+    }
+
+    override fun getDailyNotificationTime(): Flow<LocalTime> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun saveDailyNotificationTime(dailyNotificationTime: LocalTime) {
+        TODO("Not yet implemented")
     }
 
 //    override fun getDailyNotification(): Flow<Boolean> = preferences.getPreference(DAILY_NOTIFICATION, false)

@@ -33,7 +33,7 @@ import com.fredy.domain.enumsChecker.recordTypeColor
 import com.fredy.domain.model.Wallet
 import com.fredy.ui.components.handler.ResourceHandler
 import com.fredy.ui.components.list.SimpleEntityItem
-import com.fredy.theme.util.BalanceColor
+import com.fredy.theme.util.BalanceColors
 import com.fredy.theme.util.formatBalanceAmount
 import kotlin.math.absoluteValue
 
@@ -44,8 +44,8 @@ fun AnalysisAccount(
     onEvent: (AnalysisEvent) -> Unit,
     onGetWalletDetails: (Wallet) -> Unit,
 ) {
-    val expenseColor by remember { mutableStateOf(BalanceColor.Expense) }
-    val incomeColor by remember { mutableStateOf(BalanceColor.Income) }
+    val expenseColor by remember { mutableStateOf(BalanceColors.Expense) }
+    val incomeColor by remember { mutableStateOf(BalanceColors.Income) }
 
 
     state.resourceData.walletsWithAmountResource.let { resource ->

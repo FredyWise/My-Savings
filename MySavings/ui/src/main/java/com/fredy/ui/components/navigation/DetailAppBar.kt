@@ -14,8 +14,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -70,7 +72,7 @@ fun DetailAppBar(
                     35.dp
                 ),
                 tint = onBackgroundColor,
-                imageVector = Icons.Default.ArrowBack,
+                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                 contentDescription = "Close")
             Text(
                 modifier = Modifier.padding(
@@ -122,7 +124,7 @@ fun DetailAppBar(
                         trueRecordMap.records,
                         key = { it.record.recordId },
                     ) { item ->
-                        Divider(
+                        HorizontalDivider(
                             modifier = Modifier.height(
                                 0.3.dp
                             ),

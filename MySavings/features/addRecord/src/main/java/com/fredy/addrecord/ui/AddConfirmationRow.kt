@@ -8,7 +8,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import com.fredy.mysavings.R
+import com.fredy.addrecord.R
+import com.fredy.domain.util.SavingsIcons.CheckIcon
+import com.fredy.domain.util.SavingsIcons.CloseIcon
 import com.fredy.ui.components.button.SimpleButton
 
 @Composable
@@ -25,7 +27,7 @@ fun AddConfirmationRow(
     ) {
         SimpleButton(
             onClick = onCancelClick,
-            image = R.drawable.ic_close_foreground,
+            image = CloseIcon.image,
             imageColor = onBackground,
             title = "CANCEL",
             titleStyle = MaterialTheme.typography.titleMedium.copy(
@@ -34,7 +36,7 @@ fun AddConfirmationRow(
         )
         SimpleButton(
             onClick = onSaveClick,
-            image = R.drawable.ic_check_foreground,
+            image = CheckIcon.image,
             imageColor = onBackground,
             title = "SAVE",
             titleStyle = MaterialTheme.typography.titleMedium.copy(

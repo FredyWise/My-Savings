@@ -21,8 +21,8 @@ import co.yml.charts.ui.barchart.models.GroupBar
 import co.yml.charts.ui.barchart.models.GroupBarChartData
 import co.yml.charts.ui.barchart.models.GroupSeparatorConfig
 import co.yml.charts.ui.barchart.models.SelectionHighlightData
-import com.fredy.mysavings.Feature.Presentation.Util.formatBalanceAmount
-import com.fredy.mysavings.Feature.Presentation.Util.truncateString
+import com.fredy.theme.util.formatBalanceAmount
+import com.fredy.ui.util.truncateString
 import kotlin.math.absoluteValue
 
 
@@ -61,7 +61,7 @@ fun ChartGroupedBar(
     ).labelData { index ->
         formatBalanceAmount(
             (index * (groupBarData.maxOf { data -> data.barList.maxOf { it.point.y.absoluteValue } } / step).toDouble()),
-             isShortenToChar = true,
+            isShortenToChar = true,
         )
     }.build()
 
@@ -86,19 +86,21 @@ fun ChartGroupedBar(
     )
     val groupBarPlotData = BarPlotData(
         groupBarList = groupBarData,
-        barStyle = BarStyle(barWidth = 25.dp, selectionHighlightData = SelectionHighlightData(
-            highlightTextBackgroundColor = infoBackgroundColor,
-            highlightTextColor = infoColor,
-            groupBarPopUpLabel = { x, y ->
-                val xLabel = "name : ${groupBarData[x.toInt()-1].label} "
-                val yLabel = "amount : ${
-                    formatBalanceAmount(
-                        y.toDouble()
-                    )
-                }"
-                "$xLabel $yLabel"
-            },
-        )),
+        barStyle = BarStyle(
+            barWidth = 25.dp, selectionHighlightData = SelectionHighlightData(
+                highlightTextBackgroundColor = infoBackgroundColor,
+                highlightTextColor = infoColor,
+                groupBarPopUpLabel = { x, y ->
+                    val xLabel = "name : ${groupBarData[x.toInt() - 1].label} "
+                    val yLabel = "amount : ${
+                        formatBalanceAmount(
+                            y.toDouble()
+                        )
+                    }"
+                    "$xLabel $yLabel"
+                },
+            )
+        ),
         barColorPaletteList = colorPaletteList
     )
     val data = GroupBarChartData(

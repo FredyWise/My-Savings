@@ -11,8 +11,10 @@ import com.fredy.data.database.firestoreDataSource.CurrencyDataSource
 import com.fredy.data.database.firestoreDataSource.CurrencyRatesDataSource
 import com.fredy.data.mappers.toCurrency
 import com.fredy.data.mappers.toCurrencyInfoItems
+import com.fredy.data.mappers.toDataCurrencies
 import com.fredy.data.mappers.toDataCurrency
 import com.fredy.data.mappers.toDataRatesCache
+import com.fredy.data.mappers.toDomainCurrencies
 import com.fredy.data.mappers.toRatesCache
 import com.fredy.domain.model.Currency
 import com.fredy.domain.model.Rate
@@ -115,7 +117,7 @@ class CurrencyRepositoryImpl @Inject constructor(
                         )
                         cachedData
                     } else {
-                        val apiResult = getApiRates(base)!!.toRatesCache(currentUserId)
+                        val apiResult = getApiRates(base)!!.toRatesCache(currentUserId).toDataRatesCache()
                         _cachedRates.postValue(apiResult)
                         updateRates(apiResult)
                         Timber.i(
@@ -154,14 +156,14 @@ class CurrencyRepositoryImpl @Inject constructor(
             withContext(Dispatchers.IO) {
                 currencyDataSource.getCurrencies(userId)
             }.collect { currencies ->
-                emit(currencies.toDataCurrency())
+                emit(currencies.toDomainCurrencies())
             }
         }
     }
 
     override suspend fun updateCurrencies(currencies: List<Currency>) {
-        currencyDao.upsertAllCurrencies(currencies.toDataCurrency())
-        currencyDataSource.upsertAllCurrencyItem(currencies.toDataCurrency())
+        currencyDao.upsertAllCurrencies(currencies.toDataCurrencies())
+        currencyDataSource.upsertAllCurrencyItem(currencies.toDataCurrencies())
     }
 
 }

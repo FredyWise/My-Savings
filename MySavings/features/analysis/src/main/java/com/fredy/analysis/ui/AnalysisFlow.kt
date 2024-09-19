@@ -28,7 +28,7 @@ import com.fredy.ui.isFilterTypeMonthBelow
 import com.fredy.domain.enumsChecker.isExpense
 import com.fredy.domain.enumsChecker.isIncome
 import com.fredy.domain.enumsChecker.recordTypeColor
-import com.fredy.mysavings.R
+import com.fredy.domain.util.SavingsIcons.CalendarIcon
 import com.fredy.ui.components.Calendar
 import com.fredy.ui.components.handler.ResourceHandler
 import com.fredy.ui.components.list.CustomStickyHeader
@@ -141,7 +141,7 @@ fun AnalysisFlow(
                             .border(1.dp, onBackgroundColor, MaterialTheme.shapes.small)
                             .padding(horizontal = 8.dp, vertical = 4.dp),
                         iconModifier = Modifier.size(30.dp),
-                        icon = R.drawable.ic_calendar,
+                        icon = CalendarIcon.image,
                         iconDescription = "",
                         endContent = {
                             Text(

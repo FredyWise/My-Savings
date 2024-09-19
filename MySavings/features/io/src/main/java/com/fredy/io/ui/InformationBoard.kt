@@ -35,7 +35,7 @@ fun InformationBoard(
             .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        itemsIndexed(dbInfo, key = { index, item -> index }) { index, item ->
+        itemsIndexed(dbInfo, key = { index, _ -> index }) { index, item ->
             val key = "$index$item".hashCode()
             val isVisible = remember(key) {
                 MutableTransitionState(

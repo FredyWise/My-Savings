@@ -17,6 +17,7 @@ import com.fredy.auth.viewModel.AuthViewModel
 import com.fredy.auth.viewModel.AuthEvent
 import com.fredy.mysavings.navigation.Graph
 import com.fredy.mysavings.navigation.NavGraphRoot
+import com.fredy.preferences.domain.isDarkMode
 import com.fredy.preferences.viewModel.PreferencesViewModel
 import com.fredy.theme.DefaultTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -41,7 +42,7 @@ class MainActivity : ComponentActivity(), ActivityProvider {
             val setting by viewModel.state.collectAsStateWithLifecycle()
             val state by authViewModel.state.collectAsStateWithLifecycle()
 
-            val isDarkTheme = if(setting.isDarkMode == null) isSystemInDarkTheme() else setting.isDarkMode!!
+            val isDarkTheme = if(setting.displayMode.isDarkMode() == null) isSystemInDarkTheme() else setting.displayMode.isDarkMode()!!
 
             if (setting.updated) {
                 if (!setting.autoLogin) {

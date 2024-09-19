@@ -4,6 +4,7 @@ package com.fredy.data.database.firestoreDataSource
 import com.fredy.data.database.dto.FirebaseRatesCache
 import com.fredy.data.database.dto.RatesCache
 import com.fredy.data.mappers.toFireBaseRatesCache
+import com.fredy.data.mappers.toRatesCache
 
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
@@ -26,7 +27,7 @@ class CurrencyRatesDataSourceImpl @Inject constructor(
     override suspend fun upsertCurrencyRates(
         rates: RatesCache
     ) {
-        val ratesCache =rates.toFireBaseRatesCache()
+        val ratesCache = rates.toFireBaseRatesCache()
         currencyRatesCollection.document(
             ratesCache.cacheId
         ).set(

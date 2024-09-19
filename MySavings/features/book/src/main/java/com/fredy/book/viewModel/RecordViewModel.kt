@@ -66,7 +66,7 @@ class RecordViewModel @Inject constructor(
                     when (bookResource) {
                         is Resource.Success -> {
                             savedStateHandle.update<FilterState>(FILTER_STATE_KEY) {
-                                it.copy(currentBook = bookResource.data!!.first())
+                                it.copy(currentBook = bookResource.data.first())
                             }
                         }
 

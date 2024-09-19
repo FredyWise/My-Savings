@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.fredy.addrecord.domain.usecases.singleAdd.SingleAddUseCases
 import com.fredy.addrecord.viewModel.AddRecordEvent
 import com.fredy.addrecord.viewModel.AddRecordState
+import com.fredy.addrecord.viewModel.BulkAddRecordEvent
 import com.fredy.domain.util.resource.DataError
 import com.fredy.domain.util.resource.Resource
 import com.fredy.domain.model.Category
@@ -79,7 +80,7 @@ class AddSingleRecordViewModel @Inject constructor(
                             .collect { result ->
                                 resource.update { result }
                                 if (result is Resource.Success) {
-                                    state = result.data!!
+                                    state = result.data
                                     if (state.previousAmount != 0.0 && !state.isAgreeToConvert) {
                                         return@collect
                                     }
@@ -124,7 +125,7 @@ class AddSingleRecordViewModel @Inject constructor(
                     )
                 }
 
-                is AddRecordEvent.RecordAmount -> {
+                AddRecordEvent.RecordAmount -> {
                     state = state.copy(
                         recordAmount = calcState.number1.toDouble()
                     )
@@ -155,7 +156,7 @@ class AddSingleRecordViewModel @Inject constructor(
                     )
                 }
 
-                is AddRecordEvent.ConvertCurrency -> {
+                AddRecordEvent.ConvertCurrency -> {
                     viewModelScope.launch {
                         val balanceItem = currencyUseCase.convertCurrencyData(
                             calcState.number1.toDouble().absoluteValue,
@@ -172,7 +173,11 @@ class AddSingleRecordViewModel @Inject constructor(
                     }
                 }
 
-                else -> {}
+                BulkAddRecordEvent.CloseAddRecordItemDialog -> TODO()
+                is BulkAddRecordEvent.DeleteRecord -> TODO()
+                is BulkAddRecordEvent.ImageToRecords -> TODO()
+                is BulkAddRecordEvent.ShowAddRecordItemDialog -> TODO()
+                is BulkAddRecordEvent.UpdateRecord -> TODO()
             }
         }
     }
@@ -191,7 +196,7 @@ class AddSingleRecordViewModel @Inject constructor(
             is CalcEvent.Operation -> enterOperation(
                 event.operation
             )
-            else -> {}
+
         }
 
     }
@@ -226,12 +231,11 @@ class AddSingleRecordViewModel @Inject constructor(
         val number2 = calcState.number2.toDoubleOrNull()
         if (number1 != null && number2 != null) {
             val result = when (calcState.operation) {
-                is CalcOperation.Add -> number1 + number2
-                is CalcOperation.Substract -> number1 - number2
-                is CalcOperation.Multiply -> number1 * number2
-                is CalcOperation.Divide -> number1 / number2
+                CalcOperation.Add -> number1 + number2
+                CalcOperation.Substract -> number1 - number2
+                CalcOperation.Multiply -> number1 * number2
+                CalcOperation.Divide -> number1 / number2
                 null -> return
-                else -> -1.0
             }
             calcState = calcState.copy(
                 number1 = result.toString().take(

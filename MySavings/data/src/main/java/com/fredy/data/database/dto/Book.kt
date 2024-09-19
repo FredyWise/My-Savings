@@ -2,7 +2,7 @@ package com.fredy.data.database.dto
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.fredy.mysavings.Util.SavingsIcons.bookInitIcon
+import com.fredy.domain.util.SavingsIcons.bookInitIcon
 
 @Entity
 data class Book(

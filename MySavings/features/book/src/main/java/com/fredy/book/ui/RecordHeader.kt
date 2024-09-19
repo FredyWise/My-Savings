@@ -28,7 +28,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.fredy.domain.util.SavingsIcons
 import com.fredy.domain.model.Book
-import com.fredy.mysavings.R
+import com.fredy.domain.util.SavingsIcons.AddCircleOutlineIcon
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -112,7 +112,7 @@ fun RecordHeader(
                             55.dp
                         ),
                     painter = painterResource(
-                        R.drawable.ic_add_foreground
+                        AddCircleOutlineIcon.image
                     ),
                     contentDescription = "",
                     tint = Color.Unspecified

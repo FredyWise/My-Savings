@@ -12,7 +12,8 @@ import com.fredy.preferences.domain.ChangeColorType
 import com.fredy.preferences.domain.PreferencesRepository
 import com.fredy.preferences.domain.notification.NotificationWorker
 import com.fredy.preferences.data.toPreferenceState
-import com.fredy.theme.util.BalanceColor
+import com.fredy.theme.util.BalanceColors
+
 import com.fredy.theme.util.defaultDarkExpenseColor
 import com.fredy.theme.util.defaultDarkIncomeColor
 import com.fredy.theme.util.defaultDarkTransferColor
@@ -40,8 +41,8 @@ class PreferencesViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             preferencesRepository.getAllPreferenceSettings().collect { savedState ->
-                BalanceColor.Expense = savedState.selectedExpenseColor
-                BalanceColor.Income = savedState.selectedIncomeColor
+                BalanceColors.Expense = savedState.selectedExpenseColor
+                BalanceColors.Income = savedState.selectedIncomeColor
                 _state.update {
                     savedState.toPreferenceState()
                 }
@@ -159,7 +160,7 @@ class PreferencesViewModel @Inject constructor(
                             preferencesRepository.saveIncomeColor(event.color)
                             val incomeColor = event.color
                                 ?: if (event.isSystemDarkTheme) defaultDarkIncomeColor else defaultLightIncomeColor
-                            BalanceColor.Income = incomeColor
+                            BalanceColors.Income = incomeColor
                             _state.update {
                                 it.copy(selectedIncomeColor = incomeColor)
                             }
@@ -169,7 +170,7 @@ class PreferencesViewModel @Inject constructor(
                             preferencesRepository.saveExpenseColor(event.color)
                             val expenseColor = event.color
                                 ?: if (event.isSystemDarkTheme) defaultDarkExpenseColor else defaultLightExpenseColor
-                            BalanceColor.Expense = expenseColor
+                            BalanceColors.Expense = expenseColor
                             _state.update {
                                 it.copy(selectedExpenseColor = expenseColor)
                             }
@@ -180,7 +181,7 @@ class PreferencesViewModel @Inject constructor(
                             preferencesRepository.saveTransferColor(event.color)
                             val transferColor = event.color
                                 ?: if (event.isSystemDarkTheme) defaultDarkTransferColor else defaultLightTransferColor
-                            BalanceColor.Transfer = transferColor
+                            BalanceColors.Transfer = transferColor
                             _state.update {
                                 it.copy(selectedTransferColor = transferColor)
                             }

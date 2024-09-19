@@ -55,6 +55,9 @@ object SavingsIcons {
 
     // DefaultIcons
     val AddCircleOutlineIcon = SavingsIcon(R.drawable.ic_add_foreground, "AddCircleOutline")
+    val CheckIcon = SavingsIcon(R.drawable.ic_check_foreground,"CheckIcon")
+    val CloseIcon = SavingsIcon(R.drawable.ic_close_foreground, "CloseIcon")
     val GoogleButtonIcon = SavingsIcon(R.drawable.ic_google, "GoogleButtonIcon")
+    val CalendarIcon = SavingsIcon(R.drawable.ic_calendar, "CalendarIcon")
 
 }

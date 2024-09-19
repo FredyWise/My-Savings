@@ -31,20 +31,20 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.fredy.domain.util.SavingsIcons.savingsIcons
-import com.fredy.domain.util.resource.DataError
-import com.fredy.domain.util.resource.Resource
 import com.fredy.domain.enums.RecordType
 import com.fredy.domain.enumsChecker.isTransfer
 import com.fredy.domain.model.Category
 import com.fredy.domain.model.CategoryMap
 import com.fredy.domain.model.Wallet
-import com.fredy.mysavings.R
+import com.fredy.domain.util.SavingsIcons.AddCircleOutlineIcon
+import com.fredy.domain.util.SavingsIcons.savingsIcons
+import com.fredy.domain.util.resource.DataError
+import com.fredy.domain.util.resource.Resource
+import com.fredy.theme.util.BalanceColor
+import com.fredy.theme.util.formatBalanceAmount
 import com.fredy.ui.components.button.SimpleButton
 import com.fredy.ui.components.handler.ResourceHandler
 import com.fredy.ui.components.list.SimpleEntityItem
-import com.fredy.theme.util.BalanceColor
-import com.fredy.theme.util.formatBalanceAmount
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -227,7 +227,7 @@ fun AccountBottomSheet(
                             color = MaterialTheme.colorScheme.secondary,
                             shape = MaterialTheme.shapes.medium
                         ),
-                    image = R.drawable.ic_add_foreground,
+                    image = AddCircleOutlineIcon.image,
                     onClick = {
                         onAddAccount()
                     },
@@ -330,7 +330,7 @@ fun CategoryBottomSheet(
                                 shape = MaterialTheme.shapes.extraLarge
                             ),
                         painter = painterResource(
-                            R.drawable.ic_add_foreground
+                            AddCircleOutlineIcon.image
                         ),
                         contentDescription = "",
                         tint = Color.Unspecified

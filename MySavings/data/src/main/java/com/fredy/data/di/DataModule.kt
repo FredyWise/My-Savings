@@ -2,8 +2,6 @@ package com.fredy.data.di
 
 import android.content.Context
 import androidx.room.Room
-import com.fredy.data.CSV.CSVDao
-import com.fredy.data.CSV.CSVDaoImpl
 import com.fredy.data.database.SavingsDatabase
 import com.fredy.data.database.dao.BookDao
 import com.fredy.data.database.dao.CategoryDao
@@ -114,9 +112,9 @@ object DataModule {
     fun provideUserDataSource(firestore: FirebaseFirestore): UserDataSource =
         UserDataSourceImpl(firestore)
 
-    @Provides
-    @Singleton
-    fun provideCSVDao(@ApplicationContext context: Context): CSVDao = CSVDaoImpl(context)
+//    @Provides
+//    @Singleton
+//    fun provideCSVDao(@ApplicationContext context: Context): CSVDao = CSVDaoImpl(context)
 
 
 }
