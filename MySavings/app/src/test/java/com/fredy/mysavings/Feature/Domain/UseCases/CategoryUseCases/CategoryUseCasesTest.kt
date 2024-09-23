@@ -7,6 +7,7 @@ import com.fredy.domain.useCases.CategoryUseCases.DeleteCategory
 import com.fredy.domain.useCases.CategoryUseCases.GetCategory
 import com.fredy.domain.useCases.CategoryUseCases.GetCategoryMapOrderedByName
 import com.fredy.domain.useCases.CategoryUseCases.UpsertCategory
+import com.fredy.domain.util.resource.Resource
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.flow.first

@@ -1,11 +1,11 @@
 package com.fredy.mysavings.Feature.Domain.Repository
 
 import com.fredy.domain.model.TrueRecord
-import com.fredy.domain.repository.CSVRepository
+import com.fredy.io.domain.CSVRepository
 
 class FakeCSVRepository : CSVRepository {
 
-    private val csvFile = mutableListOf<Pair<String,List<TrueRecord>>>()
+    private val csvFile = mutableListOf<Pair<String, List<TrueRecord>>>()
 
     override suspend fun outputToCSV(
         directory: String,
@@ -13,7 +13,7 @@ class FakeCSVRepository : CSVRepository {
         trueRecords: List<TrueRecord>,
         delimiter: String
     ) {
-        csvFile.add(Pair(directory+filename+delimiter,trueRecords))
+        csvFile.add(Pair(directory + filename + delimiter, trueRecords))
     }
 
     override suspend fun inputFromCSV(
@@ -21,7 +21,7 @@ class FakeCSVRepository : CSVRepository {
         directory: String,
         delimiter: String
     ): List<TrueRecord> {
-        return csvFile.find { it.first.equals(directory+delimiter,ignoreCase = false) }!!.second
+        return csvFile.find { it.first.equals(directory + delimiter, ignoreCase = false) }!!.second
     }
 }
 

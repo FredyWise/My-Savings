@@ -7,6 +7,7 @@ import com.fredy.domain.model.Currency
 import com.fredy.domain.model.TrueRecord
 import com.fredy.domain.model.UserData
 import com.fredy.domain.enums.RecordType
+import com.fredy.domain.modelUI.BalanceItem
 import com.fredy.mysavings.Feature.Domain.Repository.FakeWalletRepository
 import com.fredy.mysavings.Feature.Domain.Repository.FakeUserRepository
 import com.fredy.mysavings.Feature.Domain.Repository.FakeBookRepository
@@ -15,12 +16,11 @@ import com.fredy.mysavings.Feature.Domain.Repository.FakeCategoryRepository
 import com.fredy.mysavings.Feature.Domain.Repository.FakeCurrencyRepository
 import com.fredy.mysavings.Feature.Domain.Repository.FakeRecordRepository
 import com.fredy.domain.useCases.CurrencyUseCases.CurrencyUseCases
-import com.fredy.mysavings.Feature.Presentation.Util.BalanceItem
-import com.fredy.mysavings.Feature.Presentation.Util.DefaultData
-import com.fredy.mysavings.Feature.Presentation.Util.DefaultData.deletedWallet
-import com.fredy.mysavings.Feature.Presentation.Util.DefaultData.deletedCategory
-import com.fredy.mysavings.Feature.Presentation.Util.DefaultData.transferCategory
-import com.google.firebase.Timestamp
+import com.fredy.domain.util.DefaultData
+import com.fredy.domain.util.DefaultData.deletedCategory
+import com.fredy.domain.util.DefaultData.deletedWallet
+import com.fredy.domain.util.DefaultData.transferCategory
+import com.fredy.domain.model.Record
 import io.mockk.MockKAnnotations
 import io.mockk.clearAllMocks
 import io.mockk.coEvery
@@ -29,8 +29,13 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.temporal.TemporalAccessor
 import java.util.Date
 import kotlin.random.Random
+
 
 abstract class BaseUseCaseTest {
 
@@ -46,16 +51,16 @@ abstract class BaseUseCaseTest {
     protected val currentUserCurrency = "USD"
     protected var mockCurrencyUseCases = mockkClass(CurrencyUseCases::class)
 
-    private fun randomTimestamp(): Timestamp {
-        val now = Date()
+    private fun randomDateTime(): LocalDateTime {
         val sevenDaysInMillis: Long = 7 * 24 * 60 * 60 * 1000
         val randomMillis = Random.nextLong(-sevenDaysInMillis, sevenDaysInMillis)
-        return Timestamp(Date(now.time + randomMillis))
+        val date = LocalDate.ofEpochDay(randomMillis)
+        val time = LocalTime.ofNanoOfDay(randomMillis)
+        return LocalDateTime.of(date, time)
     }
 
     @Before
     fun init() {
-        Log.setDebuggable(false)
         DefaultData
         MockKAnnotations.init(this)
         coEvery { mockCurrencyUseCases.convertCurrencyData(any(), any(), any()) } answers {
@@ -191,14 +196,14 @@ abstract class BaseUseCaseTest {
             val recordsToInsert = mutableListOf<Record>()
             val trueRecordToInsert = mutableListOf<TrueRecord>()
             ('a'..'y').forEachIndexed { index, c ->
-                val record = Record(
+                val record = com.fredy.domain.model.Record(
                     recordId = "Record${index + 1}",
                     walletIdFromFk = accounts[index].walletId,
                     walletIdToFk = accounts[index + 1].walletId,
                     categoryIdFk = categories[index + 1].categoryId,
                     userIdFk = currentUserId,
                     bookIdFk = bookTestId,
-                    recordTimestamp = randomTimestamp(),
+                    recordDateTime = randomDateTime(),
                     recordAmount = (index + 1) * 1000.0,
                     recordCurrency = if (index % 2 == 0) "USD" else "EUR",
                     recordType = if (index % 2 == 0) RecordType.Expense else RecordType.Income,
@@ -235,7 +240,7 @@ abstract class BaseUseCaseTest {
                     walletIdToFk = accounts[index + 1].walletId,
                     categoryIdFk = categories[index + 1].categoryId,
                     userIdFk = currentUserId,
-                    recordTimestamp = randomTimestamp(),
+                    recordDateTime = randomDateTime(),
                     recordAmount = (index + 1) * 1000.0,
                     recordCurrency = if (index % 2 == 0) "USD" else "EUR",
                     recordType = if (index % 2 == 0) RecordType.Expense else RecordType.Income,

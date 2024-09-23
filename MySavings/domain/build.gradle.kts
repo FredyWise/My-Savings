@@ -11,6 +11,7 @@ android {
     defaultConfig {
         buildConfigField("String", "WEB_CLIENT_ID", "\"895326687881-e2kh5jh12kjvpf9se1cehbeias0iuvmq.apps.googleusercontent.com\"")
         buildConfigField("String", "VERSION_NAME", "\"0.0.1\"")
+        buildConfigField("String", "APP_NAME", "\"My Savings\"")
     }
 
     buildTypes {
@@ -100,4 +101,19 @@ dependencies {
     testImplementation(libs.mockwebserver)
     testImplementation(libs.mockk)
     testImplementation(libs.kotlin.test.junit)
+
+    // Instrumentation and UI tests
+    androidTestImplementation(libs.hilt.android.testing)
+    kaptAndroidTest(libs.hilt.android.compiler)
+    androidTestImplementation(libs.junit)
+    androidTestImplementation(libs.kotlinx.coroutines.test)
+    androidTestImplementation(libs.androidx.core.testing)
+    androidTestImplementation(libs.truth)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.test.core.ktx)
+    androidTestImplementation(libs.mockwebserver)
+    androidTestImplementation(libs.mockk.android)
+    androidTestImplementation(libs.runner)
+    androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(libs.androidx.ui.test.junit4)
 }

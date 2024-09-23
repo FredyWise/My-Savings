@@ -35,19 +35,8 @@ import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.UploadFile
 import androidx.compose.ui.graphics.vector.ImageVector
 
-object Graph {
-    const val RootNav = "root_nav"
-    const val AuthNav = "auth_nav"
-    const val HomeNav = "home_nav"
-    const val MainNav = "main_nav"
-    const val AnalysisNav = "analysis_nav"
-}
 
-val analysisScreens = listOf(
-    NavigationRoute.AnalysisOverview,
-    NavigationRoute.AnalysisFlow,
-    NavigationRoute.AnalysisWallet,
-)
+
 
 val drawerScreens = listOf(
     NavigationRoute.Preferences,

@@ -2,6 +2,8 @@ package com.fredy.mysavings.Feature.Domain.Repository
 
 import com.fredy.domain.repository.UserRepository
 import com.fredy.domain.model.UserData
+import com.fredy.domain.util.resource.DataError
+import com.fredy.domain.util.resource.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
@@ -28,7 +30,7 @@ class FakeUserRepository : UserRepository {
         return flow { emit(users.find { it.firebaseUserId == firebaseUserId }) }
     }
 
-    override suspend fun getCurrentUserFlow(): Flow<Resource<UserData?>> {
+    override suspend fun getCurrentUserFlow(): Flow<Resource<UserData?, DataError.Database>> {
         return flow { emit(Resource.Success(users.firstOrNull())) }
     }
 

@@ -1,14 +1,15 @@
 package com.fredy.mysavings.Feature.Domain.UseCases.WalletUseCases
 
-import com.fredy.mysavings.BaseUseCaseTest
 import com.fredy.domain.model.Wallet
-import com.fredy.domain.useCases.WalletUseCases.GetWallets
-import com.fredy.domain.useCases.WalletUseCases.GetWalletsTotalBalance
 import com.fredy.domain.useCases.CurrencyUseCases.currencyConverter
 import com.fredy.domain.useCases.WalletUseCases.DeleteWallet
 import com.fredy.domain.useCases.WalletUseCases.GetWallet
+import com.fredy.domain.useCases.WalletUseCases.GetWallets
 import com.fredy.domain.useCases.WalletUseCases.GetWalletsCurrencies
+import com.fredy.domain.useCases.WalletUseCases.GetWalletsTotalBalance
 import com.fredy.domain.useCases.WalletUseCases.UpsertWallet
+import com.fredy.domain.util.resource.Resource
+import com.fredy.mysavings.BaseUseCaseTest
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.flow.first
@@ -36,7 +37,8 @@ class WalletUseCasesTest : BaseUseCaseTest() {
         getWallet = GetWallet(fakeAccountRepository)
         getWallets = GetWallets(fakeAccountRepository, fakeUserRepository)
         getWalletsCurrencies = GetWalletsCurrencies(fakeAccountRepository, fakeUserRepository)
-        getWalletsTotalBalance = GetWalletsTotalBalance(fakeAccountRepository, mockCurrencyUseCases, fakeUserRepository)
+        getWalletsTotalBalance =
+            GetWalletsTotalBalance(fakeAccountRepository, mockCurrencyUseCases, fakeUserRepository)
     }
 
     @Test
@@ -185,7 +187,10 @@ class WalletUseCasesTest : BaseUseCaseTest() {
 
         assertTrue(accountsResource is Resource.Success)
         val accounts = (accountsResource as Resource.Success).data!!
-        assertEquals(fakeAccountRepository.getUserWallets(currentUserId).first().size, accounts.size)
+        assertEquals(
+            fakeAccountRepository.getUserWallets(currentUserId).first().size,
+            accounts.size
+        )
     }
 
     @Test
@@ -206,7 +211,13 @@ class WalletUseCasesTest : BaseUseCaseTest() {
         val balanceItem = balanceItemFlow.last()
 
         val expectedTotalBalance = fakeAccountRepository.getUserWallets(currentUserId).first()
-            .sumOf { mockCurrencyUseCases.currencyConverter(it.walletAmount, it.walletCurrency, currentUserId) }
+            .sumOf {
+                mockCurrencyUseCases.currencyConverter(
+                    it.walletAmount,
+                    it.walletCurrency,
+                    currentUserId
+                )
+            }
 
         assertEquals(expectedTotalBalance, balanceItem.amount)
     }

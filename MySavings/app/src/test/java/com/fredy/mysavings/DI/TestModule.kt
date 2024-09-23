@@ -1,33 +1,5 @@
 package com.fredy.mysavings.DI
 
-import android.app.PendingIntent
-import android.content.Intent
-import com.google.android.datatransport.runtime.dagger.Module
-import com.google.android.datatransport.runtime.dagger.Provides
-import com.google.android.gms.auth.api.identity.BeginSignInRequest
-import com.google.android.gms.auth.api.identity.BeginSignInResult
-import com.google.android.gms.auth.api.identity.GetPhoneNumberHintIntentRequest
-import com.google.android.gms.auth.api.identity.GetSignInIntentRequest
-import com.google.android.gms.auth.api.identity.SignInClient
-import com.google.android.gms.auth.api.identity.SignInCredential
-import com.google.android.gms.auth.api.identity.zbu
-import com.google.android.gms.common.api.internal.ApiKey
-import com.google.android.gms.tasks.Task
-import com.google.android.gms.tasks.Tasks
-import com.google.firebase.FirebaseApp
-import com.google.firebase.appcheck.interop.InteropAppCheckTokenProvider
-import com.google.firebase.auth.AuthCredential
-import com.google.firebase.auth.AuthResult
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.heartbeatinfo.HeartBeatController
-import com.google.firebase.inject.Provider
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import java.util.concurrent.Executor
-import java.util.concurrent.ScheduledExecutorService
-import javax.inject.Singleton
-
 //@Module
 //@InstallIn(SingletonComponent::class)
 //object TestModule {

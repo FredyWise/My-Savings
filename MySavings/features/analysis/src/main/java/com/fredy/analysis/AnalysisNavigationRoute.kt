@@ -11,14 +11,6 @@ import androidx.compose.material.icons.outlined.LineAxis
 import androidx.compose.material.icons.outlined.PieChart
 import androidx.compose.ui.graphics.vector.ImageVector
 
-object Graph {
-    const val RootNav = "root_nav"
-    const val AuthNav = "auth_nav"
-    const val HomeNav = "home_nav"
-    const val MainNav = "main_nav"
-    const val AnalysisNav = "analysis_nav"
-}
-
 
 val analysisScreens = listOf(
     AnalysisNavigationRoute.AnalysisOverview,

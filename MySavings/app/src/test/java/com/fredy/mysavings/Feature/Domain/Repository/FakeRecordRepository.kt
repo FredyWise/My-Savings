@@ -1,11 +1,11 @@
 package com.fredy.mysavings.Feature.Domain.Repository
 
-import com.fredy.domain.model.Record
-import com.fredy.domain.model.TrueRecord
 import com.fredy.domain.enums.RecordType
 import com.fredy.domain.enums.SortType
-import com.fredy.domain.util.mappers.toRecordSortedMaps
+import com.fredy.domain.mappers.recordUIMapper.toRecordSortedMaps
+import com.fredy.domain.model.Record
 import com.fredy.domain.model.RecordMap
+import com.fredy.domain.model.TrueRecord
 import com.fredy.domain.repository.RecordRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -14,7 +14,7 @@ import java.time.LocalDateTime
 
 class FakeRecordRepository : RecordRepository {
 
-//    private val records = mutableListOf<Record>()
+    //    private val records = mutableListOf<Record>()
     val trueRecords = mutableListOf<TrueRecord>()
 
     override suspend fun upsertRecordItem(record: Record): String {
@@ -50,7 +50,7 @@ class FakeRecordRepository : RecordRepository {
         }
     }
 
-    override  fun getUserRecords(userId: String): Flow<List<Record>> {
+    override fun getUserRecords(userId: String): Flow<List<Record>> {
         return flow { emit(trueRecords.filter { it.record.userIdFk == userId }.map { it.record }) }
     }
 
@@ -76,10 +76,9 @@ class FakeRecordRepository : RecordRepository {
         userId: String,
         categoryId: String,
         sortType: SortType,
-    ): Flow<List<RecordMap>> {
+    ): Flow<List<TrueRecord>> {
         return flow {
-            emit(trueRecords.filter { it.record.userIdFk == userId && it.record.categoryIdFk == categoryId }
-                .toRecordSortedMaps(sortType))
+            emit(trueRecords.filter { it.record.userIdFk == userId && it.record.categoryIdFk == categoryId })
         }
     }
 
@@ -87,10 +86,9 @@ class FakeRecordRepository : RecordRepository {
         userId: String,
         accountId: String,
         sortType: SortType,
-    ): Flow<List<RecordMap>> {
+    ): Flow<List<TrueRecord>> {
         return flow {
-            emit(trueRecords.filter { it.record.userIdFk == userId && (it.record.walletIdToFk == accountId || it.record.walletIdFromFk == accountId) }
-                .toRecordSortedMaps())
+            emit(trueRecords.filter { it.record.userIdFk == userId && (it.record.walletIdToFk == accountId || it.record.walletIdFromFk == accountId) })
         }
     }
 
@@ -100,7 +98,10 @@ class FakeRecordRepository : RecordRepository {
         startDate: LocalDateTime,
         endDate: LocalDateTime,
     ): Flow<List<Record>> {
-        return flow { emit(trueRecords.filter { it.record.userIdFk == userId && it.record.recordType in recordType && it.record.recordDateTime in startDate..endDate }.map { it.record }) }
+        return flow {
+            emit(trueRecords.filter { it.record.userIdFk == userId && it.record.recordType in recordType && it.record.recordDateTime in startDate..endDate }
+                .map { it.record })
+        }
     }
 
     override fun getUserRecordsFromSpecificTime(
@@ -108,14 +109,20 @@ class FakeRecordRepository : RecordRepository {
         startDate: LocalDateTime,
         endDate: LocalDateTime,
     ): Flow<List<Record>> {
-        return flow { emit(trueRecords.filter { it.record.userIdFk == userId && it.record.recordDateTime in startDate..endDate }.map { it.record }) }
+        return flow {
+            emit(trueRecords.filter { it.record.userIdFk == userId && it.record.recordDateTime in startDate..endDate }
+                .map { it.record })
+        }
     }
 
     override fun getUserRecordsByType(
         userId: String,
         recordType: RecordType,
     ): Flow<List<Record>> {
-        return flow { emit(trueRecords.filter { it.record.userIdFk == userId && it.record.recordType == recordType }.map { it.record }) }
+        return flow {
+            emit(trueRecords.filter { it.record.userIdFk == userId && it.record.recordType == recordType }
+                .map { it.record })
+        }
     }
 }
 

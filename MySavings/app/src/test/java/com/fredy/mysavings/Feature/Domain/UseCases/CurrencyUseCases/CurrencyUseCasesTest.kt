@@ -1,12 +1,14 @@
 package com.fredy.mysavings.Feature.Domain.UseCases.CurrencyUseCases
 
-import com.fredy.mysavings.BaseUseCaseTest
 import com.fredy.domain.model.Currency
 import com.fredy.domain.useCases.CurrencyUseCases.ConvertCurrencyData
 import com.fredy.domain.useCases.CurrencyUseCases.GetCurrencies
 import com.fredy.domain.useCases.CurrencyUseCases.GetCurrencyRates
 import com.fredy.domain.useCases.CurrencyUseCases.UpdateCurrency
-import com.fredy.domain.util.mappers.getRateForCurrency
+import com.fredy.domain.useCases.CurrencyUseCases.getValueFromCode
+
+import com.fredy.domain.util.resource.Resource
+import com.fredy.mysavings.BaseUseCaseTest
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.flow.last
@@ -63,7 +65,11 @@ class CurrencyUseCasesTest : BaseUseCaseTest() {
 
         val result = convertCurrencyData(amount, fromCurrency, toCurrency)
 
-        val expectedAmount = amount * (fakeCurrencyRepository.getRateResponse().rates.getRateForCurrency(toCurrency)!!.toDouble() / fakeCurrencyRepository.getRateResponse().rates.getRateForCurrency(fromCurrency)!!.toDouble())
+        val expectedAmount =
+            amount * (fakeCurrencyRepository.getRateResponse().rates.getValueFromCode(toCurrency)!!
+                .toDouble() / fakeCurrencyRepository.getRateResponse().rates.getValueFromCode(
+                fromCurrency
+            )!!.toDouble())
         assertEquals(expectedAmount, result.amount)
         assertEquals(toCurrency, result.currency)
     }
@@ -74,7 +80,9 @@ class CurrencyUseCasesTest : BaseUseCaseTest() {
 
         assertTrue(currenciesResource is Resource.Success)
         val currencies = (currenciesResource as Resource.Success).data!!
-        assertTrue(fakeCurrencyRepository.getCachedCurrencies(currentUserId).last().containsAll(currencies))
+        assertTrue(
+            fakeCurrencyRepository.getCachedCurrencies(currentUserId).last().containsAll(currencies)
+        )
     }
 }
 

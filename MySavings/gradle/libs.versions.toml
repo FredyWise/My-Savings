@@ -59,6 +59,7 @@ uiTestManifest = "1.6.8"
 workRuntimeKtx = "2.9.1"
 ycharts = "2.1.0"
 appcompat = "1.7.0"
+monitor = "1.7.2"
 
 [libraries]
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
@@ -133,6 +134,7 @@ timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 truth = { module = "com.google.truth:truth", version.ref = "truth" }
 ycharts = { module = "co.yml:ycharts", version.ref = "ycharts" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+androidx-monitor = { group = "androidx.test", name = "monitor", version.ref = "monitor" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

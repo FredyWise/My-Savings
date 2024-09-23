@@ -18,7 +18,6 @@ dependencyResolutionManagement {
 rootProject.name = "MySavings"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 include(":app")
-include(":features:auth")
 include(":theme")
 include(":domain")
 include(":data")
@@ -32,3 +31,4 @@ include(":features:addRecord")
 include(":features:analysis")
 include(":ui")
 include(":features:book")
+include(":features:authentication")

@@ -21,6 +21,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.fredy.domain.credentials.Configuration
+import com.fredy.domain.util.SavingsIcons
 import com.fredy.mysavings.R
 import com.fredy.mysavings.navigation.NavigationRoute
 
@@ -37,7 +39,7 @@ fun DrawerHeader(
     ) {
         Icon(
             modifier = Modifier.size(60.dp),
-            painter = painterResource(id = R.drawable.main_icon),
+            painter = painterResource(id = SavingsIcons.appIcon.image),
             contentDescription = "App Icon",
             tint = Color.Unspecified
         )
@@ -46,12 +48,12 @@ fun DrawerHeader(
             horizontalAlignment = Alignment.Start
         ) {
             Text(
-                text = stringResource(id = R.string.app_name),
+                text = Configuration.AppData.AppName,
                 color = textColor,
                 fontSize = 25.sp
             )
             Text(
-                text = stringResource(id = R.string.version),
+                text = Configuration.AppData.AppVersion,
                 color = textColor,
                 fontSize = 15.sp
             )

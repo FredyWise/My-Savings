@@ -15,6 +15,7 @@ sealed class Configuration {
 
     object AppData {
          val AppVersion = BuildConfig.VERSION_NAME
+        val AppName = BuildConfig.APP_NAME
     }
 
     object Debug {

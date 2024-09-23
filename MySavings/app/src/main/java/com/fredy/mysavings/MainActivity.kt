@@ -11,15 +11,14 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
+import com.fredy.authentication.viewModel.AuthEvent
+import com.fredy.authentication.viewModel.AuthViewModel
 import com.fredy.domain.util.ActivityProvider
-
-import com.fredy.auth.viewModel.AuthViewModel
-import com.fredy.auth.viewModel.AuthEvent
-import com.fredy.mysavings.navigation.Graph
 import com.fredy.mysavings.navigation.NavGraphRoot
 import com.fredy.preferences.domain.isDarkMode
 import com.fredy.preferences.viewModel.PreferencesViewModel
 import com.fredy.theme.DefaultTheme
+import com.fredy.ui.util.navigation.Graph
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -39,10 +38,11 @@ class MainActivity : ComponentActivity(), ActivityProvider {
 //        enableEdgeToEdge()
         setContent {
             val authViewModel: AuthViewModel = hiltViewModel()
-            val setting by viewModel.state.collectAsStateWithLifecycle()
             val state by authViewModel.state.collectAsStateWithLifecycle()
+            val setting by viewModel.state.collectAsStateWithLifecycle()
 
-            val isDarkTheme = if(setting.displayMode.isDarkMode() == null) isSystemInDarkTheme() else setting.displayMode.isDarkMode()!!
+            val isDarkTheme =
+                if (setting.displayMode.isDarkMode() == null) isSystemInDarkTheme() else setting.displayMode.isDarkMode()!!
 
             if (setting.updated) {
                 if (!setting.autoLogin) {

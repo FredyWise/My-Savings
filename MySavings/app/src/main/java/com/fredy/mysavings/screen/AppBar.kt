@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.fredy.askquestions.features.ui.screens.comonComponents.Handler.AsyncImageHandler
+import com.fredy.domain.credentials.Configuration
 import com.fredy.domain.model.UserData
 import com.fredy.mysavings.R
 
@@ -39,7 +40,7 @@ fun AppBar(
     TopAppBar(
         modifier = modifier,
         title = {
-            Text(text = stringResource(id = R.string.app_name))
+            Text(text =Configuration.AppData.AppName)
         },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = backgroundColor,

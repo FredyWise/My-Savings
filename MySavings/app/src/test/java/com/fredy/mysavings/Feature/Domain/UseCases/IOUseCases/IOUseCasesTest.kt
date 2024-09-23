@@ -1,10 +1,13 @@
 package com.fredy.mysavings.Feature.Domain.UseCases.IOUseCases
 
-import com.fredy.mysavings.BaseUseCaseTest
+import com.fredy.domain.enumsChecker.isExpense
+import com.fredy.domain.enumsChecker.isIncome
+import com.fredy.domain.enumsChecker.isTransfer
 import com.fredy.domain.model.Book
-import com.fredy.mysavings.Feature.Presentation.Util.isExpense
-import com.fredy.mysavings.Feature.Presentation.Util.isIncome
-import com.fredy.mysavings.Feature.Presentation.Util.isTransfer
+import com.fredy.io.domain.useCases.GetDBInfo
+import com.fredy.io.domain.useCases.InputFromCSV
+import com.fredy.io.domain.useCases.OutputToCSV
+import com.fredy.mysavings.BaseUseCaseTest
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.last
@@ -90,10 +93,10 @@ class IOUseCasesTest : BaseUseCaseTest() {
         val sumOfAccount = fakeAccountRepository.getUserWallets(currentUserId).first().size
         val sumOfCategory = fakeCategoryRepository.getUserCategories(currentUserId).first().size
         val sumOfExpense =
-            sumOfRecord.sumOf { (if (isExpense(it.recordType)) 1 else 0).toInt() }
-        val sumOfIncome = sumOfRecord.sumOf { (if (isIncome(it.recordType)) 1 else 0).toInt() }
+            sumOfRecord.sumOf { (if (it.recordType.isExpense()) 1 else 0).toInt() }
+        val sumOfIncome = sumOfRecord.sumOf { (if (it.recordType.isIncome()) 1 else 0).toInt() }
         val sumOfTransfer =
-            sumOfRecord.sumOf { (if (isTransfer(it.recordType)) 1 else 0).toInt() }
+            sumOfRecord.sumOf { (if (it.recordType.isTransfer()) 1 else 0).toInt() }
 
         assertEquals(sumOfRecord.size, dbInfo.sumOfRecords)
         assertEquals(sumOfAccount, dbInfo.sumOfAccounts)

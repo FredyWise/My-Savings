@@ -15,6 +15,21 @@ plugins {
 android {
     namespace = "com.fredy.mysavings"
 
+
+    buildTypes {
+        release {
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+            signingConfig = signingConfigs.getByName("release")
+            signingConfigs.getByName("release")
+        }
+    }
+    kotlinOptions {
+        jvmTarget = "17"
+    }
     buildFeatures {
         compose = true
     }
@@ -24,6 +39,7 @@ android {
 
 dependencies {
     // Projects
+    implementation(projects.data)
     implementation(projects.domain)
     implementation(projects.theme)
     implementation(projects.ui)
@@ -79,7 +95,6 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
 
 // Material Design and UI Enhancements
     implementation(libs.material)
@@ -122,19 +137,8 @@ dependencies {
     testImplementation(libs.mockk)
     testImplementation(libs.kotlin.test.junit)
 
-    // Instrumentation and UI tests
-    androidTestImplementation(libs.hilt.android.testing)
-    kaptAndroidTest(libs.hilt.android.compiler)
-    androidTestImplementation(libs.junit)
-    androidTestImplementation(libs.kotlinx.coroutines.test)
-    androidTestImplementation(libs.androidx.core.testing)
-    androidTestImplementation(libs.truth)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.test.core.ktx)
-    androidTestImplementation(libs.mockwebserver)
-    androidTestImplementation(libs.mockk.android)
-    androidTestImplementation(libs.runner)
-    androidTestImplementation(libs.androidx.espresso.core)
+
+
 
 //// Permissions and Other Utilities
 //    implementation(libs.accompanist.permissions)

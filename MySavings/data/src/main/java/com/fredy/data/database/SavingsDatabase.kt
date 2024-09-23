@@ -18,6 +18,7 @@ import com.fredy.data.database.dto.Book
 import com.fredy.data.database.dto.Category
 import com.fredy.data.database.dto.Currency
 import com.fredy.data.database.dto.RatesCache
+import com.fredy.data.database.dto.Record
 import com.fredy.data.database.dto.UserData
 import com.fredy.data.database.dto.Wallet
 

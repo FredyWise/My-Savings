@@ -39,10 +39,10 @@ import com.fredy.addrecord.viewModel.BulkAddRecordEvent
 import com.fredy.addrecord.viewModel.bulkAdd.AddBulkRecordViewModel
 import com.fredy.addrecord.viewModel.singleAdd.AddSingleRecordViewModel
 import com.fredy.analysis.viewModel.AnalysisViewModel
-import com.fredy.auth.authenticationNavGraph
-import com.fredy.auth.ui.ProfileScreen
-import com.fredy.auth.viewModel.AuthEvent
-import com.fredy.auth.viewModel.AuthViewModel
+import com.fredy.authentication.viewModel.AuthViewModel
+import com.fredy.authentication.authenticationNavGraph
+import com.fredy.authentication.ui.ProfileScreen
+import com.fredy.authentication.viewModel.AuthEvent
 import com.fredy.book.ui.BookAddDialog
 import com.fredy.book.ui.RecordDialog
 import com.fredy.book.viewModel.BookEvent
@@ -52,6 +52,7 @@ import com.fredy.book.viewModel.RecordViewModel
 import com.fredy.category.ui.CategoryAddDialog
 import com.fredy.category.viewModel.CategoryEvent
 import com.fredy.category.viewModel.CategoryViewModel
+import com.fredy.ui.util.navigation.Graph
 import com.fredy.currency.ui.CurrencyScreen
 import com.fredy.currency.viewModel.CurrencyViewModel
 import com.fredy.domain.enums.RecordType

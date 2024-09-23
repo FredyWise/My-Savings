@@ -27,6 +27,7 @@ dependencies {
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.timber)
+    implementation(libs.androidx.monitor)
 
 // Testing Libraries
     // Unit and local tests
@@ -39,6 +40,21 @@ dependencies {
     testImplementation(libs.mockk)
     testImplementation(libs.kotlin.test.junit)
 
+    // Instrumentation and UI tests
+    androidTestImplementation(libs.hilt.android.testing)
+    kaptAndroidTest(libs.hilt.android.compiler)
+    androidTestImplementation(libs.junit)
+    androidTestImplementation(libs.kotlinx.coroutines.test)
+    androidTestImplementation(libs.androidx.core.testing)
+    androidTestImplementation(libs.truth)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.test.core.ktx)
+    androidTestImplementation(libs.mockwebserver)
+    androidTestImplementation(libs.mockk.android)
+    androidTestImplementation(libs.runner)
+    androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(libs.androidx.ui.test.junit4)
+
     // Networking and API Integration
     implementation(libs.retrofit)
     implementation(libs.converter.moshi)
@@ -49,6 +65,8 @@ dependencies {
     // Room
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
+    androidTestImplementation("junit:junit:4.12")
+    kapt(libs.androidx.room.compiler)
 
 
     // Firebase and Google Play services
