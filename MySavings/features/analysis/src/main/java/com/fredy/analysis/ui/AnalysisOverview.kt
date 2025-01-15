@@ -29,41 +29,34 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.fredy.analysis.ui.Charts.ChartSlimDonutWithTitle
-import com.fredy.analysis.viewModel.AnalysisEvent
 import com.fredy.analysis.viewModel.AnalysisState
 import com.fredy.domain.enums.RecordType
 import com.fredy.domain.enumsChecker.isExpense
 import com.fredy.domain.enumsChecker.recordTypeColor
 import com.fredy.domain.model.Category
 import com.fredy.domain.util.SavingsStrings
-
-import com.fredy.ui.components.handler.ResourceHandler
-import com.fredy.ui.components.list.SimpleEntityItem
 import com.fredy.theme.util.BalanceColor
 import com.fredy.theme.util.defaultColors
 import com.fredy.theme.util.formatBalanceAmount
+import com.fredy.ui.components.handler.ResourceHandler
+import com.fredy.ui.components.list.SimpleEntityItem
 
 
 @Composable
 fun AnalysisOverview(
     modifier: Modifier = Modifier,
     state: AnalysisState,
-    onEvent: (AnalysisEvent) -> Unit,
+    recordType: RecordType,
+    toggleAnalysisType: () -> Unit,
     onGetCategoryDetails: (Category) -> Unit,
 ) {
-
     state.resourceData.categoriesWithAmountResource.let { resource ->
         ResourceHandler(
             resource = resource,
-            nullOrEmptyMessage = "There is no ${state.filterState.recordType.name} on this date yet",
+            nullOrEmptyMessage = "There is no ${recordType.name} on this date yet",
             isNullOrEmpty = { it.isNullOrEmpty() },
-            onMessageClick = {
-                onEvent(
-                    AnalysisEvent.ToggleAnalysisType
-                )
-            },
+            onMessageClick = toggleAnalysisType,
         ) { data ->
-            val recordType = state.filterState.recordType
             val items = if (recordType.isExpense()) data.reversed() else data
             val totalAmount = when (recordType) {
                 RecordType.Expense -> state.balanceBar.expense.amount
@@ -97,11 +90,7 @@ fun AnalysisOverview(
                                 ) + " " + items.first().category.categoryType.name,
                                 labelColor = contentColor,
                                 amountsTotal = totalAmount,
-                                onClickLabel = {
-                                    onEvent(
-                                        AnalysisEvent.ToggleAnalysisType
-                                    )
-                                },
+                                onClickLabel = toggleAnalysisType,
                             )
                         }
                         Column(

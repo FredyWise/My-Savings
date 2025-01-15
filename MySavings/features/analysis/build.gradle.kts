@@ -15,9 +15,11 @@ android {
 
 dependencies {
 
+
     implementation(projects.domain)
     implementation(projects.ui)
     implementation(projects.theme)
+    implementation(projects.features.currency)
 
 
     // Core Functions
@@ -87,4 +89,8 @@ dependencies {
     kapt(libs.hilt.android.compiler)
     kapt(libs.androidx.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
+
+// Firebase and Google Play services
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.firestore.ktx)
 }

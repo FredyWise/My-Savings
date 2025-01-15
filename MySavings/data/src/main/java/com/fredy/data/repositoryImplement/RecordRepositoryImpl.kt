@@ -1,5 +1,6 @@
 package com.fredy.data.repositoryImplement
 
+import androidx.lifecycle.MutableLiveData
 import com.fredy.data.database.dao.RecordDao
 import com.fredy.data.database.firestoreDataSource.RecordDataSource
 import com.fredy.data.mappers.toDataRecord
@@ -10,6 +11,7 @@ import com.fredy.data.mappers.toDomainTrueRecords
 import com.fredy.domain.enums.RecordType
 import com.fredy.domain.model.Record
 import com.fredy.domain.model.TrueRecord
+import com.fredy.domain.modelUI.FilterState
 import com.fredy.domain.repository.RecordRepository
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
@@ -134,35 +136,35 @@ class RecordRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getUserCategoryRecordsOrderedByDateTime(
-        userId: String,
-        categoryId: String,
-        sortType: com.fredy.domain.enums.SortType,
-    ): Flow<List<TrueRecord>> {
-        Timber.i("getUserCategoryRecordsOrderedByDateTimeRepo: $userId")
-        return flow {
-            recordDataSource.getUserCategoryRecordsOrderedByDateTime(userId, categoryId)
-                .collect { records ->
-                    Timber.i("getUserCategoryRecordsOrderedByDateTimeRepo.Data: $records")
-                    emit(records.toDomainTrueRecords())
-                }
-        }
-    }
-
-    override fun getUserAccountRecordsOrderedByDateTime(
-        userId: String,
-        accountId: String,
-        sortType: com.fredy.domain.enums.SortType,
-    ): Flow<List<TrueRecord>> {
-        Timber.i("getUserAccountRecordsOrderedByDateTimeRepo: $accountId")
-        return flow {
-            recordDataSource.getUserWalletRecordsOrderedByDateTime(userId, accountId)
-                .collect { records ->
-                    Timber.i("getUserAccountRecordsOrderedByDateTimeRepo.Data: $records")
-                    emit(records.toDomainTrueRecords())
-                }
-        }
-    }
+//    override fun getUserCategoryRecordsOrderedByDateTime(
+//        userId: String,
+//        categoryId: String,
+//        sortType: com.fredy.domain.enums.SortType,
+//    ): Flow<List<TrueRecord>> {
+//        Timber.i("getUserCategoryRecordsOrderedByDateTimeRepo: $userId")
+//        return flow {
+//            recordDataSource.getUserCategoryRecordsOrderedByDateTime(userId, categoryId)
+//                .collect { records ->
+//                    Timber.i("getUserCategoryRecordsOrderedByDateTimeRepo.Data: $records")
+//                    emit(records.toDomainTrueRecords())
+//                }
+//        }
+//    }
+//
+//    override fun getUserAccountRecordsOrderedByDateTime(
+//        userId: String,
+//        accountId: String,
+//        sortType: com.fredy.domain.enums.SortType,
+//    ): Flow<List<TrueRecord>> {
+//        Timber.i("getUserAccountRecordsOrderedByDateTimeRepo: $accountId")
+//        return flow {
+//            recordDataSource.getUserWalletRecordsOrderedByDateTime(userId, accountId)
+//                .collect { records ->
+//                    Timber.i("getUserAccountRecordsOrderedByDateTimeRepo.Data: $records")
+//                    emit(records.toDomainTrueRecords())
+//                }
+//        }
+//    }
 
     override fun getUserRecordsByTypeFromSpecificTime(
         userId: String,
@@ -199,17 +201,17 @@ class RecordRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getUserRecordsByType(
-        userId: String,
-        recordType: RecordType,
-    ): Flow<List<Record>> {
-        Timber.i("getUserRecordsByTypeRepo: $userId")
-        return flow {
-            recordDataSource.getUserRecordsByType(userId, recordType).collect { records ->
-                Timber.i("getUserRecordsByTypeRepo.Data: $records")
-                emit(records.toDomainRecords())
-            }
-        }
-    }
+//    override fun getUserRecordsByType(
+//        userId: String,
+//        recordType: RecordType,
+//    ): Flow<List<Record>> {
+//        Timber.i("getUserRecordsByTypeRepo: $userId")
+//        return flow {
+//            recordDataSource.getUserRecordsByType(userId, recordType).collect { records ->
+//                Timber.i("getUserRecordsByTypeRepo.Data: $records")
+//                emit(records.toDomainRecords())
+//            }
+//        }
+//    }
 
 }

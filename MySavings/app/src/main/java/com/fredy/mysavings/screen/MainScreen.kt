@@ -17,17 +17,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.FilterList
-import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -38,14 +38,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.fredy.analysis.viewModel.AnalysisViewModel
 import com.fredy.book.ui.RecordDialog
 import com.fredy.book.viewModel.BookViewModel
 import com.fredy.book.viewModel.RecordEvent
@@ -56,8 +53,8 @@ import com.fredy.mysavings.navigation.MainNavGraph
 import com.fredy.mysavings.navigation.NavigationRoute
 import com.fredy.mysavings.navigation.bottomBarScreens
 import com.fredy.mysavings.navigation.drawerScreens
-import com.fredy.mysavings.navigation.navigateSingleTopTo
 import com.fredy.ui.components.dialogs.SimpleWarningDialog
+import com.fredy.ui.util.navigation.navigateSingleTopTo
 import com.fredy.wallet.viewModel.WalletViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
@@ -71,7 +68,6 @@ fun MainScreen(
     onContentColor: Color = MaterialTheme.colorScheme.onSurface,
     rootNavController: NavHostController,
     recordViewModel: RecordViewModel,
-    analysisViewModel: AnalysisViewModel,
     walletViewModel: WalletViewModel,
     categoryViewModel: CategoryViewModel,
     bookViewModel: BookViewModel,
@@ -148,7 +144,7 @@ fun MainScreen(
                         newScreen.route
                     )
                 },
-                additionalItem = {
+                additionalItem = { textColor, textStyle ->
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -158,9 +154,9 @@ fun MainScreen(
                             .padding(16.dp),
                     ) {
                         Icon(
-                            imageVector = Icons.Default.Logout,
+                            imageVector = Icons.AutoMirrored.Filled.Logout,
                             contentDescription = "",
-                            tint = MaterialTheme.colorScheme.onSurface
+                            tint = textColor
                         )
                         Spacer(
                             modifier = Modifier.width(
@@ -169,9 +165,8 @@ fun MainScreen(
                         )
                         Text(
                             text = "Sign Out",
-                            style = TextStyle(
-                                fontSize = 18.sp
-                            ),
+                            color = textColor,
+                            style = textStyle,
                             modifier = Modifier.weight(
                                 1f
                             )
@@ -243,7 +238,7 @@ fun MainScreen(
                             FloatingActionButton(
                                 onClick = {
                                     rootNavController.navigate(
-                                        "${NavigationRoute.BulkAdd.route}?bookId=${state.filterState.currentBook?.bookId}"
+                                        "${NavigationRoute.BulkAdd.route}?bookId=${state.filterState.currentBook.bookId}"
                                     )
                                 },
                                 containerColor = contentColor,
@@ -399,7 +394,6 @@ fun MainScreen(
                     innerPadding
                 ),
                 recordViewModel = recordViewModel,
-                analysisViewModel = analysisViewModel,
                 walletViewModel = walletViewModel,
                 categoryViewModel = categoryViewModel,
                 bookViewModel = bookViewModel,

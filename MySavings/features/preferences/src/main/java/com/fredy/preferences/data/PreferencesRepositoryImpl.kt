@@ -13,7 +13,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import com.fredy.preferences.domain.DisplayMode
 import com.fredy.preferences.domain.PreferenceSettings
 import com.fredy.preferences.domain.PreferencesRepository
-import com.fredy.preferences.util.Preferences
+import com.fredy.preferences.data.util.Preferences
 import com.fredy.theme.util.defaultDarkExpenseColor
 import com.fredy.theme.util.defaultDarkIncomeColor
 import com.fredy.theme.util.defaultDarkTransferColor
@@ -122,27 +122,20 @@ class PreferencesRepositoryImpl @Inject constructor(
         preferences.savePreference(TRANSFER_COLOR, color?.toArgb())
     }
 
-    override fun getDailyNotification(): Flow<Boolean> {
-        TODO("Not yet implemented")
-    }
+    override fun getDailyNotification(): Flow<Boolean> = preferences.getPreference(DAILY_NOTIFICATION, false)
 
     override suspend fun saveDailyNotification(enableNotification: Boolean) {
-        TODO("Not yet implemented")
+        preferences.savePreference(DAILY_NOTIFICATION, enableNotification)
     }
 
-    override fun getDailyNotificationTime(): Flow<LocalTime> {
-        TODO("Not yet implemented")
-    }
+    override fun getDailyNotificationTime(): Flow<LocalTime> = preferences.getPreference(DAILY_NOTIFICATION_TIME, -1)
+        .map { time ->
+            time.toLocalTime()
+        }
 
     override suspend fun saveDailyNotificationTime(dailyNotificationTime: LocalTime) {
-        TODO("Not yet implemented")
+        preferences.savePreference(DAILY_NOTIFICATION_TIME, dailyNotificationTime.toInt())
     }
-
-//    override fun getDailyNotification(): Flow<Boolean> = preferences.getPreference(DAILY_NOTIFICATION, false)
-//
-//    override suspend fun saveDailyNotification(enableNotification: Boolean) {
-//        preferences.savePreference(DAILY_NOTIFICATION, enableNotification)
-//    }
 
     override fun getAutoLogin(): Flow<Boolean> = preferences.getPreference(
         AUTO_LOGIN,
@@ -197,21 +190,6 @@ class PreferencesRepositoryImpl @Inject constructor(
         )
     }
 
-//    override fun getDailyNotification(): Flow<Boolean> = preferences.getPreference(DAILY_NOTIFICATION, false)
-//
-//    override suspend fun saveDailyNotification(enableNotification: Boolean) {
-//        preferences.savePreference(DAILY_NOTIFICATION, enableNotification)
-//    }
-
-//    override fun getDailyNotificationTime(): Flow<LocalTime> = preferences.getPreference(DAILY_NOTIFICATION_TIME, -1)
-//        .map { time ->
-//            LocalTimeConverter.intToLocalTime(time)
-//        }
-//
-//    override suspend fun saveDailyNotificationTime(dailyNotificationTime: LocalTime) {
-//        preferences.savePreference(DAILY_NOTIFICATION_TIME, LocalTimeConverter.localTimeToInt(dailyNotificationTime))
-//    }
-
     override fun bioAuthStatus(): Boolean {
         val keyGuardManager = context.getSystemService(
             Context.KEYGUARD_SERVICE
@@ -236,7 +214,7 @@ class PreferencesRepositoryImpl @Inject constructor(
 
     override fun getAllPreferenceSettings(): Flow<PreferenceSettings> = flow {
         val displayMode = getDisplayMode().first()
-        val result = com.fredy.preferences.domain.PreferenceSettings(
+        val result = PreferenceSettings(
             displayMode = displayMode,
             autoLogin = getAutoLogin().first(),
             bioAuth = getBioAuth().first(),

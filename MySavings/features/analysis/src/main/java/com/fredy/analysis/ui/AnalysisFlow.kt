@@ -22,19 +22,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import co.yml.charts.common.model.Point
 import com.fredy.analysis.ui.Charts.ChartLine
-import com.fredy.analysis.viewModel.AnalysisEvent
 import com.fredy.analysis.viewModel.AnalysisState
-import com.fredy.ui.isFilterTypeMonthBelow
+import com.fredy.domain.enums.RecordType
 import com.fredy.domain.enumsChecker.isExpense
 import com.fredy.domain.enumsChecker.isIncome
 import com.fredy.domain.enumsChecker.recordTypeColor
+import com.fredy.domain.modelUI.isFilterTypeMonthBelow
 import com.fredy.domain.util.SavingsIcons.CalendarIcon
+import com.fredy.theme.util.formatBalanceAmount
+import com.fredy.theme.util.formatDateDay
 import com.fredy.ui.components.Calendar
 import com.fredy.ui.components.handler.ResourceHandler
 import com.fredy.ui.components.list.CustomStickyHeader
 import com.fredy.ui.components.list.SimpleEntityItem
-import com.fredy.theme.util.formatBalanceAmount
-import com.fredy.theme.util.formatDateDay
 import kotlin.math.absoluteValue
 
 @Composable
@@ -42,20 +42,16 @@ fun AnalysisFlow(
     modifier: Modifier = Modifier,
     onBackgroundColor: Color = MaterialTheme.colorScheme.secondary,
     state: AnalysisState,
-    onEvent: (AnalysisEvent) -> Unit,
+    recordType: RecordType,
+    toggleAnalysisType: () -> Unit,
 ) {
     state.resourceData.recordsWithinTimeResource.let { resource ->
         ResourceHandler(
             resource = resource,
-            nullOrEmptyMessage = "There is no ${state.filterState.recordType.name} on this date yet",
+            nullOrEmptyMessage = "There is no ${recordType.name} on this date yet",
             isNullOrEmpty = { it.isNullOrEmpty() },
-            onMessageClick = {
-                onEvent(
-                    AnalysisEvent.ToggleAnalysisType
-                )
-            },
+            onMessageClick = toggleAnalysisType,
         ) { data ->
-            val recordType = state.filterState.recordType
             val totalAmount = if (recordType.isExpense()) {
                 state.balanceBar.expense.amount
             } else if (recordType.isIncome()) {
@@ -93,9 +89,7 @@ fun AnalysisFlow(
                             .padding(horizontal = 10.dp)
                             .padding(top = 8.dp)
                             .clickable {
-                                onEvent(
-                                    AnalysisEvent.ToggleAnalysisType
-                                )
+                                toggleAnalysisType()
                             },
                     ) {
                         Text(

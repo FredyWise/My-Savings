@@ -1,22 +1,28 @@
 package com.fredy.data.database.converter
 
 import androidx.room.TypeConverter
-import com.fredy.data.api.currencyModels.currencyDTO.Rates
+import com.fredy.domain.model.Rate
 import com.google.gson.Gson
+import timber.log.Timber
+
+data class CurrencyRatesWrapper(val rates: List<Rate>)
 
 object CurrencyRatesDoubleConverter {
-
     @TypeConverter
     @JvmStatic
-    fun toRates(json: String): Rates {
+    fun toRates(json: String): List<Rate>? {
         val gson = Gson()
-        return gson.fromJson(json, Rates::class.java)
+        val wrapper = gson.fromJson(json, CurrencyRatesWrapper::class.java)
+        Timber.d("toRates: $wrapper")
+        return wrapper?.rates
     }
 
     @TypeConverter
     @JvmStatic
-    fun fromRates(rates: Rates): String {
+    fun fromRates(rates: List<Rate>): String {
         val gson = Gson()
-        return gson.toJson(rates)
+        val wrapper = CurrencyRatesWrapper(rates)
+        Timber.d("fromRates: $wrapper")
+        return gson.toJson(wrapper)
     }
 }

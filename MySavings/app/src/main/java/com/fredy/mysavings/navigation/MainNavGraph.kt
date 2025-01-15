@@ -24,6 +24,7 @@ import com.fredy.category.ui.CategoriesScreen
 import com.fredy.category.ui.CategoryDetailBottomSheet
 import com.fredy.category.viewModel.CategoryEvent
 import com.fredy.category.viewModel.CategoryViewModel
+import com.fredy.ui.util.navigation.sharedViewModel
 import com.fredy.wallet.ui.WalletDetailBottomSheet
 import com.fredy.wallet.ui.WalletsScreen
 import com.fredy.wallet.viewModel.WalletEvent
@@ -38,7 +39,6 @@ fun MainNavGraph(
     navController: NavHostController,
     modifier: Modifier = Modifier,
     recordViewModel: RecordViewModel,
-    analysisViewModel: AnalysisViewModel,
     walletViewModel: WalletViewModel,
     categoryViewModel: CategoryViewModel,
     bookViewModel: BookViewModel,
@@ -80,8 +80,10 @@ fun MainNavGraph(
             exitTransition = {
                 fadeOut()
             },
-        ) {
+        ) { entry ->
+            val analysisViewModel = entry.sharedViewModel<AnalysisViewModel>(navController)
             val state by analysisViewModel.state.collectAsStateWithLifecycle()
+            val recordState by recordViewModel.state.collectAsStateWithLifecycle()
             val recordEvent = recordViewModel::onEvent
             val categoryState by categoryViewModel.state.collectAsStateWithLifecycle()
             val walletEvent = walletViewModel::onEvent
@@ -116,7 +118,6 @@ fun MainNavGraph(
             AnalysisScreen(
                 rootNavController = rootNavController,
                 state = state,
-                onEvent = analysisViewModel::onEvent,
                 onGetCategoryDetails = { category ->
                     categoryEvent(CategoryEvent.GetCategoryDetail(category))
                     isCategorySheetOpen = true
@@ -125,12 +126,17 @@ fun MainNavGraph(
                 onGetWalletDetails = { wallet ->
                     walletEvent(WalletEvent.GetWalletDetail(wallet))
                     isWalletSheetOpen = true
+                },
+                toggleAnalysisType = {
+                    recordEvent(
+                        RecordEvent.ToggleAnalysisType
+                    )
                 }
 
             )
         }
         composable(
-            route = NavigationRoute.Account.route,
+            route = NavigationRoute.Wallet.route,
             enterTransition = {
                 fadeIn()
             },

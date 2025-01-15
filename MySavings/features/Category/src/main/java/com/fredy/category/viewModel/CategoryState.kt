@@ -9,7 +9,8 @@ import com.fredy.domain.model.CategoryMap
 import com.fredy.domain.model.RecordMap
 
 data class CategoryState(
-    val categoryResource: Resource<List<CategoryMap>, DataError.Local> = Resource.Loading(),
+    val categoryMapsResource: Resource<List<CategoryMap>, DataError.Local> = Resource.Loading(),
+    val categoryResource: Resource<List<Category>, DataError.Local> = Resource.Loading(),
     val recordMapsResource: Resource<List<RecordMap>, DataError.Local> = Resource.Loading(),
     val category: Category = Category(),
     val categoryId: String = "",

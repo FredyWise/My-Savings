@@ -1,10 +1,6 @@
 package com.fredy.analysis
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -12,8 +8,8 @@ import androidx.navigation.compose.composable
 import com.fredy.analysis.ui.AnalysisAccount
 import com.fredy.analysis.ui.AnalysisFlow
 import com.fredy.analysis.ui.AnalysisOverview
-import com.fredy.analysis.viewModel.AnalysisEvent
 import com.fredy.analysis.viewModel.AnalysisState
+import com.fredy.domain.enums.RecordType
 import com.fredy.domain.model.Category
 import com.fredy.domain.model.Wallet
 
@@ -24,7 +20,8 @@ fun AnalysisNavGraph(
     navController: NavHostController,
     modifier: Modifier = Modifier,
     state: AnalysisState,
-    onEvent: (AnalysisEvent) -> Unit,
+    recordType: RecordType,
+    toggleAnalysisType: () -> Unit,
     onGetCategoryDetails: (Category) -> Unit,
     onGetWalletDetails: (Wallet) -> Unit,
 ) {
@@ -38,7 +35,8 @@ fun AnalysisNavGraph(
         ) {
             AnalysisOverview(
                 state = state,
-                onEvent = onEvent,
+                recordType =recordType ,
+                toggleAnalysisType = toggleAnalysisType,
                 onGetCategoryDetails = onGetCategoryDetails
             )
         }
@@ -47,7 +45,7 @@ fun AnalysisNavGraph(
             route = AnalysisNavigationRoute.AnalysisFlow.route
         ) {
             AnalysisFlow(
-                state = state, onEvent = onEvent
+                state = state, recordType = recordType, toggleAnalysisType = toggleAnalysisType
             )
         }
 
@@ -57,7 +55,7 @@ fun AnalysisNavGraph(
 
             AnalysisAccount(
                 state = state,
-                onEvent = onEvent,
+                toggleAnalysisType = toggleAnalysisType,
                 onGetWalletDetails = onGetWalletDetails
             )
         }

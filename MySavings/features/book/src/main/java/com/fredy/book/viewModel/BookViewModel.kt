@@ -5,8 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.fredy.domain.util.resource.Resource
 import com.fredy.domain.enums.SortType
 import com.fredy.domain.model.Book
-import com.fredy.domain.useCases.BookUseCases.BookUseCases
-import com.fredy.domain.useCases.RecordUseCases.RecordUseCases
+import com.fredy.book.domain.useCases.book.BookUseCases
 
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,8 +18,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class BookViewModel @Inject constructor(
-    private val bookUseCases: BookUseCases,
-    private val recordUseCases: RecordUseCases
+    private val bookUseCases: BookUseCases
 ) : ViewModel() {
     private val _sortType = MutableStateFlow(
         SortType.ASCENDING
@@ -79,7 +77,7 @@ class BookViewModel @Inject constructor(
                     bookUseCases.deleteBook(
                         event.book
                     )
-                    recordUseCases.updateRecordItemWithDeletedBook(event.book)
+                    bookUseCases.updateRecordItemWithDeletedBook(event.book)
                     event.onDeleteEffect()
                 }
             }

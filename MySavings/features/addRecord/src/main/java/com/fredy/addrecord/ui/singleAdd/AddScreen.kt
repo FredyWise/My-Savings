@@ -117,7 +117,7 @@ fun AddScreen(
         onSaveClicked = {
             onEvent(AddRecordEvent.ConvertCurrency)
         },
-        warningText = (resource as Resource.Error<AddRecordState, DataError.Local>).error.name
+        warningText = if(resource is Resource.Error<AddRecordState, DataError.Local>) resource.error.name else ""
     )
 
 

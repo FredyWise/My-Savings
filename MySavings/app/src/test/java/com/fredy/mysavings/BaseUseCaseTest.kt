@@ -15,7 +15,7 @@ import com.fredy.mysavings.Feature.Domain.Repository.FakeCSVRepository
 import com.fredy.mysavings.Feature.Domain.Repository.FakeCategoryRepository
 import com.fredy.mysavings.Feature.Domain.Repository.FakeCurrencyRepository
 import com.fredy.mysavings.Feature.Domain.Repository.FakeRecordRepository
-import com.fredy.domain.useCases.CurrencyUseCases.CurrencyUseCases
+import com.fredy.currency.domain.useCases.CurrencyUseCases
 import com.fredy.domain.util.DefaultData
 import com.fredy.domain.util.DefaultData.deletedCategory
 import com.fredy.domain.util.DefaultData.deletedWallet
@@ -32,8 +32,6 @@ import org.junit.Before
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
-import java.time.temporal.TemporalAccessor
-import java.util.Date
 import kotlin.random.Random
 
 

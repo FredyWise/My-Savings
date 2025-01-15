@@ -15,6 +15,7 @@ android {
 }
 dependencies {
     // Projects
+    implementation(projects.data)
     implementation(projects.theme)
     implementation(projects.ui)
     implementation(projects.domain)
@@ -85,4 +86,9 @@ dependencies {
     kapt(libs.hilt.android.compiler)
     kapt(libs.androidx.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
+
+
+    // Firebase and Google Play services
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.firestore.ktx)
 }

@@ -34,7 +34,6 @@ import androidx.compose.ui.unit.sp
 import com.fredy.domain.enums.RecordType
 import com.fredy.domain.enumsChecker.isTransfer
 import com.fredy.domain.model.Category
-import com.fredy.domain.model.CategoryMap
 import com.fredy.domain.model.Wallet
 import com.fredy.domain.util.SavingsIcons.AddCircleOutlineIcon
 import com.fredy.domain.util.SavingsIcons.savingsIcons
@@ -53,10 +52,10 @@ fun AddBottomSheet(
     modifier: Modifier = Modifier,
     sheetState: SheetState,
     onDismissModal: (Boolean) -> Unit,
-    isLeading: Boolean,
+    isAccount: Boolean,
     recordType: RecordType,
     walletResource: Resource<List<Wallet>, DataError.Local>,
-    categoryResource: Resource<List<CategoryMap>, DataError.Local>,
+    categoryResource: Resource<List<Category>, DataError.Local>,
     showWalletDialog: (wallet: Wallet) -> Unit,
     showCategoryDialog: (category: Category) -> Unit,
     onSelectFromAccount: (Wallet) -> Unit,
@@ -71,7 +70,7 @@ fun AddBottomSheet(
             onDismissModal(false)
         },
     ) {
-        if (isLeading || recordType.isTransfer()) {
+        if (isAccount || recordType.isTransfer()) {
             walletResource.let { resource ->
                 ResourceHandler(
                     modifier = if (resource is Resource.Loading || (resource as Resource.Success).data.isEmpty()) Modifier.fillMaxHeight(
@@ -84,7 +83,7 @@ fun AddBottomSheet(
                         showWalletDialog(Wallet(walletName = ""))
                     },
                 ) { data ->
-                    if (isLeading) {
+                    if (isAccount) {
                         AccountBottomSheet(
                             wallets = data,
                             onSelectAccount = {
@@ -124,7 +123,7 @@ fun AddBottomSheet(
                 ) { data ->
                     if (!recordType.isTransfer()) {
                         CategoryBottomSheet(
-                            categoryMaps = data,
+                            categoryList = data,
                             recordType = recordType,
                             onSelectCategory = {
                                 onSelectCategory(it)
@@ -246,14 +245,14 @@ fun CategoryBottomSheet(
     modifier: Modifier = Modifier,
     textColor: Color = MaterialTheme.colorScheme.onSurface,
     backgroundColor: Color = MaterialTheme.colorScheme.surface,
-    categoryMaps: List<CategoryMap>,
+    categoryList: List<Category>,
     recordType: RecordType,
     onSelectCategory: (Category) -> Unit,
     onAddCategory: () -> Unit
 ) {
-    val categoryMap = categoryMaps.find { c ->
+    val categories = categoryList.filter { c ->
         c.categoryType == recordType
-    } ?: CategoryMap()
+    }
     Column(Modifier.background(backgroundColor)) {
         Text(
             modifier = Modifier
@@ -271,7 +270,7 @@ fun CategoryBottomSheet(
             columns = GridCells.Fixed(3)
         ) {
 
-            items(categoryMap.categories) { category ->
+            items(categories) { category ->
                 Column(
                     modifier = Modifier
                         .clickable {

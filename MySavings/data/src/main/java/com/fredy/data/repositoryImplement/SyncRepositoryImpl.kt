@@ -1,6 +1,7 @@
 package com.fredy.data.repositoryImplement
 
 import android.content.Context
+import androidx.lifecycle.MutableLiveData
 import com.fredy.data.database.dao.BookDao
 import com.fredy.data.database.dao.CategoryDao
 import com.fredy.data.database.dao.RecordDao
@@ -12,14 +13,17 @@ import com.fredy.data.database.firestoreDataSource.WalletDataSource
 import com.fredy.data.mappers.toDataBook
 import com.fredy.data.mappers.toDataCategory
 import com.fredy.data.mappers.toDataWallet
-import com.fredy.data.mappers.toDomainWallet
 import com.fredy.data.util.isInternetConnected
+import com.fredy.domain.modelUI.FilterState
 import com.fredy.domain.repository.SyncRepository
 import com.fredy.domain.util.DefaultData.deletedCategory
 import com.fredy.domain.util.DefaultData.deletedWallet
 import com.fredy.domain.util.DefaultData.transferCategory
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.withContext
@@ -141,5 +145,19 @@ class SyncRepositoryImpl @Inject constructor(
             syncCategory(withDelete)
         }
     }
+
+    private val _filterSettings = MutableStateFlow(FilterState())
+    override val filterSettings: StateFlow<FilterState> = _filterSettings.asStateFlow()
+
+
+    override fun saveFilterSettings(filterState: FilterState) {
+        _filterSettings.value = filterState
+        Timber.i("saveFilterSettings: $filterState")
+    }
+
+//    override fun getFilterSettings(): StateFlow<FilterState> {
+//        Timber.i("getFilterSettings: ${_filterSettings.value}")
+//        return filterSettings
+//    }
 
 }

@@ -2,7 +2,7 @@ package com.fredy.book.viewModel
 
 import com.fredy.domain.model.TrueRecord
 import com.fredy.domain.modelUI.BalanceBar
-import com.fredy.ui.FilterState
+import com.fredy.domain.modelUI.FilterState
 
 data class RecordState(
     val resourceData: ResourceData = ResourceData(),

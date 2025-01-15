@@ -9,7 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.fredy.authentication.domain.AuthMethod
 import com.fredy.authentication.domain.usecases.AuthUseCases
 import com.fredy.domain.model.UserData
-import com.fredy.domain.useCases.UserUseCases.UserUseCases
+import com.fredy.domain.userUseCases.UserUseCases
 import com.fredy.domain.util.resource.DataError
 import com.fredy.domain.util.resource.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel

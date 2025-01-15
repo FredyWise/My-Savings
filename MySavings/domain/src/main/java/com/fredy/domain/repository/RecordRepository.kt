@@ -6,6 +6,7 @@ import com.fredy.domain.enums.SortType
 import com.fredy.domain.model.Record
 import com.fredy.domain.model.RecordMap
 import com.fredy.domain.model.TrueRecord
+import com.fredy.domain.modelUI.FilterState
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDateTime
 
@@ -23,17 +24,17 @@ interface RecordRepository {
         endDate: LocalDateTime,
     ): Flow<List<TrueRecord>>
 
-    fun getUserCategoryRecordsOrderedByDateTime(
-        userId: String,
-        categoryId: String,
-        sortType: SortType,
-    ): Flow<List<TrueRecord>>
-
-    fun getUserAccountRecordsOrderedByDateTime(
-        userId: String,
-        accountId: String,
-        sortType: SortType,
-    ): Flow<List<TrueRecord>>
+//    fun getUserCategoryRecordsOrderedByDateTime(
+//        userId: String,
+//        categoryId: String,
+//        sortType: SortType,
+//    ): Flow<List<TrueRecord>>
+//
+//    fun getUserAccountRecordsOrderedByDateTime(
+//        userId: String,
+//        accountId: String,
+//        sortType: SortType,
+//    ): Flow<List<TrueRecord>>
 
     fun getUserRecordsByTypeFromSpecificTime(
         userId: String,
@@ -50,7 +51,8 @@ interface RecordRepository {
 
     fun getUserRecords(userId: String): Flow<List<Record>>
 
-    fun getUserRecordsByType(userId: String, recordType: RecordType): Flow<List<Record>>
+//    fun getUserRecordsByType(userId: String, recordType: RecordType): Flow<List<Record>>
+
 
 }
 

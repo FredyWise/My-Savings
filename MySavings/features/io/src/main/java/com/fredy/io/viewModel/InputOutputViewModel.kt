@@ -5,8 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.fredy.domain.enums.RecordType
 import com.fredy.domain.model.Record
 import com.fredy.domain.model.TrueRecord
-import com.fredy.domain.useCases.BookUseCases.BookUseCases
-import com.fredy.domain.useCases.RecordUseCases.RecordUseCases
 import com.fredy.domain.util.resource.Resource
 import com.fredy.io.domain.model.DBInfo
 import com.fredy.io.domain.useCases.IOUseCases
@@ -28,8 +26,6 @@ import javax.inject.Inject
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class InputOutputViewModel @Inject constructor(
-    private val recordUseCases: RecordUseCases,
-    private val bookUseCases: BookUseCases,
     private val IOUseCases: IOUseCases,
 ) : ViewModel() {
 
@@ -43,13 +39,14 @@ class InputOutputViewModel @Inject constructor(
                         )
                     }
 
-                    bookUseCases.getUserBooks().collectLatest { bookResource ->
+                    IOUseCases.getUserBooks().collectLatest { bookResource ->
                         when (bookResource) {
                             is Resource.Success -> {
+                                val bookResources = bookResource.data
                                 _state.update {
                                     it.copy(
-                                        currentBook = bookResource.data.first(),
-                                        books = bookResource.data
+                                        currentBook = bookResources.first(),
+                                        books = bookResources
                                     )
                                 }
                             }
@@ -66,7 +63,7 @@ class InputOutputViewModel @Inject constructor(
     )
 
     private val _trueRecordsWithinSpecificTime = _state.flatMapLatest { state ->
-        recordUseCases.getAllTrueRecordsWithinSpecificTime(
+        IOUseCases.getAllTrueRecordsWithinSelectedBook(
             state.startDate,
             state.endDate,
             state.currentBook

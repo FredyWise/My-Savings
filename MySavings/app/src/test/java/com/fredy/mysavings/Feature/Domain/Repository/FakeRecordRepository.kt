@@ -2,9 +2,7 @@ package com.fredy.mysavings.Feature.Domain.Repository
 
 import com.fredy.domain.enums.RecordType
 import com.fredy.domain.enums.SortType
-import com.fredy.domain.mappers.recordUIMapper.toRecordSortedMaps
 import com.fredy.domain.model.Record
-import com.fredy.domain.model.RecordMap
 import com.fredy.domain.model.TrueRecord
 import com.fredy.domain.repository.RecordRepository
 import kotlinx.coroutines.flow.Flow
@@ -72,7 +70,7 @@ class FakeRecordRepository : RecordRepository {
         }
     }
 
-    override fun getUserCategoryRecordsOrderedByDateTime(
+     fun getUserCategoryRecordsOrderedByDateTime(
         userId: String,
         categoryId: String,
         sortType: SortType,
@@ -82,7 +80,7 @@ class FakeRecordRepository : RecordRepository {
         }
     }
 
-    override fun getUserAccountRecordsOrderedByDateTime(
+     fun getUserAccountRecordsOrderedByDateTime(
         userId: String,
         accountId: String,
         sortType: SortType,
@@ -115,7 +113,7 @@ class FakeRecordRepository : RecordRepository {
         }
     }
 
-    override fun getUserRecordsByType(
+     fun getUserRecordsByType(
         userId: String,
         recordType: RecordType,
     ): Flow<List<Record>> {

@@ -16,51 +16,51 @@ import javax.inject.Inject
 
 class BookRepositoryImpl @Inject constructor(
     private val bookDataSource: BookDataSource,
-    private val bookDao: BookDao,
-    private val firestore: FirebaseFirestore,
+//    private val bookDao: BookDao,
+//    private val firestore: FirebaseFirestore,
 ) : BookRepository {
-    private val bookCollection = firestore.collection(
-        "book"
-    )
-
-    override suspend fun upsertBook(book: Book): String {
-        return withContext(Dispatchers.IO) {
-            val dataBook = if (book.bookId.isEmpty()) {
-                val newBookRef = bookCollection.document()
-                book.copy(
-                    bookId = newBookRef.id,
-                )
-            } else {
-                book
-            }.toDataBook()
-
-            bookDao.upsertBookItem(
-                dataBook
-            )
-            bookDataSource.upsertBookItem(
-                dataBook
-            )
-            dataBook.bookId
-        }
-    }
-
-    override suspend fun deleteBook(book: Book) {
-        withContext(Dispatchers.IO) {
-            val dataBook = book.toDataBook()
-            bookDataSource.deleteBookItem(dataBook)
-            bookDao.deleteBookItem(dataBook)
-        }
-    }
-
-
-    override fun getBook(bookId: String): Flow<Book> {
-        return flow {
-            val domainBook = withContext(Dispatchers.IO) {
-                bookDataSource.getBook(bookId)
-            }.toDomainBook()
-            emit(domainBook)
-        }
-    }
+//    private val bookCollection = firestore.collection(
+//        "book"
+//    )
+//
+//    override suspend fun upsertBook(book: Book): String {
+//        return withContext(Dispatchers.IO) {
+//            val dataBook = if (book.bookId.isEmpty()) {
+//                val newBookRef = bookCollection.document()
+//                book.copy(
+//                    bookId = newBookRef.id,
+//                )
+//            } else {
+//                book
+//            }.toDataBook()
+//
+//            bookDao.upsertBookItem(
+//                dataBook
+//            )
+//            bookDataSource.upsertBookItem(
+//                dataBook
+//            )
+//            dataBook.bookId
+//        }
+//    }
+//
+//    override suspend fun deleteBook(book: Book) {
+//        withContext(Dispatchers.IO) {
+//            val dataBook = book.toDataBook()
+//            bookDataSource.deleteBookItem(dataBook)
+//            bookDao.deleteBookItem(dataBook)
+//        }
+//    }
+//
+//
+//    override fun getBook(bookId: String): Flow<Book> {
+//        return flow {
+//            val domainBook = withContext(Dispatchers.IO) {
+//                bookDataSource.getBook(bookId)
+//            }.toDomainBook()
+//            emit(domainBook)
+//        }
+//    }
 
     override fun getUserBooks(userId: String): Flow<List<Book>> {
         return flow {

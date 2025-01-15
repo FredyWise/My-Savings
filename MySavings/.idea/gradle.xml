@@ -15,14 +15,22 @@
             <option value="$PROJECT_DIR$/features" />
             <option value="$PROJECT_DIR$/features/addRecord" />
             <option value="$PROJECT_DIR$/features/analysis" />
-            <option value="$PROJECT_DIR$/features/auth" />
+            <option value="$PROJECT_DIR$/features/authentication" />
             <option value="$PROJECT_DIR$/features/book" />
+            <option value="$PROJECT_DIR$/features/budget" />
+            <option value="$PROJECT_DIR$/features/budget/domain" />
+            <option value="$PROJECT_DIR$/features/budgeting" />
+            <option value="$PROJECT_DIR$/features/budgeting/app" />
+            <option value="$PROJECT_DIR$/features/budgeting/data" />
+            <option value="$PROJECT_DIR$/features/budgeting/domain" />
             <option value="$PROJECT_DIR$/features/category" />
             <option value="$PROJECT_DIR$/features/currency" />
             <option value="$PROJECT_DIR$/features/io" />
             <option value="$PROJECT_DIR$/features/preferences" />
+            <option value="$PROJECT_DIR$/features/scanner" />
             <option value="$PROJECT_DIR$/features/search" />
             <option value="$PROJECT_DIR$/features/wallet" />
+            <option value="$PROJECT_DIR$/features/z" />
             <option value="$PROJECT_DIR$/theme" />
             <option value="$PROJECT_DIR$/ui" />
           </set>

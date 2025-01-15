@@ -13,7 +13,8 @@ import com.fredy.addrecord.viewModel.BulkAddRecordEvent
 import com.fredy.domain.util.resource.DataError
 import com.fredy.domain.util.resource.Resource
 import com.fredy.domain.model.Category
-import com.fredy.domain.useCases.CurrencyUseCases.CurrencyUseCases
+import com.fredy.currency.domain.useCases.CurrencyUseCases
+
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest

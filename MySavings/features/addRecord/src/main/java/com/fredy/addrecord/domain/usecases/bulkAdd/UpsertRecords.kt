@@ -4,7 +4,7 @@ import com.fredy.addrecord.viewModel.AddRecordState
 import com.fredy.domain.util.resource.DataError
 import com.fredy.domain.util.resource.Resource
 import com.fredy.domain.enums.RecordType
-import com.fredy.domain.repository.RecordRepository
+import com.fredy.addrecord.domain.AddRecordRepository
 import com.fredy.domain.repository.UserRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -13,7 +13,7 @@ import timber.log.Timber
 
 class UpsertRecords(
     val userRepository: UserRepository,
-    val recordRepository: RecordRepository,
+    val recordRepository: AddRecordRepository,
 ) {
     operator fun invoke(
         state: AddRecordState,

@@ -17,13 +17,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.fredy.domain.credentials.Configuration
 import com.fredy.domain.util.SavingsIcons
-import com.fredy.mysavings.R
 import com.fredy.mysavings.navigation.NavigationRoute
 
 
@@ -68,7 +66,7 @@ fun DrawerBody(
     textColor: Color = MaterialTheme.colorScheme.onSurface,
     itemTextStyle: TextStyle = TextStyle(fontSize = 18.sp),
     onItemClick: (NavigationRoute) -> Unit,
-    additionalItem: @Composable () -> Unit = { },
+    additionalItem: @Composable (textColor:Color,itemTextStyle: TextStyle) -> Unit = { _: Color, _: TextStyle -> },
 ) {
     LazyColumn(modifier = modifier) {
         items(items, key = { it.route }) { item ->
@@ -99,7 +97,7 @@ fun DrawerBody(
             }
         }
         item {
-            additionalItem()
+            additionalItem(textColor, itemTextStyle)
         }
     }
 }

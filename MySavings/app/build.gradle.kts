@@ -39,11 +39,11 @@ android {
 
 dependencies {
     // Projects
-    implementation(projects.data)
+//    implementation(projects.data)
     implementation(projects.domain)
     implementation(projects.theme)
     implementation(projects.ui)
-    implementation(projects.features.auth)
+    implementation(projects.features.authentication)
     implementation(projects.features.preferences)
     implementation(projects.features.book)
     implementation(projects.features.io)

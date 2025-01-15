@@ -20,10 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -38,7 +35,6 @@ import com.fredy.addrecord.viewModel.AddRecordEvent
 import com.fredy.addrecord.viewModel.BulkAddRecordEvent
 import com.fredy.addrecord.viewModel.bulkAdd.AddBulkRecordViewModel
 import com.fredy.addrecord.viewModel.singleAdd.AddSingleRecordViewModel
-import com.fredy.analysis.viewModel.AnalysisViewModel
 import com.fredy.authentication.viewModel.AuthViewModel
 import com.fredy.authentication.authenticationNavGraph
 import com.fredy.authentication.ui.ProfileScreen
@@ -64,6 +60,7 @@ import com.fredy.preferences.ui.PreferencesScreen
 import com.fredy.preferences.viewModel.PreferencesViewModel
 import com.fredy.search.ui.SearchScreen
 import com.fredy.search.viewModel.SearchViewModel
+import com.fredy.ui.util.navigation.sharedViewModel
 import com.fredy.wallet.ui.WalletAddDialog
 import com.fredy.wallet.viewModel.WalletEvent
 import com.fredy.wallet.viewModel.WalletViewModel
@@ -106,7 +103,6 @@ fun NavGraphRoot(
                 },
             ) { entry ->
                 val recordViewModel = entry.sharedViewModel<RecordViewModel>(navController)
-                val analysisViewModel = entry.sharedViewModel<AnalysisViewModel>(navController)
                 val walletViewModel = entry.sharedViewModel<WalletViewModel>(navController)
                 val categoryViewModel = entry.sharedViewModel<CategoryViewModel>(navController)
                 val bookViewModel = entry.sharedViewModel<BookViewModel>(navController)
@@ -116,7 +112,6 @@ fun NavGraphRoot(
                 MainScreen(
                     rootNavController = navController,
                     recordViewModel = recordViewModel,
-                    analysisViewModel = analysisViewModel,
                     walletViewModel = walletViewModel,
                     categoryViewModel = categoryViewModel,
                     bookViewModel = bookViewModel,
@@ -186,7 +181,7 @@ fun NavGraphRoot(
                 var isSheetOpen by rememberSaveable {
                     mutableStateOf(false)
                 }
-                var isLeading by remember {
+                var isAccount by remember {
                     mutableStateOf(
                         true
                     )
@@ -199,7 +194,7 @@ fun NavGraphRoot(
                                 isSheetOpen = it
                             }
                         },
-                        isLeading = isLeading,
+                        isAccount = isAccount,
                         recordType = recordType,
 
                         walletResource = walletResource,
@@ -280,20 +275,20 @@ fun NavGraphRoot(
                         )
                     },
                     onTopButtonClick = {
-                        isLeading = true
+                        isAccount = true
                         scope.launch {
                             isSheetOpen = true
                         }
                     },
                     onLeftButtonClick = {
-                        isLeading = true
+                        isAccount = false
                         recordType = RecordType.Expense
                         scope.launch {
                             isSheetOpen = true
                         }
                     },
                     onRightButtonClick = {
-                        isLeading = false
+                        isAccount = false
                         recordType = RecordType.Income
                         scope.launch {
                             isSheetOpen = true
@@ -360,7 +355,7 @@ fun NavGraphRoot(
                                 isSheetOpen = it
                             }
                         },
-                        isLeading = isLeading,
+                        isAccount = isLeading,
                         recordType = state.recordType,
                         walletResource = walletResource,
                         categoryResource = categoryResource,
@@ -609,26 +604,26 @@ fun NavGraphRoot(
     }
 }
 
-fun NavHostController.navigateSingleTopTo(route: String) = this.navigate(
-    route
-) {
-    popUpTo(
-        this@navigateSingleTopTo.graph.findStartDestination().id
-    ) {
-        saveState = true
-    }
-    launchSingleTop = true
-    restoreState = true
-
-}
-
-@Composable
-inline fun <reified T : ViewModel> NavBackStackEntry.sharedViewModel(
-    navController: NavHostController,
-): T {
-    val navGraphRoute = destination.parent?.route ?: return hiltViewModel()
-    val parentEntry = remember(this) {
-        navController.getBackStackEntry(navGraphRoute)
-    }
-    return hiltViewModel(parentEntry)
-}
+//fun NavHostController.navigateSingleTopTo(route: String) = this.navigate(
+//    route
+//) {
+//    popUpTo(
+//        this@navigateSingleTopTo.graph.findStartDestination().id
+//    ) {
+//        saveState = true
+//    }
+//    launchSingleTop = true
+//    restoreState = true
+//
+//}
+//
+//@Composable
+//inline fun <reified T : ViewModel> NavBackStackEntry.sharedViewModel(
+//    navController: NavHostController,
+//): T {
+//    val navGraphRoute = destination.parent?.route ?: return hiltViewModel()
+//    val parentEntry = remember(this) {
+//        navController.getBackStackEntry(navGraphRoute)
+//    }
+//    return hiltViewModel(parentEntry)
+//}

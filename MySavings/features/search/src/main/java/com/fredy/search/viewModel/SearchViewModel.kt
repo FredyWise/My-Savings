@@ -3,7 +3,7 @@ package com.fredy.search.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fredy.domain.util.resource.Resource
-import com.fredy.domain.useCases.RecordUseCases.RecordUseCases
+import com.fredy.search.domain.useCases.SearchUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -15,10 +15,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-    private val recordUseCases: RecordUseCases,
+    private val searchUseCases: SearchUseCases,
 ) : ViewModel() {
 
-    private val _trueRecordsResource = recordUseCases.getAllBooks().stateIn(
+    private val _trueRecordsResource = searchUseCases.getAllBooks().stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(),
         Resource.Success(emptyList())

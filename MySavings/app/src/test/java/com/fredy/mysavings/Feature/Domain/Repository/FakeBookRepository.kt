@@ -10,7 +10,7 @@ class FakeBookRepository : BookRepository {
 
     private val books = mutableListOf<Book>()
 
-    override suspend fun upsertBook(book: Book): String {
+     suspend fun upsertBook(book: Book): String {
         val existingBook = books.find { it.bookId == book.bookId }
         return if (existingBook != null) {
             books.remove(existingBook)
@@ -21,11 +21,11 @@ class FakeBookRepository : BookRepository {
         }
     }
 
-    override suspend fun deleteBook(book: Book) {
+     suspend fun deleteBook(book: Book) {
         books.remove(book)
     }
 
-    override fun getBook(bookId: String): Flow<Book> {
+     fun getBook(bookId: String): Flow<Book> {
         return flow { emit(books.find { it.bookId == bookId }!!) }
     }
 

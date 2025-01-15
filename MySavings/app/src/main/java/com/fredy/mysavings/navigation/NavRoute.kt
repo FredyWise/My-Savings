@@ -47,7 +47,7 @@ val drawerScreens = listOf(
 val bottomBarScreens = listOf(
     NavigationRoute.Records,
     NavigationRoute.Analysis,
-    NavigationRoute.Account,
+    NavigationRoute.Wallet,
     NavigationRoute.Categories,
 )
 
@@ -134,7 +134,7 @@ sealed class NavigationRoute(
         iconNot = Icons.Outlined.Label
     )
 
-    object Account: NavigationRoute(
+    object Wallet: NavigationRoute(
         route = "wallet",
         title = "Wallet",
         contentDescription = "Go to Wallet Screen",

@@ -6,9 +6,8 @@ import com.fredy.domain.util.resource.Resource
 import com.fredy.domain.enums.RecordType
 import com.fredy.domain.enums.SortType
 import com.fredy.domain.model.Wallet
-import com.fredy.domain.useCases.RecordUseCases.RecordUseCases
-import com.fredy.domain.useCases.UserUseCases.UserUseCases
-import com.fredy.domain.useCases.WalletUseCases.WalletUseCases
+import com.fredy.domain.userUseCases.UserUseCases
+import com.fredy.wallet.domain.useCases.WalletUseCases
 import com.fredy.domain.modelUI.BalanceBar
 import com.fredy.domain.modelUI.BalanceItem
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,7 +25,6 @@ import javax.inject.Inject
 @HiltViewModel
 class WalletViewModel @Inject constructor(
     private val walletUseCases: WalletUseCases,
-    private val recordUseCases: RecordUseCases,
     private val userUseCases: UserUseCases,
 ) : ViewModel() {
     init {
@@ -68,7 +66,7 @@ class WalletViewModel @Inject constructor(
     )
 
     private val _totalExpense = _updating.flatMapLatest {
-        recordUseCases.getUserTotalAmountByType(
+        walletUseCases.getUserTotalAmountByType(
             RecordType.Expense
         )
     }.stateIn(
@@ -78,7 +76,7 @@ class WalletViewModel @Inject constructor(
     )
 
     private val _totalIncome = _updating.flatMapLatest {
-        recordUseCases.getUserTotalAmountByType(
+        walletUseCases.getUserTotalAmountByType(
             RecordType.Income
         )
     }.stateIn(
@@ -120,7 +118,7 @@ class WalletViewModel @Inject constructor(
         )
 
     private val _records = _state.flatMapLatest {
-        recordUseCases.getUserWalletRecordsOrderedByDateTime(
+        walletUseCases.getUserWalletRecordsOrderedByDateTime(
             it.wallet.walletId,
             _sortType.value
         )
@@ -208,7 +206,7 @@ class WalletViewModel @Inject constructor(
                     walletUseCases.deleteWallet(
                         event.wallet
                     )
-                    recordUseCases.updateRecordItemWithDeletedWallet(event.wallet)
+                    walletUseCases.updateRecordItemWithDeletedWallet(event.wallet)
                     event.onDeleteEffect()
                 }
             }

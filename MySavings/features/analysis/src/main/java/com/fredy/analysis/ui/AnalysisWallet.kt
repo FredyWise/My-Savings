@@ -27,8 +27,8 @@ import co.yml.charts.common.model.Point
 import co.yml.charts.ui.barchart.models.BarData
 import co.yml.charts.ui.barchart.models.GroupBar
 import com.fredy.analysis.ui.Charts.ChartGroupedBar
-import com.fredy.analysis.viewModel.AnalysisEvent
 import com.fredy.analysis.viewModel.AnalysisState
+import com.fredy.domain.enums.RecordType
 import com.fredy.domain.enumsChecker.recordTypeColor
 import com.fredy.domain.model.Wallet
 import com.fredy.ui.components.handler.ResourceHandler
@@ -41,7 +41,7 @@ import kotlin.math.absoluteValue
 fun AnalysisAccount(
     modifier: Modifier = Modifier,
     state: AnalysisState,
-    onEvent: (AnalysisEvent) -> Unit,
+    toggleAnalysisType: () -> Unit,
     onGetWalletDetails: (Wallet) -> Unit,
 ) {
     val expenseColor by remember { mutableStateOf(BalanceColors.Expense) }
@@ -51,13 +51,9 @@ fun AnalysisAccount(
     state.resourceData.walletsWithAmountResource.let { resource ->
         ResourceHandler(
             resource = resource,
-            nullOrEmptyMessage = "There is no ${state.filterState.recordType.name} on this date yet",
+            nullOrEmptyMessage = "There is no account created",
             isNullOrEmpty = { it.isNullOrEmpty() },
-            onMessageClick = {
-                onEvent(
-                    AnalysisEvent.ToggleAnalysisType
-                )
-            },
+            onMessageClick = toggleAnalysisType
         ) { data ->
             LazyColumn(modifier = modifier) {
                 item {

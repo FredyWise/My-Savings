@@ -1,15 +1,15 @@
 package com.fredy.addrecord.domain.usecases.singleAdd
 
 import co.yml.charts.common.extensions.isNotNull
+import com.fredy.addrecord.domain.AddRecordRepository
 import com.fredy.addrecord.viewModel.AddRecordState
-import com.fredy.domain.util.resource.DataError
-import com.fredy.domain.util.resource.Resource
 import com.fredy.domain.enums.RecordType
 import com.fredy.domain.enumsChecker.isTransfer
 import com.fredy.domain.model.Record
-import com.fredy.domain.repository.RecordRepository
 import com.fredy.domain.repository.UserRepository
 import com.fredy.domain.util.DefaultData
+import com.fredy.domain.util.resource.DataError
+import com.fredy.domain.util.resource.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
@@ -17,7 +17,7 @@ import timber.log.Timber
 import kotlin.math.absoluteValue
 
 class UpsertRecordItem(
-    private val recordRepository: RecordRepository,
+    private val recordRepository: AddRecordRepository,
     private val userRepository: UserRepository
 ) {
     suspend operator fun invoke(state: AddRecordState): Flow<Resource<AddRecordState, DataError.Local>> {

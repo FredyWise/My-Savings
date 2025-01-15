@@ -41,27 +41,27 @@ class WalletRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun deleteWallet(wallet: Wallet) {
-        withContext(Dispatchers.IO) {
-            val dataWallet = wallet.toDataWallet()
-            walletDataSource.deleteWalletItem(
-                dataWallet
-            )
-            walletDao.deleteWalletItem(dataWallet)
-        }
-    }
+//    override suspend fun deleteWallet(wallet: Wallet) {
+//        withContext(Dispatchers.IO) {
+//            val dataWallet = wallet.toDataWallet()
+//            walletDataSource.deleteWalletItem(
+//                dataWallet
+//            )
+//            walletDao.deleteWalletItem(dataWallet)
+//        }
+//    }
 
 
-    override fun getWallet(walletId: String): Flow<Wallet> {
-        return flow {
-            val wallet = withContext(Dispatchers.IO) {
-                walletDataSource.getWallet(
-                    walletId
-                )
-            }.toDomainWallet()
-            emit(wallet)
-        }
-    }
+//    override fun getWallet(walletId: String): Flow<Wallet> {
+//        return flow {
+//            val wallet = withContext(Dispatchers.IO) {
+//                walletDataSource.getWallet(
+//                    walletId
+//                )
+//            }.toDomainWallet()
+//            emit(wallet)
+//        }
+//    }
 
     override fun getUserWallets(userId: String): Flow<List<Wallet>> {
         return flow {

@@ -2,13 +2,12 @@ package com.fredy.category.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.fredy.domain.util.resource.DataError
-import com.fredy.domain.util.resource.Resource
+import com.fredy.category.domain.useCases.CategoryUseCases
 import com.fredy.domain.enums.SortType
 import com.fredy.domain.model.Category
-import com.fredy.domain.model.CategoryMap
-import com.fredy.domain.useCases.CategoryUseCases.CategoryUseCases
-import com.fredy.domain.useCases.RecordUseCases.RecordUseCases
+import com.fredy.domain.util.resource.DataError
+import com.fredy.domain.util.resource.Resource
+import com.fredy.domain.util.resource.ResourceError
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -23,8 +22,7 @@ import javax.inject.Inject
 @HiltViewModel
 class CategoryViewModel @Inject constructor(
     private val categoryUseCases: CategoryUseCases,
-    private val recordUseCases: RecordUseCases
-): ViewModel() {
+) : ViewModel() {
 
     private val _sortType = MutableStateFlow(
         SortType.ASCENDING
@@ -34,14 +32,14 @@ class CategoryViewModel @Inject constructor(
         CategoryState()
     )
 
-    private val _categoryResource = categoryUseCases.getCategoryMapOrderedByName().stateIn(
+    private val _categoryMapResource = categoryUseCases.getCategoryMapOrderedByName().stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(),
         Resource.Success(emptyList())
     )
 
     private val _records = _state.flatMapLatest {
-        recordUseCases.getUserCategoryRecordsOrderedByDateTime(
+        categoryUseCases.getUserCategoryRecordsOrderedByDateTime(
             it.category.categoryId,
             _sortType.value
         )
@@ -51,26 +49,26 @@ class CategoryViewModel @Inject constructor(
         Resource.Success(emptyList())
     )
 
-    private val categoryResource = _state.onEach {
+    private val categoryMapResource = _state.onEach {
         _state.update {
             it.copy(
                 isSearching = true
             )
         }
-    }.combine(_categoryResource) { state, categoryResource ->
+    }.combine(_categoryMapResource) { state, categoryMapResource ->
         if (state.searchQuery.isBlank()) {
-            categoryResource
+            categoryMapResource
         } else {
-            if (categoryResource is Resource.Success) {
-                categoryResource.copy(
-                    data = categoryResource.data.map { categoryMap ->
+            if (categoryMapResource is Resource.Success) {
+                categoryMapResource.copy(
+                    data = categoryMapResource.data.map { categoryMap ->
                         categoryMap.copy(categories = categoryMap.categories.filter {
                             it.doesMatchSearchQuery(state.searchQuery)
                         })
                     }
                 )
             } else {
-                categoryResource
+                categoryMapResource
             }
         }
     }.onEach {
@@ -85,10 +83,27 @@ class CategoryViewModel @Inject constructor(
         Resource.Success(emptyList())
     )
 
+    private val categoryResource = _state.combine(_categoryMapResource) { state, categoryMapResource ->
+        when (categoryMapResource) {
+            is Resource.Error -> Resource.Error(categoryMapResource.error)
+            is Resource.Loading -> Resource.Loading()
+            is Resource.Success -> {
+                Resource.Success<List<Category>,DataError.Local>(
+                    categoryMapResource.data.flatMap { categoryMap -> categoryMap.categories }
+                )
+            }
+        }
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(),
+        Resource.Success(emptyList())
+    )
+
     val state = combine(
-        _state, _sortType, categoryResource, _records
-    ) { state, sortType, categoryResource, records ->
+        _state, _sortType, categoryMapResource,categoryResource, _records
+    ) { state, sortType, categoryMapResource,categoryResource, records ->
         state.copy(
+            categoryMapsResource = categoryMapResource,
             categoryResource = categoryResource,
             recordMapsResource = records,
             sortType = sortType,
@@ -128,7 +143,7 @@ class CategoryViewModel @Inject constructor(
                     categoryUseCases.deleteCategory(
                         event.category
                     )
-                    recordUseCases.updateRecordItemWithDeletedCategory(event.category)
+                    categoryUseCases.updateRecordItemWithDeletedCategory(event.category)
                     event.onDeleteEffect()
                 }
             }

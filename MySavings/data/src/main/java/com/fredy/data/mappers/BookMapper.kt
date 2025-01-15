@@ -24,3 +24,4 @@ fun DataBook.toDomainBook(): DomainBook {
         bookIconDescription,
     )
 }
+

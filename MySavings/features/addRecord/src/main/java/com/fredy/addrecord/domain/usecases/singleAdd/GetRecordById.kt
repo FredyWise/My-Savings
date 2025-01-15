@@ -1,16 +1,17 @@
 package com.fredy.addrecord.domain.usecases.singleAdd
 
+
+import com.fredy.addrecord.domain.AddRecordRepository
+import com.fredy.currency.domain.useCases.CurrencyUseCases
+import com.fredy.currency.domain.useCases.currencyConverter
 import com.fredy.domain.model.TrueRecord
-import com.fredy.domain.repository.RecordRepository
-import com.fredy.domain.useCases.CurrencyUseCases.CurrencyUseCases
-import com.fredy.domain.useCases.CurrencyUseCases.currencyConverter
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import timber.log.Timber
 
 class GetRecordById(
-    private val recordRepository: RecordRepository,
+    private val recordRepository: AddRecordRepository,
     private val currencyUseCases: CurrencyUseCases
 ) {
     operator fun invoke(recordId: String): Flow<TrueRecord> {

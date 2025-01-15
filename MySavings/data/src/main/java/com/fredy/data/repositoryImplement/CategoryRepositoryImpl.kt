@@ -43,25 +43,25 @@ class CategoryRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun deleteCategory(category: Category) {
-        withContext(Dispatchers.IO) {
-            val dataCategory = category.toDataCategory()
-            categoryDataSource.deleteCategoryItem(
-                dataCategory
-            )
-            categoryDao.deleteCategoryItem(dataCategory)
-        }
-    }
-
-
-    override fun getCategory(categoryId: String): Flow<Category> {
-        return flow {
-            val domainCategory = withContext(Dispatchers.IO) {
-                categoryDataSource.getCategory(categoryId)
-            }.toDomainCategory()
-            emit(domainCategory)
-        }
-    }
+//    override suspend fun deleteCategory(category: Category) {
+//        withContext(Dispatchers.IO) {
+//            val dataCategory = category.toDataCategory()
+//            categoryDataSource.deleteCategoryItem(
+//                dataCategory
+//            )
+//            categoryDao.deleteCategoryItem(dataCategory)
+//        }
+//    }
+//
+//
+//    override fun getCategory(categoryId: String): Flow<Category> {
+//        return flow {
+//            val domainCategory = withContext(Dispatchers.IO) {
+//                categoryDataSource.getCategory(categoryId)
+//            }.toDomainCategory()
+//            emit(domainCategory)
+//        }
+//    }
 
     override fun getUserCategories(userId:String): Flow<List<Category>> {
         return flow {

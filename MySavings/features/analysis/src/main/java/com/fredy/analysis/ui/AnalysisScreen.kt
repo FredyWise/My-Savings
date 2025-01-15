@@ -12,8 +12,8 @@ import androidx.navigation.compose.rememberNavController
 import com.fredy.analysis.AnalysisNavGraph
 import com.fredy.analysis.AnalysisNavigationRoute
 import com.fredy.analysis.analysisScreens
-import com.fredy.analysis.viewModel.AnalysisEvent
 import com.fredy.analysis.viewModel.AnalysisState
+import com.fredy.domain.enums.RecordType
 import com.fredy.domain.enumsChecker.recordTypeColor
 import com.fredy.domain.model.Category
 import com.fredy.domain.model.Wallet
@@ -25,7 +25,7 @@ fun AnalysisScreen(
     modifier: Modifier = Modifier,
     rootNavController: NavHostController,
     state: AnalysisState,
-    onEvent: (AnalysisEvent) -> Unit,
+    toggleAnalysisType: () -> Unit,
     onGetCategoryDetails: (Category) -> Unit,
     onGetWalletDetails: (Wallet) -> Unit,
 ) {
@@ -33,7 +33,8 @@ fun AnalysisScreen(
     val currentBackStack by navController.currentBackStackEntryAsState()
     val currentDestination = currentBackStack?.destination
     val currentScreen =
-        analysisScreens.find { it.route == currentDestination?.route } ?: AnalysisNavigationRoute.Analysis
+        analysisScreens.find { it.route == currentDestination?.route }
+            ?: AnalysisNavigationRoute.Analysis
     Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         AnalysisTabRow(
             allScreens = analysisScreens,
@@ -43,9 +44,7 @@ fun AnalysisScreen(
                     screen.route
                 )
                 if (currentScreen == screen && screen != AnalysisNavigationRoute.AnalysisWallet) {
-                    onEvent(
-                        AnalysisEvent.ToggleAnalysisType
-                    )
+                    toggleAnalysisType()
                 }
             },
             currentScreen = currentScreen,
@@ -54,9 +53,10 @@ fun AnalysisScreen(
             rootNavController = rootNavController,
             navController = navController,
             state = state,
-            onEvent = onEvent,
+            recordType = state.filterState.recordType,
             onGetCategoryDetails = onGetCategoryDetails,
             onGetWalletDetails = onGetWalletDetails,
+            toggleAnalysisType = toggleAnalysisType
         )
 
     }

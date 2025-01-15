@@ -3,10 +3,10 @@ package com.fredy.currency.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.yml.charts.common.extensions.isNotNull
+import com.fredy.currency.domain.useCases.CurrencyUseCases
 import com.fredy.domain.credentials.ApiCredentials
-import com.fredy.domain.useCases.CurrencyUseCases.CurrencyUseCases
-import com.fredy.domain.useCases.CurrencyUseCases.changeBase
-import com.fredy.domain.useCases.UserUseCases.UserUseCases
+import com.fredy.domain.model.Currency
+import com.fredy.domain.userUseCases.UserUseCases
 import com.fredy.domain.util.resource.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -163,6 +163,13 @@ class CurrencyViewModel @Inject constructor(
                     it.copy(toValue = result.amount.toString())
                 }
             }
+        }
+    }
+
+    private fun List<Currency>.changeBase(newBaseCode: String): List<Currency> {
+        val newBase = this.first { it.code == newBaseCode }
+        return this.map { currency ->
+            currency.copy(value = currency.value / newBase.value)
         }
     }
 

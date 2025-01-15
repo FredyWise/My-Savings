@@ -1,37 +1,26 @@
 package com.fredy.data.di
 
 import android.content.Context
-import com.fredy.data.api.countryModels.CountryApi
-import com.fredy.data.api.currencyModels.CurrencyApi
-import com.fredy.data.api.tabScannerModel.TabScannerAPI
 import com.fredy.data.database.dao.BookDao
 import com.fredy.data.database.dao.CategoryDao
-import com.fredy.data.database.dao.CurrencyCacheDao
-import com.fredy.data.database.dao.CurrencyDao
 import com.fredy.data.database.dao.RecordDao
 import com.fredy.data.database.dao.UserDao
 import com.fredy.data.database.dao.WalletDao
 import com.fredy.data.database.firestoreDataSource.BookDataSource
 import com.fredy.data.database.firestoreDataSource.CategoryDataSource
-import com.fredy.data.database.firestoreDataSource.CurrencyDataSource
-import com.fredy.data.database.firestoreDataSource.CurrencyRatesDataSource
 import com.fredy.data.database.firestoreDataSource.RecordDataSource
 import com.fredy.data.database.firestoreDataSource.UserDataSource
 import com.fredy.data.database.firestoreDataSource.WalletDataSource
 import com.fredy.data.repositoryImplement.BookRepositoryImpl
 import com.fredy.data.repositoryImplement.CategoryRepositoryImpl
-import com.fredy.data.repositoryImplement.CurrencyRepositoryImpl
 import com.fredy.data.repositoryImplement.RecordRepositoryImpl
 import com.fredy.data.repositoryImplement.SyncRepositoryImpl
-import com.fredy.data.repositoryImplement.TabScannerRepositoryImpl
 import com.fredy.data.repositoryImplement.UserRepositoryImpl
 import com.fredy.data.repositoryImplement.WalletRepositoryImpl
 import com.fredy.domain.repository.BookRepository
 import com.fredy.domain.repository.CategoryRepository
-import com.fredy.domain.repository.CurrencyRepository
 import com.fredy.domain.repository.RecordRepository
 import com.fredy.domain.repository.SyncRepository
-import com.fredy.domain.repository.TabScannerRepository
 import com.fredy.domain.repository.UserRepository
 import com.fredy.domain.repository.WalletRepository
 import com.google.firebase.auth.FirebaseAuth
@@ -55,22 +44,10 @@ object RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideCurrencyRepository(
-        userRepository: UserRepository,
-        currencyApi: CurrencyApi,
-        countryApi: CountryApi,
-        currencyRatesDataSource: CurrencyRatesDataSource,
-        currencyDataSource: CurrencyDataSource,
-        currencyCacheDao: CurrencyCacheDao,
-        currencyInfoCacheDao: CurrencyDao,
-    ): CurrencyRepository = CurrencyRepositoryImpl(
-        userRepository,
-        currencyApi,
-        countryApi,
-        currencyRatesDataSource,
-        currencyDataSource,
-        currencyCacheDao,
-        currencyInfoCacheDao
+    fun provideBookRepository(
+        bookDataSource: BookDataSource,
+    ): BookRepository = BookRepositoryImpl(
+        bookDataSource
     )
 
 
@@ -108,15 +85,6 @@ object RepositoryModule {
         categoryDataSource, categoryDao, firestore,
     )
 
-    @Provides
-    @Singleton
-    fun provideBookRepository(
-        firestore: FirebaseFirestore,
-        bookDataSource: BookDataSource,
-        bookDao: BookDao,
-    ): BookRepository = BookRepositoryImpl(
-        bookDataSource, bookDao, firestore,
-    )
 
     @Provides
     @Singleton
@@ -144,13 +112,6 @@ object RepositoryModule {
 //        csvDao
 //    )
 
-    @Provides
-    @Singleton
-    fun provideTabScannerRepository(
-        tabScannerAPI: TabScannerAPI,
-    ): TabScannerRepository = TabScannerRepositoryImpl(
-        tabScannerAPI
-    )
 
     @Provides
     @Singleton

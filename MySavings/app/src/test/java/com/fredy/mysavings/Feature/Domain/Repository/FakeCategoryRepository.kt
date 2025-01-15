@@ -21,11 +21,11 @@ class FakeCategoryRepository : CategoryRepository {
         }
     }
 
-    override suspend fun deleteCategory(category: Category) {
+     suspend fun deleteCategory(category: Category) {
         categories.remove(category)
     }
 
-    override fun getCategory(categoryId: String): Flow<Category> {
+     fun getCategory(categoryId: String): Flow<Category> {
         return flow { emit(categories.find { it.categoryId == categoryId }!!) }
     }
 

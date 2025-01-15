@@ -1,11 +1,7 @@
 package com.fredy.data.di
 
-import com.fredy.domain.credentials.ApiCredentials
-import com.fredy.data.api.countryModels.CountryApi
-import com.fredy.data.api.currencyModels.CurrencyApi
-import com.fredy.data.api.tabScannerModel.TabScannerAPI
 import com.fredy.data.api.textCorrectionModels.TypeWiseApi
-
+import com.fredy.domain.credentials.ApiCredentials
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,32 +14,32 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object ApiModule {
-
-    @Provides
-    @Singleton
-    fun provideTabScannerApi(okHttpClient: OkHttpClient): TabScannerAPI = Retrofit.Builder()
-        .baseUrl(ApiCredentials.TabScanner.BASE_URL)
-        .addConverterFactory(GsonConverterFactory.create()).client(
-            okHttpClient
-        )
-        .build()
-        .create(TabScannerAPI::class.java)
-
-    @Provides
-    @Singleton
-    fun provideCountryApi(okHttpClient: OkHttpClient): CountryApi = Retrofit.Builder().baseUrl(
-        ApiCredentials.CountryModels.BASE_URL
-    ).addConverterFactory(GsonConverterFactory.create()).client(
-        okHttpClient
-    ).build().create(CountryApi::class.java)
-
-    @Provides
-    @Singleton
-    fun provideCurrencyApi(okHttpClient: OkHttpClient): CurrencyApi = Retrofit.Builder().baseUrl(
-        ApiCredentials.CurrencyModels.BASE_URL
-    ).addConverterFactory(GsonConverterFactory.create()).client(
-        okHttpClient
-    ).build().create(CurrencyApi::class.java)
+//
+//    @Provides
+//    @Singleton
+//    fun provideTabScannerApi(okHttpClient: OkHttpClient): TabScannerAPI = Retrofit.Builder()
+//        .baseUrl(ApiCredentials.TabScanner.BASE_URL)
+//        .addConverterFactory(GsonConverterFactory.create()).client(
+//            okHttpClient
+//        )
+//        .build()
+//        .create(TabScannerAPI::class.java)
+//
+//    @Provides
+//    @Singleton
+//    fun provideCountryApi(okHttpClient: OkHttpClient): CountryApi = Retrofit.Builder().baseUrl(
+//        ApiCredentials.CountryModels.BASE_URL
+//    ).addConverterFactory(GsonConverterFactory.create()).client(
+//        okHttpClient
+//    ).build().create(CountryApi::class.java)
+//
+//    @Provides
+//    @Singleton
+//    fun provideCurrencyApi(okHttpClient: OkHttpClient): CurrencyApi = Retrofit.Builder().baseUrl(
+//        ApiCredentials.CurrencyModels.BASE_URL
+//    ).addConverterFactory(GsonConverterFactory.create()).client(
+//        okHttpClient
+//    ).build().create(CurrencyApi::class.java)
 
     @Provides
     @Singleton

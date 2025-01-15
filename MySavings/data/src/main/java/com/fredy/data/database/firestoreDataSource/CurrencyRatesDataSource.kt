@@ -2,19 +2,15 @@ package com.fredy.data.database.firestoreDataSource
 
 
 import com.fredy.data.database.dto.FirebaseRatesCache
-import com.fredy.data.database.dto.RatesCache
-import com.fredy.data.mappers.toFireBaseRatesCache
-import com.fredy.data.mappers.toRatesCache
-
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 interface CurrencyRatesDataSource {
-    suspend fun upsertCurrencyRates(cache: RatesCache)
-    suspend fun deleteCurrencyRates(cache: RatesCache)
-    suspend fun getCurrencyRates(cacheId: String): RatesCache?
+    suspend fun upsertCurrencyRates(cache: FirebaseRatesCache)
+    suspend fun deleteCurrencyRates(cache: FirebaseRatesCache)
+    suspend fun getCurrencyRates(cacheId: String): FirebaseRatesCache?
 }
 
 class CurrencyRatesDataSourceImpl @Inject constructor(
@@ -25,9 +21,9 @@ class CurrencyRatesDataSourceImpl @Inject constructor(
     )
 
     override suspend fun upsertCurrencyRates(
-        rates: RatesCache
+        rates: FirebaseRatesCache
     ) {
-        val ratesCache = rates.toFireBaseRatesCache()
+        val ratesCache = rates
         currencyRatesCollection.document(
             ratesCache.cacheId
         ).set(
@@ -35,11 +31,12 @@ class CurrencyRatesDataSourceImpl @Inject constructor(
         )
     }
 
-    override suspend fun deleteCurrencyRates(cache: RatesCache) {
+    override suspend fun deleteCurrencyRates(cache: FirebaseRatesCache) {
         currencyRatesCollection.document(cache.cacheId).delete()
     }
 
-    override suspend fun getCurrencyRates(cacheId: String): RatesCache? {
-        return currencyRatesCollection.document(cacheId).get().await().toObject<FirebaseRatesCache>()?.toRatesCache()
+    override suspend fun getCurrencyRates(cacheId: String): FirebaseRatesCache? {
+        return currencyRatesCollection.document(cacheId).get().await()
+            .toObject<FirebaseRatesCache>()
     }
 }

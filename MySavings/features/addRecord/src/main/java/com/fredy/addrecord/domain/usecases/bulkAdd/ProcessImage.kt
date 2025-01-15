@@ -5,7 +5,7 @@ import android.content.Context
 import android.net.Uri
 import android.provider.OpenableColumns
 import com.fredy.domain.model.Record
-import com.fredy.domain.repository.TabScannerRepository
+import com.fredy.addrecord.domain.TabScannerRepository
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

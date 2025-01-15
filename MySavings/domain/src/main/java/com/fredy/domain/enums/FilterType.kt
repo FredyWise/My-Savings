@@ -7,5 +7,4 @@ enum class FilterType {
     Monthly,
     Weekly,
     Daily,
-
 }

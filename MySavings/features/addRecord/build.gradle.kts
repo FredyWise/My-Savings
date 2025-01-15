@@ -18,6 +18,8 @@ dependencies {
     implementation(projects.theme)
     implementation(projects.ui)
     implementation(projects.domain)
+    implementation(projects.data)
+    implementation(projects.features.currency)
 
 
     // Core Functions
@@ -89,6 +91,14 @@ dependencies {
     kapt(libs.hilt.android.compiler)
     kapt(libs.androidx.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
+
+    // Networking and API Integration
+    implementation(libs.retrofit)
+    implementation(libs.converter.moshi)
+    implementation(libs.converter.gson)
+    implementation(libs.okhttp)
+    implementation(libs.logging.interceptor)
+
 
 // Permissions and Other Utilities
     implementation(libs.accompanist.permissions)

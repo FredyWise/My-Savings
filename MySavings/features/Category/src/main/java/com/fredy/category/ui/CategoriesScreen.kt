@@ -65,7 +65,7 @@ fun CategoriesScreen(
                 )
             },
         )
-        state.categoryResource.let { resource ->
+        state.categoryMapsResource.let { resource ->
             ResourceHandler(
                 resource = resource,
                 nullOrEmptyMessage = "You Didn't Have Any Category Yet",

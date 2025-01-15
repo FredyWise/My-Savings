@@ -21,11 +21,11 @@ class FakeWalletRepository : WalletRepository {
         }
     }
 
-    override suspend fun deleteWallet(wallet: Wallet) {
+     suspend fun deleteWallet(wallet: Wallet) {
         wallets.remove(wallet)
     }
 
-    override fun getWallet(accountId: String): Flow<Wallet> {
+     fun getWallet(accountId: String): Flow<Wallet> {
         return flow { emit(wallets.find { it.walletId == accountId }!!) }
     }
 

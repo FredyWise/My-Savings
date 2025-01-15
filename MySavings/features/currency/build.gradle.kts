@@ -18,6 +18,7 @@ dependencies {
     // Projects
     implementation(projects.theme)
     implementation(projects.ui)
+    implementation(projects.data)
     implementation(projects.domain)
 
     // Core
@@ -70,4 +71,15 @@ dependencies {
     kapt(libs.hilt.android.compiler)
     kapt(libs.androidx.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
+
+    // Networking and API Integration
+    implementation(libs.retrofit)
+    implementation(libs.converter.moshi)
+    implementation(libs.converter.gson)
+    implementation(libs.okhttp)
+    implementation(libs.logging.interceptor)
+
+    // Firebase and Google Play services
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.firestore.ktx)
 }

@@ -3,13 +3,16 @@ package com.fredy.io.di
 import android.content.Context
 import com.fredy.data.CSV.CSVDao
 import com.fredy.data.CSV.CSVDaoImpl
-import com.fredy.io.domain.CSVRepository
+import com.fredy.domain.repository.BookRepository
 import com.fredy.domain.repository.CategoryRepository
 import com.fredy.domain.repository.RecordRepository
 import com.fredy.domain.repository.UserRepository
 import com.fredy.domain.repository.WalletRepository
 import com.fredy.io.data.CSVRepositoryImpl
+import com.fredy.io.domain.CSVRepository
+import com.fredy.io.domain.useCases.GetAllTrueRecordsWithinSelectedBook
 import com.fredy.io.domain.useCases.GetDBInfo
+import com.fredy.io.domain.useCases.GetUserBooks
 import com.fredy.io.domain.useCases.IOUseCases
 import com.fredy.io.domain.useCases.InputFromCSV
 import com.fredy.io.domain.useCases.OutputToCSV
@@ -42,6 +45,7 @@ object ioModule {
     fun provideCSVUseCases(
         csvRepository: CSVRepository,
         userRepository: UserRepository,
+        bookRepository: BookRepository,
         recordRepository: RecordRepository,
         walletRepository: WalletRepository,
         categoryRepository: CategoryRepository,
@@ -60,11 +64,16 @@ object ioModule {
             walletRepository,
             categoryRepository
         ),
+        getAllTrueRecordsWithinSelectedBook = GetAllTrueRecordsWithinSelectedBook(
+            recordRepository,
+            userRepository
+        ),
         getDBInfo = GetDBInfo(
             userRepository,
             recordRepository,
             walletRepository,
             categoryRepository
-        )
+        ),
+        getUserBooks = GetUserBooks(bookRepository, userRepository)
     )
 }
