@@ -1,8 +1,7 @@
 package com.fredy.category.domain.useCases
 
-import com.fredy.category.domain.CategoryRepository
 import com.fredy.domain.model.Category
-
+import com.fredy.domain.repository.CategoryRepository
 import com.fredy.domain.repository.UserRepository
 
 class UpsertCategory(

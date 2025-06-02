@@ -1,13 +1,12 @@
 package com.fredy.category.domain.useCases
 
-import com.fredy.domain.util.resource.DataError
-import com.fredy.domain.util.resource.Resource
-import com.fredy.domain.model.CategoryMap
-import com.fredy.category.domain.CategoryRepository
 import com.fredy.category.domain.categoryUIMapper.toCategoryMaps
+import com.fredy.domain.model.CategoryMap
+import com.fredy.domain.repository.CategoryRepository
 import com.fredy.domain.repository.UserRepository
 import com.fredy.domain.util.DefaultData
-
+import com.fredy.domain.util.resource.DataError
+import com.fredy.domain.util.resource.Resource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch

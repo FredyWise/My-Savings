@@ -70,7 +70,7 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
 
-    implementation(libs.okhttp)
+
 
 // Firebase and Google Play services
     implementation(platform(libs.firebase.bom))

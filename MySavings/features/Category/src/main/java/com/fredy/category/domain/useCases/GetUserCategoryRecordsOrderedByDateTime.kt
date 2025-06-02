@@ -1,13 +1,12 @@
 package com.fredy.category.domain.useCases
 
-import com.fredy.category.domain.CategoryRepository
-import com.fredy.domain.util.resource.DataError
-import com.fredy.domain.util.resource.Resource
 import com.fredy.domain.enums.SortType
 import com.fredy.domain.mappers.recordUIMapper.toRecordSortedMaps
 import com.fredy.domain.model.RecordMap
-import com.fredy.domain.repository.RecordRepository
+import com.fredy.domain.repository.CategoryRepository
 import com.fredy.domain.repository.UserRepository
+import com.fredy.domain.util.resource.DataError
+import com.fredy.domain.util.resource.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow

@@ -4,7 +4,9 @@ import com.fredy.data.database.dao.CategoryDao
 import com.fredy.data.database.firestoreDataSource.CategoryDataSource
 import com.fredy.data.mappers.toDataCategory
 import com.fredy.data.mappers.toDomainCategory
+import com.fredy.domain.enums.SortType
 import com.fredy.domain.model.Category
+import com.fredy.domain.model.TrueRecord
 import com.fredy.domain.repository.CategoryRepository
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
@@ -43,25 +45,26 @@ class CategoryRepositoryImpl @Inject constructor(
         }
     }
 
-//    override suspend fun deleteCategory(category: Category) {
-//        withContext(Dispatchers.IO) {
-//            val dataCategory = category.toDataCategory()
-//            categoryDataSource.deleteCategoryItem(
-//                dataCategory
-//            )
-//            categoryDao.deleteCategoryItem(dataCategory)
-//        }
-//    }
-//
-//
-//    override fun getCategory(categoryId: String): Flow<Category> {
-//        return flow {
-//            val domainCategory = withContext(Dispatchers.IO) {
-//                categoryDataSource.getCategory(categoryId)
-//            }.toDomainCategory()
-//            emit(domainCategory)
-//        }
-//    }
+
+    override suspend fun deleteCategory(category: Category) {
+        withContext(Dispatchers.IO) {
+            val dataCategory = category.toDataCategory()
+            categoryDataSource.deleteCategoryItem(
+                dataCategory
+            )
+            categoryDao.deleteCategoryItem(dataCategory)
+        }
+    }
+
+
+    override fun getCategory(categoryId: String): Flow<Category> {
+        return flow {
+            val domainCategory = withContext(Dispatchers.IO) {
+                categoryDataSource.getCategory(categoryId)
+            }.toDomainCategory()
+            emit(domainCategory)
+        }
+    }
 
     override fun getUserCategories(userId:String): Flow<List<Category>> {
         return flow {
@@ -75,6 +78,15 @@ class CategoryRepositoryImpl @Inject constructor(
                 }
                 emit(domainCategories)
             }
+        }
+    }
+
+    override fun getUserCategoryRecordsOrderedByDateTime(
+        userId: String,
+        categoryId: String,
+        sortType: SortType
+    ): Flow<List<TrueRecord>> {
+        return flow {
         }
     }
 

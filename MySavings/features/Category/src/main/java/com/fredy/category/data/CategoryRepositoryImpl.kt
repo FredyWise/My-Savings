@@ -1,12 +1,13 @@
 package com.fredy.category.data
 
-import com.fredy.category.domain.CategoryRepository
+
 import com.fredy.data.database.dao.CategoryDao
 import com.fredy.data.database.firestoreDataSource.CategoryDataSource
 import com.fredy.data.database.firestoreDataSource.RecordDataSource
 import com.fredy.data.mappers.toDomainTrueRecords
 import com.fredy.domain.model.Category
 import com.fredy.domain.model.TrueRecord
+import com.fredy.domain.repository.CategoryRepository
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow

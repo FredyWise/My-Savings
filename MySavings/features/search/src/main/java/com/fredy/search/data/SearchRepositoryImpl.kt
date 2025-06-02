@@ -27,6 +27,7 @@ class SearchRepositoryImpl @Inject constructor(
                 Timber.i("getRecordMapsRepo.Data: $records")
                 emit(records.toBookSortedMaps(userBooks))
             }
+
         }
     }
 
